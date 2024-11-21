@@ -1,0 +1,120 @@
+import { BaseQueryFn, createApi } from "@reduxjs/toolkit/query/react";
+
+export const BASE_URL = process.env.BASE_URL;
+import UniversalCookie from "universal-cookie";
+import type { AxiosRequestConfig } from "axios";
+
+import customBaseFetch, { Authentication } from "@/app/customBaseFetch";
+import { signOut } from "next-auth/react";
+
+const axiosBaseQuery =
+  (
+    { baseUrl }: { baseUrl: string } = { baseUrl: "" }
+  ): BaseQueryFn<
+    {
+      url: string;
+      method?: AxiosRequestConfig["method"];
+      data?: AxiosRequestConfig["data"];
+      params?: AxiosRequestConfig["params"];
+      headers?: AxiosRequestConfig["headers"];
+      body?: any;
+    },
+    unknown,
+    unknown
+  > =>
+    async (args) => {
+      const { url, method, params, headers, body } = args;
+
+      const result = await customBaseFetch({
+        url: baseUrl + url,
+        method,
+        data: body,
+        params,
+        headers,
+      });
+
+      if (result && result.error && result.error.status == 401) {
+        signOut();
+      }
+
+      if (result.data && result.data.token && (result.data.token as Authentication[]).length > 0) {
+        const cookies = new UniversalCookie();
+        // cookies.
+        result.data.token.forEach((token: any) => {
+          cookies.set(token.name, token.value, {
+            path: "/",
+            // httpOnly: rest.includes(' HttpOnly')
+            // secure: true,
+            // httpOnly: true,
+            // expires: new Date(jwtDecode(value.trim()).exp! * 1000),
+          });
+        });
+        const results = await customBaseFetch({
+          url: baseUrl + url,
+          method,
+          data: body,
+          params,
+          headers,
+        });
+        if (results && results.error && results.error.status == 401) {
+          signOut();
+        }
+
+        return results;
+      }
+
+      return result;
+    };
+
+export const api = createApi({
+  reducerPath: "api",
+  baseQuery: axiosBaseQuery({
+    baseUrl: BASE_URL as string,
+  }),
+  tagTypes: [
+
+    // Admin Tag 
+
+    "AdminGetData",
+    "AdminGetDataById",
+    "AdminUpdate",
+    "AdminRemove",
+
+    // SupperAdmin Tag
+
+    "SupperAdminGetData",
+    "SupperAdminGetDataById",
+    "SupperAdminUpdate",
+    "SupperAdminRemove",
+
+
+    //  School  Tag
+    "SchoolGetDataById",
+    "SchoolGetData",
+    "SchoolCreate",
+    "SchoolUpdate",
+
+    // Stage Tag
+    "StageGetData",
+    "StageGetDataById",
+    "StageCreate",
+    "StageRemove",
+
+    // Class Tag
+    "ClassGetData",
+    "ClassGetDataById",
+    "ClassCreate",
+    "ClassRemove",
+    "ClassUpdate",
+
+    // Section Tag
+    "SectionGetData",
+    "SectionGetDataById",
+    "SectionCreate",
+    "SectionRemove",
+    "SectionUpdate",
+
+
+  ],
+  endpoints: (build) => ({}),
+});
