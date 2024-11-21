@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 const Page = () => {
 
-    return <div className=''>
+    return <div>
         <Table />
     </div>;
 };
