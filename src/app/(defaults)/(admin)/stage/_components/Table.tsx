@@ -4,9 +4,8 @@ import React, { useState } from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
-import _logic from "./_logic";
+import useLogic from "./_logic";
 import { AddIcons } from "@/components/common/icons/Actions";
-import Model from "@/components/Model";
 import PageComponent from "./create/_components/PageComponent";
 
 
@@ -18,7 +17,7 @@ const TableComponent = () => {
     router,
     isMounted,
     isDark,
-  } = _logic()
+  } = useLogic()
   const [open, setOpen] = useState(false)
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>

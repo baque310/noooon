@@ -1,7 +1,6 @@
 import { getTranslation } from "@/ni18n/i18n";
 import { useClassGetDataQuery } from "@/services/admin/class";
 import { useLazySectionGetDataByIdQuery, useSectionCreateMutation, useSectionUpdateMutation } from "@/services/admin/section";
-import { useStageGetDataQuery } from "@/services/admin/stage";
 import { FormikHelpers } from "formik";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -12,7 +11,7 @@ export interface FormValues {
     classId: string
     isActive?: string
 }
-const _logic = () => {
+const useLogic = () => {
 
     const { t } = getTranslation();
     const router = useRouter();
@@ -90,4 +89,4 @@ const _logic = () => {
     }
 }
 
-export default _logic
+export default useLogic

@@ -30,7 +30,7 @@ export interface FormValues {
         }[]
     }[]
 }
-const _logic = () => {
+const useLogic = () => {
 
     const { t } = getTranslation();
     const router = useRouter();
@@ -193,4 +193,4 @@ const _logic = () => {
     }
 }
 
-export default _logic
+export default useLogic

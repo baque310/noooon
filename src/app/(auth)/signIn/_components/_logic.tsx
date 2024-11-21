@@ -7,7 +7,7 @@ import { VAPID_KEY } from '@/services/types/config';
 import { getTranslation } from '../../../../ni18n/i18n';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-const _logic = () => {
+const useLogic = () => {
     const { t } = getTranslation();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -61,4 +61,4 @@ const _logic = () => {
 
 }
 
-export default _logic
+export default useLogic

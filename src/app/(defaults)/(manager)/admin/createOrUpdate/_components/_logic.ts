@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
 interface FormValues extends AddAdminPayload { }
-const _logic = () => {
+const useLogic = () => {
 
     const { t } = getTranslation();
     const router = useRouter();
@@ -94,4 +94,4 @@ const _logic = () => {
     }
 }
 
-export default _logic
+export default useLogic

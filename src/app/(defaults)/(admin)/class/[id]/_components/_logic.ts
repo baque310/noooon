@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
-const _logic = () => {
+const useLogic = () => {
     const { t } = getTranslation();
     const router = useRouter()
     const params = useParams()
@@ -47,4 +47,4 @@ const _logic = () => {
     }
 }
 
-export default _logic
+export default useLogic

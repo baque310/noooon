@@ -7,11 +7,11 @@ import { BackButton } from '@/components/common/BackButton';
 import { ItemList } from '@/components/common/ItemList';
 
 
-import _logic from './_logic';
+import useLogic from './_logic';
 import { ArrowIcons } from '@/components/common/icons/Actions';
 
 const PageComponent = () => {
-    const { t, data, isFetching, id, router } = _logic();
+    const { t, data, isFetching, id, router } = useLogic();
 
     return (
         <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">

@@ -1,18 +1,18 @@
-"use client" 
+"use client"
 import React, { useState } from 'react';
 import { LoadingForm } from '@/components/Form/loadingForm';
 import { BackButton } from '@/components/common/BackButton';
 import { ItemList } from '@/components/common/ItemList';
 
 
-import _logic from './_logic';
+import useLogic from './_logic';
 import { ArrowIcons } from '@/components/common/icons/Actions';
 import moment from 'moment';
 import CreateComponent from '../../_components/create/_components/CreateComponent';
 import DeleteModel from '@/components/Model/DeleteModel';
 
 const PageComponent = () => {
-    const { t, data, isFetching, handleRemove, isLoadingClassRemove } = _logic();
+    const { t, data, isFetching, handleRemove, isLoadingClassRemove } = useLogic();
     const [open, setOpen] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     return (

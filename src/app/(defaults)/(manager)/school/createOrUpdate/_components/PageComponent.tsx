@@ -6,7 +6,7 @@ import { LoadingForm } from '@/components/Form/loadingForm';
 import { BackButton } from '@/components/common/BackButton';
 import * as Yup from 'yup';
 
-import _logic, { FormValues } from './_logic';
+import useLogic, { FormValues } from './_logic';
 import { FieldArray, Form, Formik, FormikProps } from 'formik';
 import { InputForm } from '@/components/Form/inputForm';
 import { OptionType, SelectForm } from '@/components/Form/SelectForm';
@@ -25,7 +25,8 @@ const PageComponent = () => {
     id,
     schoolSchema,
     handleSubmit,
-    isLoadingSchoolUpdate, } = _logic();
+    isLoadingSchoolUpdate,
+  } = useLogic();
 
   type SchoolSchema = Yup.InferType<typeof schoolSchema>;
 

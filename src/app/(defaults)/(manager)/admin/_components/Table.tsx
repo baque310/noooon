@@ -4,7 +4,7 @@ import React from "react";
 
 import moment from "moment";
 import { withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
-import _logic from "./_logic";
+import useLogic from "./_logic";
 
 
 const TableComponent = () => {
@@ -22,7 +22,7 @@ const TableComponent = () => {
     router,
     isMounted,
     isDark,
-  } = _logic()
+  } = useLogic()
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>

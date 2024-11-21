@@ -3,9 +3,8 @@
 
 import React from 'react';
 
-import _logic, { FormValues } from './_logic';
-import { Form, Formik, FormikProps } from 'formik';
-import { InputForm } from '@/components/Form/inputForm';
+import useLogic, { FormValues } from './_logic';
+import { Form, Formik, FormikProps } from 'formik'; 
 import { RolePageAndActionBasedComponent } from '@/components/Provider/RolePageAndActionBasedComponent';
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import Model from '@/components/Model';
@@ -26,7 +25,7 @@ const PageComponent = ({
     handleSubmit,
     isLoadingStageUpdate,
 
-  } = _logic();
+  } = useLogic();
 
 
   return (

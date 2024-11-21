@@ -5,8 +5,8 @@ import React from "react";
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import { AddIcons } from "@/components/common/icons/Actions";
-import _logic from "./_logic";
-
+import useLogic from "./_logic";
+ 
 
 const TableComponent = () => {
   const {
@@ -23,7 +23,7 @@ const TableComponent = () => {
     router,
     isMounted,
     isDark,
-  } = _logic()
+  } = useLogic()
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -74,37 +74,37 @@ const TableComponent = () => {
                 accessor: "username",
                 sortable: true,
               },
-              {
-                title: t("SupperAdminPage.School.name"),
-                accessor: "School.name",
-                // sortable: true,
-              },
-              {
-                title: t("SupperAdminPage.School.address"),
-                accessor: "School.address",
-                // sortable: true,
-              },
-              {
-                title: t("SupperAdminPage.School.email"),
-                accessor: "School.email",
-                // sortable: true,
-              },
-              {
-                title: t("SupperAdminPage.School.phone1"),
-                accessor: "School.phone1",
-                // sortable: true,
-              },
-              {
-                title: t("SupperAdminPage.School.phone2"),
-                accessor: "School.phone2",
-                // sortable: true,
-              },
-              {
-                title: t("SupperAdminPage.School.hasBanner"),
-                accessor: "School.hasBanner",
-                // sortable: true,
-                render: ({ School }: any) => (School.hasBanner ? <div>{t("common.yes")}</div> : <div>{t("common.no")}</div>),
-              },
+              // {
+              //   title: t("SupperAdminPage.School.name"),
+              //   accessor: "School.name",
+              //   // sortable: true,
+              // },
+              // {
+              //   title: t("SupperAdminPage.School.address"),
+              //   accessor: "School.address",
+              //   // sortable: true,
+              // },
+              // {
+              //   title: t("SupperAdminPage.School.email"),
+              //   accessor: "School.email",
+              //   // sortable: true,
+              // },
+              // {
+              //   title: t("SupperAdminPage.School.phone1"),
+              //   accessor: "School.phone1",
+              //   // sortable: true,
+              // },
+              // {
+              //   title: t("SupperAdminPage.School.phone2"),
+              //   accessor: "School.phone2",
+              //   // sortable: true,
+              // },
+              // {
+              //   title: t("SupperAdminPage.School.hasBanner"),
+              //   accessor: "School.hasBanner",
+              //   // sortable: true,
+              //   render: ({ School }: any) => (School.hasBanner ? <div>{t("common.yes")}</div> : <div>{t("common.no")}</div>),
+              // },
               {
                 title: t("common.status"),
                 accessor: "isActive",

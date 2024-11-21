@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import _logic, { FormValues } from './_logic';
+import useLogic, { FormValues } from './_logic';
 import { Form, Formik, FormikProps } from 'formik';
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import Model from '@/components/Model';
@@ -28,7 +28,7 @@ const CreateComponent = ({
     isFetching,
     id
 
-  } = _logic();
+  } = useLogic();
 
 
   return (

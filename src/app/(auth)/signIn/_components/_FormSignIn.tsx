@@ -3,7 +3,7 @@
 import { Form, Formik, FormikProps } from 'formik';
 import { InputForm } from '@/components/Form/inputForm';
 import { ButtonForm } from '@/components/Form/ButtonForm';
-import _logic from './_logic';
+import useLogic from './_logic';
 import * as Yup from 'yup'; 
 
 const FormSignIn = () => {
@@ -12,7 +12,7 @@ const FormSignIn = () => {
         t,
         isLoading,
         signInSchema,
-    } = _logic();
+    } = useLogic();
 
     type SignInSchema = Yup.InferType<typeof signInSchema>;
 

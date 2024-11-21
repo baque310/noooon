@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 
-const _logic = () => {
+const useLogic = () => {
     const { t } = getTranslation();
     const router = useRouter();
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
@@ -25,4 +25,4 @@ const _logic = () => {
     }
 }
 
-export default _logic
+export default useLogic

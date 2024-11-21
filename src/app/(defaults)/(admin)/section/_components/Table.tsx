@@ -2,9 +2,8 @@
 import { DataTable } from "mantine-datatable";
 import React, { useState } from "react";
 
-import moment from "moment";
-import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
-import _logic from "./_logic";
+ import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import useLogic from "./_logic";
 import { AddIcons } from "@/components/common/icons/Actions";
 import CreateComponent from "./create/_components/CreateComponent";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
@@ -27,7 +26,7 @@ const TableComponent = () => {
     sortStatus,
     setSortStatus,
 
-  } = _logic()
+  } = useLogic()
   const [open, setOpen] = useState(false)
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>

@@ -16,20 +16,20 @@ const PageComponent = () => {
 
     return (
         <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
-            <BackButton title={t('ManagerAdminPage.School.managerAdminInformation')} />
+            {/* <BackButton title={t('ManagerAdminPage.School.managerAdminInformation')} /> */}
 
             {
                 isFetching ? <LoadingForm /> : <>
                     <AttachmentsImage className="my-2 h-44" src={String(data?.photo)} />
 
                     <div className='CardDetails internalMenu '>
-                        <ItemList title={t('ManagerAdminPage.username')} value={String(data?.username)} />
+                        {/* <ItemList title={t('ManagerAdminPage.username')} value={String(data?.username)} />
                         <ItemList title={t('ManagerAdminPage.School.name')} value={String(data?.School.name)} />
                         <ItemList title={t('ManagerAdminPage.School.address')} value={String(data?.School.address)} />
                         <ItemList title={t('ManagerAdminPage.School.phone1')} value={String(data?.School.phone1)} />
                         <ItemList title={t('ManagerAdminPage.School.phone2')} value={String(data?.School.phone2)} />
                         <ItemList title={t('ManagerAdminPage.School.email')} value={String(data?.School.email)} />
-                        <ItemList title={t('ManagerAdminPage.School.hasBanner')} value={String(data?.School.hasBanner)} />
+                        <ItemList title={t('ManagerAdminPage.School.hasBanner')} value={String(data?.School.hasBanner)} /> */}
                         <ItemList title={t('common.status')} value={
                             <div className='flex gap-2 px-[2px]'>
                                 {data?.isActive == "true" ?
@@ -44,7 +44,7 @@ const PageComponent = () => {
                         {t('common.settings')}
                     </div>
                     <div className='CardDetails internalMenu '>
-                        <ItemList
+                        {/* <ItemList
                             props={{
                                 onClick: () => {
                                     router.push(`/createOrUpdate?id=${id}`)
@@ -52,8 +52,8 @@ const PageComponent = () => {
                             }}
                             title={t('update-info')}
                             value={<ArrowIcons className='rtl:rotate-180 text-[#000]/50' />}
-                        />
-                        <ItemList
+                        /> */}
+                        {/* <ItemList
                             props={{
                                 onClick: () => {
                                     router.push(`/changeRole?id=${id}`)
@@ -61,7 +61,7 @@ const PageComponent = () => {
                             }}
                             title={t('update-role')}
                             value={<ArrowIcons className='rtl:rotate-180 text-[#000]/50' />}
-                        /> 
+                        />  */}
                     </div> 
                 </>
             }
