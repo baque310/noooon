@@ -4,26 +4,29 @@ import React, { useState } from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
-import useLogic from "./_logic";
 import { AddIcons } from "@/components/common/icons/Actions";
-import PageComponent from "./create/_components/PageComponent";
+import PageComponent from "./PageComponent";
+import useMounted from "@/hooks/useMounted";
+import { getTranslation } from "@/ni18n/i18n";
+import { useStageGetDataQuery } from "@/services/admin/stage";
+import { IRootState } from "@/store";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+
 
 
 const TableComponent = () => {
-  const {
-    t,
-    data,
-    isFetching,
-    router,
-    isMounted,
-    isDark,
-  } = useLogic()
+  const { t } = getTranslation();
+  const router = useRouter();
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const { isMounted } = useMounted();
+  const { isFetching, currentData: data } = useStageGetDataQuery();
   const [open, setOpen] = useState(false)
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("StagePage.Stages")}</div>
-        <div className={"flex gap-3"}> 
+        <div className={"flex gap-3"}>
           {
             <RolePageAndActionBasedComponent
               component={(props) => {
