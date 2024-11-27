@@ -18,6 +18,8 @@ export type PAGE_CODE =
   | "stage"
   | "class"
   | "section"
+  | "student"
+  | "student_enrollment"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";

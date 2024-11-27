@@ -24,8 +24,7 @@ const useLogic = () => {
             setIsLoading(true);
             const currentToken = await getToken(messaging, {
                 vapidKey: VAPID_KEY
-            }).catch((err) => {
-                console.log("err", err);
+            }).catch((err) => { 
                 return "";
             });
 
@@ -37,10 +36,8 @@ const useLogic = () => {
                 callbackUrl: `${window.location.origin}/`,
             });
 
-            if (res?.ok) {
-                localStorage.setItem('username', values.username);
-                localStorage.setItem('password', values.password);
-                router.replace("/dashboard");
+            if (res?.ok) { 
+                router.replace("/");
             }
 
             if (res && res.error) {

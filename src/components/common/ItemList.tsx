@@ -1,8 +1,8 @@
 "use client"
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
- import { getTranslation } from '../../ni18n/i18n';
-import IconCaretsDown from './icons/sidebar/icon-carets-down';
+import { getTranslation } from '../../ni18n/i18n';
+import IconCopy from './icons/icon-copy';
 export const ItemList = ({ title, value, props, children, isCopyToClipboard }:
     {
         children?: React.ReactNode,
@@ -23,7 +23,7 @@ export const ItemList = ({ title, value, props, children, isCopyToClipboard }:
                     isCopyToClipboard ?
                         <CopyToClipboard text={value as string} onCopy={(text, result) => {
                             if (result) {
-                                // toast.success(t('Copied to clipboard'))
+                                toast.success(t('common.Copied-to-clipboard'))
                             } else {
                                 toast.error('Failed to copy to clipboard')
                             }
@@ -32,7 +32,7 @@ export const ItemList = ({ title, value, props, children, isCopyToClipboard }:
                                 <div>
                                     {value}
                                 </div>
-                                {<IconCaretsDown />}
+                                {<IconCopy />}
                             </button>
                         </CopyToClipboard>
                         : <>{value}

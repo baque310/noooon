@@ -114,6 +114,20 @@ export const api = createApi({
     "SectionRemove",
     "SectionUpdate",
 
+    // Student Tag
+    "StudentGetData",
+    "StudentGetDataById",
+    "StudentCreate",
+    "StudentUpdate",
+    "StudentRemove",
+    "StudentCreateMulti",
+
+    // Student Enrollment Tag
+    "StudentEnrollmentGetData",
+    "StudentEnrollmentGetDataById",
+    "StudentEnrollmentCreate",
+    "StudentEnrollmentUpdate",
+    "StudentEnrollmentRemove",
 
   ],
   endpoints: (build) => ({}),

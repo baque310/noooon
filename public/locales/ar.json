@@ -16,6 +16,7 @@
         "please-check-the-information": "يرجى التأكد من المعلومات"
     },
     "common": {
+        "Copied-to-clipboard": "تم النسخ إلى الحافظة",
         "this-field-is-required": "هذا الحقل مطلوب",
         "no-data": "لا توجد بيانات",
         "createdAt": "تاريخ الانشاء",
@@ -65,7 +66,9 @@
         "logout": "تسجيل الخروج",
         "class": "الصف",
         "stage": "المرحلة",
-        "section": "الشعبة"
+        "section": "الشعبة",
+        "student": "الطالب",
+        "studentEnrollment": "تسجيل الطالب"
     },
     "SupperAdminPage": {
         "supperAdmin": "مدير عام",
@@ -154,7 +157,7 @@
         "DeleteClass": "حذف الصف",
         "Are-you-sure-you-want-to-delete-this-Class": "هل أنت متأكد أنك تريد حذف هذا الصف؟"
     },
-    "SectionPage":{
+    "SectionPage": {
         "Section": "الشعبة",
         "Sections": "الشعب",
         "name": "اسم الشعبة",
@@ -170,5 +173,44 @@
         "add": "اضافة",
         "DeleteSection": "حذف الشعبة",
         "Are-you-sure-you-want-to-delete-this-Section": "هل أنت متأكد أنك تريد حذف هذه الشعبة؟"
+    },
+    "StudentPage": {
+        "student": "الطالب",
+        "students": "الطلاب",
+        "fullName": "الاسم الكامل",
+        "enter-fullName": "ادخل الاسم الكامل",
+        "birth": "تاريخ الميلاد",
+        "enter-birth": "ادخل تاريخ الميلاد",
+        "enrollmentDate": "تاريخ التسجيل",
+        "enter-enrollmentDate": "ادخل تاريخ التسجيل",
+        "address": "العنوان",
+        "enter-address": "ادخل العنوان",
+        "email": "البريد الالكتروني",
+        "enter-email": "ادخل البريد الالكتروني",
+        "phone1": "الهاتف 1",
+        "enter-phone1": "ادخل الهاتف 1",
+        "enter-phone2": "ادخل الهاتف 2",
+        "phone2": "الهاتف 2",
+        "muiltAdd": "اضافة متعددة",
+        "singleAdd": "اضافة فردية",
+        "Username": "اسم المستخدم",
+        "photo": "صورة",
+        "update-info": "تعديل المعلومات",
+        "add": "اضافة",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "infoStudent": "معلومات الطالب",
+        "infoContact": "معلومات الاتصال",
+        "StudentInformation": "معلومات الطالب",
+        "Are-you-sure-you-want-to-delete-this-Student": "هل أنت متأكد أنك تريد حذف هذا الطالب؟",
+        "DeleteStudent": "حذف الطالب",
+        "email-already-exists": "البريد الالكتروني موجود بالفعل"
+    },
+    "StudentEnrollmentPage":{
+        "SectionName": "اسم الشعبة", 
+        "StudentFullName": "اسم الطالب", 
+        "SchoolYear": "السنة الدراسية",
+        "StageName": "اسم المرحلة",
+        "ClassName": "اسم الصف" ,
+        "studentEnrollment": "تسجيل الطالب"
     }
 }
