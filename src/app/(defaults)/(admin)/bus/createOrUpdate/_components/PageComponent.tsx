@@ -191,7 +191,7 @@ const PageComponent = () => {
 
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingBusUpdate}
+                    isLoading={isLoadingBusUpdate ||isLoadingBusCreate}
                   />
                 </div>
               </Form>
