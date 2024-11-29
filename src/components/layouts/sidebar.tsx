@@ -155,6 +155,14 @@ const Sidebar = () => {
                 label={t("sidebar.teacher")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"bus"}
+                toggleMenu={toggleMenu}
+                to={"/bus"}
+                label={t("sidebar.bus")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
 
             </ul>
           </PerfectScrollbar>

@@ -70,7 +70,8 @@
         "section": "الشعبة",
         "student": "الطالب",
         "studentEnrollment": "تسجيل الطالب",
-        "teacher":"المدرس"
+        "teacher":"المدرس",
+        "bus": "خط النقل"
     },
     "SupperAdminPage": {
         "supperAdmin": "مدير عام",
@@ -264,5 +265,32 @@
         "Are-you-sure-you-want-to-delete-this-Teacher": "هل أنت متأكد أنك تريد حذف هذا المدرس؟",
         "DeleteTeacher": "حذف المدرس",
         "email-already-exists": "البريد الالكتروني موجود بالفعل"
+    },
+    "BusPage": {
+        "bus": "خط النقل", 
+        "fullName": "الاسم الكامل",
+        "enter-fullName": "ادخل الاسم الكامل",
+        "carNumber": "رقم السيارة",
+        "enter-carNumber": "ادخل رقم السيارة",
+        "carType": "نوع السيارة",
+        "enter-carType": "ادخل نوع السيارة",
+        "carColor": " لون السيارة",
+        "enter-carColor": "ادخل لون السيارة",
+        "address": "العنوان",
+        "enter-address": "ادخل العنوان", 
+        "phone1": "الهاتف 1",
+        "enter-phone1": "ادخل الهاتف 1",
+        "enter-phone2": "ادخل الهاتف 2",
+        "phone2": "الهاتف 2", 
+        "Username": "اسم المستخدم",
+        "photo": "صورة",
+        "update-info": "تعديل المعلومات",
+        "add": "اضافة",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "infoBus": "معلومات خط النقل",
+        "infoContact": "معلومات الاتصال",
+        "BusInformation": "معلومات خط النقل",
+        "Are-you-sure-you-want-to-delete-this-Bus": "هل أنت متأكد أنك تريد حذف هذا خط النقل؟",
+        "DeleteBus": "حذف خط النقل"
     }
 }

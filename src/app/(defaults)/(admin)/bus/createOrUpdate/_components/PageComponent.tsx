@@ -5,19 +5,18 @@ import { LoadingForm } from '@/components/Form/loadingForm';
 import { BackButton } from '@/components/common/BackButton';
 
 import { getTranslation } from "@/ni18n/i18n";
-import { AddTeacherPayload, useLazyTeacherGetDataByIdQuery, useTeacherCreateMutation, useTeacherUpdateMutation } from "@/services/admin/teacher";
+import { AddBusPayload, useLazyBusGetDataByIdQuery, useBusCreateMutation, useBusUpdateMutation } from "@/services/admin/bus";
 import { FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
-export interface FormValues extends AddTeacherPayload {
+export interface FormValues extends AddBusPayload {
 
-} 
+}
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import { Form, Formik, FormikProps } from 'formik';
-import { InputForm } from '@/components/Form/inputForm';
-import { DateTimeForm } from '@/components/Form/DateTimeForm';
+import { InputForm } from '@/components/Form/inputForm'; 
 import { UploadFileForm } from '@/components/Form/uploadFileForm';
 
 const PageComponent = () => {
@@ -25,10 +24,10 @@ const PageComponent = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const id = searchParams.get("id"); 
-    const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery()
+    const [BusGetDataById, { currentData: data, isFetching }] = useLazyBusGetDataByIdQuery()
     useEffect(() => {
         if (id) {
-            TeacherGetDataById({ id: String(id) })
+            BusGetDataById({ id: String(id) })
                 .then((data) => {
                     if (!data.data) {
                         router.back();
@@ -36,8 +35,9 @@ const PageComponent = () => {
                 });
         }
     }, [id]) 
-    const [TeacherCreate, { isLoading: isLoadingTeacherCreate }] = useTeacherCreateMutation();
-    const [TeacherUpdate, { isLoading: isLoadingTeacherUpdate }] = useTeacherUpdateMutation();
+
+    const [BusCreate, { isLoading: isLoadingBusCreate }] = useBusCreateMutation();
+    const [BusUpdate, { isLoading: isLoadingBusUpdate }] = useBusUpdateMutation();
 
     const handleSubmit = async (
         values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
@@ -54,14 +54,14 @@ const PageComponent = () => {
             }
 
             if (id) {
-                await TeacherUpdate({
+                await BusUpdate({
                     body: formData,
                     id: String(id),
                 }
                 ).unwrap()
 
             } else {
-                await TeacherCreate({
+                await BusCreate({
                     ...values
 
                 }).unwrap()
@@ -73,25 +73,23 @@ const PageComponent = () => {
             }
         } catch (error: any) {
             console.error("Failed to operation :", error);
-            if (error) {
-                if (error.message == `Resource already exists. More details: {\"modelName\":\"Teacher\",\"target\":\"teachers_email_key\"}`) {
-                    return toast.error(t('TeacherPage.email-already-exists'), { autoClose: 30000 });
-                }
+            if (error) { 
                 return toast.error(JSON.stringify(error), { autoClose: 30000 });
             }
             toast.error(error, { autoClose: 30000 });
         }
     };
   
-    const teacherSchema = Yup.object().shape({
+    const busSchema = Yup.object().shape({
         fullName: Yup.string().required(t("common.this-field-is-required")),
         phone1: Yup.string().required(t("common.this-field-is-required")),
     }) 
 
+
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton title={t(id ? "TeacherPage.update-info" : "TeacherPage.add")} />
+        <BackButton title={t(id ? "BusPage.update-info" : "BusPage.add")} />
 
         {isFetching ? (
           <LoadingForm />
@@ -101,68 +99,66 @@ const PageComponent = () => {
 
               fullName: data?.fullName ?? "",
               address: data?.address,
-              email: data?.email,
+              carColor: data?.carColor,
               phone1: data?.phone1 ?? "",
               phone2: data?.phone2,
-              birth: data?.birth,
-              hiringDate: data?.hiringDate,
+              carNumber: data?.carNumber,
+              carType: data?.carType,
               photo: data?.photo,
             }}
-            validationSchema={teacherSchema}
+            validationSchema={busSchema}
             onSubmit={handleSubmit}
           >
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
                 <div className="Card flex flex-col gap-1">
                   <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                    {t("TeacherPage.infoTeacher")}
+                    {t("BusPage.infoBus")}
                   </div>
                   <InputForm
                     formikProps={props}
                     name={"fullName"}
-                    title={t("TeacherPage.fullName")}
-                    placeholder={t("TeacherPage.enter-fullName")}
+                    title={t("BusPage.fullName")}
+                    placeholder={t("BusPage.enter-fullName")}
                   />
-                  <DateTimeForm
+                  <InputForm
                     formikProps={props}
-                    name={"birth"}
-                    title={t("TeacherPage.birth")}
-                    placeholder={t("TeacherPage.enter-birth")}
+                    name={"carType"}
+                    title={t("BusPage.carType")}
+                    placeholder={t("BusPage.enter-carType")}
 
                   />
-                  <DateTimeForm
+                  <InputForm
                     formikProps={props}
-                    name={"hiringDate"}
-                    title={t("TeacherPage.hiringDate")}
-                    placeholder={t("TeacherPage.enter-hiringDate")}
+                    name={"carNumber"}
+                    title={t("BusPage.carNumber")}
+                    placeholder={t("BusPage.enter-carNumber")}
+
+                  />
+                  <InputForm
+                    formikProps={props}
+                    name={"carColor"}
+                    title={t("BusPage.carColor")}
+                    placeholder={t("BusPage.enter-carColor")}
 
                   />
                 </div>
                 <div className="Card flex flex-col gap-1">
                   <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                    {t("TeacherPage.infoContact")}
-                  </div>
-
+                    {t("BusPage.infoContact")}
+                  </div> 
                   <InputForm
                     formikProps={props}
                     name={"address"}
-                    title={t("TeacherPage.address")}
-                    placeholder={t("TeacherPage.enter-address")}
-                  />
-                  <InputForm
-                    formikProps={props}
-                    name={"email"}
-                    title={t("TeacherPage.email")}
-                    placeholder={t("TeacherPage.enter-email")}
-                  />
-                  <div className='flex gap-2 max-md:flex-col'>
-
-
+                    title={t("BusPage.address")}
+                    placeholder={t("BusPage.enter-address")}
+                  /> 
+                  <div className='flex gap-2 max-md:flex-col'> 
                     <InputForm
                       formikProps={props}
                       name={"phone1"}
-                      title={t("TeacherPage.phone1")}
-                      placeholder={t("TeacherPage.enter-phone1")}
+                      title={t("BusPage.phone1")}
+                      placeholder={t("BusPage.enter-phone1")}
                       props={{
                         type: "tel"
                       }}
@@ -170,8 +166,8 @@ const PageComponent = () => {
                     <InputForm
                       formikProps={props}
                       name={"phone2"}
-                      title={t("TeacherPage.phone2")}
-                      placeholder={t("TeacherPage.enter-phone2")}
+                      title={t("BusPage.phone2")}
+                      placeholder={t("BusPage.enter-phone2")}
                       props={{
                         type: "tel"
                       }}
@@ -179,12 +175,12 @@ const PageComponent = () => {
                   </div>
                 </div>
                 {id && <div className="Card flex flex-col gap-1">
-                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("TeacherPage.img-info")}</div>
+                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("BusPage.img-info")}</div>
                   <UploadFileForm
                     valueFileName={props.values.photo}
                     formikProps={props}
                     name={"photo"}
-                    title={t("TeacherPage.photo")}
+                    title={t("BusPage.photo")}
                     placeholder={""}
                   />
                 </div>}
@@ -195,7 +191,7 @@ const PageComponent = () => {
 
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingTeacherUpdate ||isLoadingTeacherCreate}
+                    isLoading={isLoadingBusUpdate}
                   />
                 </div>
               </Form>

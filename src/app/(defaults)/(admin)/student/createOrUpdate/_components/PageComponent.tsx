@@ -156,7 +156,7 @@ const PageComponent = () => {
                     data={data}
                     studentSchema={studentSchema}
                     handleSubmit={handleSubmit}
-                    isLoadingStudentUpdate={isLoadingStudentUpdate}
+                    isLoadingStudentUpdate={isLoadingStudentCreate}
                   /> :
                   <MuiltAdd
 

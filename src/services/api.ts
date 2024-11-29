@@ -139,6 +139,14 @@ export const api = createApi({
     "TeacherRemove",
     "TeacherUpdate",
 
+    // bus Tag
+      "BusGetData",
+      "BusGetDataById",
+      "BusCreate",
+      "BusUpdate",
+      "BusRemove",
+
+
   ],
   endpoints: (build) => ({}),
 });
