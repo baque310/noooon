@@ -4,8 +4,7 @@ import React from 'react';
 import { Form, Formik, FormikProps } from 'formik';
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import Model from '@/components/Model';
-import { SelectForm } from '@/components/Form/SelectForm';
-import { InputForm } from '@/components/Form/inputForm';
+import { SelectForm } from '@/components/Form/SelectForm'; 
 import { LoadingForm } from '@/components/Form/loadingForm';
 import { getTranslation } from "@/ni18n/i18n";
 import { useClassGetDataQuery } from "@/services/admin/class";
@@ -73,7 +72,7 @@ const CreateComponent = ({
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
-        if (error.message == "name already exist") {
+        if (error.message == "section already exists") {
           return toast.error(t('SectionPage.name-already-exists'), { autoClose: 30000 });
         }
 
@@ -90,7 +89,14 @@ const CreateComponent = ({
       classId: Yup.string().required(t("common.this-field-is-required")),
     }
   });
-
+  const sections = [
+    {  title: 'A' },
+    {  title: 'B' },
+    {   title: 'C' },
+    {  title: 'D' },
+    {  title: 'E' },
+    {  title: 'F' },
+  ];
 
   return (
     <Model title={t(id ? "SectionPage.update" : "SectionPage.add")}
@@ -115,11 +121,17 @@ const CreateComponent = ({
         >
           {(props: FormikProps<any>) => (
             <Form className={"flex flex-col gap-4"}>
-              <InputForm
+              <SelectForm
                 formikProps={props}
                 name={"name"}
                 title={t("SectionPage.name")}
                 placeholder={t("SectionPage.enter-name")}
+                options={sections.map(section => {
+                  return {
+                    value: section.title,
+                    label: t(section.title as any)
+                  }
+                })}
 
               />
               {id ?

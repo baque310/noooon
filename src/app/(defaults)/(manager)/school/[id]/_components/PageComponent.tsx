@@ -6,12 +6,28 @@ import { LoadingForm } from '@/components/Form/loadingForm';
 import { BackButton } from '@/components/common/BackButton';
 import { ItemList } from '@/components/common/ItemList';
 
-
-import useLogic from './_logic';
+import { getTranslation } from "@/ni18n/i18n";
+import { useLazySchoolGetDataByIdQuery } from "@/services/Manager/School";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { ArrowIcons } from '@/components/common/icons/Actions';
 
 const PageComponent = () => {
-    const { t, data, isFetching, id, router } = useLogic();
+    const { t } = getTranslation();
+    const router = useRouter()
+    const params = useParams()
+    const { id } = params
+    const [SchoolGetDataById, { currentData: data, isFetching }] = useLazySchoolGetDataByIdQuery()
+    useEffect(() => {
+        if (id) {
+            SchoolGetDataById({ id: String(id) })
+                .then((data) => {
+                    if (!data.data) {
+                        router.back();
+                    }
+                });
+        }
+    }, [id])
 
     return (
         <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">

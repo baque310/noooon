@@ -140,7 +140,7 @@ const TableComponent = () => {
                 title: t("SectionPage.name"),
                 accessor: "name",
                 sortable: true,
-                // render: ({ name }: any) => t(name as any),
+                render: ({ name }: any) => t(name as any),
               },
               {
                 title: t("SectionPage.ClassName"),

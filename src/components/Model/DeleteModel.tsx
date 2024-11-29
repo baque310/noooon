@@ -18,7 +18,7 @@ const DeleteModel = ({ setOpen, open, name, title, handleRemove, isLoading, desc
 
         >
             <div>
-                <h3 className="font-bold my-3 !font-[Almarai] ">
+                <h3 className="font-bold my-3  ">
                     {description} <span className=" font-bold text-red-700 px-1">{name}</span>
                 </h3>
 

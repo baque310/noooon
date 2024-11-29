@@ -4,26 +4,80 @@ import React from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
-import useLogic from "./_logic";
+import useMounted from "@/hooks/useMounted";
+import { getTranslation } from "@/ni18n/i18n";
+import { useSchoolGetDataQuery } from "@/services/Manager/School";
+ import { IRootState } from "@/store";
+import { DataTableSortStatus } from "mantine-datatable";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+
 import { AddIcons } from "@/components/common/icons/Actions";
 
 
 const TableComponent = () => {
-  const {
-    t,
-    data,
-    isFetching,
-    handleChange,
-    handleKeyPress,
-    pageNumber,
-    setPageNumber,
-    setSortStatus,
-    sortStatus,
-    Search,
-    router,
-    isMounted,
-    isDark,
-  } = useLogic()
+  const { t } = getTranslation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || "";
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+      columnAccessor: "createdAt",
+      direction: "desc",
+  });
+
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const { isMounted } = useMounted();
+
+  const [pageNumber, setPageNumber] = useState(Number(1));
+
+  const [param, setParam] = useState<
+      | {
+          approval_status?: string;
+          search?: string;
+          range?: string;
+      }
+      | undefined
+  >();
+  const params = {
+      skip: pageNumber,
+      take: 30,
+      sortBy: sortStatus.columnAccessor,
+      sortDirection: sortStatus.direction,
+      ...(search && { search: search as string }),
+      ...param,
+  };
+
+  const { isFetching, currentData: data } = useSchoolGetDataQuery({
+      ...params,
+  });
+
+  const [Search, setSearch] = useState(search);
+  const handleChange = (e: any) => {
+      const value = e.target.value;
+      setSearch(value);
+      if (value == "") {
+          handleSearch(value);
+      }
+  };
+  const allParams = new URLSearchParams(searchParams);
+  const handleSearch = (value?: string) => {
+      if (search != Search) {
+          // router.push({
+          //     pathname: router.pathname,
+          //     query: { ...router.query, search: value ?? Search },
+          // });
+          allParams.set("search", value ?? Search);
+
+          router.push(`/school?${allParams.toString()}`);
+          setPageNumber(1);
+      }
+  };
+  const handleKeyPress = (event: any) => {
+      if (event.key === "Enter") {
+          handleSearch();
+      }
+  };
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>

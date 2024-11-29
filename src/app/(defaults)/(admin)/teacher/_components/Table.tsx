@@ -6,12 +6,13 @@ import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import { useStudentGetDataQuery } from "@/services/admin/student";
+import { useTeacherGetDataQuery } from "@/services/admin/teacher";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+
 import { AddIcons } from "@/components/common/icons/Actions";
 
 
@@ -47,7 +48,7 @@ const TableComponent = () => {
     ...param,
   };
 
-  const { isFetching, currentData: data } = useStudentGetDataQuery({
+  const { isFetching, currentData: data } = useTeacherGetDataQuery({
     ...params,
   });
 
@@ -62,13 +63,9 @@ const TableComponent = () => {
   const allParams = new URLSearchParams(searchParams);
   const handleSearch = (value?: string) => {
     if (search != Search) {
-      // router.push({
-      //     pathname: router.pathname,
-      //     query: { ...router.query, search: value ?? Search },
-      // });
       allParams.set("search", value ?? Search);
 
-      router.push(`/student?${allParams.toString()}`);
+      router.push(`/teacher?${allParams.toString()}`);
       setPageNumber(1);
     }
   };
@@ -77,11 +74,10 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">{t("StudentPage.student")}</div>
+        <div className="text-xl uppercase ">{t("TeacherPage.teacher")}</div>
         <div className={"flex gap-3"}>
           <input
             value={Search ?? ""}
@@ -100,7 +96,7 @@ const TableComponent = () => {
                     className={` ${props.disabled && "hidden"
                       } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
-                      router.push("/student/createOrUpdate");
+                      router.push("/teacher/createOrUpdate");
                     }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
@@ -117,51 +113,51 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
-              router.push(`/student/${item.record.id}`);
+              router.push(`/teacher/${item.record.id}`);
             }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
             records={data?.data as any}
             columns={[
               {
-                title: t("StudentPage.fullName"),
+                title: t("TeacherPage.fullName"),
                 accessor: "fullName",
                 sortable: true,
               },
               {
-                title: t("StudentPage.Username"),
+                title: t("TeacherPage.Username"),
                 accessor: "User.username",
                 // sortable: true,
               },
               {
-                title: t("StudentPage.birth"),
+                title: t("TeacherPage.birth"),
                 accessor: "birth",
                 sortable: true,
                 render: ({ birth }: any) => (birth ? <div>{moment(birth).format("YYYY-MM-DD")}</div> : null),
               },
               {
-                title: t("StudentPage.enrollmentDate"),
-                accessor: "enrollmentDate",
+                title: t("TeacherPage.hiringDate"),
+                accessor: "hiringDate",
                 sortable: true,
-                render: ({ enrollmentDate }: any) => (enrollmentDate ? <div>{moment(enrollmentDate).format("YYYY-MM-DD")}</div> : null),
+                render: ({ hiringDate }: any) => (hiringDate ? <div>{moment(hiringDate).format("YYYY-MM-DD")}</div> : null),
               },
               {
-                title: t("StudentPage.address"),
+                title: t("TeacherPage.address"),
                 accessor: "address",
                 sortable: true,
               },
               {
-                title: t("StudentPage.email"),
+                title: t("TeacherPage.email"),
                 accessor: "email",
                 sortable: true,
               },
               {
-                title: t("StudentPage.phone1"),
+                title: t("TeacherPage.phone1"),
                 accessor: "phone1",
                 sortable: true,
               },
               {
-                title: t("StudentPage.phone2"),
+                title: t("TeacherPage.phone2"),
                 accessor: "phone2",
                 sortable: true,
               },
@@ -200,4 +196,4 @@ const TableComponent = () => {
   );
 };
 
-export default withRole(TableComponent, "student", ["read-any", "read-own"]);
+export default withRole(TableComponent, "teacher", ["read-any", "read-own"]);

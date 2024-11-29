@@ -58,6 +58,7 @@ const PageComponent = () => {
                 isFetching ? <LoadingForm /> : <>
                     <div className='CardDetails internalMenu '>
                         <ItemList title={t('SchoolPage.name')} value={t(data?.name as any)} />
+                        <ItemList title={t('common.updatedAt')} value={moment(data?.updatedAt).format('YYYY-MM-DD hh:mm:ss A')} />
                         <ItemList title={t('common.createdAt')} value={moment(data?.createdAt).format('YYYY-MM-DD hh:mm:ss A')} />
                     </div>
                     <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">

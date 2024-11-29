@@ -53,8 +53,8 @@ const PageComponent = () => {
             {
                 isFetching ? <LoadingForm /> : <>
                     <div className='CardDetails internalMenu '>
-                        <ItemList title={t('SectionPage.name')} value={String(data?.name)} />
-                        <ItemList title={t('SectionPage.ClassName')} value={t(data?.Class.name as any)} />
+                        <ItemList title={t('SectionPage.name')} value={t(data?.name as any)} />
+                        <ItemList title={t('SectionPage.ClassName')} value={t(data?.Class?.name as any)} />
                         <ItemList title={t('common.status')} value={
                             <div className='flex gap-2 px-[2px]'>
                                 {data?.isActive == "true" ?

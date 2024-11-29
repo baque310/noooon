@@ -1,17 +1,19 @@
 import { Metadata } from 'next';
 import React from 'react';
-import PageComponent from './_components/PageComponent';
+import Table from './_components/Table';
 
 
 
 export const metadata: Metadata = {
-  title: 'Student Enrollment ',
+    title: 'teacher',
 };
 const Page = () => {
 
-  return <div className=''>
-    <PageComponent />
-  </div>;
+    return <div className=''>
+        <Table />
+    </div>;
 };
 
 export default Page;
+
+

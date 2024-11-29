@@ -4,31 +4,159 @@ import React from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
-import useLogic from "./_logic";
-import { AddIcons } from "@/components/common/icons/Actions";
+import { AddIcons, ArrowIcons, DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
+import useMounted from "@/hooks/useMounted";
+import { getTranslation } from "@/ni18n/i18n";
+import { useStudentEnrollmentGetDataQuery, useStudentEnrollmentRemoveMutation } from "@/services/admin/studentEnrollment";
+import { IRootState } from "@/store";
+import { DataTableSortStatus } from "mantine-datatable";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import UpdateComponent from "./UpdateComponent";
+import Dropdown from "@/components/dropdown";
+import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
+import { toast } from "react-toastify";
+import DeleteModel from "@/components/Model/DeleteModel";
+import { SelectWithSearch } from "@/components/Filter/SelectSearch";
+import { useClassGetDataQuery } from "@/services/admin/class";
+import { useSectionGetDataQuery } from "@/services/admin/section";
+import { useStageGetDataQuery } from "@/services/admin/stage";
+import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 
 
 const TableComponent = () => {
-  const {
-    t,
-    data,
-    isFetching,
-    handleChange,
-    handleKeyPress,
-    pageNumber,
-    setPageNumber,
-    setSortStatus,
-    sortStatus,
-    Search,
-    router,
-    isMounted,
-    isDark,
-  } = useLogic()
+  const { t } = getTranslation();
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || "";
+  const schoolYearId = searchParams.get("schoolYearId") || undefined
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+    columnAccessor: "createdAt",
+    direction: "desc",
+  });
+  const [searchStage, setSearchStage] = useState("");
+  const [selectedRecords, setSelectedRecords] = useState([]);
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const { isMounted } = useMounted();
+
+  const [pageNumber, setPageNumber] = useState(Number(1));
+  const { isFetching: isFetchingClassData, currentData: ClassData } = useClassGetDataQuery({});
+  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({
+    skip: 1,
+    take: 100,
+    search: searchStage
+  });
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
+
+  const [param, setParam] = useState<
+    | {
+      approval_status?: string;
+      search?: string;
+      range?: string;
+      classId?: string;
+      sectionId?: string;
+      stageId?: string;
+      schoolYearId?: string;
+
+    }
+    | undefined
+  >();
+  const params = {
+    skip: pageNumber,
+    take: 30,
+    sortBy: sortStatus.columnAccessor,
+    sortDirection: sortStatus.direction,
+    ...(search && { search: search as string }),
+    ...param,
+  };
+
+  const { isFetching: isFetching, currentData: data } = useStudentEnrollmentGetDataQuery({
+    ...params,
+  });
+
+  const [Search, setSearch] = useState(search);
+  const handleChange = (e: any) => {
+    const value = e.target.value;
+    setSearch(value);
+    if (value == "") {
+      handleSearch(value);
+    }
+  };
+  const allParams = new URLSearchParams(searchParams);
+  const handleSearch = (value?: string) => {
+    if (search != Search) {
+      allParams.set("search", value ?? Search);
+      router.push(`/studentEnrollment?${allParams.toString()}`);
+      setPageNumber(1);
+    }
+  };
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
+  const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+  const [StudentEnrollmentRemove, { isLoading: isLoadingStudentEnrollmentRemove }] = useStudentEnrollmentRemoveMutation()
+
+  const handleRemove = async () => {
+    try {
+      await StudentEnrollmentRemove({
+        studentEnrollmentIds: selectedRecords.map((record: any) => record.id)
+      }).unwrap();
+      toast.success(t('common.deleted-successfully'), { autoClose: 15000 });
+      router.back();
+    } catch (error: any) {
+      console.error('Failed to operation :', error);
+      if (error && error.message) {
+        return toast.error(error.message, { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
+  const [openDelete, setOpenDelete] = useState(false)
+  const handleSelectClass = (value: any) => {
+    if (value) {
+      setParam({ ...param, classId: value.value });
+
+    } else {
+      setParam({ ...param, classId: undefined });
+
+    }
+  }
+  const handleSelectSection = (value: any) => {
+    if (value) {
+      setParam({ ...param, sectionId: value.value });
+
+    } else {
+      setParam({ ...param, sectionId: undefined });
+    }
+  }
+  const handleSelectStage = (value: any) => {
+    if (value) {
+      setParam({ ...param, stageId: value.value });
+
+    } else {
+      setParam({ ...param, stageId: undefined });
+    }
+  }
+  const handleSelectSchoolYear = (value: any) => {
+    if (value) {
+      setParam({ ...param, schoolYearId: value.value });
+
+    } else {
+      setParam({ ...param, schoolYearId: undefined });
+    }
+  }
+
+
   return (
-    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
+    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("StudentEnrollmentPage.studentEnrollment")}</div>
-        <div className={"flex gap-3"}>
+        <div className={"flex  max-md:flex-col gap-2"}>
           <input
             value={Search ?? ""}
             placeholder={`${t("common.search")} ...`}
@@ -38,26 +166,133 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
+           
+          <SelectWithSearch
+            placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
+            isLoading={isFetchingSchoolYearData}
+            props={{
+              onChange: handleSelectSchoolYear
+            }}
+            options={SchoolYearData?.map((item) => {
+              return {
+                value: item.id,
+                label: item.from + '-' + item.to
+              };
+            })}
+          />
           {
             <RolePageAndActionBasedComponent
               component={(props) => {
                 return (
-                  <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      router.push("/studentEnrollment/createOrUpdate");
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
+                  <div className="inline-flex relative">
+                    <button
+                      className={` ${props.disabled && "hidden"
+                        } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border  ltr:rounded-r-none rtl:rounded-l-none`}
+                      onClick={() => {
+                        router.push("/studentEnrollment/createOrUpdate");
+                      }}>
+                      {t("common.add")}
+                    </button>
+                    <div className="relative w-0 h-0">
+                      <span className={`${selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"} badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
+                        {selectedRecords.length > 0 ? selectedRecords.length : 0}
+                      </span>
+                    </div>
+                    <div className="dropdown">
+                      <Dropdown
+                        placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                        btnClassName="dropdown-toggle h-full transition-all"
+                        button={
+                          <button
+                            className={`relative h-full ltr:rounded-l-none rtl:rounded-r-none flex justify-center gap-1 items-center  border-primary/70 text-primary hover:scale-[1.01] transition-transform py-1 px-2    rounded border  `}
+                          >
+                            {t("common.options")}
+                            <ArrowIcons className="h-4 w-4 rotate-90" />
+
+                          </button>
+                        }
+                      >
+                        <ul className="!min-w-[170px]">
+                          <li  >
+                            <button
+                              disabled={selectedRecords.length == 0}
+                              className={` ${selectedRecords.length > 0 ? "" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "} flex justify-between`}
+                              onClick={() => {
+                                setOpen(true);
+                              }}
+                              type="button">
+                              {t("common.update")}
+                              <UpdateIcons className="h-4 w-4" />
+                            </button>
+                          </li>
+                          <li
+                            className={`${selectedRecords.length > 0 ? 'text-danger hover:bg-danger/20 hover:!text-danger' : ""}`}
+                          >
+                            <button
+                              disabled={selectedRecords.length == 0}
+                              onClick={() => {
+                                setOpenDelete(true)
+                              }}
+                              type="button" className={`${selectedRecords.length > 0 ? "!text-danger" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "}  flex justify-between`} >
+                              {t("common.delete")}
+                              <DeleteIcons className="h-4 w-4" />
+                            </button>
+                          </li>
+                        </ul>
+                      </Dropdown>
+                    </div>
+                  </div>
+
                 );
               }}
               resource={"admin"}
               permission={["create-any", "create-own"]}
             />
-          }
+          } 
+
         </div>
+      </div>
+      <div className={"flex justify-end max-md:flex-col gap-2 mt-2 "}>
+        <SelectWithSearch
+            placeholder={t("StudentEnrollmentPage.StageName")}
+            isLoading={isFetchingStageData}
+            props={{
+              onChange: handleSelectStage
+            }}
+            options={StageData?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            })}
+          />
+          <SelectWithSearch
+            placeholder={t("SectionPage.ClassName")}
+            isLoading={isFetchingClassData}
+            props={{
+              onChange: handleSelectClass
+            }}
+            options={ClassData?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            })}
+          />
+         
+          <SelectWithSearch
+            placeholder={t("StudentEnrollmentPage.SectionName")}
+            isLoading={isFetchingSectionData}
+            props={{
+              onChange: handleSelectSection
+            }}
+            options={SectionData?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            })}
+          />  
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
@@ -78,7 +313,7 @@ const TableComponent = () => {
               {
                 title: t("StudentEnrollmentPage.SchoolYear"),
                 accessor: "SchoolYear",
-                sortable: true,
+                // sortable: true,
                 render: ({ SchoolYear }: any) => SchoolYear.from + " - " + SchoolYear.to,
 
               },
@@ -86,6 +321,7 @@ const TableComponent = () => {
                 title: t("StudentEnrollmentPage.StageName"),
                 accessor: "Stage.name",
                 // sortable: true,
+                render: ({ Stage }: any) => t(Stage.name)
               },
               {
                 title: t("StudentEnrollmentPage.ClassName"),
@@ -96,6 +332,7 @@ const TableComponent = () => {
                 title: t("StudentEnrollmentPage.SectionName"),
                 accessor: "Section.name",
                 // sortable: true,
+                render: ({ Section }: any) => t(Section.name)
               },
 
               {
@@ -125,9 +362,31 @@ const TableComponent = () => {
             onPageChange={(p) => {
               setPageNumber(p);
             }}
+            {...  {
+              selectedRecords: selectedRecords,
+              onSelectedRecordsChange: (records: any) => {
+                setSelectedRecords(records);
+              },
+              // isRecordSelectable: (record: any) => record.isPaid == false
+
+            } as any}
           />
         )}
       </div>
+      <UpdateComponent
+        open={open}
+        setOpen={setOpen}
+        data={selectedRecords.map((record: any) => record.id)}
+      />
+      <DeleteModel
+        description={t('StudentEnrollmentPage.Are-you-sure-you-want-to-delete-this-StudentEnrollment')}
+        title={t('StudentEnrollmentPage.DeleteStudentEnrollment')}
+        open={openDelete}
+        setOpen={setOpenDelete}
+        handleRemove={handleRemove}
+        isLoading={isLoadingStudentEnrollmentRemove}
+        name={`${selectedRecords.length}`}
+      />
     </div>
   );
 };

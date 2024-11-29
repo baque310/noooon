@@ -28,7 +28,7 @@ export interface IStudentEnrollment {
     Student: IStudent
 }
 
-export interface  GetStudentDataRequestParams extends GetDataRequestParams{
+export interface GetStudentDataRequestParams extends GetDataRequestParams {
     schoolYearId?: string
     stageId?: string
     classId?: string
@@ -44,6 +44,13 @@ export interface AddStudentEnrollmentPayload {
     classId: string
     sectionId: string
     studentIds: string[]
+}
+export interface UpdateStudentEnrollmentPayload {
+    schoolYearId: string
+    stageId: string
+    classId: string
+    sectionId: string
+    studentEnrollmentIds: string[]
 }
 
 
@@ -77,19 +84,20 @@ export const StudentEnrollment = api.injectEndpoints({
             invalidatesTags: ["StudentEnrollmentCreate", "StudentEnrollmentGetDataById", "StudentEnrollmentGetData"],
         }),
 
-        StudentEnrollmentUpdate: build.mutation<IStudentEnrollment, { id: string, body: AddStudentEnrollmentPayload | FormData }>({
-            query: ({ body, id }) => ({
-                url: `admin/student-enrollment/${id}`,
+        StudentEnrollmentUpdate: build.mutation<IStudentEnrollment, UpdateStudentEnrollmentPayload>({
+            query: (  body ) => ({
+                url: `admin/student-enrollment/{id}`,
                 body,
                 method: "PATCH",
             }),
             invalidatesTags: ["StudentEnrollmentUpdate", "StudentEnrollmentGetDataById", "StudentEnrollmentGetData"],
         }),
 
-        StudentEnrollmentRemove: build.mutation<void, { id: string }>({
-            query: ({ id }) => ({
-                url: `admin/student-enrollment/${id}`,
+        StudentEnrollmentRemove: build.mutation<void, { studentEnrollmentIds: string[] }>({
+            query: (body) => ({
+                url: `admin/student-enrollment/{id}`,
                 method: "DELETE",
+                body
             }),
             invalidatesTags: ["StudentEnrollmentRemove", "StudentEnrollmentGetDataById", "StudentEnrollmentGetData"],
         }),

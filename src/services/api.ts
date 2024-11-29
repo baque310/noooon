@@ -129,6 +129,16 @@ export const api = createApi({
     "StudentEnrollmentUpdate",
     "StudentEnrollmentRemove",
 
+    // School Year Tag
+    "SchoolYearGetData",
+
+    // teacher Tag
+    "TeacherGetData",
+    "TeacherGetDataById",
+    "TeacherCreate",
+    "TeacherRemove",
+    "TeacherUpdate",
+
   ],
   endpoints: (build) => ({}),
 });

@@ -14,18 +14,19 @@ const SingleAdd = ({
   studentSchema,
   handleSubmit,
   isLoadingStudentUpdate,
+  id
 }: {
   t: any,
   data: any,
   studentSchema: any,
   handleSubmit: any,
   isLoadingStudentUpdate: any
+  id?: string | null
 }) => {
 
   return (
     <Formik<FormValues>
       initialValues={{
-
         fullName: DataStudentGetDataById?.fullName ?? "",
         address: DataStudentGetDataById?.address,
         email: DataStudentGetDataById?.email,
@@ -105,7 +106,7 @@ const SingleAdd = ({
               />
             </div>
           </div>
-          <div className="Card flex flex-col gap-1">
+          {id && <div className="Card flex flex-col gap-1">
             <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("StudentPage.img-info")}</div>
             <UploadFileForm
               valueFileName={props.values.photo}
@@ -114,7 +115,7 @@ const SingleAdd = ({
               title={t("StudentPage.photo")}
               placeholder={""}
             />
-          </div>
+          </div>}
           <div className="flex flex-row-reverse gap-2">
             <ButtonForm
               props={{
