@@ -168,6 +168,15 @@ export const api = createApi({
     "GuidanceUpdate",
     "GuidanceRemove",
 
+    // Gallery Tag
+    "GalleryGetData",
+    "GalleryGetDataById",
+    "GalleryCreate",
+    "GalleryUpdate",
+    "GalleryRemove",
+
+    
+
 
   ],
   endpoints: (build) => ({}),

@@ -8,8 +8,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import IconCaretsDown from "../common/icons/sidebar/icon-carets-down";
 import { MenuItem } from "../common/Menu/MenuItem";
-import { useSession } from "next-auth/react";
-
+import { useSession } from "next-auth/react"; 
 import useNotification from "@/hooks/useNotification";
 import { usePlaySound } from "@/hooks/usePlaySound";
 import { getTranslation } from "@/ni18n/i18n";
@@ -185,6 +184,14 @@ const Sidebar = () => {
                 toggleMenu={toggleMenu}
                 to={"/guidance"}
                 label={t("sidebar.guidance")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"gallery"}
+                toggleMenu={toggleMenu}
+                to={"/gallery"}
+                label={t("sidebar.gallery")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
 

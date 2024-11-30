@@ -24,6 +24,7 @@ export type PAGE_CODE =
   |"bus"
   |"banner"
   |"guidance"
+  |"gallery"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";

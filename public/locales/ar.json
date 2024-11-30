@@ -43,7 +43,7 @@
         "username-must-be-5-20-characters": "يجب أن يكون اسم المستخدم مكونًا من 5-20 حرفًا ويمكن أن يحتوي على أحرف وأرقام ونقاط. لا يمكن أن يبدأ أو ينتهي بنقطة.",
         "password-must-be-at-least-8-characters-long": "يجب أن تكون كلمة المرور على الأقل 8 أحرف طويلة.",
         "password-must-contain-letters-numbers-and-special-characters": "يجب أن تحتوي كلمة المرور على أحرف وأرقام ورموز خاصة.",
-        "options":"خيارات"
+        "options": "خيارات"
     },
     "AdminPage": {
         "admin": " الادمن",
@@ -72,10 +72,11 @@
         "section": "الشعبة",
         "student": "الطالب",
         "studentEnrollment": "تسجيل الطالب",
-        "teacher":"المدرس",
+        "teacher": "المدرس",
         "bus": "خط النقل",
         "banner": "صور الاعلانات",
-        "guidance": "الارشادات"
+        "guidance": "الارشادات",
+        "gallery": "المعرض"
     },
     "SupperAdminPage": {
         "supperAdmin": "مدير عام",
@@ -212,12 +213,12 @@
         "DeleteStudent": "حذف الطالب",
         "email-already-exists": "البريد الالكتروني موجود بالفعل"
     },
-    "StudentEnrollmentPage":{
-        "SectionName": "اسم الشعبة", 
-        "StudentFullName": "اسم الطالب", 
+    "StudentEnrollmentPage": {
+        "SectionName": "اسم الشعبة",
+        "StudentFullName": "اسم الطالب",
         "SchoolYear": "السنة الدراسية",
         "StageName": "اسم المرحلة",
-        "ClassName": "اسم الصف" ,
+        "ClassName": "اسم الصف",
         "studentEnrollment": "تسجيل الطالب",
         "StudentEnrollmentInformation": "معلومات تسجيل الطالب",
         "update-info": "تعديل المعلومات",
@@ -226,12 +227,11 @@
         "add": "اضافة",
         "infoStudentEnrollment": "معلومات تسجيل الطالب",
         "enter-StageName": "ادخل اسم المرحلة",
-        "enter-ClassName":"ادخل اسم الصف",
-        "enter-SectionName":"ادخل اسم الشعبة",
+        "enter-ClassName": "ادخل اسم الصف",
+        "enter-SectionName": "ادخل اسم الشعبة",
         "Students": "الطلاب",
         "enter-SchoolYear": "ادخل السنة الدراسية",
         "enrollmentDate": "تاريخ التسجيل"
-
     },
     "A": "أ",
     "B": "ب",
@@ -271,7 +271,7 @@
         "email-already-exists": "البريد الالكتروني موجود بالفعل"
     },
     "BusPage": {
-        "bus": "خط النقل", 
+        "bus": "خط النقل",
         "fullName": "الاسم الكامل",
         "enter-fullName": "ادخل الاسم الكامل",
         "carNumber": "رقم السيارة",
@@ -281,11 +281,11 @@
         "carColor": " لون السيارة",
         "enter-carColor": "ادخل لون السيارة",
         "address": "العنوان",
-        "enter-address": "ادخل العنوان", 
+        "enter-address": "ادخل العنوان",
         "phone1": "الهاتف 1",
         "enter-phone1": "ادخل الهاتف 1",
         "enter-phone2": "ادخل الهاتف 2",
-        "phone2": "الهاتف 2", 
+        "phone2": "الهاتف 2",
         "Username": "اسم المستخدم",
         "photo": "صورة",
         "update-info": "تعديل المعلومات",
@@ -298,7 +298,7 @@
         "DeleteBus": "حذف خط النقل",
         "bus-already-exists": "خط النقل موجود بالفعل"
     },
-    "BannerPage":{
+    "BannerPage": {
         "banner": "صور الاعلاناتات",
         "banners": "صور الاعلاناتات",
         "title": "الاسم",
@@ -314,7 +314,7 @@
         "DeleteBanner": "حذف صور الاعلانات",
         "banner-already-exists": "صور الاعلانات موجود بالفعل"
     },
-    "GuidancePage":{
+    "GuidancePage": {
         "guidance": "الارشادات",
         "guidances": " الارشادات",
         "title": "الاسم",
@@ -330,7 +330,7 @@
         "DeleteGuidance": "حذف الارشادات ",
         "guidance-already-exists": "الارشادات  موجود بالفعل"
     },
-    "ManagerBannerPage":{
+    "ManagerBannerPage": {
         "ManagerBanner": "صور الاعلاناتات",
         "ManagerBanners": "صور الاعلاناتات",
         "title": "الاسم",
@@ -345,5 +345,20 @@
         "Are-you-sure-you-want-to-delete-this-ManagerBanner": "هل أنت متأكد أنك تريد حذف هذا صور الاعلانات؟",
         "DeleteManagerBanner": "حذف صور الاعلانات",
         "banner-already-exists": "صور الاعلانات موجود بالفعل"
+    },
+    "GalleryPage": {
+        "Gallery": "المعرض",
+        "Gallerys": "المعرض",
+        "title": "الاسم",
+        "enter-title": "ادخل الاسم",
+        "description": "الوصف",
+        "enter-description": "ادخل الوصف",
+        "url": "الصورة",
+        "update-info": "تعديل المعلومات",
+        "add": "اضافة",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "GalleryInformation": "معلومات المعرض ",
+        "Are-you-sure-you-want-to-delete-this-Gallery": "هل أنت متأكد أنك تريد حذف هذا المعرض ؟",
+        "DeleteGallery": "حذف المعرض "
     }
 }
