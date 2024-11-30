@@ -16,74 +16,79 @@ export interface FormValues extends AddBusPayload {
 }
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import { Form, Formik, FormikProps } from 'formik';
-import { InputForm } from '@/components/Form/inputForm'; 
+import { InputForm } from '@/components/Form/inputForm';
 import { UploadFileForm } from '@/components/Form/uploadFileForm';
 
 const PageComponent = () => {
   const { t } = getTranslation();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const id = searchParams.get("id"); 
-    const [BusGetDataById, { currentData: data, isFetching }] = useLazyBusGetDataByIdQuery()
-    useEffect(() => {
-        if (id) {
-            BusGetDataById({ id: String(id) })
-                .then((data) => {
-                    if (!data.data) {
-                        router.back();
-                    }
-                });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const [BusGetDataById, { currentData: data, isFetching }] = useLazyBusGetDataByIdQuery()
+  useEffect(() => {
+    if (id) {
+      BusGetDataById({ id: String(id) })
+        .then((data) => {
+          if (!data.data) {
+            router.back();
+          }
+        });
+    }
+  }, [id])
+
+  const [BusCreate, { isLoading: isLoadingBusCreate }] = useBusCreateMutation();
+  const [BusUpdate, { isLoading: isLoadingBusUpdate }] = useBusUpdateMutation();
+
+  const handleSubmit = async (
+    values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
+    try {
+
+      const formData = new FormData();
+      if (typeof values.photo === "string") {
+        delete (values as any).photo;
+      }
+      for (const key in values) {
+        if ((values as any)[key]) {
+          formData.append(key, (values as any)[key]);
         }
-    }, [id]) 
+      }
 
-    const [BusCreate, { isLoading: isLoadingBusCreate }] = useBusCreateMutation();
-    const [BusUpdate, { isLoading: isLoadingBusUpdate }] = useBusUpdateMutation();
-
-    const handleSubmit = async (
-        values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
-        try {
-
-            const formData = new FormData();
-            if (typeof values.photo === "string") {
-                delete (values as any).url;
-            }
-            for (const key in values) {
-                if ((values as any)[key]) {
-                    formData.append(key, (values as any)[key]);
-                }
-            }
-
-            if (id) {
-                await BusUpdate({
-                    body: formData,
-                    id: String(id),
-                }
-                ).unwrap()
-
-            } else {
-                await BusCreate({
-                    ...values
-
-                }).unwrap()
-            }
-            toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
-            resetForm();
-            if (id) {
-                router.back();
-            }
-        } catch (error: any) {
-            console.error("Failed to operation :", error);
-            if (error) { 
-                return toast.error(JSON.stringify(error), { autoClose: 30000 });
-            }
-            toast.error(error, { autoClose: 30000 });
+      if (id) {
+        await BusUpdate({
+          body: formData,
+          id: String(id),
         }
-    };
-  
-    const busSchema = Yup.object().shape({
-        fullName: Yup.string().required(t("common.this-field-is-required")),
-        phone1: Yup.string().required(t("common.this-field-is-required")),
-    }) 
+        ).unwrap()
+
+      } else {
+        await BusCreate(formData).unwrap()
+      }
+      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
+      resetForm();
+      if (id) {
+        router.back();
+      }
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error) {
+        if (error.message == "schoolBus already exist") {
+          return toast.error(t("BusPage.bus-already-exists"), { autoClose: 30000 });
+
+        }
+        return toast.error(JSON.stringify(error), { autoClose: 30000 });
+      }
+      toast.error(error, { autoClose: 30000 });
+    }
+  };
+
+  const busSchema = Yup.object().shape({
+    fullName: Yup.string().required(t("common.this-field-is-required")),
+    phone1: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")).required(t("common.this-field-is-required")),
+    phone2: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")),
+    carNumber: Yup.string().required(t("common.this-field-is-required")),
+    carType: Yup.string().required(t("common.this-field-is-required")),
+    carColor: Yup.string().required(t("common.this-field-is-required")),
+  })
 
 
   return (
@@ -96,15 +101,14 @@ const PageComponent = () => {
         ) : (
           <Formik<FormValues>
             initialValues={{
-
-              fullName: data?.fullName ?? "",
-              address: data?.address,
-              carColor: data?.carColor,
-              phone1: data?.phone1 ?? "",
-              phone2: data?.phone2,
-              carNumber: data?.carNumber,
-              carType: data?.carType,
-              photo: data?.photo,
+              fullName: data?.fullName || "",
+              address: data?.address || "",
+              carColor: data?.carColor || "",
+              phone1: data?.phone1 || "",
+              phone2: data?.phone2 || "",
+              carNumber: data?.carNumber || "",
+              carType: data?.carType || "",
+              photo: data?.photo || "",
             }}
             validationSchema={busSchema}
             onSubmit={handleSubmit}
@@ -146,14 +150,14 @@ const PageComponent = () => {
                 <div className="Card flex flex-col gap-1">
                   <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
                     {t("BusPage.infoContact")}
-                  </div> 
+                  </div>
                   <InputForm
                     formikProps={props}
                     name={"address"}
                     title={t("BusPage.address")}
                     placeholder={t("BusPage.enter-address")}
-                  /> 
-                  <div className='flex gap-2 max-md:flex-col'> 
+                  />
+                  <div className='flex gap-2 max-md:flex-col'>
                     <InputForm
                       formikProps={props}
                       name={"phone1"}
@@ -174,7 +178,7 @@ const PageComponent = () => {
                     />
                   </div>
                 </div>
-                {id && <div className="Card flex flex-col gap-1">
+                <div className="Card flex flex-col gap-1">
                   <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("BusPage.img-info")}</div>
                   <UploadFileForm
                     valueFileName={props.values.photo}
@@ -183,7 +187,7 @@ const PageComponent = () => {
                     title={t("BusPage.photo")}
                     placeholder={""}
                   />
-                </div>}
+                </div>
                 <div className="flex flex-row-reverse gap-2">
                   <ButtonForm
                     props={{
@@ -191,7 +195,7 @@ const PageComponent = () => {
 
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingBusUpdate ||isLoadingBusCreate}
+                    isLoading={isLoadingBusUpdate || isLoadingBusCreate}
                   />
                 </div>
               </Form>

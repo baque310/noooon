@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import * as Yup from 'yup';
 export interface FormValues extends AddTeacherPayload {
 
-} 
+}
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import { Form, Formik, FormikProps } from 'formik';
 import { InputForm } from '@/components/Form/inputForm';
@@ -22,71 +22,73 @@ import { UploadFileForm } from '@/components/Form/uploadFileForm';
 
 const PageComponent = () => {
   const { t } = getTranslation();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const id = searchParams.get("id"); 
-    const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery()
-    useEffect(() => {
-        if (id) {
-            TeacherGetDataById({ id: String(id) })
-                .then((data) => {
-                    if (!data.data) {
-                        router.back();
-                    }
-                });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery()
+  useEffect(() => {
+    if (id) {
+      TeacherGetDataById({ id: String(id) })
+        .then((data) => {
+          if (!data.data) {
+            router.back();
+          }
+        });
+    }
+  }, [id])
+  const [TeacherCreate, { isLoading: isLoadingTeacherCreate }] = useTeacherCreateMutation();
+  const [TeacherUpdate, { isLoading: isLoadingTeacherUpdate }] = useTeacherUpdateMutation();
+
+  const handleSubmit = async (
+    values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
+    try {
+
+      const formData = new FormData();
+      if (typeof values.photo === "string") {
+        delete (values as any).url;
+      }
+      for (const key in values) {
+        if ((values as any)[key]) {
+          formData.append(key, (values as any)[key]);
         }
-    }, [id]) 
-    const [TeacherCreate, { isLoading: isLoadingTeacherCreate }] = useTeacherCreateMutation();
-    const [TeacherUpdate, { isLoading: isLoadingTeacherUpdate }] = useTeacherUpdateMutation();
+      }
 
-    const handleSubmit = async (
-        values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
-        try {
-
-            const formData = new FormData();
-            if (typeof values.photo === "string") {
-                delete (values as any).url;
-            }
-            for (const key in values) {
-                if ((values as any)[key]) {
-                    formData.append(key, (values as any)[key]);
-                }
-            }
-
-            if (id) {
-                await TeacherUpdate({
-                    body: formData,
-                    id: String(id),
-                }
-                ).unwrap()
-
-            } else {
-                await TeacherCreate({
-                    ...values
-
-                }).unwrap()
-            }
-            toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
-            resetForm();
-            if (id) {
-                router.back();
-            }
-        } catch (error: any) {
-            console.error("Failed to operation :", error);
-            if (error) {
-                if (error.message == `Resource already exists. More details: {\"modelName\":\"Teacher\",\"target\":\"teachers_email_key\"}`) {
-                    return toast.error(t('TeacherPage.email-already-exists'), { autoClose: 30000 });
-                }
-                return toast.error(JSON.stringify(error), { autoClose: 30000 });
-            }
-            toast.error(error, { autoClose: 30000 });
+      if (id) {
+        await TeacherUpdate({
+          body: formData,
+          id: String(id),
         }
-    };
-  
-    const teacherSchema = Yup.object().shape({
-        fullName: Yup.string().required(t("common.this-field-is-required")),
-        phone1: Yup.string().required(t("common.this-field-is-required")),
-    }) 
+        ).unwrap()
+
+      } else {
+        await TeacherCreate({
+          ...values
+
+        }).unwrap()
+      }
+      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
+      resetForm();
+      if (id) {
+        router.back();
+      }
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error) {
+        if (error.message == `Resource already exists. More details: {\"modelName\":\"Teacher\",\"target\":\"teachers_email_key\"}`) {
+          return toast.error(t('TeacherPage.email-already-exists'), { autoClose: 30000 });
+        }
+        return toast.error(JSON.stringify(error), { autoClose: 30000 });
+      }
+      toast.error(error, { autoClose: 30000 });
+    }
+  };
+
+  const teacherSchema = Yup.object().shape({
+    fullName: Yup.string().required(t("common.this-field-is-required")),
+    phone1: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")).required(t("common.this-field-is-required")),
+    phone2: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")),
+    email: Yup.string().email(t("common.invalid-email")).optional()
+  })
 
   return (
     <>
@@ -100,13 +102,13 @@ const PageComponent = () => {
             initialValues={{
 
               fullName: data?.fullName ?? "",
-              address: data?.address,
-              email: data?.email,
+              address: data?.address ?? "",
+              email: data?.email ?? "",
               phone1: data?.phone1 ?? "",
-              phone2: data?.phone2,
-              birth: data?.birth,
-              hiringDate: data?.hiringDate,
-              photo: data?.photo,
+              phone2: data?.phone2 ?? "",
+              birth: data?.birth ?? "",
+              hiringDate: data?.hiringDate ?? "",
+              photo: data?.photo ?? "",
             }}
             validationSchema={teacherSchema}
             onSubmit={handleSubmit}
@@ -195,7 +197,7 @@ const PageComponent = () => {
 
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingTeacherUpdate ||isLoadingTeacherCreate}
+                    isLoading={isLoadingTeacherUpdate || isLoadingTeacherCreate}
                   />
                 </div>
               </Form>

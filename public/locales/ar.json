@@ -16,6 +16,8 @@
         "please-check-the-information": "يرجى التأكد من المعلومات"
     },
     "common": {
+        "invalid-phone": "الهاتف غير صالح",
+        "invalid-email": "البريد الالكتروني غير صالح",
         "Copied-to-clipboard": "تم النسخ إلى الحافظة",
         "this-field-is-required": "هذا الحقل مطلوب",
         "no-data": "لا توجد بيانات",
@@ -291,6 +293,7 @@
         "infoContact": "معلومات الاتصال",
         "BusInformation": "معلومات خط النقل",
         "Are-you-sure-you-want-to-delete-this-Bus": "هل أنت متأكد أنك تريد حذف هذا خط النقل؟",
-        "DeleteBus": "حذف خط النقل"
+        "DeleteBus": "حذف خط النقل",
+        "bus-already-exists": "خط النقل موجود بالفعل"
     }
 }

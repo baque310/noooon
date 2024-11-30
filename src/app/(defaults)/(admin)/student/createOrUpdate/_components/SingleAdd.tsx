@@ -1,12 +1,12 @@
 
 import React from 'react'
-import { FormValues } from './_logic';
-import { Form, Formik, FormikProps } from 'formik';
+ import { Form, Formik, FormikProps } from 'formik';
 import { InputForm } from '@/components/Form/inputForm';
 import { ButtonForm } from '@/components/Form/ButtonForm';
 
 import { DateTimeForm } from '@/components/Form/DateTimeForm';
 import { UploadFileForm } from '@/components/Form/uploadFileForm';
+import { FormValues } from './PageComponent';
 
 const SingleAdd = ({
   t,
@@ -28,13 +28,13 @@ const SingleAdd = ({
     <Formik<FormValues>
       initialValues={{
         fullName: DataStudentGetDataById?.fullName ?? "",
-        address: DataStudentGetDataById?.address,
-        email: DataStudentGetDataById?.email,
+        address: DataStudentGetDataById?.address?? "",
+        email: DataStudentGetDataById?.email?? "",
         phone1: DataStudentGetDataById?.phone1 ?? "",
-        phone2: DataStudentGetDataById?.phone2,
-        birth: DataStudentGetDataById?.birth,
-        enrollmentDate: DataStudentGetDataById?.enrollmentDate,
-        photo: DataStudentGetDataById?.photo,
+        phone2: DataStudentGetDataById?.phone2?? "",
+        birth: DataStudentGetDataById?.birth?? "",
+        enrollmentDate: DataStudentGetDataById?.enrollmentDate?? "",
+        photo: DataStudentGetDataById?.photo?? "",
       }}
       validationSchema={studentSchema}
       onSubmit={handleSubmit}

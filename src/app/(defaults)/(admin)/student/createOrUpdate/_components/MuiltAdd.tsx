@@ -1,9 +1,9 @@
 
 import React from 'react'
-import { FormValuesMulti } from './_logic';
-import { FieldArray, Form, Formik, FormikProps } from 'formik';
+ import { FieldArray, Form, Formik, FormikProps } from 'formik';
 import { InputForm } from '@/components/Form/inputForm';
 import { ButtonForm } from '@/components/Form/ButtonForm';
+import { FormValuesMulti } from './PageComponent';
 
 
 const MuiltAdd = ({

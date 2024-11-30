@@ -25,9 +25,9 @@ export interface IBus {
 export interface AddBusPayload {
     fullName: string
     phone1: string
-    carType?: string
-    carColor?: string
-    carNumber?: string
+    carType: string
+    carColor: string
+    carNumber: string
     address?: string 
     phone2?: string
     photo?: null | string

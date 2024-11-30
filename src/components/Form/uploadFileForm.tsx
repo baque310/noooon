@@ -1,10 +1,9 @@
-import { Field, FormikProps, FormikValues } from 'formik';
-import React, { ReactNode, useState } from 'react';
+import { FormikProps, FormikValues } from 'formik';
+import React, { ReactNode, useEffect, useState } from 'react';
 import Upload from 'rc-upload';
- 
- import { getTranslation } from '../../ni18n/i18n';
+
+import { getTranslation } from '../../ni18n/i18n';
 import { convertBase64 } from './helper/convertBase64';
-// Assuming you want to make this component generic for any form values
 // ! TODO:
 interface InputFormProps<T = FormikValues> {
     formikProps: FormikProps<T>;
@@ -21,10 +20,6 @@ export const UploadFileForm = <T extends FormikValues>({
     formikProps,
     name,
     title,
-    placeholder,
-    icon,
-    props,
-    className,
     valueFileName
 }: InputFormProps<T>): React.ReactElement => {
     let pathArr = name.split('.');
@@ -35,8 +30,17 @@ export const UploadFileForm = <T extends FormikValues>({
     const [fileName, setFileName] = useState<String | undefined>(valueFileName);
     const [image, setImage] = useState(valueFileName ? true : false);
     const [sizeFile, setSizeFile] = useState<String | undefined>();
-
     const [isError, setIsError] = useState(false)
+    useEffect(() => {
+        if (valueFileName) {
+            setImage(true)
+            setFileName(valueFileName)
+        } else {
+            setImage(false)
+            setFileName(undefined)
+        }
+    }, [valueFileName])
+
     return (
         <div
             className={`w-full ${formikProps.submitCount ? (errorValue && touchedValue ? 'has-error' : '') : ''}`}>
@@ -49,7 +53,7 @@ export const UploadFileForm = <T extends FormikValues>({
                     type="drag"
                     beforeUpload={async (file) => {
                         if (file) {
-                            if (file.size > 10 * 1024 * 1024) { 
+                            if (file.size > 10 * 1024 * 1024) {
                                 setSizeFile(t('file-size-exceeds-the-maximum-limit-of-10MB'))
                                 return false;
                             }
