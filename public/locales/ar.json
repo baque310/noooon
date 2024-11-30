@@ -73,7 +73,9 @@
         "student": "الطالب",
         "studentEnrollment": "تسجيل الطالب",
         "teacher":"المدرس",
-        "bus": "خط النقل"
+        "bus": "خط النقل",
+        "banner": "صور الاعلانات",
+        "guidance": "الارشادات"
     },
     "SupperAdminPage": {
         "supperAdmin": "مدير عام",
@@ -295,5 +297,53 @@
         "Are-you-sure-you-want-to-delete-this-Bus": "هل أنت متأكد أنك تريد حذف هذا خط النقل؟",
         "DeleteBus": "حذف خط النقل",
         "bus-already-exists": "خط النقل موجود بالفعل"
+    },
+    "BannerPage":{
+        "banner": "صور الاعلاناتات",
+        "banners": "صور الاعلاناتات",
+        "title": "الاسم",
+        "enter-title": "ادخل الاسم",
+        "description": "الوصف",
+        "enter-description": "ادخل الوصف",
+        "url": "الصورة",
+        "update-info": "تعديل المعلومات",
+        "add": "اضافة",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "BannerInformation": "معلومات صور الاعلانات",
+        "Are-you-sure-you-want-to-delete-this-Banner": "هل أنت متأكد أنك تريد حذف هذا صور الاعلانات؟",
+        "DeleteBanner": "حذف صور الاعلانات",
+        "banner-already-exists": "صور الاعلانات موجود بالفعل"
+    },
+    "GuidancePage":{
+        "guidance": "الارشادات",
+        "guidances": " الارشادات",
+        "title": "الاسم",
+        "enter-title": "ادخل الاسم",
+        "description": "الوصف",
+        "enter-description": "ادخل الوصف",
+        "url": "الصورة",
+        "update-info": "تعديل المعلومات",
+        "add": "اضافة",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "GuidanceInformation": "معلومات الارشادات ",
+        "Are-you-sure-you-want-to-delete-this-Guidance": "هل أنت متأكد أنك تريد حذف هذا الارشادات ؟",
+        "DeleteGuidance": "حذف الارشادات ",
+        "guidance-already-exists": "الارشادات  موجود بالفعل"
+    },
+    "ManagerBannerPage":{
+        "ManagerBanner": "صور الاعلاناتات",
+        "ManagerBanners": "صور الاعلاناتات",
+        "title": "الاسم",
+        "enter-title": "ادخل الاسم",
+        "description": "الوصف",
+        "enter-description": "ادخل الوصف",
+        "url": "الصورة",
+        "update-info": "تعديل المعلومات",
+        "add": "اضافة",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "ManagerBannerInformation": "معلومات صور الاعلانات",
+        "Are-you-sure-you-want-to-delete-this-ManagerBanner": "هل أنت متأكد أنك تريد حذف هذا صور الاعلانات؟",
+        "DeleteManagerBanner": "حذف صور الاعلانات",
+        "banner-already-exists": "صور الاعلانات موجود بالفعل"
     }
 }

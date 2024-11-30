@@ -5,15 +5,13 @@ import PageComponent from './_components/PageComponent';
 
 
 export const metadata: Metadata = {
-    title: 'bus ',
+  title: 'banner ',
 };
 const Page = () => {
 
-    return <div className=''>
-        <PageComponent />
-    </div>;
+  return <div className=''>
+    <PageComponent />
+  </div>;
 };
 
 export default Page;
-
-

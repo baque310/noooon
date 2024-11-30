@@ -1,8 +1,6 @@
 import { api, BASE_URL } from "@/services/api";
 import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
 
-
-
 export interface IBus {
     id: string
     fullName: string 
@@ -14,12 +12,8 @@ export interface IBus {
     phone2: string
     photo: null | string
     createdAt: string
-    updatedAt: string
-    
-    
+    updatedAt: string    
 }
-
-
 
 
 export interface AddBusPayload {
@@ -30,9 +24,7 @@ export interface AddBusPayload {
     carNumber: string
     address?: string 
     phone2?: string
-    photo?: null | string
- 
-
+    photo?: null | string 
 }
  
 
@@ -100,6 +92,5 @@ export const {
     useLazyBusGetDataByIdQuery,
     useBusCreateMutation,
     useBusRemoveMutation,
-    useBusUpdateMutation, 
-
+    useBusUpdateMutation,  
 } = Bus;

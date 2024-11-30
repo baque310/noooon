@@ -22,6 +22,8 @@ export type PAGE_CODE =
   | "student_enrollment"
   |"teacher"
   |"bus"
+  |"banner"
+  |"guidance"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";

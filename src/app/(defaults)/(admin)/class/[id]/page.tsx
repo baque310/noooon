@@ -5,7 +5,7 @@ import PageComponent from './_components/PageComponent';
 
 
 export const metadata: Metadata = {
-    title: 'School',
+    title: 'class',
 };
 const Page = () => {
 

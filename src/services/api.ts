@@ -140,11 +140,33 @@ export const api = createApi({
     "TeacherUpdate",
 
     // bus Tag
-      "BusGetData",
-      "BusGetDataById",
-      "BusCreate",
-      "BusUpdate",
-      "BusRemove",
+    "BusGetData",
+    "BusGetDataById",
+    "BusCreate",
+    "BusUpdate",
+    "BusRemove",
+
+    // Admin-Banner Tag
+
+    "BannerGetData",
+    "BannerGetDataById",
+    "BannerCreate",
+    "BannerUpdate",
+    "BannerRemove",
+
+    //ManagerBanner
+    "ManagerBannerGetData",
+    "ManagerBannerGetDataById",
+    "ManagerBannerCreate",
+    "ManagerBannerUpdate",
+    "ManagerBannerRemove",
+
+    // Guidance Tag
+    "GuidanceGetData",
+    "GuidanceGetDataById",
+    "GuidanceCreate",
+    "GuidanceUpdate",
+    "GuidanceRemove",
 
 
   ],

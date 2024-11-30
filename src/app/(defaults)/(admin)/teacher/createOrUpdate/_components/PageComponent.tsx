@@ -45,7 +45,7 @@ const PageComponent = () => {
 
       const formData = new FormData();
       if (typeof values.photo === "string") {
-        delete (values as any).url;
+        delete (values as any).photo;
       }
       for (const key in values) {
         if ((values as any)[key]) {

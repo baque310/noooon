@@ -163,6 +163,30 @@ const Sidebar = () => {
                 label={t("sidebar.bus")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"banner"}
+                toggleMenu={toggleMenu}
+                to={"/banner"}
+                label={t("sidebar.banner")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"banner"}
+                toggleMenu={toggleMenu}
+                to={"/managerBanner"}
+                label={t("sidebar.banner")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"guidance"}
+                toggleMenu={toggleMenu}
+                to={"/guidance"}
+                label={t("sidebar.guidance")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
 
             </ul>
           </PerfectScrollbar>
