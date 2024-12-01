@@ -175,6 +175,23 @@ export const api = createApi({
     "GalleryUpdate",
     "GalleryRemove",
 
+    // Subject Tag
+    "SubjectGetData",
+    "SubjectGetDataById",
+    "SubjectCreate",
+    "SubjectUpdate",
+    "SubjectRemove",
+
+    //Stage Subject Tag 
+    "StageSubjectGetData",
+    "StageSubjectGetDataById",
+    "StageSubjectCreate",
+    "StageSubjectUpdate",
+    "StageSubjectRemove",
+    
+    
+    
+
     
 
 

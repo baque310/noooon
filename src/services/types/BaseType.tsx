@@ -20,11 +20,13 @@ export type PAGE_CODE =
   | "section"
   | "student"
   | "student_enrollment"
-  |"teacher"
-  |"bus"
-  |"banner"
-  |"guidance"
-  |"gallery"
+  | "teacher"
+  | "bus"
+  | "banner"
+  | "guidance"
+  | "gallery"
+  | "subject"
+  | "stage_subject"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";

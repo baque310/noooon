@@ -194,6 +194,22 @@ const Sidebar = () => {
                 label={t("sidebar.gallery")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"subject"}
+                toggleMenu={toggleMenu}
+                to={"/subject"}
+                label={t("sidebar.subject")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"stage_subject"}
+                toggleMenu={toggleMenu}
+                to={"/stageSubject"}
+                label={t("sidebar.stageSubject")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
 
             </ul>
           </PerfectScrollbar>
