@@ -24,7 +24,7 @@ const TableComponent = () => {
   const [open, setOpen] = useState(false)
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
-      <div className={"flex justify-between max-md:flex-col gap-2 "}>
+      <div className={"flex justify-between gap-2 "}>
         <div className="text-xl uppercase ">{t("StagePage.Stages")}</div>
         <div className={"flex gap-3"}>
           {

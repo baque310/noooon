@@ -78,7 +78,7 @@ const TableComponent = () => {
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("BusPage.bus")}</div>
-        <div className={"flex gap-3"}>
+        <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
             placeholder={`${t("common.search")} ...`}
@@ -131,7 +131,7 @@ const TableComponent = () => {
               },
               {
                 title: t("BusPage.carType"),
-                accessor: "birth",
+                accessor: "carType",
                 sortable: true, 
               },
               {

@@ -81,7 +81,7 @@ const TableComponent = () => {
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("ClassPage.Classes")}</div>
-        <div className={"flex gap-3"}>
+        <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
             placeholder={`${t("common.search")} ...`}
@@ -111,7 +111,7 @@ const TableComponent = () => {
                 return (
                   <button
                     className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                      } flex w-fit justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       setOpen(true)
                     }}>
