@@ -78,7 +78,8 @@
         "guidance": "الارشادات",
         "gallery": "المعرض",
         "subject": "الموضوع",
-        "stageSubject": "المواضيع"
+        "stageSubject": "المواضيع",
+        "teacherSubject": "المواضيع المدرسين"
     },
     "SupperAdminPage": {
         "supperAdmin": "مدير عام",
@@ -380,8 +381,8 @@
 
     },
     "StageSubjectPage": {
-        "StageSubject": "المواضيع المراحل",
-        "StageSubjects":"المواضيع المراحل",
+        "StageSubject": "موضوع المرحلة",
+        "StageSubjects":"المواضيع المرحلة",
         "name": "الاسم",
         "SubjectName": "اسم الموضوع",
         "enter-SubjectName": "ادخل اسم الموضوع",
@@ -390,13 +391,40 @@
         "StageName": "اسم المرحلة",
         "enter-StageName": "ادخل اسم المرحلة",
         "enter-name": "ادخل الاسم",
-        "update-info": "تعديل مواضيع المرحلة",
+        "update-info": "تعديل موضوع المرحلة",
         "add": "اضافة",
         "update": "تعديل",
         "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
-        "StageSubjectInformation": "معلومات مواضيع المرحلة ",
-        "Are-you-sure-you-want-to-delete-this-StageSubject": "هل أنت متأكد أنك تريد حذف هذا مواضيع المرحلة ؟",
-        "DeleteStageSubject": "حذف مواضيع المرحلة ",
+        "StageSubjectInformation": "معلومات موضوع المرحلة ",
+        "Are-you-sure-you-want-to-delete-this-StageSubject": "هل أنت متأكد أنك تريد حذف هذا موضوع المرحلة ؟",
+        "DeleteStageSubject": "حذف موضوع المرحلة ",
         "name-already-exist": "الاسم موجود بالفعل"
+    },
+    "TeacherSubjectPage": {
+        "TeacherSubject": " موضوع المدرس",
+        "TeacherSubjects":"المواضيع المدرسين",
+        "name": "الاسم",
+        "SubjectName": "اسم الموضوع",
+        "enter-SubjectName": "ادخل اسم الموضوع",
+        "ClassName": "اسم الصف",
+        "enter-ClassName": "ادخل اسم الصف",
+        "StageName": "اسم المرحلة",
+        "enter-StageName": "ادخل اسم المرحلة",
+        "enter-name": "ادخل الاسم",
+        "update-info": "تعديل موضوع المدرس ",
+        "add": "اضافة",
+        "update": "تعديل",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "TeacherSubjectInformation": "معلومات موضوع المدرس ",
+        "Are-you-sure-you-want-to-delete-this-TeacherSubject": "هل أنت متأكد أنك تريد حذف هذا موضوع المدرس ؟",
+        "DeleteTeacherSubject": "حذف موضوع المدرس ",
+        "teacher-name-already-exist": "اسم المدرس موجود بالفعل" ,
+        "SchoolYear": "السنة الدراسية",
+        "enter-SchoolYear": "ادخل السنة الدراسية",
+        "TeacherName": "اسم المدرس",
+        "enter-TeacherName": "ادخل اسم المدرس",
+        "StageSubjectName": "اسم موضوع المرحلة",
+        "enter-StageSubjectName": "ادخل اسم موضوع المرحلة",
+        "TeacherSubjectCannotBeDeleted":  "لا يمكن حذف موضوع المدرس لانه مرتبط بمواد اخرى"
     }
 }

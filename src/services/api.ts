@@ -188,6 +188,14 @@ export const api = createApi({
     "StageSubjectCreate",
     "StageSubjectUpdate",
     "StageSubjectRemove",
+
+    //Teacher Subject Tag
+    "TeacherSubjectGetData",
+    "TeacherSubjectGetDataById",
+    "TeacherSubjectCreate",
+    "TeacherSubjectUpdate",
+    "TeacherSubjectRemove",
+    
     
     
     

@@ -23,7 +23,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           # cache: "npm"
 
-      - run: NODE_OPTIONS=--max_old_space_size=4096 npm i --force
+      - run: NODE_OPTIONS=--max_old_space_size=2048 npm i --force
 
       - run: npm run build --if-present
       # - name: Pm2 Start

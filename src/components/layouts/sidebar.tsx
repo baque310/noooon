@@ -210,6 +210,14 @@ const Sidebar = () => {
                 label={t("sidebar.stageSubject")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
+              <MenuItem
+                permission={["read-any", "read-own"]}
+                resource={"teacher_subject"}
+                toggleMenu={toggleMenu}
+                to={"/teacherSubject"}
+                label={t("sidebar.teacherSubject")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+              />
 
             </ul>
           </PerfectScrollbar>

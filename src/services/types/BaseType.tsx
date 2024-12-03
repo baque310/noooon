@@ -27,6 +27,7 @@ export type PAGE_CODE =
   | "gallery"
   | "subject"
   | "stage_subject"
+  | "teacher_subject"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
