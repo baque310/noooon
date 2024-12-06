@@ -20,6 +20,9 @@ declare module 'next-auth' {
         roles: Roles[],
         createdAt: string
         updatedAt: string
+        "RoleType": "SuperAdmin" | "Manager" | "Admin"
+        "schoolId": string
+
 
     }
     interface JWT {

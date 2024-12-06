@@ -28,6 +28,18 @@ export type PAGE_CODE =
   | "subject"
   | "stage_subject"
   | "teacher_subject"
+  | "schedule"
+  | "section_schedule"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
+
+export enum Days {
+  SUNDAY = "SUNDAY",
+  MONDAY = "MONDAY",
+  TUESDAY = "TUESDAY",
+  WEDNESDAY = "WEDNESDAY",
+  THURSDAY = "THURSDAY",
+  FRIDAY = "FRIDAY",
+  SATURDAY = "SATURDAY"
+}

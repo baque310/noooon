@@ -8,11 +8,12 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import IconCaretsDown from "../common/icons/sidebar/icon-carets-down";
 import { MenuItem } from "../common/Menu/MenuItem";
-import { useSession } from "next-auth/react"; 
+import { useSession } from "next-auth/react";
 import useNotification from "@/hooks/useNotification";
 import { usePlaySound } from "@/hooks/usePlaySound";
 import { getTranslation } from "@/ni18n/i18n";
 import IconManagerAdmin from "../common/icons/sidebar/IconManagerAdmin";
+import MenuSubItem from "../common/Menu/MenuSubitems";
 
 
 const Sidebar = () => {
@@ -68,6 +69,8 @@ const Sidebar = () => {
   const notification = useNotification();
   const playSound = usePlaySound();
 
+  const isManager = session.data?.user.RoleType == "Manager"
+
 
 
   return (
@@ -90,46 +93,78 @@ const Sidebar = () => {
           </div>
           <PerfectScrollbar className="relative h-[calc(100vh-80px)]">
             <ul className="relative space-y-0.5 mt-4 p-4 py-0 font-semibold">
-              <MenuItem
+
+              {isManager &&
+                <>
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"admin"}
+                    toggleMenu={toggleMenu}
+                    to={"/admin"}
+                    label={t("sidebar.admin")}
+                    icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  />
+
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"school"}
+                    toggleMenu={toggleMenu}
+                    to={"/school"}
+                    label={t("sidebar.school")}
+                    icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  />
+
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"banner"}
+                    toggleMenu={toggleMenu}
+                    to={"/managerBanner"}
+                    label={t("sidebar.banner")}
+                    icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  />
+                </>
+              }
+
+              <MenuSubItem
                 permission={["read-any", "read-own"]}
-                resource={"admin"}
-                toggleMenu={toggleMenu}
-                to={"/admin"}
-                label={t("sidebar.admin")}
+                resource={["stage", "class", "section"]}
+                name={"stages"}
+                currentMenu={currentMenu}
+                label={t("sidebar.stages")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"school"}
+                menuList={[
+                  {
+                    number: 0,
+                    label: t("sidebar.stage"),
+                    resource: "stage",
+                    permission: ["read-any", "read-own"],
+                    to: "stage",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  },
+                  {
+                    number: 0,
+                    label: t("sidebar.class"),
+                    resource: "class",
+                    permission: ["read-any", "read-own"],
+                    to: "class",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  },
+                  {
+                    number: 0,
+                    label: t("sidebar.section"),
+                    resource: "section",
+                    permission: ["read-any", "read-own"],
+                    to: "section",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  },
+                ]}
                 toggleMenu={toggleMenu}
-                to={"/school"}
-                label={t("sidebar.school")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                setCurrentMenu={setCurrentMenu}
               />
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"stage"}
-                toggleMenu={toggleMenu}
-                to={"/stage"}
-                label={t("sidebar.stage")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"class"}
-                toggleMenu={toggleMenu}
-                to={"/class"}
-                label={t("sidebar.class")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"section"}
-                toggleMenu={toggleMenu}
-                to={"/section"}
-                label={t("sidebar.section")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
+
               <MenuItem
                 permission={["read-any", "read-own"]}
                 resource={"student"}
@@ -162,22 +197,15 @@ const Sidebar = () => {
                 label={t("sidebar.bus")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
-              <MenuItem
+              {!isManager && <MenuItem
                 permission={["read-any", "read-own"]}
                 resource={"banner"}
                 toggleMenu={toggleMenu}
                 to={"/banner"}
                 label={t("sidebar.banner")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"banner"}
-                toggleMenu={toggleMenu}
-                to={"/managerBanner"}
-                label={t("sidebar.banner")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
+              />}
+
               <MenuItem
                 permission={["read-any", "read-own"]}
                 resource={"guidance"}
@@ -194,29 +222,76 @@ const Sidebar = () => {
                 label={t("sidebar.gallery")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
-              <MenuItem
+
+            
+              <MenuSubItem
                 permission={["read-any", "read-own"]}
-                resource={"subject"}
-                toggleMenu={toggleMenu}
-                to={"/subject"}
+                resource={["subject", "stage_subject", "stage_subject"]}
+                name={"subjects"}
+                currentMenu={currentMenu}
                 label={t("sidebar.subject")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"stage_subject"}
+                menuList={[
+                  {
+                    number: 0,
+                    label: t("sidebar.subject"),
+                    resource: "subject",
+                    permission: ["read-any", "read-own"],
+                    to: "subject",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  },
+                  {
+                    number: 0,
+                    label: t("sidebar.stageSubject"),
+                    resource: "stage_subject",
+                    permission: ["read-any", "read-own"],
+                    to: "stageSubject",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  },
+                  {
+                    number: 0,
+                    label: t("sidebar.teacherSubject"),
+                    resource: "teacher_subject",
+                    permission: ["read-any", "read-own"],
+                    to: "teacherSubject",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  },
+                ]}
                 toggleMenu={toggleMenu}
-                to={"/stageSubject"}
-                label={t("sidebar.stageSubject")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                setCurrentMenu={setCurrentMenu}
               />
-              <MenuItem
+              <MenuSubItem
                 permission={["read-any", "read-own"]}
-                resource={"teacher_subject"}
-                toggleMenu={toggleMenu}
-                to={"/teacherSubject"}
-                label={t("sidebar.teacherSubject")}
+                resource={["schedule"]}
+                name={"schedules"}
+                currentMenu={currentMenu}
+                label={t("sidebar.schedules")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                menuList={[
+                  {
+                    number: 0,
+                    label: t("sidebar.schedule"),
+                    resource: "schedule",
+                    permission: ["read-any", "read-own"],
+                    to: "schedule",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  }, 
+                  {
+                    number: 0,
+                    label: t("sidebar.sectionSchedule"),
+                    resource: "schedule",
+                    permission: ["read-any", "read-own"],
+                    to: "sectionSchedule",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  }, 
+                ]}
+                toggleMenu={toggleMenu}
+                setCurrentMenu={setCurrentMenu}
               />
 
             </ul>

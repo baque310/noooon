@@ -68,6 +68,7 @@
         "school": "المدرسة",
         "logout": "تسجيل الخروج",
         "class": "الصف",
+        "stages": "المراحل الدراسية",
         "stage": "المرحلة",
         "section": "الشعبة",
         "student": "الطالب",
@@ -79,7 +80,10 @@
         "gallery": "المعرض",
         "subject": "الموضوع",
         "stageSubject": "المواضيع",
-        "teacherSubject": "المواضيع المدرسين"
+        "teacherSubject": "المواضيع المدرسين",
+        "schedules": "الجداول",
+        "schedule": "الجدول الدروس",
+        "sectionSchedule": "الجدول الدروس الشعبة "
     },
     "SupperAdminPage": {
         "supperAdmin": "مدير عام",
@@ -378,11 +382,10 @@
         "DeleteSubject": "حذف الموضوع ",
         "name-already-exist": "الاسم موجود بالفعل",
         "this-Subject-connected-with-other-stage": "هذا الموضوع مرتبط بمراحل اخرى"
-
     },
     "StageSubjectPage": {
         "StageSubject": "موضوع المرحلة",
-        "StageSubjects":"المواضيع المرحلة",
+        "StageSubjects": "المواضيع المرحلة",
         "name": "الاسم",
         "SubjectName": "اسم الموضوع",
         "enter-SubjectName": "ادخل اسم الموضوع",
@@ -402,7 +405,7 @@
     },
     "TeacherSubjectPage": {
         "TeacherSubject": " موضوع المدرس",
-        "TeacherSubjects":"المواضيع المدرسين",
+        "TeacherSubjects": "المواضيع المدرسين",
         "name": "الاسم",
         "SubjectName": "اسم الموضوع",
         "enter-SubjectName": "ادخل اسم الموضوع",
@@ -418,13 +421,47 @@
         "TeacherSubjectInformation": "معلومات موضوع المدرس ",
         "Are-you-sure-you-want-to-delete-this-TeacherSubject": "هل أنت متأكد أنك تريد حذف هذا موضوع المدرس ؟",
         "DeleteTeacherSubject": "حذف موضوع المدرس ",
-        "teacher-name-already-exist": "اسم المدرس موجود بالفعل" ,
+        "teacher-name-already-exist": "اسم المدرس موجود بالفعل",
         "SchoolYear": "السنة الدراسية",
         "enter-SchoolYear": "ادخل السنة الدراسية",
         "TeacherName": "اسم المدرس",
         "enter-TeacherName": "ادخل اسم المدرس",
         "StageSubjectName": "اسم موضوع المرحلة",
         "enter-StageSubjectName": "ادخل اسم موضوع المرحلة",
-        "TeacherSubjectCannotBeDeleted":  "لا يمكن حذف موضوع المدرس لانه مرتبط بمواد اخرى"
+        "TeacherSubjectCannotBeDeleted": "لا يمكن حذف موضوع المدرس لانه مرتبط بمواد اخرى"
+    },
+    "SchedulePage": {
+        "Schedule": "الجدول الدروس",
+        "Schedules": "الجداول",
+        "update-info": "تعديل الجدول الدروس",
+        "ScheduleInformation": "معلومات الجدول الدروس ",
+        "Are-you-sure-you-want-to-delete-this-Schedule": "هل أنت متأكد أنك تريد حذف هذا الجدول الدروس ؟",
+        "DeleteSchedule": "حذف الجدول الدروس ",
+        "day": "اليوم",
+        "select-day": "اختر اليوم",
+        "timeFrom": "من الوقت",
+        "timeTo": "الى الوقت",
+        "select-timeFrom": "اختر من الوقت",
+        "select-timeTo": "اختر الى الوقت"
+    },
+    "SUNDAY": "الاحد",
+    "MONDAY": "الاثنين",
+    "TUESDAY": "الثلاثاء",
+    "WEDNESDAY": "الاربعاء",
+    "THURSDAY": "الخميس",
+    "FRIDAY": "الجمعة",
+    "SATURDAY": "السبت",
+    "SectionSchedulePage": {
+        "StageName": "اسم المرحلة",
+        "SectionName": "اسم الشعبة",
+        "TeacherName": "اسم المدرس",
+        "SubjectName": "اسم الموضوع",
+        "timeFrom": "من الوقت",
+        "timeTo": "الى الوقت",
+        "SchoolYear": "السنة الدراسية",
+        "SectionSchedule":"جدول الدروس الشعبة"
+
+
+
     }
 }

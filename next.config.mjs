@@ -14,7 +14,9 @@ const withPWA = withPWAInit({
     register: true,
 });
 
-export default withPWA({
+export default
+//  withPWA(
+    {
     // Your Next.js config
     env: {
         BASE_URL: process.env.BASE_URL,
@@ -34,4 +36,5 @@ export default withPWA({
         appId: process.env.appId,
         measurementId: process.env.measurementId
     },
-});
+}
+// );

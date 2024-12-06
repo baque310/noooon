@@ -195,12 +195,29 @@ export const api = createApi({
     "TeacherSubjectCreate",
     "TeacherSubjectUpdate",
     "TeacherSubjectRemove",
-    
-    
-    
-    
 
-    
+    // Schedule Tag
+    "ScheduleGetData",
+    "ScheduleGetDataById",
+    "ScheduleCreate",
+    "ScheduleUpdate",
+    "ScheduleRemove",
+
+    //Section Schedule Tag
+     "SectionScheduleGetData",
+     "SectionScheduleGetDataById",
+     "SectionScheduleCreate",
+     "SectionScheduleUpdate",
+     "SectionScheduleRemove",
+ 
+     
+
+
+
+
+
+
+
 
 
   ],

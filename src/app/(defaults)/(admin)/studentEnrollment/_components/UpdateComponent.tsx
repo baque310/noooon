@@ -105,6 +105,7 @@ const UpdateComponent = ({
                   }
                 }}
               />
+              
               <SelectForm
                 formikProps={props}
                 name={"stageId"}
