@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React, { ReactNode, useEffect, useState } from 'react';
 import AnimateHeight from 'react-animate-height';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { RolePageAndActionBasedComponent } from '@/components/Provider/RolePageAndActionBasedComponent';
 import { toLocaleString } from '@/utils/LocaleString';
@@ -10,7 +10,6 @@ import { PAGE_CODE, PERMISSION } from '@/services/types/BaseType';
 import IconCaretsDown from '../icons/sidebar/icon-carets-down';
 
 export const MenuSubItem = ({ setCurrentMenu, name, currentMenu, label, icon, menuList, toggleMenu, resource, permission, number = 0 }: { number?: number, setCurrentMenu: any, name: string, currentMenu: string, label: string, icon?: React.ReactNode, menuList: { resource: PAGE_CODE | PAGE_CODE[], permission: PERMISSION | PERMISSION[], isNoSub?: boolean, to: string,number?:number, label: string, icon?: React.ReactNode }[], toggleMenu: any, resource: PAGE_CODE | PAGE_CODE[], permission: PERMISSION | PERMISSION[] }) => {
-    const router = useRouter();
     const pathname = usePathname();
     const [isActive, setIsActive] = useState(false);
 
