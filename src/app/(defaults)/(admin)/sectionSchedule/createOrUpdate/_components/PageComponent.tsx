@@ -12,7 +12,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
 export interface FormValues extends AddSectionSchedulePayload, UpdateSectionSchedulePayload {
-
+  schoolYearId: string;
+  // stageId: string;
 }
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import { Form, Formik, FormikProps } from 'formik';
@@ -158,7 +159,7 @@ const PageComponent = () => {
               SectionSchedules: [],
               teacherSubjectId: data?.teacherSubjectId || "",
               schoolYearId: data?.schoolYearId || "",
-              stageId: data?.stageId || "",
+              // stageId: data?.stageId || "",
             }}
             validationSchema={sectionScheduleSchema}
             onSubmit={handleSubmit}
