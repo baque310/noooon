@@ -4,7 +4,7 @@ import { LoadingForm } from '@/components/Form/loadingForm';
 import { BackButton } from '@/components/common/BackButton';
 import { ItemList } from '@/components/common/ItemList';
 
- 
+
 import { useClassRemoveMutation, useLazyClassGetDataByIdQuery } from "@/services/admin/class";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -16,7 +16,7 @@ import DeleteModel from '@/components/Model/DeleteModel';
 import { getTranslation } from '@/ni18n/i18n';
 
 const PageComponent = () => {
-   
+
     const { t } = getTranslation();
     const router = useRouter()
     const params = useParams()
@@ -57,7 +57,7 @@ const PageComponent = () => {
                 isFetching ? <LoadingForm /> : <>
                     <div className='CardDetails internalMenu '>
                         <ItemList title={t('ClassPage.name')} value={String(data?.name)} />
-                        <ItemList title={t('ClassPage.StageName')} value={t(data?.Stage.name as any)} />
+                        <ItemList title={t('ClassPage.StageName')} value={data?.Stage.name && t(data?.Stage.name as any)} />
                         <ItemList title={t('common.createdAt')} value={moment(data?.createdAt).format('YYYY-MM-DD hh:mm:ss A')} />
 
                     </div>

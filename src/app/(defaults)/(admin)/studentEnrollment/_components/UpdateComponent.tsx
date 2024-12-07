@@ -8,11 +8,12 @@ import { SelectForm } from '@/components/Form/SelectForm';
 import { LoadingForm } from '@/components/Form/loadingForm';
 import { getTranslation } from "@/ni18n/i18n";
 import { useStageGetDataQuery } from "@/services/admin/stage";
-import { FormikHelpers } from "formik"; 
+import { FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
 import { useSchoolYearGetDataQuery } from '@/services/SchoolYear';
 import { UpdateStudentEnrollmentPayload, useStudentEnrollmentUpdateMutation } from '@/services/admin/studentEnrollment';
+import moment from 'moment';
 export interface FormValues extends UpdateStudentEnrollmentPayload {
 
 }
@@ -26,7 +27,7 @@ const UpdateComponent = ({
   data: string[]
 }
 ) => {
-  const { t } = getTranslation();  
+  const { t } = getTranslation();
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
 
@@ -73,7 +74,9 @@ const UpdateComponent = ({
             classId: "",
             sectionId: "",
             stageId: "",
-            schoolYearId: "",
+            schoolYearId: SchoolYear?.find(item =>
+              item.from == moment().year()
+            )?.id || "",
             studentEnrollmentIds: data
 
           }}
@@ -105,7 +108,7 @@ const UpdateComponent = ({
                   }
                 }}
               />
-              
+
               <SelectForm
                 formikProps={props}
                 name={"stageId"}

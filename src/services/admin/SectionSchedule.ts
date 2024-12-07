@@ -67,8 +67,7 @@ export interface AddSectionSchedulePayload {
 
 }
 export interface UpdateSectionSchedulePayload {
-    timeFrom: string
-    timeTo: string
+    teacherSubjectId: string
 }
 
  
@@ -77,7 +76,7 @@ export const SectionSchedule = api.injectEndpoints({
     endpoints: (build) => ({
         SectionScheduleGetData: build.query<ISectionSchedule, GetDataRequestParams>({
             query: (params) => ({
-                url: `admin/section/schedule/sectionSchedule`,
+                url: `admin/sectionSchedule`,
                 params,
                 method: "GET",
             }),
@@ -87,7 +86,7 @@ export const SectionSchedule = api.injectEndpoints({
 
         SectionScheduleGetDataById: build.query<ISectionScheduleData, { id: string }>({
             query: ({ id }) => ({
-                url: `admin/section/schedule/sectionSchedule/${id}`,
+                url: `admin/sectionSchedule/${id}`,
                 method: "GET",
             }),
             providesTags: ["SectionScheduleGetDataById"],
@@ -96,7 +95,7 @@ export const SectionSchedule = api.injectEndpoints({
 
         SectionScheduleCreate: build.mutation<ISectionSchedule, AddSectionSchedulePayload>({
             query: (body) => ({
-                url: `admin/section/schedule/sectionSchedule`,
+                url: `admin/sectionSchedule`,
                 body,
                 method: "POST",
             }),
@@ -105,7 +104,7 @@ export const SectionSchedule = api.injectEndpoints({
 
         SectionScheduleUpdate: build.mutation<ISectionSchedule, { id: string, body: UpdateSectionSchedulePayload }>({
             query: ({ body, id }) => ({
-                url: `admin/section/schedule/sectionSchedule/${id}`,
+                url: `admin/sectionSchedule/${id}`,
                 body,
                 method: "PATCH",
             }),
@@ -114,7 +113,7 @@ export const SectionSchedule = api.injectEndpoints({
 
         SectionScheduleRemove: build.mutation<void, { id: string }>({
             query: ({ id }) => ({
-                url: `admin/section/schedule/sectionSchedule/${id}`,
+                url: `admin/sectionSchedule/${id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["SectionScheduleRemove", "SectionScheduleGetDataById", "SectionScheduleGetData"],

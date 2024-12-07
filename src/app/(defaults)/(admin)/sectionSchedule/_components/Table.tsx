@@ -173,7 +173,7 @@ const TableComponent = () => {
                                 {
                                   title: t("SectionSchedulePage.SectionName"),
                                   accessor: "section.name",
-                                  render: ({ section }) =>  t(section.name), 
+                                  render: ({ section }) => t(section.name),
                                 },
 
                                 {
@@ -190,16 +190,15 @@ const TableComponent = () => {
                                   render: ({ Schedule }: any) => (Schedule.timeFrom ? <div>{moment.utc(Schedule.timeFrom).format("hh:mm:ss A")}</div> : null),
 
                                 },
-                                {
-                                  title: t("SectionSchedulePage.SchoolYear"),
-                                  accessor: "SchoolYear.from",
-                                },
 
                                 {
                                   title: t("SectionSchedulePage.timeTo"),
                                   accessor: "Schedule.timeTo",
                                   render: ({ Schedule }: any) => (Schedule.timeTo ? <div>{moment.utc(Schedule.timeTo).format("hh:mm:ss A")}</div> : null),
-
+                                },
+                                {
+                                  title: t("SectionSchedulePage.SchoolYear"),
+                                  accessor: "SchoolYear.from",
                                 },
 
                               ]}

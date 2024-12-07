@@ -48,10 +48,17 @@ export interface AddTeacherSubjectPayload {
     schoolYearId: string
 }
 
+export interface GetTeacherSubjectDataRequestParams extends GetDataRequestParams {
+    classId?: string
+    stageId?: string
+    teacherId?: string
+    schoolYearId?: string
+}
+
 
 export const TeacherSubject = api.injectEndpoints({
     endpoints: (build) => ({
-        TeacherSubjectGetData: build.query<ITeacherSubject[], GetDataRequestParams>({
+        TeacherSubjectGetData: build.query<ITeacherSubject[], GetTeacherSubjectDataRequestParams>({
             query: (params) => ({
                 url: `admin/teacher-subject`,
                 params,

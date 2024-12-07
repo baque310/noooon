@@ -9,7 +9,7 @@ import { getTranslation } from "@/ni18n/i18n";
 import { useLazyStageGetDataByIdQuery, useStageRemoveMutation } from "@/services/admin/stage";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 import { ArrowIcons } from '@/components/common/icons/Actions';
 import moment from 'moment';
 import DeleteModel from '@/components/Model/DeleteModel';
@@ -52,12 +52,12 @@ const PageComponent = () => {
     const [openDelete, setOpenDelete] = useState(false)
     return (
         <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
-            <BackButton title={t('SchoolPage.SchoolInformation')} />
+            <BackButton title={t('StagePage.infoStage')} />
 
             {
                 isFetching ? <LoadingForm /> : <>
                     <div className='CardDetails internalMenu '>
-                        <ItemList title={t('SchoolPage.name')} value={t(data?.name as any)} />
+                        <ItemList title={t('StagePage.name')} value={data?.name && t(data?.name as any)} />
                         <ItemList title={t('common.updatedAt')} value={moment(data?.updatedAt).format('YYYY-MM-DD hh:mm:ss A')} />
                         <ItemList title={t('common.createdAt')} value={moment(data?.createdAt).format('YYYY-MM-DD hh:mm:ss A')} />
                     </div>
@@ -86,7 +86,7 @@ const PageComponent = () => {
                 setOpen={setOpenDelete}
                 handleRemove={handleRemove}
                 isLoading={isLoadingStageRemove}
-                name={t(data?.name as any)}
+                name={t(data?.name??"" as any)}
             />
         </div>
     );

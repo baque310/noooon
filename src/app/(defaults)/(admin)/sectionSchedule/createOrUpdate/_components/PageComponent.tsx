@@ -5,13 +5,13 @@ import { LoadingForm } from '@/components/Form/loadingForm';
 import { BackButton } from '@/components/common/BackButton';
 
 import { getTranslation } from "@/ni18n/i18n";
-import { AddSchedulePayload, daysArray, UpdateSchedulePayload, useLazyScheduleGetDataByIdQuery, useScheduleCreateMutation, useScheduleUpdateMutation } from "@/services/admin/Schedule";
+import { AddSectionSchedulePayload, UpdateSectionSchedulePayload, useLazySectionScheduleGetDataByIdQuery, useSectionScheduleCreateMutation, useSectionScheduleUpdateMutation } from "@/services/admin/SectionSchedule";
 import { FieldArray, FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
-export interface FormValues extends AddSchedulePayload, UpdateSchedulePayload {
+export interface FormValues extends AddSectionSchedulePayload, UpdateSectionSchedulePayload {
 
 }
 import { ButtonForm } from '@/components/Form/ButtonForm';
@@ -22,18 +22,34 @@ import { SelectForm } from '@/components/Form/SelectForm';
 import { listTime } from '@/utils/time';
 import { useSchoolYearGetDataQuery } from '@/services/SchoolYear';
 import moment from 'moment';
+import { useLazyTeacherSubjectGetDataQuery } from '@/services/admin/TeacherSubject';
+import { useStageGetDataQuery } from '@/services/admin/stage';
+import { useSettingGetDataQuery } from '@/services/Setting';
+import { daysArray, useLazyScheduleGetDataQuery } from '@/services/admin/Schedule';
+import { Days } from '@/services/types/BaseType';
+import { useTeacherGetDataQuery } from '@/services/admin/teacher';
 
 const PageComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const [ScheduleGetDataById, { currentData: data, isFetching }] = useLazyScheduleGetDataByIdQuery()
+  const [searchTeacher, setSearchTeacher] = useState<string | undefined>()
+  const [SectionScheduleGetDataById, { currentData: data, isFetching }] = useLazySectionScheduleGetDataByIdQuery()
   const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
+  const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
+  const { currentData: teacher, isFetching: isFetchingTeacher } = useTeacherGetDataQuery({
+    search: searchTeacher,
+    skip: 1,
+    take: 30,
+  });
+  const [getSchedule, { currentData: Schedule, isFetching: isFetchingSchedule }] = useLazyScheduleGetDataQuery();
 
+  const [getTeacherSubject, { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject }] = useLazyTeacherSubjectGetDataQuery();
   useEffect(() => {
     if (id) {
-      ScheduleGetDataById({ id: String(id) })
+      SectionScheduleGetDataById({ id: String(id) })
         .then((data) => {
           if (!data.data) {
             router.back();
@@ -41,32 +57,35 @@ const PageComponent = () => {
         });
     }
   }, [id])
-  const [ScheduleCreate, { isLoading: isLoadingScheduleCreate }] = useScheduleCreateMutation();
-  const [ScheduleUpdate, { isLoading: isLoadingScheduleUpdate }] = useScheduleUpdateMutation();
+  const [SectionScheduleCreate, { isLoading: isLoadingSectionScheduleCreate }] = useSectionScheduleCreateMutation();
+  const [SectionScheduleUpdate, { isLoading: isLoadingSectionScheduleUpdate }] = useSectionScheduleUpdateMutation();
 
   const handleSubmit = async (
     values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
 
+      console.log(values);
 
 
       if (id) {
-        await ScheduleUpdate({
+        await SectionScheduleUpdate({
           body: {
-            timeFrom: moment.utc(values.timeFrom, "hh:mm a").format("HH:mm:ss"),
-            timeTo: moment.utc(values.timeTo, "hh:mm a").format("HH:mm:ss"),
+            // timeFrom: moment.utc(values.timeFrom, "hh:mm a").format("HH:mm:ss"),
+            // timeTo: moment.utc(values.timeTo, "hh:mm a").format("HH:mm:ss"),
+            ...values
           },
           id: String(id),
         }
         ).unwrap()
 
       } else {
-        await ScheduleCreate({
-          schedules: values.schedules.map(schedules => {
+        await SectionScheduleCreate({
+          SectionSchedules: values.SectionSchedules.map(SectionSchedules => {
             return {
-              ...schedules,
-              timeFrom: moment.utc(schedules.timeFrom, "hh:mm a").format("HH:mm:ss"),
-              timeTo: moment.utc(schedules.timeTo, "hh:mm a").format("HH:mm:ss"),
+              scheduleId: SectionSchedules.scheduleId,
+              schoolYearId: SectionSchedules.schoolYearId,
+              sectionId: SectionSchedules.sectionId,
+              teacherSubjectId: SectionSchedules.teacherSubjectId
             }
           })
 
@@ -86,30 +105,38 @@ const PageComponent = () => {
     }
   };
 
-  const scheduleSchema = Yup.object().shape({
+  const sectionScheduleSchema = Yup.object().shape({
     ...id ? {
-      timeFrom: Yup.string().required(t('common.this-field-is-required')),
-      timeTo: Yup.string().required(t('common.this-field-is-required')),
+      teacherSubjectId: Yup.string().required(t('common.this-field-is-required')),
     } : {
-      schedules: Yup.array().of(
+      SectionSchedules: Yup.array().of(
         Yup.object().shape({
           day: Yup.string().required(t('common.this-field-is-required')),
-          timeFrom: Yup.string().required(t('common.this-field-is-required')),
-          timeTo: Yup.string().required(t('common.this-field-is-required')),
+          teacherSubjectId: Yup.string().required(t('common.this-field-is-required')),
+          sectionId: Yup.string().required(t('common.this-field-is-required')),
+          scheduleId: Yup.string().required(t('common.this-field-is-required')),
           schoolYearId: Yup.string().required(t('common.this-field-is-required')),
         }))
     }
   })
 
-  const schedules = {
-    "day": "",
-    "timeFrom": "",
-    "timeTo": "",
-    "schoolYearId": SchoolYear?.find(item =>
-      item.from === moment().year()
-    )?.id || "",
+  const [SectionSchedules, setSectionSchedules] = useState({
+    "teacherSubjectId": "",
+    "sectionId": "",
+    "scheduleId": "",
+    "schoolYearId": Setting?.CurrentSchoolYear.id,
 
-  }
+  })
+
+  useEffect(() => {
+    if (Setting?.CurrentSchoolYear.id) {
+      setSectionSchedules({
+        ...SectionSchedules,
+        "schoolYearId": Setting?.CurrentSchoolYear.id,
+      })
+    }
+  }, [Setting?.CurrentSchoolYear.id])
+
 
   const [active, setActive] = useState<number>(-1);
   const togglePara = (value: number) => {
@@ -121,28 +148,27 @@ const PageComponent = () => {
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton title={t(id ? "SchedulePage.update-info" : "common.add")} />
+        <BackButton title={t(id ? "SectionSchedulePage.update-info" : "common.add")} />
 
-        {isFetching ? (
+        {isFetching || isFetchingSetting ? (
           <LoadingForm />
         ) : (
           <Formik<FormValues>
             initialValues={{
-              schedules: [],
-
-              timeFrom: data?.timeFrom ? moment.utc(data?.timeFrom).format("hh:mm a") : "",
-              timeTo: data?.timeTo ? moment.utc(data?.timeTo).format("hh:mm a") : "",
-
+              SectionSchedules: [],
+              teacherSubjectId: data?.teacherSubjectId || "",
+              schoolYearId: data?.schoolYearId || "",
+              stageId: data?.stageId || "",
             }}
-            validationSchema={scheduleSchema}
+            validationSchema={sectionScheduleSchema}
             onSubmit={handleSubmit}
           >
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
-                {!id ? <FieldArray name="schedules">
+                {!id ? <FieldArray name="SectionSchedules">
                   {({ insert, remove, push, replace }) => (
                     <div className={'flex flex-col gap-4 '}>
-                      {props.values.schedules?.map((_: any, index: number) => {
+                      {props.values.SectionSchedules?.map((_: any, index: number) => {
                         return (
                           <div key={index} className="">
                             <button
@@ -154,17 +180,9 @@ const PageComponent = () => {
                                 <p>
                                   {index + 1} {")"}
                                 </p>
-
                                 <p>
-                                  {t(_.day)} {" / "}
+                                  {t(_.day ?? "")}
                                 </p>
-                                <p>
-                                  {`${_.timeFrom} `}  {" - "}
-                                </p>
-                                <p>
-                                  {_.timeTo}
-                                </p>
-
 
                               </bdi>
                               <div
@@ -185,52 +203,40 @@ const PageComponent = () => {
                                 >
                                   <div
                                     className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                                    {t('SchedulePage.ScheduleInformation')}
+                                    {t('SectionSchedulePage.SectionScheduleInformation')}
                                   </div>
+
+
                                   <SelectForm
                                     formikProps={props}
-                                    name={`schedules.${index}.day`}
-                                    title={t('SchedulePage.day')}
-                                    placeholder={t('SchedulePage.select-day')}
-                                    options={daysArray.map(day => { return { value: day.value, label: t(day.label as any) } })}
+                                    name={`SectionSchedules.${index}.day`}
+                                    title={t('SectionSchedulePage.day')}
+                                    placeholder={t('SectionSchedulePage.select-day')}
+                                    options={daysArray.map(day => {
+                                      return {
+                                        label: t(day.value),
+                                        value: day.value
+                                      }
+                                    })}
                                     props={{
                                       isClearable: true,
                                       onChange: (e) => {
-                                        props.setFieldValue(`schedules.${index}.day`, (e as any)?.value ?? "")
-                                      }
+                                        const value = (e as any)?.value ?? ""
+                                        props.setFieldValue(`SectionSchedules.${index}.day`, value)
+                                        getSchedule({
+                                          day: value
+                                        })
+                                      },
+                                      // onInputChange: (e) => {
+                                      //   
+                                      // }
                                     }}
                                   />
                                   <SelectForm
                                     formikProps={props}
-                                    name={`schedules.${index}.timeFrom`}
-                                    title={t('SchedulePage.timeFrom')}
-                                    placeholder={t('SchedulePage.select-timeFrom')}
-                                    options={listTime}
-                                    props={{
-                                      isClearable: true,
-                                      onChange: (e) => {
-                                        props.setFieldValue(`schedules.${index}.timeFrom`, (e as any)?.value ?? "")
-                                      }
-                                    }}
-                                  />
-                                  <SelectForm
-                                    formikProps={props}
-                                    name={`schedules.${index}.timeTo`}
-                                    title={t('SchedulePage.timeTo')}
-                                    placeholder={t('SchedulePage.select-timeTo')}
-                                    options={listTime}
-                                    props={{
-                                      isClearable: true,
-                                      onChange: (e) => {
-                                        props.setFieldValue(`schedules.${index}.timeTo`, (e as any)?.value ?? "")
-                                      }
-                                    }}
-                                  />
-                                  <SelectForm
-                                    formikProps={props}
-                                    name={`schedules.${index}.schoolYearId`}
-                                    title={t("StudentEnrollmentPage.SchoolYear")}
-                                    placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
+                                    name={`SectionSchedules.${index}.schoolYearId`}
+                                    title={t("SectionSchedulePage.SchoolYear")}
+                                    placeholder={t("SectionSchedulePage.select-SchoolYear")}
                                     options={SchoolYear?.map((item) => {
                                       return {
                                         label: item.from + " - " + item.to,
@@ -239,10 +245,154 @@ const PageComponent = () => {
                                     }) ?? []
                                     }
                                     props={{
-                                      isLoading: isFetchingSchoolYear,
+                                      isLoading: isFetchingSchoolYear || isFetchingSetting,
                                       isClearable: true,
                                       onChange: (e) => {
-                                        props.setFieldValue(`schedules.${index}.schoolYearId`, (e as any)?.value ?? "")
+                                        props.setFieldValue(`SectionSchedules.${index}.schoolYearId`, (e as any)?.value ?? "")
+                                        props.setFieldValue(`SectionSchedules.${index}.stageId`, undefined)
+                                        props.setFieldValue(`SectionSchedules.${index}.classId`, undefined)
+                                        props.setFieldValue(`SectionSchedules.${index}.sectionId`, undefined)
+                                      }
+                                    }}
+                                  />
+
+                                  <SelectForm
+                                    formikProps={props}
+                                    name={`SectionSchedules.${index}.stageId`}
+                                    title={t("StageSubjectPage.StageName")}
+                                    placeholder={t("SectionSchedulePage.select-StageName")}
+                                    options={stage?.map((item) => {
+                                      return {
+                                        label: t(item.name as any),
+                                        value: item.id,
+                                      };
+                                    }) ?? []
+                                    }
+                                    props={{
+                                      isLoading: isFetchingStage,
+                                      isClearable: true,
+                                      onChange: (e) => {
+                                        props.setFieldValue(`SectionSchedules.${index}.stageId`, (e as any)?.value ?? "")
+                                        props.setFieldValue(`SectionSchedules.${index}.classId`, undefined)
+                                        props.setFieldValue(`SectionSchedules.${index}.sectionId`, undefined)
+
+                                      }
+                                    }}
+                                  />
+
+                                  {props.values.SectionSchedules[index].stageId && <SelectForm
+                                    formikProps={props}
+                                    name={`SectionSchedules.${index}.classId`}
+                                    title={t("SectionSchedulePage.ClassName")}
+                                    placeholder={t("SectionSchedulePage.select-ClassName")}
+                                    options={stage ? stage
+                                      .find((item) => item.id === props.values.SectionSchedules[index].stageId)?.Class?.map((item) => {
+                                        return {
+                                          label: t(item.name as any),
+                                          value: item.id,
+                                        };
+                                      }) || [] : []
+                                    }
+                                    props={{
+                                      isLoading: isFetchingStage,
+                                      isClearable: true,
+                                      onChange: (e) => {
+                                        const value = (e as any)?.value ?? ""
+                                        props.setFieldValue(`SectionSchedules.${index}.classId`, value)
+                                        props.setFieldValue(`SectionSchedules.${index}.sectionId`, undefined)
+                                        getTeacherSubject({
+                                          classId: value,
+                                          stageId: props.values.SectionSchedules[index].stageId,
+                                          schoolYearId: props.values.SectionSchedules[index].schoolYearId
+                                        })
+
+                                      }
+                                    }}
+                                  />}
+                                  {props?.values?.SectionSchedules[index]?.classId && <SelectForm
+                                    formikProps={props}
+                                    name={`SectionSchedules.${index}.sectionId`}
+                                    title={t("SectionSchedulePage.SectionName")}
+                                    placeholder={t("SectionSchedulePage.select-SectionName")}
+                                    options={stage ? stage
+                                      .find((item) => item.id === props?.values?.SectionSchedules[index]?.stageId)?.Class
+                                      ?.find((item) => item.id === props?.values?.SectionSchedules[index]?.classId)?.Section?.map((item) => {
+                                        return {
+                                          label: t(item.name as any),
+                                          value: item.id,
+                                        };
+                                      }) || [] : []
+                                    }
+                                    props={{
+                                      isLoading: isFetchingStage,
+                                      isClearable: true,
+                                      onChange: (e) => {
+                                        props.setFieldValue(`SectionSchedules.${index}.sectionId`, (e as any)?.value ?? "")
+                                      }
+                                    }}
+                                  />}
+
+                                  <SelectForm
+                                    formikProps={props}
+                                    name={`SectionSchedules.${index}.teacherSubjectId`}
+                                    title={t('SectionSchedulePage.teacherSubject')}
+                                    placeholder={t('SectionSchedulePage.select-teacherSubject')}
+                                    options={TeacherSubject?.map((item, index) => {
+                                      return {
+                                        label: <div className='flex gap-1'>
+                                          <div>
+                                            {item.StageSubject.Subject.name}
+                                          </div>
+                                          <div>
+                                            {"( "}
+                                          </div>
+                                          <div>
+                                            {item.Teacher.fullName}
+                                          </div>
+                                          <div>
+                                            {' )'}
+                                          </div>
+                                        </div>,
+                                        value: item.id
+                                      }
+                                    }) || []
+                                    }
+                                    props={{
+                                      isClearable: true,
+                                      onChange: (e) => {
+                                        props.setFieldValue(`SectionSchedules.${index}.teacherSubjectId`, (e as any)?.value ?? "")
+                                      }
+                                    }}
+                                  />
+                                  <SelectForm
+                                    formikProps={props}
+                                    name={`SectionSchedules.${index}.scheduleId`}
+                                    title={t('SectionSchedulePage.schedule')}
+                                    placeholder={t('SectionSchedulePage.select-schedule')}
+                                    options={
+                                      Schedule && Schedule[props?.values?.SectionSchedules[index].day as Days]?.map((item) => {
+                                        return {
+                                          value: item.id,
+                                          label: <div className='flex gap-1'>
+                                            <div>
+                                              {moment.utc(item.timeFrom).format("HH:mm A")}
+                                            </div>
+                                            <div>
+                                              {" - "}
+                                            </div>
+                                            <div>
+                                              {moment.utc(item.timeTo).format("HH:mm A")}
+                                            </div>
+                                          </div>
+                                        }
+                                      })
+                                      || []
+
+                                    }
+                                    props={{
+                                      isClearable: true,
+                                      onChange: (e) => {
+                                        props.setFieldValue(`SectionSchedules.${index}.scheduleId`, (e as any)?.value ?? "")
                                       }
                                     }}
                                   />
@@ -251,7 +401,7 @@ const PageComponent = () => {
                                 </div>
 
                                 {
-                                  props.values.schedules?.length - 1 != 0 && <div
+                                  props.values.SectionSchedules?.length - 1 != 0 && <div
                                     className="flex justify-end gap-2 mt-2">
                                     <button type="button"
                                       className=" hover:bg-danger/10 border-danger/70 text-danger/70  hover:scale-[1.01] transition-transform py-[2px] px-2  rounded border"
@@ -269,7 +419,7 @@ const PageComponent = () => {
                         // index == props.values.targets.length - 1 &&
                         <button type="button"
                           className=" w-fit mr-auto bg-secondary/10 hover:bg-secondary/20 border-secondary/70 text-secondary/70 hover:scale-[1.01] transition-transform py-1 px-2   rounded border"
-                          onClick={() => push(schedules)}>
+                          onClick={() => push(SectionSchedules)}>
                           {t('common.add')}
                         </button>}
                     </div>
@@ -279,34 +429,93 @@ const PageComponent = () => {
                   :
                   <div className="Card flex flex-col gap-1">
                     <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                      {t("SchedulePage.ScheduleInformation")}
+                      {t("SectionSchedulePage.SectionScheduleInformation")}
                     </div>
+
                     <SelectForm
                       formikProps={props}
-                      name={`timeFrom`}
-                      title={t('SchedulePage.timeFrom')}
-                      placeholder={t('SchedulePage.select-timeFrom')}
-                      options={listTime}
+                      name={`stageId`}
+                      title={t("StageSubjectPage.StageName")}
+                      placeholder={t("SectionSchedulePage.select-StageName")}
+                      options={stage?.map((item) => {
+                        return {
+                          label: t(item.name as any),
+                          value: item.id,
+                        };
+                      }) ?? []
+                      }
                       props={{
+                        isLoading: isFetchingStage,
                         isClearable: true,
                         onChange: (e) => {
-                          props.setFieldValue(`timeFrom`, (e as any)?.value ?? "")
+                          props.setFieldValue(`stageId`, (e as any)?.value ?? "")
+                          props.setFieldValue(`classId`, undefined)
+
                         }
                       }}
                     />
+
+                    {props.values.stageId && <SelectForm
+                      formikProps={props}
+                      name={`classId`}
+                      title={t("SectionSchedulePage.ClassName")}
+                      placeholder={t("SectionSchedulePage.select-ClassName")}
+                      options={stage ? stage
+                        .find((item) => item.id === props.values.stageId)?.Class?.map((item) => {
+                          return {
+                            label: t(item.name as any),
+                            value: item.id,
+                          };
+                        }) || [] : []
+                      }
+                      props={{
+                        isLoading: isFetchingStage,
+                        isClearable: true,
+                        onChange: (e) => {
+                          const value = (e as any)?.value ?? ""
+                          props.setFieldValue(`classId`, value)
+                          getTeacherSubject({
+                            classId: value,
+                            stageId: props.values.stageId,
+                            schoolYearId: props.values.schoolYearId
+                          })
+
+                        }
+                      }}
+                    />}
                     <SelectForm
                       formikProps={props}
-                      name={`timeTo`}
-                      title={t('SchedulePage.timeTo')}
-                      placeholder={t('SchedulePage.select-timeTo')}
-                      options={listTime}
+                      name={`teacherSubjectId`}
+                      title={t('SectionSchedulePage.teacherSubject')}
+                      placeholder={t('SectionSchedulePage.select-teacherSubject')}
+                      options={TeacherSubject?.map((item, index) => {
+                        return {
+                          label: <div className='flex gap-1'>
+                            <div>
+                              {item.StageSubject.Subject.name}
+                            </div>
+                            <div>
+                              {"( "}
+                            </div>
+                            <div>
+                              {item.Teacher.fullName}
+                            </div>
+                            <div>
+                              {' )'}
+                            </div>
+                          </div>,
+                          value: item.id
+                        }
+                      }) || []
+                      }
                       props={{
                         isClearable: true,
                         onChange: (e) => {
-                          props.setFieldValue(`timeTo`, (e as any)?.value ?? "")
+                          props.setFieldValue(`teacherSubjectId`, (e as any)?.value ?? "")
                         }
                       }}
                     />
+
                   </div>
                 }
 
@@ -317,7 +526,7 @@ const PageComponent = () => {
 
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingScheduleUpdate || isLoadingScheduleCreate}
+                    isLoading={isLoadingSectionScheduleUpdate || isLoadingSectionScheduleCreate}
                   />
                 </div>
               </Form>

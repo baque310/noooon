@@ -4,7 +4,7 @@ import React from 'react';
 import { Form, Formik, FormikProps } from 'formik';
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import Model from '@/components/Model';
-import { SelectForm } from '@/components/Form/SelectForm'; 
+import { SelectForm } from '@/components/Form/SelectForm';
 import { LoadingForm } from '@/components/Form/loadingForm';
 import { getTranslation } from "@/ni18n/i18n";
 import { useClassGetDataQuery } from "@/services/admin/class";
@@ -72,7 +72,7 @@ const CreateComponent = ({
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
-        if (error.message == "section already exists") {
+        if (error.message == "section already exists" || error.message == "name already exist") {
           return toast.error(t('SectionPage.name-already-exists'), { autoClose: 30000 });
         }
 
@@ -90,12 +90,12 @@ const CreateComponent = ({
     }
   });
   const sections = [
-    {  title: 'A' },
-    {  title: 'B' },
-    {   title: 'C' },
-    {  title: 'D' },
-    {  title: 'E' },
-    {  title: 'F' },
+    { title: 'A' },
+    { title: 'B' },
+    { title: 'C' },
+    { title: 'D' },
+    { title: 'E' },
+    { title: 'F' },
   ];
 
   return (
@@ -110,7 +110,7 @@ const CreateComponent = ({
           initialValues={{
             name: data?.name ?? "",
             classId: data?.classId ?? "",
-            isActive: data?.isActive ?? ""
+            isActive: data?.isActive ?? "true"
 
           }}
           validationSchema={schoolSchema}
@@ -135,28 +135,29 @@ const CreateComponent = ({
 
               />
               {id ?
-                <SelectForm
-                  formikProps={props}
-                  name={"isActive"}
-                  title={t("common.status")}
-                  placeholder={t("common.choses-status")}
-                  options={[
-                    {
-                      label: t("common.isActive"),
-                      value: "true"
-                    },
-                    {
-                      label: t("common.isNotActive"),
-                      value: "false"
-                    }
-                  ]}
-                  props={{
-                    isClearable: true,
-                    onChange: (e) => {
-                      props.setFieldValue("isActive", (e as any)?.value ?? "")
-                    }
-                  }}
-                />
+                // <SelectForm
+                //   formikProps={props}
+                //   name={"isActive"}
+                //   title={t("common.status")}
+                //   placeholder={t("common.choses-status")}
+                //   options={[
+                //     {
+                //       label: t("common.isActive"),
+                //       value: "true"
+                //     },
+                //     {
+                //       label: t("common.isNotActive"),
+                //       value: "false"
+                //     }
+                //   ]}
+                //   props={{
+                //     isClearable: true,
+                //     onChange: (e) => {
+                //       props.setFieldValue("isActive", (e as any)?.value ?? "")
+                //     }
+                //   }}
+                // />
+                <></>
 
                 : <SelectForm
                   formikProps={props}

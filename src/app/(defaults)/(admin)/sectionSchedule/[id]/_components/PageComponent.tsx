@@ -7,22 +7,21 @@ import { BackButton } from '@/components/common/BackButton';
 import { ItemList } from '@/components/common/ItemList';
 
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazyScheduleGetDataByIdQuery, useScheduleRemoveMutation } from "@/services/admin/Schedule";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { ArrowIcons } from '@/components/common/icons/Actions';
 import moment from 'moment';
-import { AttachmentsImage } from '@/components/common/LightboxImagePreview';
 import DeleteModel from '@/components/Model/DeleteModel';
+import { useLazySectionScheduleGetDataByIdQuery, useSectionScheduleRemoveMutation } from '@/services/admin/SectionSchedule';
 
 const PageComponent = () => {
     const { t } = getTranslation();
     const router = useRouter()
     const params = useParams()
     const { id } = params
-    const [ScheduleGetDataById, { currentData: data, isFetching }] = useLazyScheduleGetDataByIdQuery()
-    const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useScheduleRemoveMutation()
+    const [ScheduleGetDataById, { currentData: data, isFetching }] = useLazySectionScheduleGetDataByIdQuery()
+    const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useSectionScheduleRemoveMutation()
 
     useEffect(() => {
         if (id) {
@@ -56,12 +55,12 @@ const PageComponent = () => {
             {
                 isFetching ? <LoadingForm /> : <>
                     <div className='CardDetails internalMenu '>
-                        <ItemList title={t('SchedulePage.day')} value={data?.day && t(data.day as any)} />
-                        <ItemList title={t('SchedulePage.timeFrom')} value={moment.utc(data?.timeFrom).format("hh:mm:ss A")} />
+                        {/* <ItemList title={t('SchedulePage.day')} value={data?.day && t(data.day as any)} /> */}
+                        {/* <ItemList title={t('SchedulePage.timeFrom')} value={moment.utc(data?.timeFrom).format("hh:mm:ss A")} />
                         <ItemList title={t('SchedulePage.timeTo')} value={moment.utc(data?.timeTo).format("hh:mm:ss A")} />
                         <ItemList title={t('common.updatedAt')} value={moment.utc(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
                         <ItemList title={t('common.createdAt')} value={moment.utc(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
-                    </div>
+                   */} </div>
 
                     <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">
                         {t('common.settings')}
@@ -70,7 +69,7 @@ const PageComponent = () => {
                         <ItemList
                             props={{
                                 onClick: () => {
-                                    router.push(`/schedule/createOrUpdate?id=${id}`)
+                                    router.push(`/sectionSchedule/createOrUpdate?id=${id}`)
                                 }
                             }}
                             title={t('SchedulePage.update-info')}
@@ -92,13 +91,13 @@ const PageComponent = () => {
             }
 
             <DeleteModel
-                description={t('SchedulePage.Are-you-sure-you-want-to-delete-this-Schedule')}
+                description={t('SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule')}
                 title={t('SchedulePage.DeleteSchedule')}
                 open={openDelete}
                 setOpen={setOpenDelete}
                 handleRemove={handleRemove}
                 isLoading={isLoadingScheduleRemove}
-                name={data?.day ?? ""}
+                name={data?.section?.name ?? ""}
             />
 
         </div>

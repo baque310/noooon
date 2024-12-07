@@ -13,6 +13,7 @@ import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
  import { useSelector } from "react-redux";
+import moment from "moment";
 
 
 
@@ -80,7 +81,7 @@ const TableComponent = () => {
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">{t("SectionPage.Section")}</div>
+        <div className="text-xl uppercase ">{t("SectionPage.Sections")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
@@ -148,26 +149,32 @@ const TableComponent = () => {
                 // sortable: true,
                 // render: ({ Class }: any) => t(Class.name as any),
               },
-              {
-                title: t("common.status"),
-                accessor: "isActive",
-                sortable: true,
-                render: ({ isActive }) => (
-                  <div className="flex gap-2 px-[2px]">
-                    {isActive == "true" ? (
-                      <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("common.isActive")}</div>
-                    ) : (
-                      <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t("common.isNotActive")}</div>
-                    )}
-                  </div>
-                ),
-              },
+              // {
+              //   title: t("common.status"),
+              //   accessor: "isActive",
+              //   sortable: true,
+              //   render: ({ isActive }) => (
+              //     <div className="flex gap-2 px-[2px]">
+              //       {isActive == "true" ? (
+              //         <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("common.isActive")}</div>
+              //       ) : (
+              //         <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t("common.isNotActive")}</div>
+              //       )}
+              //     </div>
+              //   ),
+              // },
 
+              {
+                title: t("common.updatedAt"),
+                accessor: "updatedAt",
+                // sortable: true,
+                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+              },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
                 // sortable: true,
-                // render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}

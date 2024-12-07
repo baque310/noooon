@@ -5,7 +5,7 @@ import PageComponent from './_components/PageComponent';
 
 
 export const metadata: Metadata = {
-  title: 'schedule ',
+  title: 'Section Schedule ',
 };
 const Page = () => {
 

@@ -204,13 +204,16 @@ export const api = createApi({
     "ScheduleRemove",
 
     //Section Schedule Tag
-     "SectionScheduleGetData",
-     "SectionScheduleGetDataById",
-     "SectionScheduleCreate",
-     "SectionScheduleUpdate",
-     "SectionScheduleRemove",
- 
-     
+    "SectionScheduleGetData",
+    "SectionScheduleGetDataById",
+    "SectionScheduleCreate",
+    "SectionScheduleUpdate",
+    "SectionScheduleRemove",
+
+    // setting tags
+    "SettingGetData",
+
+
 
 
 

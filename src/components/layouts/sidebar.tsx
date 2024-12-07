@@ -164,23 +164,38 @@ const Sidebar = () => {
                 toggleMenu={toggleMenu}
                 setCurrentMenu={setCurrentMenu}
               />
+              <MenuSubItem
+                permission={["read-any", "read-own"]}
+                resource={["student", "student_enrollment", ]}
+                name={"students"}
+                currentMenu={currentMenu}
+                label={t("sidebar.students")}
+                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                menuList={[
+                  {
+                    number: 0,
+                    label: t("sidebar.student"),
+                    resource: "student",
+                    permission: ["read-any", "read-own"],
+                    to: "student",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  },
+                  {
+                    number: 0,
+                    label: t("sidebar.studentEnrollment"),
+                    resource: "student_enrollment",
+                    permission: ["read-any", "read-own"],
+                    to: "studentEnrollment",
+                    isNoSub: true,
+                    // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                  }, 
+                ]}
+                toggleMenu={toggleMenu}
+                setCurrentMenu={setCurrentMenu}
+              />
 
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"student"}
-                toggleMenu={toggleMenu}
-                to={"/student"}
-                label={t("sidebar.student")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
-              <MenuItem
-                permission={["read-any", "read-own"]}
-                resource={"student_enrollment"}
-                toggleMenu={toggleMenu}
-                to={"/studentEnrollment"}
-                label={t("sidebar.studentEnrollment")}
-                icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-              />
+              
               <MenuItem
                 permission={["read-any", "read-own"]}
                 resource={"teacher"}
@@ -229,7 +244,7 @@ const Sidebar = () => {
                 resource={["subject", "stage_subject", "stage_subject"]}
                 name={"subjects"}
                 currentMenu={currentMenu}
-                label={t("sidebar.subject")}
+                label={t("sidebar.subjects")}
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 menuList={[
                   {

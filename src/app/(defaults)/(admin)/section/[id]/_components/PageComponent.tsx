@@ -53,16 +53,16 @@ const PageComponent = () => {
             {
                 isFetching ? <LoadingForm /> : <>
                     <div className='CardDetails internalMenu '>
-                        <ItemList title={t('SectionPage.name')} value={t(data?.name as any)} />
-                        <ItemList title={t('SectionPage.ClassName')} value={t(data?.Class?.name as any)} />
-                        <ItemList title={t('common.status')} value={
+                        <ItemList title={t('SectionPage.name')} value={t(data?.name ?? "" as any)} />
+                        <ItemList title={t('SectionPage.ClassName')} value={t(data?.Class?.name ?? "" as any)} />
+                        {/* <ItemList title={t('common.status')} value={
                             <div className='flex gap-2 px-[2px]'>
                                 {data?.isActive == "true" ?
                                     <div className={` rounded-md p-1 ltr:ml-2 rtl:ml-2  bg-success/20 text-success `}>{t("common.isActive")}</div>
                                     : <div className={` rounded-md p-1 ltr:ml-2 rtl:ml-2  bg-danger/50 text-danger`}>{t("common.isNotActive")}</div>
                                 }
                             </div>
-                        } />
+                        } /> */}
                         <ItemList title={t('common.createdAt')} value={moment(data?.createdAt).format('YYYY-MM-DD hh:mm:ss A')} />
 
                     </div>

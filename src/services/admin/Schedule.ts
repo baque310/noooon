@@ -42,11 +42,13 @@ export const daysArray = Object.values(Days).map(d => { return { value: d, label
 
 
 
-
+export interface GetScheduleDataRequestParams extends GetDataRequestParams {
+    day?: string
+}
 
 export const Schedule = api.injectEndpoints({
     endpoints: (build) => ({
-        ScheduleGetData: build.query<ISchedule, GetDataRequestParams>({
+        ScheduleGetData: build.query<ISchedule, GetScheduleDataRequestParams>({
             query: (params) => ({
                 url: `admin/schedule`,
                 params,
@@ -58,7 +60,7 @@ export const Schedule = api.injectEndpoints({
 
         ScheduleGetDataById: build.query<IScheduleData, { id: string }>({
             query: ({ id }) => ({
-                url: `admin/schedule/schedule/${id}`,
+                url: `admin/schedule/${id}`,
                 method: "GET",
             }),
             providesTags: ["ScheduleGetDataById"],
@@ -67,7 +69,7 @@ export const Schedule = api.injectEndpoints({
 
         ScheduleCreate: build.mutation<ISchedule, AddSchedulePayload>({
             query: (body) => ({
-                url: `admin/schedule/schedule`,
+                url: `admin/schedule`,
                 body,
                 method: "POST",
             }),
@@ -76,7 +78,7 @@ export const Schedule = api.injectEndpoints({
 
         ScheduleUpdate: build.mutation<ISchedule, { id: string, body: UpdateSchedulePayload }>({
             query: ({ body, id }) => ({
-                url: `admin/schedule/schedule/${id}`,
+                url: `admin/schedule/${id}`,
                 body,
                 method: "PATCH",
             }),
@@ -85,7 +87,7 @@ export const Schedule = api.injectEndpoints({
 
         ScheduleRemove: build.mutation<void, { id: string }>({
             query: ({ id }) => ({
-                url: `admin/schedule/schedule/${id}`,
+                url: `admin/schedule/${id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["ScheduleRemove", "ScheduleGetDataById", "ScheduleGetData"],

@@ -73,6 +73,10 @@ const PageComponent = () => {
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
+        if(error.message=="Resource already exists. More details: {\"modelName\":\"StudentEnrollment\",\"target\":\"student_enrollments_schoolYearId_studentId_key\"}")
+        {
+          return toast.error(t("StudentEnrollmentPage.schoolYear-already-exists"), { autoClose: 30000 });
+        }
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
       toast.error(error, { autoClose: 30000 });

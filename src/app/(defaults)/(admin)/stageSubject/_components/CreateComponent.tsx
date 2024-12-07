@@ -152,8 +152,7 @@ const CreateComponent = ({
                     props.setFieldValue("stageId", (e as any)?.value ?? "")
                   }
                 }}
-              />
-
+              /> 
 
               <SelectForm
                 formikProps={props}
@@ -175,9 +174,7 @@ const CreateComponent = ({
                     props.setFieldValue("classId", (e as any)?.value ?? "") 
                   }
                 }}
-              />
-
-
+              /> 
 
               <div className="flex flex-row-reverse gap-2">
                 <ButtonForm

@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "mantine-datatable";
-import React from "react";
+import React, { useEffect } from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
@@ -31,7 +31,6 @@ const TableComponent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
-  const schoolYearId = searchParams.get("schoolYearId") || undefined
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
     columnAccessor: "createdAt",
     direction: "desc",
@@ -64,6 +63,20 @@ const TableComponent = () => {
     }
     | undefined
   >();
+  useEffect(() => {
+    if (SchoolYearData) {
+      setParam(
+        {
+          ...params,
+          schoolYearId: SchoolYearData?.find(item =>
+            item.from == moment().year()
+          )?.id || undefined,
+
+        }
+      )
+    }
+  }, [SchoolYearData])
+
   const params = {
     skip: pageNumber,
     take: 30,
@@ -122,7 +135,7 @@ const TableComponent = () => {
       setParam({ ...param, classId: value.value });
 
     } else {
-      setParam({ ...param, classId: undefined });
+      setParam({ ...param, classId: undefined, sectionId: undefined });
 
     }
   }
@@ -139,7 +152,7 @@ const TableComponent = () => {
       setParam({ ...param, stageId: value.value });
 
     } else {
-      setParam({ ...param, stageId: undefined });
+      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined  });
     }
   }
   const handleSelectSchoolYear = (value: any) => {
@@ -166,12 +179,13 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
-           
+
           <SelectWithSearch
             placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
             isLoading={isFetchingSchoolYearData}
             props={{
-              onChange: handleSelectSchoolYear
+              onChange: handleSelectSchoolYear,
+              value: param?.schoolYearId
             }}
             options={SchoolYearData?.map((item) => {
               return {
@@ -248,51 +262,56 @@ const TableComponent = () => {
               resource={"admin"}
               permission={["create-any", "create-own"]}
             />
-          } 
+          }
 
         </div>
       </div>
-      <div className={"flex justify-end max-md:flex-col gap-2 mt-2 "}>
+      <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
+
         <SelectWithSearch
-            placeholder={t("StudentEnrollmentPage.StageName")}
-            isLoading={isFetchingStageData}
-            props={{
-              onChange: handleSelectStage
-            }}
-            options={StageData?.map((item) => {
-              return {
-                value: item.id,
-                label: t(item.name as any),
-              };
-            })}
-          />
+          placeholder={t("StudentEnrollmentPage.StageName")}
+          isLoading={isFetchingStageData}
+          props={{
+            onChange: handleSelectStage
+          }}
+          options={StageData?.map((item) => {
+            return {
+              value: item.id,
+              label: t(item.name as any),
+            };
+          })}
+        />
+        {param?.stageId &&
           <SelectWithSearch
+
             placeholder={t("SectionPage.ClassName")}
             isLoading={isFetchingClassData}
             props={{
               onChange: handleSelectClass
             }}
-            options={ClassData?.map((item) => {
+            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
               return {
                 value: item.id,
                 label: t(item.name as any),
               };
             })}
           />
-         
-          <SelectWithSearch
-            placeholder={t("StudentEnrollmentPage.SectionName")}
-            isLoading={isFetchingSectionData}
-            props={{
-              onChange: handleSelectSection
-            }}
-            options={SectionData?.map((item) => {
-              return {
-                value: item.id,
-                label: t(item.name as any),
-              };
-            })}
-          />  
+
+        }
+
+        {param?.classId && <SelectWithSearch
+          placeholder={t("StudentEnrollmentPage.SectionName")}
+          isLoading={isFetchingSectionData}
+          props={{
+            onChange: handleSelectSection
+          }}
+          options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
+            return {
+              value: item.id,
+              label: t(item.name as any),
+            };
+          })}
+        />}
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
