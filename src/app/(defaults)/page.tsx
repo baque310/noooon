@@ -1,8 +1,13 @@
+import { Metadata } from 'next';
 import React from 'react'
-
+export const metadata: Metadata = {
+  title: 'dashboard',
+};
 const Page = () => {
   return (
-    <div>Page</div>
+    <div className='flex justify-center items-center h-screen w-full'>
+      dashboard 
+    </div>
   )
 }
 

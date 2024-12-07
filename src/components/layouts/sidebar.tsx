@@ -81,7 +81,8 @@ const Sidebar = () => {
         <div className={`h-full bg-white dark:bg-black ${!semidark && "bg-[#28243d]"} `}>
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/dashboard" className="main-logo flex shrink-0 items-center">
-              <img className="ml-[5px] w-10 h-10 rounded-full flex-none" src="/favicon.png" alt="logo" />
+              
+              {/* <img className="ml-[5px] w-10 h-10 rounded-full flex-none" src="/favicon.png" alt="logo" /> */}
               <span className="align-middle text-lg font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">{t("appName")}</span>
             </Link>
             <button
@@ -166,7 +167,7 @@ const Sidebar = () => {
               />
               <MenuSubItem
                 permission={["read-any", "read-own"]}
-                resource={["student", "student_enrollment", ]}
+                resource={["student", "student_enrollment",]}
                 name={"students"}
                 currentMenu={currentMenu}
                 label={t("sidebar.students")}
@@ -189,13 +190,13 @@ const Sidebar = () => {
                     to: "studentEnrollment",
                     isNoSub: true,
                     // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                  }, 
+                  },
                 ]}
                 toggleMenu={toggleMenu}
                 setCurrentMenu={setCurrentMenu}
               />
 
-              
+
               <MenuItem
                 permission={["read-any", "read-own"]}
                 resource={"teacher"}
@@ -238,7 +239,7 @@ const Sidebar = () => {
                 icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
               />
 
-            
+
               <MenuSubItem
                 permission={["read-any", "read-own"]}
                 resource={["subject", "stage_subject", "stage_subject"]}
@@ -294,7 +295,7 @@ const Sidebar = () => {
                     to: "schedule",
                     isNoSub: true,
                     // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                  }, 
+                  },
                   {
                     number: 0,
                     label: t("sidebar.sectionSchedule"),
@@ -303,7 +304,7 @@ const Sidebar = () => {
                     to: "sectionSchedule",
                     isNoSub: true,
                     // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                  }, 
+                  },
                 ]}
                 toggleMenu={toggleMenu}
                 setCurrentMenu={setCurrentMenu}

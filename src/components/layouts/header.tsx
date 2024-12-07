@@ -71,7 +71,7 @@ export const Header = () => {
                 <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
                     <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
                         <Link href="/" className="main-logo flex shrink-0 items-center">
-                            <img className="inline  w-10 h-10 rounded-full ltr:-ml-1 rtl:-mr-1" src="/favicon.png" alt="logo" />
+                            {/* <img className="inline  w-10 h-10 rounded-full ltr:-ml-1 rtl:-mr-1" src="/favicon.png" alt="logo" /> */}
                             <span className="hidden align-middle text-lg  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">{t('appName')}</span>
                         </Link>
                         <button
