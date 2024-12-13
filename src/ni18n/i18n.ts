@@ -11,7 +11,7 @@ type NestedKeys<T> = {
 // TranslationKeys type to include all keys from both en and ar
 export type TranslationKeys = NestedKeys<typeof en> | NestedKeys<typeof ar>;
 
- 
+
 // Type for localization data
 interface LocaleData {
   [key: string]: any;
@@ -42,7 +42,7 @@ export const getTranslation = () => {
   const lang = getLang() || 'en';
   const data: LocaleData = langObj[lang as keyof Locales] || en
 
-  const t = (key: TranslationKeys): string => {
+  const t = (key: TranslationKeys | "" = ""): string => {
     const keys = key.split('.');
     let result: any = data;
 

@@ -2,7 +2,7 @@ import React from 'react'
 import Select, { GroupBase, OptionsOrGroups } from 'react-select';
 
 
-export const SelectWithSearch = ({ placeholder, options, props, isLoading }: { placeholder: string, isLoading: boolean, props: any, options: OptionsOrGroups<any, GroupBase<any>> | undefined }) => {
+export const SelectWithSearch = ({ placeholder, options, props, isLoading=false }: { placeholder: string, isLoading?: boolean, props: any, options: OptionsOrGroups<any, GroupBase<any>> | undefined }) => {
     return (
         <div className="custom-select w-full min-w-[210px]">
             <Select

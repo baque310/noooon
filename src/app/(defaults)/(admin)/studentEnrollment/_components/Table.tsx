@@ -15,14 +15,12 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import UpdateComponent from "./UpdateComponent";
 import Dropdown from "@/components/dropdown";
-import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
 import { toast } from "react-toastify";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
-import { useClassGetDataQuery } from "@/services/admin/class";
-import { useSectionGetDataQuery } from "@/services/admin/section";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
+import { useSettingGetDataQuery } from "@/services/Setting";
 
 
 const TableComponent = () => {
@@ -35,18 +33,11 @@ const TableComponent = () => {
     columnAccessor: "createdAt",
     direction: "desc",
   });
-  const [searchStage, setSearchStage] = useState("");
   const [selectedRecords, setSelectedRecords] = useState([]);
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
-
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
-  const { isFetching: isFetchingClassData, currentData: ClassData } = useClassGetDataQuery({});
-  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({
-    skip: 1,
-    take: 100,
-    search: searchStage
-  });
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
@@ -64,18 +55,16 @@ const TableComponent = () => {
     | undefined
   >();
   useEffect(() => {
-    if (SchoolYearData) {
+    if (SchoolYearData && Setting) {
       setParam(
         {
           ...params,
-          schoolYearId: SchoolYearData?.find(item =>
-            item.from == moment().year()
-          )?.id || undefined,
+          schoolYearId: Setting?.currentSchoolYearId
 
         }
       )
     }
-  }, [SchoolYearData])
+  }, [SchoolYearData, Setting])
 
   const params = {
     skip: pageNumber,
@@ -152,7 +141,7 @@ const TableComponent = () => {
       setParam({ ...param, stageId: value.value });
 
     } else {
-      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined  });
+      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
     }
   }
   const handleSelectSchoolYear = (value: any) => {
@@ -182,7 +171,7 @@ const TableComponent = () => {
 
           <SelectWithSearch
             placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
-            isLoading={isFetchingSchoolYearData}
+            isLoading={isFetchingSchoolYearData || isFetchingSetting}
             props={{
               onChange: handleSelectSchoolYear,
               value: param?.schoolYearId
@@ -283,9 +272,8 @@ const TableComponent = () => {
         />
         {param?.stageId &&
           <SelectWithSearch
-
             placeholder={t("SectionPage.ClassName")}
-            isLoading={isFetchingClassData}
+
             props={{
               onChange: handleSelectClass
             }}
@@ -301,7 +289,6 @@ const TableComponent = () => {
 
         {param?.classId && <SelectWithSearch
           placeholder={t("StudentEnrollmentPage.SectionName")}
-          isLoading={isFetchingSectionData}
           props={{
             onChange: handleSelectSection
           }}

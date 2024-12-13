@@ -1,14 +1,13 @@
 import { api, BASE_URL } from "@/services/api";
 import { BaseGetDataResponse, Days, GetDataRequestParams } from "../types/BaseType";
+import { ISection } from "./section";
 
 
 
 export type ISectionSchedule = {
     data: {
         [K in keyof typeof Days]: ISectionScheduleData[];
-    }
-    "totalCount": 27,
-    "pageCount": 3
+    } 
 }
 
 interface ISectionScheduleData {
@@ -19,10 +18,7 @@ interface ISectionScheduleData {
     schoolId: string
     schoolYearId: string
     scheduleId: string
-    section: {
-        id: string
-        name: string
-    },
+    section: ISection 
     Schedule: {
         id: string
         day: string

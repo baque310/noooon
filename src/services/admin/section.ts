@@ -1,6 +1,7 @@
 import { api } from "@/services/api";
 import { User } from "next-auth";
 import { GetDataRequestParams } from "../types/BaseType";
+import { IStage } from "./stage";
 
 export interface SectionDataResponse extends User { }
 
@@ -17,6 +18,7 @@ export interface ISection {
         createdAt: string
         updatedAt: string
         stageId: string
+        Stage: IStage
     }
 }
 
