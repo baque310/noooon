@@ -5,19 +5,21 @@ import { LoadingForm } from '@/components/Form/loadingForm';
 import { BackButton } from '@/components/common/BackButton';
 
 import { getTranslation } from "@/ni18n/i18n";
-import { AddBusPayload, useLazyBusGetDataByIdQuery, useBusCreateMutation, useBusUpdateMutation } from "@/services/admin/bus";
+import { AddBusPayload, useLazyBusGetDataByIdQuery, useBusUpdateMutation, BusConnectStudentBusPayload, useBusConnectStudentBusMutation } from "@/services/admin/bus";
 import { FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
-export interface FormValues extends AddBusPayload {
+export interface FormValues extends BusConnectStudentBusPayload {
 
 }
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import { Form, Formik, FormikProps } from 'formik';
 import { InputForm } from '@/components/Form/inputForm';
 import { UploadFileForm } from '@/components/Form/uploadFileForm';
+import { useStudentGetDataQuery } from '@/services/admin/student';
+import { CheckBoxForm } from '@/components/Form/CheckBoxForm';
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -25,6 +27,7 @@ const PageComponent = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [BusGetDataById, { currentData: data, isFetching }] = useLazyBusGetDataByIdQuery()
+  const [searchStudent, setSearchStudent] = useState("");
   useEffect(() => {
     if (id) {
       BusGetDataById({ id: String(id) })
@@ -35,35 +38,22 @@ const PageComponent = () => {
         });
     }
   }, [id])
+  const { currentData: StudentData, isFetching: isFetchingStudent } = useStudentGetDataQuery({
+    search: searchStudent,
+    skip: 1,
+    take: 100,
 
-  const [BusCreate, { isLoading: isLoadingBusCreate }] = useBusCreateMutation();
-  const [BusUpdate, { isLoading: isLoadingBusUpdate }] = useBusUpdateMutation();
+  });
+  const [BusConnectStudentBus, { isLoading: isLoadingBusConnectStudentBus }] = useBusConnectStudentBusMutation();
+
 
   const handleSubmit = async (
     values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
 
-      const formData = new FormData();
-      if (typeof values.photo === "string") {
-        delete (values as any).photo;
-      }
-      for (const key in values) {
-        if ((values as any)[key]) {
-          formData.append(key, (values as any)[key]);
-        }
-      }
+      await BusConnectStudentBus(values).unwrap()
 
-      if (id) {
-        await BusUpdate({
-          body: formData,
-          id: String(id),
-        }
-        ).unwrap()
-
-      } else {
-        await BusCreate(formData).unwrap()
-      }
-      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
+      toast.success(t("common.added-successfully"), { autoClose: 30000, });
       resetForm();
       if (id) {
         router.back();
@@ -82,112 +72,83 @@ const PageComponent = () => {
   };
 
   const busSchema = Yup.object().shape({
-    fullName: Yup.string().required(t("common.this-field-is-required")),
-    phone1: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")).required(t("common.this-field-is-required")),
-    phone2: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")),
-    carNumber: Yup.string().required(t("common.this-field-is-required")),
-    carType: Yup.string().required(t("common.this-field-is-required")),
-    carColor: Yup.string().required(t("common.this-field-is-required")),
+    studentIds: Yup.array().of(Yup.string().required(t("common.this-field-is-required"))),
   })
 
 
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton title={t(id ? "BusPage.update-info" : "BusPage.add")} />
+        <BackButton title={t("BusPage.addStudents")} />
 
         {isFetching ? (
           <LoadingForm />
         ) : (
           <Formik<FormValues>
             initialValues={{
-              fullName: data?.fullName || "",
-              address: data?.address || "",
-              carColor: data?.carColor || "",
-              phone1: data?.phone1 || "",
-              phone2: data?.phone2 || "",
-              carNumber: data?.carNumber || "",
-              carType: data?.carType || "",
-              photo: data?.photo || "",
+              busId: id as string,
+              studentIds: [],
             }}
             validationSchema={busSchema}
             onSubmit={handleSubmit}
           >
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
-                <div className="Card flex flex-col gap-1">
-                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                    {t("BusPage.infoBus")}
+
+                <div className="Card">
+                  <div className=" text-sm font-semibold text-black dark:text-white-dark  mb-2 ">
+                    {t("StudentEnrollmentPage.Students")}
                   </div>
                   <InputForm
                     formikProps={props}
-                    name={"fullName"}
-                    title={t("BusPage.fullName")}
-                    placeholder={t("BusPage.enter-fullName")}
+                    name={"searchStudent"}
+                    title={t("" as any)}
+                    placeholder={t("common.search")}
+                    props={{
+                      onChange: (e) => {
+                        setSearchStudent(e.target.value);
+                        props.setFieldValue("searchStudent", e.target.value);
+                      },
+                    }}
                   />
-                  <InputForm
-                    formikProps={props}
-                    name={"carType"}
-                    title={t("BusPage.carType")}
-                    placeholder={t("BusPage.enter-carType")}
-
-                  />
-                  <InputForm
-                    formikProps={props}
-                    name={"carNumber"}
-                    title={t("BusPage.carNumber")}
-                    placeholder={t("BusPage.enter-carNumber")}
-
-                  />
-                  <InputForm
-                    formikProps={props}
-                    name={"carColor"}
-                    title={t("BusPage.carColor")}
-                    placeholder={t("BusPage.enter-carColor")}
-
-                  />
+                  <>
+                    {isFetchingStudent ? (
+                      <div className="flex justify-center my-2">
+                        <div className="loader !bg-primary !w-10 !h-10" />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-1 py-2">
+                        {StudentData?.data.map((item, index) => (
+                          <div className="" key={item.id}>
+                            <CheckBoxForm
+                              key={index}
+                              formikProps={props}
+                              name={`studentIds.${index}`}
+                              title={`${item.fullName}`}
+                              props={{
+                                className: "rtl",
+                                checked: props.values.studentIds.some((it: any) => it == item.id),
+                                value: props.values.studentIds.some((it: any) => it == item.id),
+                                onChange: (e) => {
+                                  if (e.target.checked) {
+                                    let newValues = props.values.studentIds.concat(item.id);
+                                    props.setFieldValue(`studentIds`, newValues);
+                                  } else {
+                                    let newValues = props.values.studentIds.filter((it: any) => it != item.id);
+                                    props.setFieldValue(`studentIds`, newValues);
+                                  }
+                                },
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 </div>
-                <div className="Card flex flex-col gap-1">
-                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                    {t("BusPage.infoContact")}
-                  </div>
-                  <InputForm
-                    formikProps={props}
-                    name={"address"}
-                    title={t("BusPage.address")}
-                    placeholder={t("BusPage.enter-address")}
-                  />
-                  <div className='flex gap-2 max-md:flex-col'>
-                    <InputForm
-                      formikProps={props}
-                      name={"phone1"}
-                      title={t("BusPage.phone1")}
-                      placeholder={t("BusPage.enter-phone1")}
-                      props={{
-                        type: "tel"
-                      }}
-                    />
-                    <InputForm
-                      formikProps={props}
-                      name={"phone2"}
-                      title={t("BusPage.phone2")}
-                      placeholder={t("BusPage.enter-phone2")}
-                      props={{
-                        type: "tel"
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="Card flex flex-col gap-1">
-                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("BusPage.img-info")}</div>
-                  <UploadFileForm
-                    valueFileName={props.values.photo}
-                    formikProps={props}
-                    name={"photo"}
-                    title={t("BusPage.photo")}
-                    placeholder={""}
-                  />
-                </div>
+
+
+
                 <div className="flex flex-row-reverse gap-2">
                   <ButtonForm
                     props={{
@@ -195,7 +156,7 @@ const PageComponent = () => {
 
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingBusUpdate || isLoadingBusCreate}
+                    isLoading={isLoadingBusConnectStudentBus}
                   />
                 </div>
               </Form>
