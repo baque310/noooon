@@ -13,15 +13,15 @@ import { toast } from "react-toastify";
 import { ArrowIcons } from '@/components/common/icons/Actions';
 import moment from 'moment';
 import DeleteModel from '@/components/Model/DeleteModel';
-import { useLazySectionScheduleGetDataByIdQuery, useSectionScheduleRemoveMutation } from '@/services/admin/SectionSchedule';
+import { useLazyExamsGetDataByIdQuery, useExamsRemoveMutation } from '@/services/admin/Exams';
 
 const PageComponent = () => {
     const { t } = getTranslation();
     const router = useRouter()
     const params = useParams()
     const { id } = params
-    const [ScheduleGetDataById, { currentData: data, isFetching }] = useLazySectionScheduleGetDataByIdQuery()
-    const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useSectionScheduleRemoveMutation()
+    const [ScheduleGetDataById, { currentData: data, isFetching }] = useLazyExamsGetDataByIdQuery()
+    const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useExamsRemoveMutation()
 
     useEffect(() => {
         if (id) {
@@ -41,6 +41,9 @@ const PageComponent = () => {
         } catch (error: any) {
             console.error('Failed to operation :', error);
             if (error && error.message) {
+                if (error.message==`Foreign key constraint failed on the field. More details: {"modelName":"Exam","field_name":"examId"}`){
+                    return toast.error(t("ExamsPage.relatedWirhExam"), { autoClose: 15000 });
+                }
                 return toast.error(error.message, { autoClose: 15000 });
             }
             toast.error(error, { autoClose: 15000 });
@@ -50,21 +53,18 @@ const PageComponent = () => {
     const [openDelete, setOpenDelete] = useState(false)
     return (
         <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
-            <BackButton title={t('SectionSchedulePage.SectionScheduleInformation')} />
+            <BackButton title={t('ExamsPage.ExamsInformation')} />
 
             {
                 isFetching ? <LoadingForm /> : <>
                     <div className='CardDetails internalMenu '>
-                        <ItemList title={t('SectionSchedulePage.SchoolYear')} value={data?.SchoolYear.from + " - " + data?.SchoolYear.to} />
-                        <ItemList title={t('SectionSchedulePage.day')} value={data?.Schedule?.day && t(data.Schedule.day as any)} />
-                        <ItemList title={t('SectionSchedulePage.timeFrom')} value={moment.utc(data?.Schedule.timeFrom).format("hh:mm:ss A")} />
-                        <ItemList title={t('SectionSchedulePage.timeTo')} value={moment.utc(data?.Schedule.timeTo).format("hh:mm:ss A")} />
-                        <ItemList title={t('SectionSchedulePage.SubjectName')} value={data?.teacherSubject.StageSubject.Subject.name + "( " + data?.teacherSubject.Teacher.fullName + ")"} />
-                        <ItemList title={t('SectionSchedulePage.StageName')} value={data?.section.Class.Stage.name && t(data?.section.Class.Stage.name as any)} />
-                        <ItemList title={t('SectionSchedulePage.ClassName')} value={data?.section.Class.name} />
-                        <ItemList title={t('SectionSchedulePage.SectionName')} value={data?.section.name && t(data.section.name as any)} />
-                        {/* <ItemList title={t('common.updatedAt')} value={moment.utc(data.).format("YYYY-MM-DD hh:mm:ss A")} />
-                        <ItemList title={t('common.createdAt')} value={moment.utc(data?.Schedule.createdAt).format("YYYY-MM-DD hh:mm:ss A")} /> */}
+                        <ItemList title={t('ExamsPage.content')} value={data?.content} />
+                        <ItemList title={t('TeacherSubjectPage.SchoolYear')} value={data?.SchoolYear.from + " - " + data?.SchoolYear.to} />
+                        <ItemList title={t('SubjectPage.name')} value={data?.StageSubject.Subject.name} />
+                        <ItemList title={t('StagePage.name')} value={data?.StageSubject.Stage.name && t(data?.StageSubject?.Stage?.name as any)} />
+                        <ItemList title={t('ClassPage.name')} value={data?.StageSubject.Class.name} />
+                        <ItemList title={t('common.updatedAt')} value={moment.utc(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
+                        <ItemList title={t('common.createdAt')} value={moment.utc(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
 
                     </div>
 
@@ -75,10 +75,19 @@ const PageComponent = () => {
                         <ItemList
                             props={{
                                 onClick: () => {
-                                    router.push(`/sectionSchedule/createOrUpdate?id=${id}`)
+                                    router.push(`/exams/createOrUpdate?id=${id}`)
                                 }
                             }}
                             title={t('SchedulePage.update-info')}
+                            value={<ArrowIcons className='rtl:rotate-180 text-[#000]/50' />}
+                        />
+                        <ItemList
+                            props={{
+                                onClick: () => {
+                                    router.push(`/exams/addSection?id=${id}`)
+                                }
+                            }}
+                            title={t('ExamsPage.addSection')}
                             value={<ArrowIcons className='rtl:rotate-180 text-[#000]/50' />}
                         />
                         <ItemList
@@ -97,13 +106,13 @@ const PageComponent = () => {
             }
 
             <DeleteModel
-                description={t('SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule')}
-                title={t('SchedulePage.DeleteSchedule')}
+                description={t('ExamsPage.Are-you-sure-you-want-to-delete-this-Exams')}
+                title={t('ExamsPage.DeleteExam')}
                 open={openDelete}
                 setOpen={setOpenDelete}
                 handleRemove={handleRemove}
                 isLoading={isLoadingScheduleRemove}
-                name={data?.section?.name ? t(data?.section?.name as any) : ""}
+                name={data?.content ?? ""}
             />
 
         </div>

@@ -13,23 +13,33 @@ export interface GetDataRequestParams {
 }
 
 export type PAGE_CODE =
-  | "admin"
-  | "school"
-  | "stage"
-  | "class"
-  | "section"
-  | "student"
-  | "student_enrollment"
-  | "teacher"
-  | "bus"
-  | "banner"
-  | "guidance"
-  | "gallery"
-  | "subject"
-  | "stage_subject"
-  | "teacher_subject"
-  | "schedule"
-  | "section_schedule"
+| "admin"
+| "school"
+| "stage"
+| "class"
+| "section"
+| "student"
+| "student_enrollment"
+| "teacher"
+| "bus"
+| "banner"
+| "guidance"
+| "gallery"
+| "subject"
+| "stage_subject"
+| "teacher_subject"
+| "schedule"
+| "section_schedule"
+| "exam"
+| "exam_type"
+| "exam_result"
+| "attendance"
+| "lesson"
+| "homework"
+| "setting"
+| "notification"
+| "user"
+| "dashboard"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
@@ -43,3 +53,4 @@ export enum Days {
   FRIDAY = "FRIDAY",
   SATURDAY = "SATURDAY"
 }
+

@@ -16,8 +16,9 @@
         "please-check-the-information": "يرجى التأكد من المعلومات"
     },
     "common": {
-        "at-least-one-required" :"مطلوب واحد على الأقل",
-        "at-least-oneDay-required-content-subject" :"مطلوب يوم على الأقل يحتوي مادة",
+        "view":"عرض التفاصيل",
+        "at-least-one-required": "مطلوب واحد على الأقل",
+        "at-least-oneDay-required-content-subject": "مطلوب يوم على الأقل يحتوي مادة",
         "invalid-phone": "الهاتف غير صالح",
         "invalid-email": "البريد الالكتروني غير صالح",
         "Copied-to-clipboard": "تم النسخ إلى الحافظة",
@@ -87,7 +88,11 @@
         "teacherSubject": "المواد حسب المدرسين",
         "schedules": "جداول المواد الدراسية",
         "schedule": "اوقات الدروس",
-        "sectionSchedule": "جدول الدروس حسب المواد"
+        "sectionSchedule": "جدول الدروس حسب المواد",
+        "exams": "الامتحانات",
+        "exam": "معلومات الامتحان",
+        "examType": "نوع الامتحان",
+        "examResult": "نتآئج الامتحانات"
     },
     "SupperAdminPage": {
         "supperAdmin": "مدير عام",
@@ -160,6 +165,20 @@
         "name-already-exists": "الاسم موجود بالفعل",
         "Are-you-sure-you-want-to-delete-this-stage": "هل أنت متأكد أنك تريد حذف هذه المرحلة؟",
         "DeleteStage": "حذف المرحلة"
+    },
+    "ExamResultsPage": {
+        "StudentFullName": "اسم الطالب",
+        "score": "الدرجة",
+        "notes": "الملاحظة",
+        "examDate": "تاريخ الامتحان", 
+        "SectionName": "اسم السعبة",
+        "ExamTypeName": "نوع الامتحان", 
+        "StageName": "اسم المرحلة",
+        "SubjectName": "اسم المادة",
+        "SchoolYear":"السنة الدراسية",
+        "examResult":"نتآئج الامتحانات",
+        "ExamResultsInformation": "معلومات نتائج الامتحان"
+         
     },
     "ClassPage": {
         "Class": "الصف",
@@ -388,6 +407,21 @@
         "name-already-exist": "الاسم موجود بالفعل",
         "this-Subject-connected-with-other-stage": "هذا المادة مرتبطة بمراحل اخرى"
     },
+    "ExamTypePage": {
+        "ExamType": "نوع الامتحان",
+        "ExamTypes": "نوع الامتحان",
+        "name": "الاسم",
+        "enter-name": "ادخل الاسم",
+        "update-info": "تعديل نوع الامتحان",
+        "add": "اضافة",
+        "update": "تعديل",
+        "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+        "ExamTypeInformation": "معلومات نوع الامتحان ",
+        "Are-you-sure-you-want-to-delete-this-ExamType": "هل أنت متأكد أنك تريد حذف هذا نوع الامتحان ؟",
+        "DeleteExamType": "حذف نوع الامتحان ",
+        "name-already-exist": "الاسم موجود بالفعل",
+        "this-ExamType-connected-with-other-stage": "هذا نوع الامتحان مرتبطة بمراحل اخرى"
+    },
     "StageSubjectPage": {
         "StageSubject": "المواد حسب الصفوف",
         "StageSubjects": "المواد حسب الصفوف",
@@ -407,6 +441,40 @@
         "Are-you-sure-you-want-to-delete-this-StageSubject": "هل أنت متأكد أنك تريد حذف هذه المادة ؟",
         "DeleteStageSubject": "حذف المادة  ",
         "name-already-exist": "الاسم موجود بالفعل"
+    },
+    "ExamsPage": {
+        "exam": "معلومات الامتحان",
+        "ExamsInformation": "معلومات الامتحان",
+        "ExamsInformationAndDate": "معلومات الامتحان وتاريخ",
+        "content": "المحتوى",
+        "examTypName": "نوع الامتحان",
+        "select-examTypName": "اختر نوع الامتحان",
+        "stageSubject": "المادة",
+        "select-stageSubject": "اختر نوع المادة",
+        "examDate": "تاريخ الامتحان",
+        "enter-examDate": "ادخل تاريخ الامتحان",
+        "SchoolYear": "السنة الدراسية",
+        "enter-content": "ادخل المحتوى",
+        "selectSectionAndDate": "الرجاء اختيار الوقت والتاريخ",
+        "update-info": "تعديل الامتحان  ",
+        "Are-you-sure-you-want-to-delete-this-Exams": "هل أنت متأكد أنك تريد حذف هذا الامتحان ؟",
+        "DeleteExam": "حذف الامتحان ",
+        "Are-you-sure-you-want-to-delete-this-ExamSection": "هل أنت متأكد أنك تريد حذف هذا شعب الامتحان ؟",
+        "DeleteExamSection": "حذف شعب الامتحان ",
+        "addSection": "اضافة شعبة وتاريخ",
+        "Resource-already-exists": "الشعبة موجود بالفعل",
+        "Stage": "المرحلة",
+        "StageName": "اسم المرحلة",
+        "enter-ClassName": "ادخل اسم الصف",
+        "selectStage": "اختر المرحلة",
+        "Class": "الصف",
+        "Classes": "الصفوف",
+        "ClassName": "اسم الصف",
+        "Section": "الشعبة",
+        "sections": "الشعب",
+        "SectionName": "اسم الشعبة",
+        "add": "اضافة",
+        "relatedWirhExam": "هذا الامتحان مرتبط  لايمكن حذفه"
     },
     "TeacherSubjectPage": {
         "TeacherSubject": " موضوع المدرس",
@@ -478,8 +546,8 @@
         "teacherSubject": " اسم المادة حسب المدرس",
         "select-teacherSubject": "اختر اسم المادة حسب المدرس",
         "schedule": "وقت الدرس",
-        "days":"الايام",
-        "A-section-schedule-with-the-same-details-already-exists":"يوجد بالفعل جدول القسم بنفس التفاصيل.",
+        "days": "الايام",
+        "A-section-schedule-with-the-same-details-already-exists": "يوجد بالفعل جدول القسم بنفس التفاصيل.",
         "select-schedule": "اختر وقت الدرس",
         "update-info": "تعديل جدول الدروس حسب المواد ",
         "Are-you-sure-you-want-to-delete-this-SectionSchedule": "هل أنت متأكد أنك تريد حذف هذا الجدول الدروس ؟"

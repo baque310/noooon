@@ -37,10 +37,17 @@ export interface AddStageSubjectPayload {
     subjectId: string
 }
 
+export interface GetStageSubjectDataRequestParams extends GetDataRequestParams {
+    stageId?: string
+    classId?: string
+    StageType?: string
+
+}
+
 
 export const StageSubject = api.injectEndpoints({
     endpoints: (build) => ({
-        StageSubjectGetData: build.query<IStageSubject[], GetDataRequestParams>({
+        StageSubjectGetData: build.query<IStageSubject[], GetStageSubjectDataRequestParams>({
             query: (params) => ({
                 url: `admin/stage-subject`,
                 params,

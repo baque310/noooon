@@ -295,7 +295,7 @@ const Sidebar = () => {
                 />
                 <MenuSubItem
                   permission={["read-any", "read-own"]}
-                  resource={["schedule"]}
+                  resource={["schedule", "section_schedule"]}
                   name={"schedules"}
                   currentMenu={currentMenu}
                   label={t("sidebar.schedules")}
@@ -313,7 +313,7 @@ const Sidebar = () => {
                     {
                       number: 0,
                       label: t("sidebar.sectionSchedule"),
-                      resource: "schedule",
+                      resource: ["section_schedule", "schedule"],
                       permission: ["read-any", "read-own"],
                       to: "sectionSchedule",
                       isNoSub: true,
@@ -322,6 +322,46 @@ const Sidebar = () => {
                   ]}
                   toggleMenu={toggleMenu}
                   setCurrentMenu={setCurrentMenu}
+                />
+                <MenuSubItem
+                  permission={["read-any", "read-own"]}
+                  resource={["exam", "exam_type", "exam_result"]}
+                  name={"exam"}
+                  currentMenu={currentMenu}
+                  label={t("sidebar.exams")}
+                  icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  menuList={[
+                    {
+                      number: 0,
+                      label: t("sidebar.examType"),
+                      resource: "exam_type",
+                      permission: ["read-any", "read-own"],
+                      to: "examType",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+                    {
+                      number: 0,
+                      label: t("sidebar.exam"),
+                      resource: "exam",
+                      permission: ["read-any", "read-own"],
+                      to: "exams",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+                    {
+                      number: 0,
+                      label: t("sidebar.examResult"),
+                      resource: "exam_result",
+                      permission: ["read-any", "read-own"],
+                      to: "examResult",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+
+                  ]}
+                  toggleMenu={toggleMenu}
+                  setCurrentMenu={setCurrentMenu} 
                 />
 
               </ul>

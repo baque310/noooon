@@ -214,6 +214,30 @@ export const api = createApi({
     "SettingGetData",
 
 
+    //Exams
+    "ExamsGetData",
+    "ExamsGetDataById",
+    "ExamsCreate",
+    "ExamsUpdate",
+    "ExamsCreateSections",
+    "ExamsRemove",
+    //ExamType
+    "ExamTypeGetData",
+    "ExamTypeGetDataById",
+    "ExamTypeCreate",
+    "ExamTypeUpdate",
+    "ExamTypeCreateSections",
+    "ExamTypeRemove",
+    "ExamSectionsRemove",
+
+    //Homeworks
+    "HomeworksGetData",
+    "HomeworksGetDataById",
+    "HomeworksCreate",
+    "HomeworksUpdate", 
+    "HomeworksRemove",
+
+
 
 
 
