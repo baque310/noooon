@@ -252,7 +252,22 @@ const Sidebar = () => {
                   label={t("sidebar.gallery")}
                   icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
-
+                <MenuItem
+                  permission={["read-any", "read-own"]}
+                  resource={"homework"}
+                  toggleMenu={toggleMenu}
+                  to={"/homework"}
+                  label={t("sidebar.homeworks")}
+                  icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                />
+                <MenuItem
+                  permission={["read-any", "read-own"]}
+                  resource={"lesson"}
+                  toggleMenu={toggleMenu}
+                  to={"/lesson"}
+                  label={t("sidebar.lessons")}
+                  icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                /> 
 
                 <MenuSubItem
                   permission={["read-any", "read-own"]}

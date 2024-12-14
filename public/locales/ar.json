@@ -16,7 +16,7 @@
         "please-check-the-information": "يرجى التأكد من المعلومات"
     },
     "common": {
-        "view":"عرض التفاصيل",
+        "view": "عرض التفاصيل",
         "at-least-one-required": "مطلوب واحد على الأقل",
         "at-least-oneDay-required-content-subject": "مطلوب يوم على الأقل يحتوي مادة",
         "invalid-phone": "الهاتف غير صالح",
@@ -66,6 +66,8 @@
         "user-information": "معلومات المستخدم"
     },
     "sidebar": {
+        "homeworks": "الواجبات",
+        "lessons": "الدروس",
         "dashboard": "لوحة التحكم",
         "admin": "الادمن",
         "school": "المدرسة",
@@ -170,15 +172,43 @@
         "StudentFullName": "اسم الطالب",
         "score": "الدرجة",
         "notes": "الملاحظة",
-        "examDate": "تاريخ الامتحان", 
+        "examDate": "تاريخ الامتحان",
         "SectionName": "اسم السعبة",
-        "ExamTypeName": "نوع الامتحان", 
+        "ExamTypeName": "نوع الامتحان",
         "StageName": "اسم المرحلة",
         "SubjectName": "اسم المادة",
-        "SchoolYear":"السنة الدراسية",
-        "examResult":"نتآئج الامتحانات",
+        "SchoolYear": "السنة الدراسية",
+        "examResult": "نتآئج الامتحانات",
         "ExamResultsInformation": "معلومات نتائج الامتحان"
-         
+    },
+    "LessonsPage": {
+        "title": "العنوان",
+        "content": "المحتوى",
+        "teacherFullName": "اسم المدرس",
+        "examDate": "تاريخ الامتحان",
+        "SectionName": "اسم السعبة",
+        "ExamTypeName": "نوع الامتحان",
+        "StageName": "اسم المرحلة",
+        "SubjectName": "اسم المادة",
+        "SchoolYear": "السنة الدراسية",
+        "lesson": "الدرس",
+        "lessons": "الدروس",
+        "LessonsInformation": "معلومات الدرس "
+    },
+    "HomeworksPage": {
+        "title": "العنوان",
+        "content": "المحتوى",
+        "dueDate": "تاريخ الانتهاء",
+        "teacherFullName": "اسم المدرس",
+        "examDate": "تاريخ الامتحان",
+        "SectionName": "اسم السعبة",
+        "ExamTypeName": "نوع الامتحان",
+        "StageName": "اسم المرحلة",
+        "SubjectName": "اسم المادة",
+        "SchoolYear": "السنة الدراسية",
+        "Homework": "الواجب",
+        "Homeworks": "الواجبات",
+        "HomeworksInformation": "معلومات الواجب "
     },
     "ClassPage": {
         "Class": "الصف",
