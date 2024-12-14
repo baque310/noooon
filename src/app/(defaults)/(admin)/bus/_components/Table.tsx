@@ -14,7 +14,9 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { AddIcons } from "@/components/common/icons/Actions";
-
+import RowStudentTable from "./RowStudentTable";
+import Avatar from "@/components/common/Avatar";
+ 
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -112,13 +114,24 @@ const TableComponent = () => {
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
-            onRowClick={async (item) => {
-              router.push(`/bus/${item.record.id}`);
-            }}
+            // onRowClick={async (item) => {
+            //   router.push(`/bus/${item.record.id}`);
+            // }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
             records={data?.data as any}
             columns={[
+              {
+                title: t("BusPage.photo"),
+                accessor: "photo",
+                sortable: true,
+                render: ({ photo, fullName }: any) => <>
+                  <Avatar
+                    photo={photo}
+                    username={fullName}
+                  />
+                </>
+              },
               {
                 title: t("BusPage.fullName"),
                 accessor: "fullName",
@@ -186,6 +199,25 @@ const TableComponent = () => {
             page={pageNumber}
             onPageChange={(p) => {
               setPageNumber(p);
+            }}
+
+            rowExpansion={{
+              collapseProps: {
+                transitionDuration: 500,
+                animateOpacity: false,
+                transitionTimingFunction: 'ease-out',
+              },
+              content: (record) => { 
+                return (
+                  <>
+                   
+                    <RowStudentTable
+                      data={record.record.Student as any}
+                      id={record.record.id as any}
+                    />
+                  </>
+                )
+              }
             }}
           />
         )}

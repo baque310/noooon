@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
+import Avatar from "@/components/common/Avatar";
 
 
 const TableComponent = () => {
@@ -123,6 +124,17 @@ const TableComponent = () => {
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
             records={data?.data as any}
             columns={[
+              {
+                title: t("StudentPage.photo"),
+                accessor: "photo",
+                sortable: true,
+                render: ({ photo, fullName }: any) => <>
+                  <Avatar
+                    photo={photo}
+                    username={fullName}
+                  />
+                </>
+              },
               {
                 title: t("StudentPage.fullName"),
                 accessor: "fullName",

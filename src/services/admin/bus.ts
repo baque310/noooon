@@ -1,18 +1,20 @@
 import { api, BASE_URL } from "@/services/api";
 import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
+import { IStudent } from "./student";
 
 export interface IBus {
     id: string
-    fullName: string 
+    fullName: string
     carType?: string
     carColor?: string
     carNumber?: string
-    address: string 
+    address: string
     phone1: string
     phone2: string
     photo: null | string
     createdAt: string
-    updatedAt: string    
+    updatedAt: string
+    Student: IStudent[]
 }
 
 
@@ -22,11 +24,16 @@ export interface AddBusPayload {
     carType: string
     carColor: string
     carNumber: string
-    address?: string 
+    address?: string
     phone2?: string
-    photo?: null | string 
+    photo?: null | string
 }
- 
+
+export interface BusConnectStudentBusPayload {
+    busId: string
+    studentIds: string[]
+}
+
 
 export const Bus = api.injectEndpoints({
     endpoints: (build) => ({
@@ -37,6 +44,24 @@ export const Bus = api.injectEndpoints({
                 method: "GET",
             }),
             providesTags: ["BusGetData"],
+            transformResponse: (response: BaseGetDataResponse<IBus>) => {
+                if (response.data.length > 0) {
+                    response.data.map((data) => {
+                        if (data.photo) {
+                            data.photo = BASE_URL + "uploads/" + data.photo
+                        }
+                        if (data.Student.length > 0) {
+                            data.Student.map((student) => {
+                                if (student.photo) {
+                                    student.photo = BASE_URL + "uploads/" + student.photo
+                                }
+                            })
+                        }
+                        return data
+                    })
+                }
+                return response
+            }
 
         }),
 
@@ -55,7 +80,7 @@ export const Bus = api.injectEndpoints({
 
         }),
 
-        BusCreate: build.mutation<IBus, AddBusPayload| FormData >({
+        BusCreate: build.mutation<IBus, AddBusPayload | FormData>({
             query: (body) => ({
                 url: `admin/bus`,
                 body,
@@ -63,7 +88,7 @@ export const Bus = api.injectEndpoints({
             }),
             invalidatesTags: ["BusCreate", "BusGetDataById", "BusGetData"],
         }),
-     
+
         BusUpdate: build.mutation<IBus, { id: string, body: AddBusPayload | FormData }>({
             query: ({ body, id }) => ({
                 url: `admin/bus/${id}`,
@@ -71,6 +96,22 @@ export const Bus = api.injectEndpoints({
                 method: "PATCH",
             }),
             invalidatesTags: ["BusUpdate", "BusGetDataById", "BusGetData"],
+        }),
+        BusConnectStudentBus: build.mutation<IBus, BusConnectStudentBusPayload>({
+            query: (body) => ({
+                url: `admin/bus/connectStudentBus`,
+                body,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["BusConnectStudentBus", "BusGetDataById", "BusGetData"],
+        }),
+        BusDisconnectStudentBus: build.mutation<IBus, BusConnectStudentBusPayload>({
+            query: (body) => ({
+                url: `admin/bus/disconnectStudentBus`,
+                body,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["BusDisconnectStudentBus", "BusGetDataById", "BusGetData"],
         }),
 
         BusRemove: build.mutation<void, { id: string }>({
@@ -92,5 +133,7 @@ export const {
     useLazyBusGetDataByIdQuery,
     useBusCreateMutation,
     useBusRemoveMutation,
-    useBusUpdateMutation,  
+    useBusUpdateMutation,
+    useBusConnectStudentBusMutation,
+    useBusDisconnectStudentBusMutation,
 } = Bus;

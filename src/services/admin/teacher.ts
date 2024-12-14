@@ -51,6 +51,17 @@ export const Teacher = api.injectEndpoints({
                 method: "GET",
             }),
             providesTags: ["TeacherGetData"],
+            transformResponse: (response: BaseGetDataResponse<ITeacher>) => {
+                if (response.data.length > 0) {
+                    response.data.map((data) => {
+                        if (data.photo) {
+                            data.photo = BASE_URL + "uploads/" + data.photo
+                        }
+                        return data
+                    })
+                } 
+                return response
+            }
 
         }),
 

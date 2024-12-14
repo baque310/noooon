@@ -145,6 +145,8 @@ export const api = createApi({
     "BusCreate",
     "BusUpdate",
     "BusRemove",
+    "BusConnectStudentBus",
+    "BusDisconnectStudentBus",
 
     // Admin-Banner Tag
 
@@ -234,7 +236,7 @@ export const api = createApi({
     "HomeworksGetData",
     "HomeworksGetDataById",
     "HomeworksCreate",
-    "HomeworksUpdate", 
+    "HomeworksUpdate",
     "HomeworksRemove",
 
 

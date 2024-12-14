@@ -332,6 +332,9 @@
         "email-already-exists": "البريد الالكتروني موجود بالفعل"
     },
     "BusPage": {
+        "DeleteBusStudent":"حذف الطالب من خط النقل",
+        "Are-you-sure-you-want-to-delete-this-BusStudent":"هل أنت متأكد من أنك تريد حذف طالب من خط النقل هذا؟",
+        "addStudents":"اضافة طلاب",
         "bus": "خطوط النقل",
         "fullName": "الاسم الكامل",
         "enter-fullName": "ادخل الاسم الكامل",
