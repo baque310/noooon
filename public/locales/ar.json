@@ -510,7 +510,7 @@
         "relatedWirhExam": "هذا الامتحان مرتبط  لايمكن حذفه"
     },
     "TeacherSubjectPage": {
-        "TeacherSubject": " موضوع المدرس",
+        "TeacherSubject": " المواد حسب المدرسين",
         "TeacherSubjects": "المواضيع المدرسين",
         "name": "الاسم",
         "SubjectName": "اسم الموضوع",
@@ -520,13 +520,13 @@
         "StageName": "اسم المرحلة",
         "enter-StageName": "ادخل اسم المرحلة",
         "enter-name": "ادخل الاسم",
-        "update-info": "تعديل موضوع المدرس ",
+        "update-info": "تعديل المواد حسب المدرسين ",
         "add": "اضافة",
         "update": "تعديل",
         "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
-        "TeacherSubjectInformation": "معلومات موضوع المدرس ",
-        "Are-you-sure-you-want-to-delete-this-TeacherSubject": "هل أنت متأكد أنك تريد حذف هذا موضوع المدرس ؟",
-        "DeleteTeacherSubject": "حذف موضوع المدرس ",
+        "TeacherSubjectInformation": "معلومات المواد حسب المدرسين ",
+        "Are-you-sure-you-want-to-delete-this-TeacherSubject": "هل أنت متأكد أنك تريد حذف هذا المواد حسب المدرسين ؟",
+        "DeleteTeacherSubject": "حذف المواد حسب المدرسين ",
         "teacher-name-already-exist": "اسم المدرس موجود بالفعل",
         "SchoolYear": "السنة الدراسية",
         "enter-SchoolYear": "ادخل السنة الدراسية",
@@ -534,7 +534,7 @@
         "enter-TeacherName": "ادخل اسم المدرس",
         "StageSubjectName": "اسم موضوع المرحلة",
         "enter-StageSubjectName": "ادخل اسم موضوع المرحلة",
-        "TeacherSubjectCannotBeDeleted": "لا يمكن حذف موضوع المدرس لانه مرتبط بمواد اخرى"
+        "TeacherSubjectCannotBeDeleted": "لا يمكن حذف المواد حسب المدرسين لانه مرتبط بمواد اخرى"
     },
     "SchedulePage": {
         "Schedule": "الجدول الدروس",
