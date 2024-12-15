@@ -6,17 +6,14 @@ import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazyExamsGetDataQuery, useExamsGetDataQuery } from "@/services/admin/Exams";
+import {  useExamsGetDataQuery } from "@/services/admin/Exams";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { AddIcons } from "@/components/common/icons/Actions";
-import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
-import AnimateHeight from "react-animate-height";
-import { daysArray } from "@/services/admin/Schedule";
+ 
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
