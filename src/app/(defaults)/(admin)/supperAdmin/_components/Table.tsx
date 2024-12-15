@@ -5,25 +5,79 @@ import React from "react";
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import { AddIcons } from "@/components/common/icons/Actions";
-import useLogic from "./_logic";
- 
+import useMounted from "@/hooks/useMounted";
+import { getTranslation } from "@/ni18n/i18n";
+import { useSupperAdminGetDataQuery } from "@/services/admin/SupperAdmin";
+import { IRootState } from "@/store";
+import { DataTableSortStatus } from "mantine-datatable";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+
 
 const TableComponent = () => {
-  const {
-    t,
-    data,
-    isFetching,
-    handleChange,
-    handleKeyPress,
-    pageNumber,
-    setPageNumber,
-    setSortStatus,
-    sortStatus,
-    Search,
-    router,
-    isMounted,
-    isDark,
-  } = useLogic()
+
+  const { t } = getTranslation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || "";
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+      columnAccessor: "createdAt",
+      direction: "desc",
+  });
+
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const { isMounted } = useMounted();
+
+  const [pageNumber, setPageNumber] = useState(Number(1));
+
+  const [param, setParam] = useState<
+      | {
+          approval_status?: string;
+          search?: string;
+          range?: string;
+      }
+      | undefined
+  >();
+  const params = {
+      skip: pageNumber,
+      take: 30,
+      sortBy: sortStatus.columnAccessor,
+      sortDirection: sortStatus.direction,
+      ...(search && { search: search as string }),
+      ...param,
+  };
+
+  const { isFetching: isFetching, currentData: data} = useSupperAdminGetDataQuery({
+      ...params,
+  });
+
+  const [Search, setSearch] = useState(search);
+  const handleChange = (e: any) => {
+      const value = e.target.value;
+      setSearch(value);
+      if (value == "") {
+          handleSearch(value);
+      }
+  };
+  const allParams = new URLSearchParams(searchParams);
+  const handleSearch = (value?: string) => {
+      if (search != Search) {
+          // router.push({
+          //     pathname: router.pathname,
+          //     query: { ...router.query, search: value ?? Search },
+          // });
+          allParams.set("search", value ?? Search);
+
+          router.push(`/supperAdmin?${allParams.toString()}`);
+          setPageNumber(1);
+      }
+  };
+  const handleKeyPress = (event: any) => {
+      if (event.key === "Enter") {
+          handleSearch();
+      }
+  };
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -46,7 +100,7 @@ const TableComponent = () => {
                     className={` ${props.disabled && "hidden"
                       } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
-                      router.push("/createOrUpdate");
+                      router.push("/supperAdmin/createOrUpdate");
                     }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
@@ -73,38 +127,7 @@ const TableComponent = () => {
                 title: t("SupperAdminPage.username"),
                 accessor: "username",
                 sortable: true,
-              },
-              // {
-              //   title: t("SupperAdminPage.School.name"),
-              //   accessor: "School.name",
-              //   // sortable: true,
-              // },
-              // {
-              //   title: t("SupperAdminPage.School.address"),
-              //   accessor: "School.address",
-              //   // sortable: true,
-              // },
-              // {
-              //   title: t("SupperAdminPage.School.email"),
-              //   accessor: "School.email",
-              //   // sortable: true,
-              // },
-              // {
-              //   title: t("SupperAdminPage.School.phone1"),
-              //   accessor: "School.phone1",
-              //   // sortable: true,
-              // },
-              // {
-              //   title: t("SupperAdminPage.School.phone2"),
-              //   accessor: "School.phone2",
-              //   // sortable: true,
-              // },
-              // {
-              //   title: t("SupperAdminPage.School.hasBanner"),
-              //   accessor: "School.hasBanner",
-              //   // sortable: true,
-              //   render: ({ School }: any) => (School.hasBanner ? <div>{t("common.yes")}</div> : <div>{t("common.no")}</div>),
-              // },
+              }, 
               {
                 title: t("common.status"),
                 accessor: "isActive",

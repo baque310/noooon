@@ -1,5 +1,5 @@
 import { BASE_URL, api } from "@/services/api";
-import { BaseGetDataResponse, GetDataRequestParams } from "./types/BaseType";
+import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
 import { User } from "next-auth";
 
 export interface SupperAdminDataResponse extends User { }

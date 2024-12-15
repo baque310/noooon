@@ -139,6 +139,14 @@ const Sidebar = () => {
                     />
                   </>
                 }
+                {!isManager && <MenuItem
+                  permission={["read-any", "read-own"]}
+                  resource={"admin"}
+                  toggleMenu={toggleMenu}
+                  to={"/supperAdmin"}
+                  label={t("sidebar.admin")}
+                  icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                />}
 
                 <MenuSubItem
                   permission={["read-any", "read-own"]}
@@ -236,6 +244,7 @@ const Sidebar = () => {
                   icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />}
 
+
                 <MenuItem
                   permission={["read-any", "read-own"]}
                   resource={"guidance"}
@@ -267,7 +276,7 @@ const Sidebar = () => {
                   to={"/lesson"}
                   label={t("sidebar.lessons")}
                   icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-                /> 
+                />
 
                 <MenuSubItem
                   permission={["read-any", "read-own"]}
@@ -376,7 +385,7 @@ const Sidebar = () => {
 
                   ]}
                   toggleMenu={toggleMenu}
-                  setCurrentMenu={setCurrentMenu} 
+                  setCurrentMenu={setCurrentMenu}
                 />
 
               </ul>

@@ -176,7 +176,7 @@ const TableComponent = () => {
                     className={` ${props.disabled && "hidden"
                       } flex justify-center gap-1  items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border `}
                     onClick={() => {
-                      router.push("/Exams/createOrUpdate");
+                      router.push("/exams/createOrUpdate");
                     }}>
                     {t("common.add")}
                   </button>
