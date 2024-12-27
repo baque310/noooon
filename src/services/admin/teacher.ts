@@ -7,6 +7,7 @@ export interface ITeacher {
     id: string
     fullName: string
     birth: string
+    Gender: Gender
     hiringDate: string
     address: string
     email: string
@@ -21,8 +22,8 @@ export interface ITeacher {
     User: {
         id: string
         username: string
-    } 
-    
+    }
+
 }
 
 
@@ -37,10 +38,11 @@ export interface AddTeacherPayload {
     email?: string
     phone2?: string
     photo?: null | string
- 
-
+    Gender: Gender
 }
- 
+
+export type Gender = "Male" | "Female"
+
 
 export const Teacher = api.injectEndpoints({
     endpoints: (build) => ({
@@ -59,7 +61,7 @@ export const Teacher = api.injectEndpoints({
                         }
                         return data
                     })
-                } 
+                }
                 return response
             }
 
@@ -88,7 +90,7 @@ export const Teacher = api.injectEndpoints({
             }),
             invalidatesTags: ["TeacherCreate", "TeacherGetDataById", "TeacherGetData"],
         }),
-     
+
         TeacherUpdate: build.mutation<ITeacher, { id: string, body: AddTeacherPayload | FormData }>({
             query: ({ body, id }) => ({
                 url: `admin/teacher/${id}`,
@@ -117,6 +119,6 @@ export const {
     useLazyTeacherGetDataByIdQuery,
     useTeacherCreateMutation,
     useTeacherRemoveMutation,
-    useTeacherUpdateMutation, 
+    useTeacherUpdateMutation,
 
 } = Teacher;

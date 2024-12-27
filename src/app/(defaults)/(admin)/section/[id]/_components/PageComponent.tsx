@@ -39,6 +39,10 @@ const PageComponent = () => {
         } catch (error: any) {
             console.error('Failed to operation :', error);
             if (error && error.message) {
+
+                if (error.message == `Foreign key constraint failed on the field. More details: {"modelName":"Section","field_name":"sectionId"}`) {
+                    return toast.error(t('SectionPage.this-section-connected-with-other-section'), { autoClose: 30000 });
+                }
                 return toast.error(error.message, { autoClose: 15000 });
             }
             toast.error(error, { autoClose: 15000 });

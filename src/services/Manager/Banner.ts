@@ -5,6 +5,7 @@ export interface IManagerBanner {
     id: string
     title: string
     description: string
+    priority: number
     url: string
     Status: string
     createdAt: string
@@ -20,6 +21,7 @@ export interface AddManagerBannerPayload {
     title: string
     description: string
     url: string | null
+    priority : number
 }
 
 

@@ -59,6 +59,7 @@ const PageComponent = () => {
                     <div className='CardDetails internalMenu '>
                         <ItemList title={t('ManagerBannerPage.title')} value={String(data?.title)} />
                         <ItemList title={t('ManagerBannerPage.description')} value={String(data?.description ?? "")} />
+                        <ItemList title={t('ManagerBannerPage.priority')} value={String(data?.priority ?? "")} />
                         <ItemList title={t('common.updatedAt')} value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
                         <ItemList title={t('common.createdAt')} value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
                     </div>

@@ -14,28 +14,34 @@ const RowSections = ({
 }) => {
 
     const sections = [
-        { key: 'SectionA', title: 'A' },
-        { key: 'SectionB', title: 'B' },
-        { key: 'SectionC', title: 'C' },
-        { key: 'SectionD', title: 'D' },
-        { key: 'SectionE', title: 'E' },
-        { key: 'SectionF', title: 'F' },
+        // { key: 'SectionA', title: 'A' },
+        // { key: 'SectionB', title: 'B' },
+        // { key: 'SectionC', title: 'C' },
+        // { key: 'SectionD', title: 'D' },
+        // { key: 'SectionE', title: 'E' },
+        // { key: 'SectionF', title: 'F' },
+
+        { title: 'أ' },
+        { title: 'ب' },
+        { title: 'ج' },
+        { title: 'د' }, 
+        { title: 'و' }, 
     ];
 
     return (
         <div className='flex gap-4'>
             {sections.map((section) => (
                 <CheckBoxForm
-                    key={section.key}
+                    key={section.title}
                     formikProps={props}
-                    name={`StageData.${index}.ClassData.${idx}.${section.key}`}
+                    name={`StageData.${index}.ClassData.${idx}.${section.title}`}
                     title={t(`SchoolPage.Sections.${section.title}`)}
                     props={{
                         onChange: (e) => {
-                            props.setFieldValue(`StageData.${index}.ClassData.${idx}.${section.key}`, e.target.checked);
+                            props.setFieldValue(`StageData.${index}.ClassData.${idx}.${section.title}`, e.target.checked);
                         },
-                        checked: props.values.StageData[index].ClassData[idx][section.key],
-                        value: String(props.values.StageData[index].ClassData[idx][section.key]),
+                        checked: props.values.StageData[index].ClassData[idx][section.title],
+                        value: String(props.values.StageData[index].ClassData[idx][section.title]),
                     }}
                 />
             ))}

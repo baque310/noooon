@@ -211,6 +211,7 @@
         "HomeworksInformation": "معلومات الواجب "
     },
     "ClassPage": {
+        "this-class-connected-with-other-class":"هذا الصف مرتب مع مرحلة ",
         "Class": "الصف",
         "Classes": "الصفوف",
         "name": "اسم الصف",
@@ -240,7 +241,9 @@
         "update": "تعديل",
         "add": "اضافة",
         "DeleteSection": "حذف الشعبة",
-        "Are-you-sure-you-want-to-delete-this-Section": "هل أنت متأكد أنك تريد حذف هذه الشعبة؟"
+        "Are-you-sure-you-want-to-delete-this-Section": "هل أنت متأكد أنك تريد حذف هذه الشعبة؟",
+        "this-section-connected-with-other-section": "هذا الشبة  مرتبطة مع اخرى "
+
     },
     "StudentPage": {
         "student": "الطالب",
@@ -301,6 +304,10 @@
     "E": "ه",
     "F": "و",
     "TeacherPage": {
+        "Gender":"الجنس",
+        "select-Gender":"اختر نوع الجنس",
+        "Male":"ذكر",
+        "Female":"انثى",
         "teacher": "المدرس",
         "teachers": "المدرسين",
         "fullName": "الاسم الكامل",
@@ -363,6 +370,8 @@
         "bus-already-exists": "خط النقل موجود بالفعل"
     },
     "BannerPage": {
+        "priority":"الاولوية",
+        "enter-priority" :"ادخل الاولوية",
         "banner": " الاعلان",
         "banners": " الاعلانات",
         "title": "الاسم",
@@ -395,6 +404,8 @@
         "guidance-already-exists": "الارشاد  موجود بالفعل"
     },
     "ManagerBannerPage": {
+        "priority":"الاولوية",
+        "enter-priority" :"ادخل الاولوية",
         "ManagerBanner": " الاعلان",
         "ManagerBanners": "الاعلانات",
         "title": "الاسم",
@@ -513,8 +524,8 @@
         "TeacherSubject": " المواد حسب المدرسين",
         "TeacherSubjects": "المواضيع المدرسين",
         "name": "الاسم",
-        "SubjectName": "اسم الموضوع",
-        "enter-SubjectName": "ادخل اسم الموضوع",
+        "SubjectName": "اسم المادة",
+        "enter-SubjectName": "ادخل اسم المادة",
         "ClassName": "اسم الصف",
         "enter-ClassName": "ادخل اسم الصف",
         "StageName": "اسم المرحلة",
@@ -524,17 +535,17 @@
         "add": "اضافة",
         "update": "تعديل",
         "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
-        "TeacherSubjectInformation": "معلومات المواد حسب المدرسين ",
+        "TeacherSubjectInformation": "معلومات المواد حسب المدرس ",
         "Are-you-sure-you-want-to-delete-this-TeacherSubject": "هل أنت متأكد أنك تريد حذف هذا المواد حسب المدرسين ؟",
-        "DeleteTeacherSubject": "حذف المواد حسب المدرسين ",
+        "DeleteTeacherSubject": "حذف المواد حسب المدرس ",
         "teacher-name-already-exist": "اسم المدرس موجود بالفعل",
         "SchoolYear": "السنة الدراسية",
         "enter-SchoolYear": "ادخل السنة الدراسية",
         "TeacherName": "اسم المدرس",
         "enter-TeacherName": "ادخل اسم المدرس",
-        "StageSubjectName": "اسم موضوع المرحلة",
-        "enter-StageSubjectName": "ادخل اسم موضوع المرحلة",
-        "TeacherSubjectCannotBeDeleted": "لا يمكن حذف المواد حسب المدرسين لانه مرتبط بمواد اخرى"
+        "StageSubjectName": "اسم المادة المرحلة",
+        "enter-StageSubjectName": "ادخل اسم المادة المرحلة",
+        "TeacherSubjectCannotBeDeleted": "لا يمكن حذف المواد حسب المدرس لانه مرتبط بمواد اخرى"
     },
     "SchedulePage": {
         "Schedule": "الجدول الدروس",

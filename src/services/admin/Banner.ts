@@ -5,6 +5,7 @@ export interface IBanner {
     id: string
     title: string
     description: string
+    priority: number
     url: string
     Status: string
     createdAt: string
@@ -13,13 +14,14 @@ export interface IBanner {
     School: {
         id: string
         name: string
-    } 
-} 
+    }
+}
 
 export interface AddBannerPayload {
     title: string
     description: string
     url: string | null
+    priority: number
 }
 
 
@@ -50,7 +52,7 @@ export const Banner = api.injectEndpoints({
 
         }),
 
-        BannerCreate: build.mutation<IBanner, AddBannerPayload | FormData >({
+        BannerCreate: build.mutation<IBanner, AddBannerPayload | FormData>({
             query: (body) => ({
                 url: `admin/banner`,
                 body,
@@ -74,7 +76,7 @@ export const Banner = api.injectEndpoints({
                 method: "DELETE",
             }),
             invalidatesTags: ["BannerRemove", "BannerGetDataById", "BannerGetData"],
-        }), 
+        }),
 
     }),
 });
@@ -85,5 +87,5 @@ export const {
     useLazyBannerGetDataByIdQuery,
     useBannerCreateMutation,
     useBannerRemoveMutation,
-    useBannerUpdateMutation, 
+    useBannerUpdateMutation,
 } = Banner;

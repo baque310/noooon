@@ -19,6 +19,7 @@ import { Form, Formik, FormikProps } from 'formik';
 import { InputForm } from '@/components/Form/inputForm';
 import { DateTimeForm } from '@/components/Form/DateTimeForm';
 import { UploadFileForm } from '@/components/Form/uploadFileForm';
+import { SelectForm } from '@/components/Form/SelectForm';
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -87,7 +88,8 @@ const PageComponent = () => {
     fullName: Yup.string().required(t("common.this-field-is-required")),
     phone1: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")).required(t("common.this-field-is-required")),
     phone2: Yup.string().matches(/^[0-9]+$/, t("common.invalid-phone")),
-    email: Yup.string().email(t("common.invalid-email")).optional()
+    email: Yup.string().email(t("common.invalid-email")).optional(),
+    Gender: Yup.string().required(t("common.this-field-is-required")),
   })
 
   return (
@@ -109,6 +111,8 @@ const PageComponent = () => {
               birth: data?.birth ?? "",
               hiringDate: data?.hiringDate ?? "",
               photo: data?.photo ?? "",
+              Gender: data?.Gender ?? "Male"
+
             }}
             validationSchema={teacherSchema}
             onSubmit={handleSubmit}
@@ -157,9 +161,25 @@ const PageComponent = () => {
                     title={t("TeacherPage.email")}
                     placeholder={t("TeacherPage.enter-email")}
                   />
+                  <SelectForm
+                    formikProps={props}
+                    name={"Gender"}
+                    title={t("TeacherPage.Gender")}
+                    placeholder={t("TeacherPage.select-Gender")}
+                    options={[
+                      {
+                        label: t("TeacherPage.Male"),
+                        value: "Male"
+                      },
+                      {
+                        label: t("TeacherPage.Female"),
+                        value: "Female"
+                      },
+                    ]
+                    }
+                  />
+
                   <div className='flex gap-2 max-md:flex-col'>
-
-
                     <InputForm
                       formikProps={props}
                       name={"phone1"}

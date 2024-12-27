@@ -142,6 +142,12 @@ const TableComponent = () => {
                 // sortable: true,
               },
               {
+                title: t("TeacherPage.Gender"),
+                accessor: "Gender",
+                sortable: true,
+                render: ({ Gender }) => Gender ? t(("TeacherPage." + Gender) as any) : ""
+              },
+              {
                 title: t("TeacherPage.birth"),
                 accessor: "birth",
                 sortable: true,

@@ -62,10 +62,11 @@ const PageComponent = () => {
                             value={String(data?.User?.username)}
                             isCopyToClipboard
                         />
-                        <ItemList title={t('TeacherPage.address')} value={String(data?.address)} />
-                        <ItemList title={t('TeacherPage.phone1')} value={String(data?.phone1)} />
-                        <ItemList title={t('TeacherPage.phone2')} value={String(data?.phone2)} />
-                        <ItemList title={t('TeacherPage.email')} value={String(data?.email)} />
+                        <ItemList title={t('TeacherPage.address')} value={String(data?.address ?? "")} />
+                        <ItemList title={t('TeacherPage.Gender')} value={data?.Gender ? t("TeacherPage." + (data?.Gender ?? "") as any) : ""} />
+                        <ItemList title={t('TeacherPage.phone1')} value={String(data?.phone1 ?? "")} />
+                        <ItemList title={t('TeacherPage.phone2')} value={String(data?.phone2 ?? "")} />
+                        <ItemList title={t('TeacherPage.email')} value={String(data?.email ?? "")} />
                         <ItemList title={t('TeacherPage.birth')} value={data?.birth && moment(data?.birth).format("YYYY-MM-DD")} />
                         <ItemList title={t('TeacherPage.hiringDate')} value={data?.hiringDate && moment(data?.hiringDate).format("YYYY-MM-DD")} />
                         <ItemList title={t('common.updatedAt')} value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />

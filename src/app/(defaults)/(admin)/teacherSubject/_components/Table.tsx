@@ -126,6 +126,11 @@ const TableComponent = () => {
                 // sortable: true,
               },
               {
+                title: t("TeacherSubjectPage.TeacherName"),
+                accessor: "Teacher.fullName",
+                // sortable: true,
+              },
+              {
                 title: t("TeacherSubjectPage.StageName"),
                 accessor: "StageSubject.Stage.name",
                 // sortable: true,

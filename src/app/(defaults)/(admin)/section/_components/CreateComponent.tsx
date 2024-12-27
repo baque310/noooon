@@ -75,7 +75,6 @@ const CreateComponent = ({
         if (error.message == "section already exists" || error.message == "name already exist") {
           return toast.error(t('SectionPage.name-already-exists'), { autoClose: 30000 });
         }
-
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
       toast.error(error, { autoClose: 30000 });
@@ -90,12 +89,11 @@ const CreateComponent = ({
     }
   });
   const sections = [
-    { title: 'A' },
-    { title: 'B' },
-    { title: 'C' },
-    { title: 'D' },
-    { title: 'E' },
-    { title: 'F' },
+    { title: 'أ' },
+    { title: 'ب' },
+    { title: 'ج' },
+    { title: 'د' }, 
+    { title: 'و' }, 
   ];
 
   return (

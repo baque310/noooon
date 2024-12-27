@@ -133,6 +133,11 @@ const TableComponent = () => {
                 sortable: true,
               },
               {
+                title: t("ManagerBannerPage.priority"),
+                accessor: "priority",
+                sortable: true,
+              },
+              {
                 title: t("common.status"),
                 accessor: "Status",
                 sortable: true,

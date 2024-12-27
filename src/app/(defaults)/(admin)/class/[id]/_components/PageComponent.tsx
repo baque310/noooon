@@ -41,6 +41,9 @@ const PageComponent = () => {
             router.back();
         } catch (error: any) {
             console.error('Failed to operation :', error);
+            if (error && error.message==`Foreign key constraint failed on the field. More details: {"modelName":"Class","field_name":"classId"}`) {
+                return toast.error(t("ClassPage.this-class-connected-with-other-class"), { autoClose: 15000 });
+            }
             if (error && error.message) {
                 return toast.error(error.message, { autoClose: 15000 });
             }

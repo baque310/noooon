@@ -91,23 +91,22 @@ const TableComponent = () => {
             name="search"
           />
           {
-            <RolePageAndActionBasedComponent
-              component={(props) => {
-                return (
+            // <RolePageAndActionBasedComponent
+            //   component={(props) => {
+            //     return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2 rounded border `}
                     onClick={() => {
                       router.push("/bus/createOrUpdate");
                     }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
                   </button>
-                );
-              }}
-              resource={"admin"}
-              permission={["create-any", "create-own"]}
-            />
+            //     );
+            //   }}
+            //   resource={"bus"}
+            //   permission={["create-any", "create-own"]}
+            // />
           }
         </div>
       </div>

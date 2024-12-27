@@ -94,6 +94,7 @@ const PageComponent = () => {
               title: data?.title ?? "",
               description: data?.description ?? "",
               url: data?.url ?? "",
+              priority: data?.priority ?? 0,
             }}
             validationSchema={managerBannerSchema}
             onSubmit={handleSubmit}
@@ -118,7 +119,15 @@ const PageComponent = () => {
                     props={{
                       ...{ as: "textarea" } as any
                     }}
-
+                  />
+                  <InputForm
+                    formikProps={props}
+                    name={"title"}
+                    title={t("ManagerBannerPage.priority")}
+                    placeholder={t("ManagerBannerPage.enter-priority")}
+                    props={{
+                      type: "number",
+                    }}
                   />
                 </div>
                 <div className="Card flex flex-col gap-1">
