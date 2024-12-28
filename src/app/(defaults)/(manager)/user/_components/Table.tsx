@@ -3,21 +3,21 @@ import { DataTable } from "mantine-datatable";
 import React from "react";
 
 import moment from "moment";
-import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import { withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import { useSchoolGetDataQuery } from "@/services/Manager/School";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { AddIcons } from "@/components/common/icons/Actions";
+import { useUserGetDataQuery } from "@/services/Manager/User";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 
 
-const TableComponent = () => {
+const TableComponent = () => { 
+
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -35,9 +35,7 @@ const TableComponent = () => {
   const [param, setParam] = useState<
     | {
       isActive?: string;
-      hasBanner?: string;
       search?: string;
-      range?: string;
     }
     | undefined
   >();
@@ -50,7 +48,7 @@ const TableComponent = () => {
     ...param,
   };
 
-  const { isFetching, currentData: data } = useSchoolGetDataQuery({
+  const { isFetching, currentData: data } = useUserGetDataQuery({
     ...params,
   });
 
@@ -65,13 +63,9 @@ const TableComponent = () => {
   const allParams = new URLSearchParams(searchParams);
   const handleSearch = (value?: string) => {
     if (search != Search) {
-      // router.push({
-      //     pathname: router.pathname,
-      //     query: { ...router.query, search: value ?? Search },
-      // });
       allParams.set("search", value ?? Search);
 
-      router.push(`/school?${allParams.toString()}`);
+      router.push(`/user?${allParams.toString()}`);
       setPageNumber(1);
     }
   };
@@ -81,7 +75,7 @@ const TableComponent = () => {
     }
   };
 
-  const handleSelectIsActive = (value: any) => {
+  const handleSelect = (value: any) => {
     if (value) {
       setParam({ ...param, isActive: value.value });
 
@@ -89,18 +83,10 @@ const TableComponent = () => {
       setParam({ ...param, isActive: undefined });
     }
   };
-  const handleSelectHasBanner = (value: any) => {
-    if (value) {
-      setParam({ ...param, hasBanner: value.value });
-
-    } else {
-      setParam({ ...param, hasBanner: undefined });
-    }
-  };
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">{t("SchoolPage.schools")}</div>
+        <div className="text-xl uppercase ">{t("UserPage.Users")}</div>
         <div className={"flex gap-3"}>
           <input
             value={Search ?? ""}
@@ -115,86 +101,34 @@ const TableComponent = () => {
             placeholder={t("common.status")}
             isLoading={false}
             props={{
-              onChange: handleSelectIsActive
+              onChange: handleSelect
             }}
             options={[
               { label: t("common.isActive"), value: "TRUE" },
               { label: t("common.isNotActive"), value: "FALSE" },
             ]}
           />
-          <SelectWithSearch
-            placeholder={t("SchoolPage.hasBanner")}
-            isLoading={false}
-            props={{
-              onChange: handleSelectHasBanner
-            }}
-            options={[
-              { label: t("common.yes"), value: "TRUE" },
-              { label: t("common.no"), value: "FALSE" },
-            ]}
-          />
-
-          {
-            <RolePageAndActionBasedComponent
-              component={(props) => {
-                return (
-                  <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      router.push("/school/createOrUpdate");
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
-                );
-              }}
-              resource={"admin"}
-              permission={["create-any", "create-own"]}
-            />
-          }
         </div>
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
-            onRowClick={async (item) => {
-              router.push(`/school/${item.record.id}`);
-            }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
             records={data?.data as any}
             columns={[
               {
-                title: t("SchoolPage.name"),
-                accessor: "name",
+                title: t("UserPage.username"),
+                accessor: "username",
                 sortable: true,
               },
               {
-                title: t("SchoolPage.address"),
-                accessor: "address",
-                sortable: true,
+                title: t("UserPage.SchoolName"),
+                accessor: "School.name",
               },
               {
-                title: t("SchoolPage.email"),
-                accessor: "email",
-                sortable: true,
-              },
-              {
-                title: t("SchoolPage.phone1"),
-                accessor: "phone1",
-                sortable: true,
-              },
-              {
-                title: t("SchoolPage.phone2"),
-                accessor: "phone2",
-                sortable: true,
-              },
-              {
-                title: t("SchoolPage.hasBanner"),
-                accessor: "hasBanner",
-                sortable: true,
-                render: ({ hasBanner }: any) => (hasBanner ? <div>{t("common.yes")}</div> : <div>{t("common.no")}</div>),
+                title: t("UserPage.SchoolAddress"),
+                accessor: "School.address",
               },
               {
                 title: t("common.status"),
@@ -209,6 +143,27 @@ const TableComponent = () => {
                     )}
                   </div>
                 ),
+              },
+              {
+                title: t("common.statusDeleted"),
+                accessor: "isDeleted",
+                sortable: true,
+                render: ({ isDeleted }) => (
+                  <div className="flex gap-2 px-[2px]">
+                    {isDeleted == "TRUE" ? (
+                      <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("common.isDeleted")}</div>
+                    ) : (
+                      <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t("common.isNotDeleted")}</div>
+                    )}
+                  </div>
+                ),
+              },
+
+              {
+                title: t("common.updatedAt"),
+                accessor: "updatedAt",
+                sortable: true,
+                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
               {
                 title: t("common.createdAt"),
@@ -238,4 +193,4 @@ const TableComponent = () => {
   );
 };
 
-export default withRole(TableComponent, "school", ["read-any", "read-own"]);
+export default withRole(TableComponent, "user", ["read-any", "read-own"]);

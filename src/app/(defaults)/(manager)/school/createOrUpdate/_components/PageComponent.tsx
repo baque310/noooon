@@ -117,9 +117,9 @@ const PageComponent = () => {
           }
           toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
           resetForm();
-          if (id) {
+          // if (id) {
               router.back();
-          }
+          // }
       } catch (error: any) {
           console.error("Failed to operation :", error);
           if (error) {

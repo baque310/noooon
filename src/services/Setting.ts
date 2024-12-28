@@ -1,5 +1,4 @@
-import { BASE_URL, api } from "@/services/api";
-import { BaseGetDataResponse, GetDataRequestParams } from "./types/BaseType";
+import { api } from "@/services/api";
 import { User } from "next-auth";
 
 export interface SettingDataResponse extends User { }
@@ -28,9 +27,19 @@ export const Setting = api.injectEndpoints({
       }),
       providesTags: ["SettingGetData"],
     }),
+    SettingUpdate: build.mutation<ISetting, { id: string, currentSchoolYearId: string }>({
+      query: ({ id, currentSchoolYearId }) => ({
+        url: `setting/${id}`,
+        body: { currentSchoolYearId },
+        method: "PATCH",
+      }),
+      invalidatesTags: ["SettingGetData", "SettingUpdate"],
+    }),
   }),
 });
 export const {
   useSettingGetDataQuery,
   useLazySettingGetDataQuery,
+  useSettingUpdateMutation,
+
 } = Setting;

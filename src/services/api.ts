@@ -215,6 +215,12 @@ export const api = createApi({
 
     // setting tags
     "SettingGetData",
+    "SettingUpdate",
+
+
+    // SchoolGetDataAdmin
+    "SchoolGetDataAdmin",
+    "SchoolUpdateAdmin",
 
 
     //Exams

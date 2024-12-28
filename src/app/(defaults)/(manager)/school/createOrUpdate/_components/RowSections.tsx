@@ -35,7 +35,7 @@ const RowSections = ({
                     key={section.title}
                     formikProps={props}
                     name={`StageData.${index}.ClassData.${idx}.${section.title}`}
-                    title={t(`SchoolPage.Sections.${section.title}`)}
+                    title={t(`${section.title}`)}
                     props={{
                         onChange: (e) => {
                             props.setFieldValue(`StageData.${index}.ClassData.${idx}.${section.title}`, e.target.checked);

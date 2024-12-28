@@ -111,12 +111,22 @@ const Sidebar = () => {
 
                 {isManager &&
                   <>
+
+
+                    <MenuItem
+                      permission={["read-any", "read-own"]}
+                      resource={"dashboard"}
+                      toggleMenu={toggleMenu}
+                      to={"/"}
+                      label={t("sidebar.dashboard")}
+                      icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                    />
                     <MenuItem
                       permission={["read-any", "read-own"]}
                       resource={"admin"}
                       toggleMenu={toggleMenu}
                       to={"/admin"}
-                      label={t("sidebar.admin")}
+                      label={t("sidebar.admins")}
                       icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
 
@@ -125,7 +135,7 @@ const Sidebar = () => {
                       resource={"school"}
                       toggleMenu={toggleMenu}
                       to={"/school"}
-                      label={t("sidebar.school")}
+                      label={t("sidebar.schools")}
                       icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
 
@@ -135,6 +145,22 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/managerBanner"}
                       label={t("sidebar.banner")}
+                      icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                    />
+                    <MenuItem
+                      permission={["read-any", "read-own"]}
+                      resource={"user"}
+                      toggleMenu={toggleMenu}
+                      to={"/user"}
+                      label={t("sidebar.users")}
+                      icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                    />
+                    <MenuItem
+                      permission={["read-any", "read-own"]}
+                      resource={"setting"}
+                      toggleMenu={toggleMenu}
+                      to={"/setting"}
+                      label={t("sidebar.settings")}
                       icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                   </>
@@ -157,6 +183,14 @@ const Sidebar = () => {
                     label={t("sidebar.admin")}
                     icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                   />
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"school"}
+                    toggleMenu={toggleMenu}
+                    to={"/adminSchool"}
+                    label={t("sidebar.school")}
+                    icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  />
                 </>
                 }
 
@@ -167,7 +201,7 @@ const Sidebar = () => {
                   currentMenu={currentMenu}
                   label={t("sidebar.stages")}
                   icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-                  menuList={[
+                  menuList={[ 
                     {
                       number: 0,
                       label: t("sidebar.stage"),

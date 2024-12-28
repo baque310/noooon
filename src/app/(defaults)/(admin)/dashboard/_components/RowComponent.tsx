@@ -3,20 +3,14 @@ import React from "react";
 
 import { withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import { getTranslation } from "@/ni18n/i18n";
-import { useRouter } from "next/navigation";
 import { useDashboardGetDataQuery } from "@/services/admin/Dashboard";
 import RowCard from "./RowCard";
-import { PaymentStatusBarChart } from "./PaymentStatusBarChartProps";
 import TableComponent from "./Table";
 import RowCardMullite from "./RowCardMullite";
 
 const RowComponent = () => {
   const { t } = getTranslation();
-  const router = useRouter();
-
   const { currentData, isFetching } = useDashboardGetDataQuery()
-
-  console.log(currentData);
 
   return (
     <div className={`m-4 flex-col flex gap-4`}>
@@ -68,7 +62,7 @@ const RowComponent = () => {
           titleAbsent={t("DashboardPage.absent")}
           titlePresent={t("DashboardPage.present")}
           titleVacation={t("DashboardPage.vacation")}
-        /> 
+        />
       </div>
       <TableComponent data={currentData?.passFailRates} isFetching={isFetching} />
     </div>
