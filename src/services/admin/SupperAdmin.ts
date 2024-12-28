@@ -46,16 +46,27 @@ export interface ISchool {
 
 }
 
-export interface AddSupperAdminPayload { 
-  username: string,
-  password: string,
+
+export interface AddSupperAdminPayload {
+  username: string
+  password?: string
   isActive: string
+  photo?: string
+  roles: {
+    resource: string
+    resource_ar?: string
+    icon?: string
+    permissions: {
+      action: string
+      possession: string
+    }[]
+  }[]
 }
 
 export interface Roles {
-  resource: string;
-  resource_ar: string;
-  icon: string | null;
+  resource?: string;
+  resource_ar?: string;
+  icon?: string | null;
   roles?: PossessionRoles[];
   permissions?: PossessionRoles[];
   rolesString?: string[];
@@ -88,7 +99,7 @@ export const SupperAdmin = api.injectEndpoints({
 
     SupperAdminGetDataById: build.query<ISupperAdmin, { id: string }>({
       query: ({ id }) => ({
-        url: `manager/admin/${id}`,
+        url: `supper/admin/${id}`,
         method: "GET",
       }),
       providesTags: ["SupperAdminGetDataById"],
@@ -104,31 +115,58 @@ export const SupperAdmin = api.injectEndpoints({
         return response;
       },
     }),
- 
+    SupperAdminGetDataOwnRoles: build.query<Roles[], void>({
+      query: () => ({
+        url: `supper/admin/ownRoles`,
+        method: "GET",
+      }),
+      // providesTags: ["SupperAdminGetDataOwnRoles"],
+      transformResponse: (response: Roles[]) => {
+        response.map((role) => {
+          role.roles = role.permissions;
+          role.rolesString = role.permissions?.map((i) => `${i.action}-${i.possession}`);
+          return role;
+        });
+        return response;
+      },
+
+    }),
+    SupperAdminCreate: build.mutation<SupperAdminDataResponse, AddSupperAdminPayload>({
+      query: (body) => ({
+        url: `supper/admin`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: ["SupperAdminCreate", "SupperAdminGetData"],
+    }),
+
     SupperAdminUpdate: build.mutation<SupperAdminDataResponse, { id: string; body: AddSupperAdminPayload | FormData }>({
       query: ({ id, body }) => ({
-        url: `manager/admin/${id}`,
+        url: `supper/admin/${id}`,
         body,
         method: "PATCH",
       }),
       invalidatesTags: ["SupperAdminUpdate", "SupperAdminGetDataById"],
     }),
-  
+
     SupperAdminRemove: build.mutation<void, { id: string }>({
       query: ({ id }) => ({
-        url: `manager/admin/${id}`,
+        url: `supper/admin/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["SupperAdminRemove", "SupperAdminGetData"],
     }),
-    
+
   }),
 });
 export const {
-  useSupperAdminGetDataQuery, 
-  useLazySupperAdminGetDataQuery, 
-  useSupperAdminGetDataByIdQuery, 
+  useSupperAdminGetDataQuery,
+  useLazySupperAdminGetDataQuery,
+  useSupperAdminGetDataByIdQuery,
   useLazySupperAdminGetDataByIdQuery,
   useSupperAdminUpdateMutation,
-  useSupperAdminRemoveMutation, 
+  useSupperAdminRemoveMutation,
+  useSupperAdminCreateMutation,
+  useSupperAdminGetDataOwnRolesQuery,
+  useLazySupperAdminGetDataOwnRolesQuery,
 } = SupperAdmin;

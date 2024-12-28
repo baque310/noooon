@@ -13,6 +13,7 @@ import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import Avatar from "@/components/common/Avatar";
 
 
 const TableComponent = () => {
@@ -124,6 +125,16 @@ const TableComponent = () => {
             records={data?.data as any}
             columns={[
               {
+                title: t("BusPage.photo"),
+                accessor: "photo", 
+                render: ({ photo, username }: any) => <>
+                  <Avatar
+                    photo={photo}
+                    username={username}
+                  />
+                </>
+              }, 
+              {
                 title: t("SupperAdminPage.username"),
                 accessor: "username",
                 sortable: true,
@@ -134,7 +145,7 @@ const TableComponent = () => {
                 sortable: true,
                 render: ({ isActive }) => (
                   <div className="flex gap-2 px-[2px]">
-                    {isActive == "true" ? (
+                    {isActive == "TRUE" ? (
                       <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("common.isActive")}</div>
                     ) : (
                       <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t("common.isNotActive")}</div>

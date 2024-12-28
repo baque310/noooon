@@ -139,14 +139,26 @@ const Sidebar = () => {
                     />
                   </>
                 }
-                {!isManager && <MenuItem
-                  permission={["read-any", "read-own"]}
-                  resource={"admin"}
-                  toggleMenu={toggleMenu}
-                  to={"/supperAdmin"}
-                  label={t("sidebar.admin")}
-                  icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-                />}
+                {!isManager && <>
+
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"dashboard"}
+                    toggleMenu={toggleMenu}
+                    to={"/dashboard"}
+                    label={t("sidebar.dashboard")}
+                    icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  />
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"admin"}
+                    toggleMenu={toggleMenu}
+                    to={"/supperAdmin"}
+                    label={t("sidebar.admin")}
+                    icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  />
+                </>
+                }
 
                 <MenuSubItem
                   permission={["read-any", "read-own"]}

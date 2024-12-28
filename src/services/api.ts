@@ -86,6 +86,7 @@ export const api = createApi({
     "SupperAdminGetDataById",
     "SupperAdminUpdate",
     "SupperAdminRemove",
+    "SupperAdminCreate",
 
 
     //  School  Tag
