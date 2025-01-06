@@ -28,7 +28,7 @@ const SelectFilter = ({
                 placement={
                     placement ? placement :
                     `${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                btnClassName="block p-2 rounded bg-white dark:bg-dark border hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                btnClassName="block p-2 rounded bg-white dark:bg-black border-0 dark:!border-0 border-dark-dark-light hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
                 button={
                     <div className="" >
                         {title}
