@@ -16,6 +16,9 @@ import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import { useLessonsGetDataQuery } from "@/services/admin/Lessons";
+import { useSectionGetDataQuery } from "@/services/admin/section";
+import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
+import SelectFilter from "@/components/Filter/SelectFilter";
 
 
 const TableComponent = () => {
@@ -32,22 +35,27 @@ const TableComponent = () => {
   const { isMounted } = useMounted();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
-  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
-
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
       search?: string;
       range?: string;
-      classId?: string;
       sectionId?: string;
-      stageId?: string;
+      teacherSubjectId?: string;
       schoolYearId?: string;
 
     }
     | undefined
   >();
+  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({
+  });
+  const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+    // sectionId  :param.sectionId,
+    schoolYearId: param?.schoolYearId
+
+  });
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
+
+
   useEffect(() => {
     if (SchoolYearData && Setting) {
       setParam(
@@ -94,31 +102,20 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-  const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-
-  const handleSelectClass = (value: any) => {
-    if (value) {
-      setParam({ ...param, classId: value.value });
-
-    } else {
-      setParam({ ...param, classId: undefined, sectionId: undefined });
-
-    }
-  }
   const handleSelectSection = (value: any) => {
     if (value) {
-      setParam({ ...param, sectionId: value.value });
+      setParam({ ...param, sectionId: value });
 
     } else {
       setParam({ ...param, sectionId: undefined });
     }
   }
-  const handleSelectStage = (value: any) => {
+  const handleSelectTeacherSubject = (value: any) => {
     if (value) {
-      setParam({ ...param, stageId: value.value });
+      setParam({ ...param, teacherSubjectId: value.value });
 
     } else {
-      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
+      setParam({ ...param, teacherSubjectId: undefined });
     }
   }
   const handleSelectSchoolYear = (value: any) => {
@@ -163,51 +160,43 @@ const TableComponent = () => {
 
         </div>
       </div>
-      {/* <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
-
-        <SelectWithSearch
-          placeholder={t("LessonsPage.StageName")}
-          isLoading={isFetchingStageData}
-          props={{
-            onChange: handleSelectStage
-          }}
-          options={StageData?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          })}
-        />
-        {param?.stageId &&
-          <SelectWithSearch
-            placeholder={t("SectionPage.ClassName")}
-
-            props={{
-              onChange: handleSelectClass
-            }}
-            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
+      <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
+        <SelectFilter
+          title={t("StudentEnrollmentPage.SectionName")}
+          placement="bottom-end"
+          handleChange={handleSelectSection}
+          options={
+            SectionData?.map((item) => {
               return {
-                value: item.id,
                 label: t(item.name as any),
+                value: item.id,
               };
-            })}
+            }
+            ) ?? []
+          }
+        />
+        <div className="max-w-36">
+          <SelectWithSearch
+            placeholder={t("HomeworksPage.teacherFullName")}
+            props={{
+              onChange: handleSelectTeacherSubject,
+            }}
+            options={
+              TeacherSubjectData?.map((item) => {
+                return {
+                  label: item.Teacher.fullName
+                  //  + item.StageSubject.Subject.name,
+                  ,
+                  value: item.id,
+                };
+              }
+              ) ?? []
+            }
           />
+        </div>
 
-        }
 
-        {param?.classId && <SelectWithSearch
-          placeholder={t("LessonsPage.SectionName")}
-          props={{
-            onChange: handleSelectSection
-          }}
-          options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          })}
-        />}
-      </div> */}
+      </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
@@ -253,14 +242,14 @@ const TableComponent = () => {
                 accessor: "Section.name",
                 // sortable: true,
                 render: ({ Section }: any) => Section?.name && t(Section?.name ?? "" as any)
-              }, 
+              },
               {
                 title: t("LessonsPage.SchoolYear"),
                 accessor: "SchoolYear.from",
                 // sortable: true,
                 render: ({ SchoolYear }: any) => (SchoolYear.from || SchoolYear.to ? SchoolYear.from + " - " + SchoolYear.to : null),
 
-              }, 
+              },
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",

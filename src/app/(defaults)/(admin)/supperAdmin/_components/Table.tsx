@@ -14,6 +14,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import Avatar from "@/components/common/Avatar";
+import Dropdown from "@/components/dropdown";
+import SelectFilter from "@/components/Filter/SelectFilter";
 
 
 const TableComponent = () => {
@@ -23,8 +25,8 @@ const TableComponent = () => {
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-      columnAccessor: "createdAt",
-      direction: "desc",
+    columnAccessor: "createdAt",
+    direction: "desc",
   });
 
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
@@ -33,52 +35,65 @@ const TableComponent = () => {
   const [pageNumber, setPageNumber] = useState(Number(1));
 
   const [param, setParam] = useState<
-      | {
-          approval_status?: string;
-          search?: string;
-          range?: string;
-      }
-      | undefined
+    | {
+      isActive?: string;
+      search?: string;
+      range?: string;
+    }
+    | undefined
   >();
   const params = {
-      skip: pageNumber,
-      take: 30,
-      sortBy: sortStatus.columnAccessor,
-      sortDirection: sortStatus.direction,
-      ...(search && { search: search as string }),
-      ...param,
+    skip: pageNumber,
+    take: 30,
+    sortBy: sortStatus.columnAccessor,
+    sortDirection: sortStatus.direction,
+    ...(search && { search: search as string }),
+    ...param,
   };
 
-  const { isFetching: isFetching, currentData: data} = useSupperAdminGetDataQuery({
-      ...params,
+  const { isFetching: isFetching, currentData: data } = useSupperAdminGetDataQuery({
+    ...params,
   });
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
-      const value = e.target.value;
-      setSearch(value);
-      if (value == "") {
-          handleSearch(value);
-      }
+    const value = e.target.value;
+    setSearch(value);
+    if (value == "") {
+      handleSearch(value);
+    }
   };
   const allParams = new URLSearchParams(searchParams);
   const handleSearch = (value?: string) => {
-      if (search != Search) {
-          // router.push({
-          //     pathname: router.pathname,
-          //     query: { ...router.query, search: value ?? Search },
-          // });
-          allParams.set("search", value ?? Search);
+    if (search != Search) {
+      // router.push({
+      //     pathname: router.pathname,
+      //     query: { ...router.query, search: value ?? Search },
+      // });
+      allParams.set("search", value ?? Search);
 
-          router.push(`/supperAdmin?${allParams.toString()}`);
-          setPageNumber(1);
-      }
+      router.push(`/supperAdmin?${allParams.toString()}`);
+      setPageNumber(1);
+    }
   };
   const handleKeyPress = (event: any) => {
-      if (event.key === "Enter") {
-          handleSearch();
-      }
+    if (event.key === "Enter") {
+      handleSearch();
+    }
   };
+
+  const handleSelectIsActive = (value?: string) => {
+     
+    if (value) {
+      setParam({ ...param, isActive: value });
+
+    } else {
+      setParam({ ...param, isActive: undefined });
+    }
+  };
+
+
+
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -93,6 +108,22 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
+          <SelectFilter
+            handleChange={handleSelectIsActive}
+            title={t("common.status")}
+            options={[
+              {
+                label: t("common.isActive"),
+                value: "TRUE",
+              },
+              {
+                label: t("common.isNotActive"),
+                value: "FALSE",
+              },
+            ]}
+          />
+
+
           {
             <RolePageAndActionBasedComponent
               component={(props) => {
@@ -126,19 +157,19 @@ const TableComponent = () => {
             columns={[
               {
                 title: t("BusPage.photo"),
-                accessor: "photo", 
+                accessor: "photo",
                 render: ({ photo, username }: any) => <>
                   <Avatar
                     photo={photo}
                     username={username}
                   />
                 </>
-              }, 
+              },
               {
                 title: t("SupperAdminPage.username"),
                 accessor: "username",
                 sortable: true,
-              }, 
+              },
               {
                 title: t("common.status"),
                 accessor: "isActive",

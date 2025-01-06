@@ -21,6 +21,9 @@ import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import { useSettingGetDataQuery } from "@/services/Setting";
+import SelectFilter from "@/components/Filter/SelectFilter";
+import { useSectionGetDataQuery } from "@/services/admin/section";
+import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 
 
 const TableComponent = () => {
@@ -28,26 +31,31 @@ const TableComponent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
-
-  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
-  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
-  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
-  const { isMounted } = useMounted();
-
   const [param, setParam] = useState<
     | {
       approval_status?: string;
       search?: string;
       range?: string;
-      classId?: string;
+      teacherSubjectId?: string;
       sectionId?: string;
-      stageId?: string;
       schoolYearId?: string;
 
     }
     | undefined
   >();
+  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({
+  });
+  const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+    // sectionId  :param.sectionId,
+    schoolYearId: param?.schoolYearId
+
+  });
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const { isMounted } = useMounted();
+
+
   useEffect(() => {
     if (SchoolYearData) {
       setParam(
@@ -58,7 +66,7 @@ const TableComponent = () => {
         }
       )
     }
-  }, [SchoolYearData,Setting])
+  }, [SchoolYearData, Setting])
 
 
   const [getData, { isFetching, currentData: data }] = useLazySectionScheduleGetDataQuery();
@@ -108,29 +116,21 @@ const TableComponent = () => {
     });
   };
 
-  const handleSelectClass = (value: any) => {
-    if (value) {
-      setParam({ ...param, classId: value.value });
 
-    } else {
-      setParam({ ...param, classId: undefined, sectionId: undefined });
-
-    }
-  }
   const handleSelectSection = (value: any) => {
     if (value) {
-      setParam({ ...param, sectionId: value.value });
+      setParam({ ...param, sectionId: value });
 
     } else {
       setParam({ ...param, sectionId: undefined });
     }
   }
-  const handleSelectStage = (value: any) => {
+  const handleSelectTeacherSubject = (value: any) => {
     if (value) {
-      setParam({ ...param, stageId: value.value });
+      setParam({ ...param, teacherSubjectId: value.value });
 
     } else {
-      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
+      setParam({ ...param, teacherSubjectId: undefined });
     }
   }
   const handleSelectSchoolYear = (value: any) => {
@@ -191,48 +191,41 @@ const TableComponent = () => {
         </div>
       </div>
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
-
-        <SelectWithSearch
-          placeholder={t("StudentEnrollmentPage.StageName")}
-          isLoading={isFetchingStageData}
-          props={{
-            onChange: handleSelectStage
-          }}
-          options={StageData?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          })}
-        />
-        {param?.stageId &&
-          <SelectWithSearch
-            placeholder={t("SectionPage.ClassName")}
-            props={{
-              onChange: handleSelectClass
-            }}
-            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
+        <SelectFilter
+          title={t("StudentEnrollmentPage.SectionName")}
+          placement="bottom-end"
+          handleChange={handleSelectSection}
+          options={
+            SectionData?.map((item) => {
               return {
-                value: item.id,
                 label: t(item.name as any),
+                value: item.id,
               };
-            })}
+            }
+            ) ?? []
+          }
+        />
+        <div className="max-w-36">
+          <SelectWithSearch
+            placeholder={t("HomeworksPage.teacherFullName")}
+            props={{
+              onChange: handleSelectTeacherSubject,
+            }}
+            options={
+              TeacherSubjectData?.map((item) => {
+                return {
+                  label: item.Teacher.fullName
+                  //  + item.StageSubject.Subject.name,
+                  ,
+                  value: item.id,
+                };
+              }
+              ) ?? []
+            }
           />
+        </div>
 
-        }
 
-        {param?.classId && <SelectWithSearch
-          placeholder={t("StudentEnrollmentPage.SectionName")}
-          props={{
-            onChange: handleSelectSection
-          }}
-          options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          })}
-        />}
       </div>
       <div className={'flex flex-col gap-4  mt-4'}>
 
@@ -243,8 +236,9 @@ const TableComponent = () => {
             </div>
             :
             <>
+
               {
-                !(param?.sectionId && daysArray) ?
+                (daysArray.filter((item) => data && data.data && (data.data[item.value as keyof typeof data.data] as any[])?.length > 0).length == 0) ?
                   <div className="flex justify-center items-center min-h-64 Card">
                     {t("common.no-data")}
                   </div> :

@@ -15,6 +15,8 @@ import { useSelector } from "react-redux";
 
 import { AddIcons } from "@/components/common/icons/Actions";
 import CreateComponent from "./CreateComponent";
+import { useStageGetDataQuery } from "@/services/admin/stage";
+import SelectFilter from "@/components/Filter/SelectFilter";
 
 
 const TableComponent = () => {
@@ -34,7 +36,8 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
+      stageId?: string;
+      classId?: string;
       search?: string;
       range?: string;
     }
@@ -46,6 +49,7 @@ const TableComponent = () => {
     ...(search && { search: search as string }),
     ...param,
   };
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
   const { isFetching, currentData: data } = useStageSubjectGetDataQuery({
     ...params,
@@ -75,6 +79,24 @@ const TableComponent = () => {
     }
   };
   const [open, setOpen] = useState(false)
+  const handleSelectClass = (value: any) => {
+    if (value) {
+      setParam({ ...param, classId: value });
+
+    } else {
+      setParam({ ...param, classId: undefined, });
+
+    }
+  }
+
+  const handleSelectStage = (value: any) => {
+    if (value) {
+      setParam({ ...param, stageId: value });
+
+    } else {
+      setParam({ ...param, stageId: undefined, classId: undefined });
+    }
+  }
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -109,6 +131,38 @@ const TableComponent = () => {
             />
           }
         </div>
+      </div>
+      <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
+        <SelectFilter
+          placement="bottom-end"
+          title={t("StudentEnrollmentPage.StageName")}
+          handleChange={handleSelectStage}
+          options={StageData?.map((item) => {
+            return {
+              value: item.id,
+              label: t(item.name as any),
+            };
+          }) ?? []
+          }
+        />
+
+        {param?.stageId &&
+          <SelectFilter
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
+            }
+          />
+        }
+
+
+
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (

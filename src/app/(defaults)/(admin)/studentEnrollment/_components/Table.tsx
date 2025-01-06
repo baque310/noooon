@@ -21,6 +21,7 @@ import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { useSettingGetDataQuery } from "@/services/Setting";
+import SelectFilter from "@/components/Filter/SelectFilter";
 
 
 const TableComponent = () => {
@@ -121,7 +122,7 @@ const TableComponent = () => {
   const [openDelete, setOpenDelete] = useState(false)
   const handleSelectClass = (value: any) => {
     if (value) {
-      setParam({ ...param, classId: value.value });
+      setParam({ ...param, classId: value });
 
     } else {
       setParam({ ...param, classId: undefined, sectionId: undefined });
@@ -130,7 +131,7 @@ const TableComponent = () => {
   }
   const handleSelectSection = (value: any) => {
     if (value) {
-      setParam({ ...param, sectionId: value.value });
+      setParam({ ...param, sectionId: value });
 
     } else {
       setParam({ ...param, sectionId: undefined });
@@ -138,7 +139,7 @@ const TableComponent = () => {
   }
   const handleSelectStage = (value: any) => {
     if (value) {
-      setParam({ ...param, stageId: value.value });
+      setParam({ ...param, stageId: value });
 
     } else {
       setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
@@ -256,8 +257,20 @@ const TableComponent = () => {
         </div>
       </div>
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
+        <SelectFilter
+          placement="bottom-end"
+          title={t("StudentEnrollmentPage.StageName")}
+          handleChange={handleSelectStage}
+          options={StageData?.map((item) => {
+            return {
+              value: item.id,
+              label: t(item.name as any),
+            };
+          }) ?? []
+          }
+        />
 
-        <SelectWithSearch
+        {/* <SelectWithSearch
           placeholder={t("StudentEnrollmentPage.StageName")}
           isLoading={isFetchingStageData}
           props={{
@@ -269,8 +282,22 @@ const TableComponent = () => {
               label: t(item.name as any),
             };
           })}
-        />
+        /> */}
         {param?.stageId &&
+          <SelectFilter
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
+            }
+          />
+        }
+        {/* {param?.stageId &&
           <SelectWithSearch
             placeholder={t("SectionPage.ClassName")}
 
@@ -285,20 +312,34 @@ const TableComponent = () => {
             })}
           />
 
-        }
+        } */}
 
-        {param?.classId && <SelectWithSearch
-          placeholder={t("StudentEnrollmentPage.SectionName")}
-          props={{
-            onChange: handleSelectSection
-          }}
-          options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          })}
-        />}
+        {param?.classId &&
+          <SelectFilter
+            title={t("StudentEnrollmentPage.SectionName")}
+            placement="bottom-end"
+            handleChange={handleSelectSection}
+            options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
+            }
+          />
+          // <SelectWithSearch
+          //   placeholder={t("StudentEnrollmentPage.SectionName")}
+          //   props={{
+          //     onChange: handleSelectSection
+          //   }}
+          // options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
+          //   return {
+          //     value: item.id,
+          //     label: t(item.name as any),
+          //   };
+          // })}
+          // />
+        }
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (

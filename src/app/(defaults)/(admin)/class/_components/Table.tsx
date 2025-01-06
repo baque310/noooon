@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
- import { AddIcons } from "@/components/common/icons/Actions";
+import { AddIcons } from "@/components/common/icons/Actions";
 import CreateComponent from "./CreateComponent";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import { getTranslation } from "@/ni18n/i18n";
@@ -14,6 +14,7 @@ import useMounted from "@/hooks/useMounted";
 import { useClassGetDataQuery } from "@/services/admin/class";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { IRootState } from "@/store";
+import SelectFilter from "@/components/Filter/SelectFilter";
 
 
 const TableComponent = () => {
@@ -22,22 +23,22 @@ const TableComponent = () => {
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-      columnAccessor: "createdAt",
-      direction: "desc",
+    columnAccessor: "createdAt",
+    direction: "desc",
   });
 
   const [param, setParam] = useState<
-      | {
-          search?: string;
-          stageId?: string;
-      }
-      | undefined
+    | {
+      search?: string;
+      stageId?: string;
+    }
+    | undefined
   >();
   const params = {
-      sortBy: sortStatus.columnAccessor,
-      sortDirection: sortStatus.direction,
-      ...(search && { search: search as string }),
-      ...param,
+    sortBy: sortStatus.columnAccessor,
+    sortDirection: sortStatus.direction,
+    ...(search && { search: search as string }),
+    ...param,
   };
 
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
@@ -48,33 +49,33 @@ const TableComponent = () => {
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
-      const value = e.target.value;
-      setSearch(value);
-      if (value == "") {
-          handleSearch(value);
-      }
+    const value = e.target.value;
+    setSearch(value);
+    if (value == "") {
+      handleSearch(value);
+    }
   };
   const allParams = new URLSearchParams(searchParams);
   const handleSearch = (value?: string) => {
-      if (search != Search) {
-          allParams.set("search", value ?? Search);
-          router.push(`/class?${allParams.toString()}`);
-      }
+    if (search != Search) {
+      allParams.set("search", value ?? Search);
+      router.push(`/class?${allParams.toString()}`);
+    }
   };
   const handleKeyPress = (event: any) => {
-      if (event.key === "Enter") {
-          handleSearch();
-      }
+    if (event.key === "Enter") {
+      handleSearch();
+    }
   };
 
   const handleSelectStage = (value: any) => {
-      if (value) {
-          setParam({ ...param, stageId: value.value });
+    if (value) {
+      setParam({ ...param, stageId: value.value });
 
-      } else {
-          setParam({ ...param, stageId: undefined });
+    } else {
+      setParam({ ...param, stageId: undefined });
 
-      }
+    }
   }
   const [open, setOpen] = useState(false)
   return (
@@ -91,20 +92,18 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
-          <SelectWithSearch
-            placeholder={t("ClassPage.StageName")}
-            isLoading={isFetchingStageData}
-            props={{
-              onChange: handleSelectStage
-            }}
+
+          <SelectFilter
+            handleChange={handleSelectStage}
+            title={t("ClassPage.StageName")}
             options={StageData?.map((item) => {
               return {
                 value: item.id,
                 label: t(item.name as any),
               };
-            })}
+            }) ?? []
+            }
           />
-
           {
             <RolePageAndActionBasedComponent
               component={(props) => {

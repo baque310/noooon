@@ -2,7 +2,7 @@
 import { DataTable } from "mantine-datatable";
 import React, { useState } from "react";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
- import { AddIcons } from "@/components/common/icons/Actions";
+import { AddIcons } from "@/components/common/icons/Actions";
 import CreateComponent from "./CreateComponent";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import useMounted from "@/hooks/useMounted";
@@ -12,8 +12,9 @@ import { useSectionGetDataQuery } from "@/services/admin/section";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
- import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import moment from "moment";
+import SelectFilter from "@/components/Filter/SelectFilter";
 
 
 
@@ -92,20 +93,18 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
-          <SelectWithSearch
-            placeholder={t("SectionPage.ClassName")}
-            isLoading={isFetchingClassData}
-            props={{
-              onChange: handleSelectClass
-            }}
+
+          <SelectFilter
+            handleChange={handleSelectClass}
+            title={t("SectionPage.ClassName")}
             options={ClassData?.map((item) => {
               return {
                 value: item.id,
                 label: t(item.name as any),
               };
-            })}
-          />
-
+            }) ?? []
+            }
+          /> 
           {
             <RolePageAndActionBasedComponent
               component={(props) => {

@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 
 import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
+import SelectFilter from "@/components/Filter/SelectFilter";
 
 
 const TableComponent = () => {
@@ -34,7 +35,7 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
+      Gender?: string;
       search?: string;
       range?: string;
     }
@@ -75,6 +76,16 @@ const TableComponent = () => {
       handleSearch();
     }
   };
+
+  const handleSelectGander = (value: any) => {
+    if (value) {
+      setParam({ ...param, Gender: value });
+    }
+    else {
+      setParam({ ...param, Gender: undefined });
+    }
+  }
+
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -89,6 +100,23 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
+          <SelectFilter
+            handleChange={handleSelectGander}
+            title={t("TeacherPage.Gender")}
+            options={[
+              {
+                label: t("TeacherPage.Male"),
+                value: "Male"
+              },
+              {
+                label: t("TeacherPage.Female"),
+                value: "Female"
+              }
+              ,
+            ]
+            }
+          />
+
           {
             <RolePageAndActionBasedComponent
               component={(props) => {
