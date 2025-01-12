@@ -42,6 +42,10 @@ const PageComponent = () => {
         } catch (error: any) {
             console.error('Failed to operation :', error);
             if (error && error.message) {
+                if (error.message === `Foreign key constraint failed on the field. More details: {"modelName":"Schedule","field_name":"scheduleId"}`) {
+                    return toast.error(t('SchedulePage.Schedule-is-related-with-other-models'), { autoClose: 15000 });
+                    
+                }
                 return toast.error(error.message, { autoClose: 15000 });
             }
             toast.error(error, { autoClose: 15000 });
@@ -98,7 +102,7 @@ const PageComponent = () => {
                 setOpen={setOpenDelete}
                 handleRemove={handleRemove}
                 isLoading={isLoadingScheduleRemove}
-                name={data?.day ?? ""}
+                name={data?.day ? t(data?.day as any) : ""}
             />
 
         </div>

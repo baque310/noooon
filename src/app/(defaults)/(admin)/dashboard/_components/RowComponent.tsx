@@ -7,6 +7,9 @@ import { useDashboardGetDataQuery } from "@/services/admin/Dashboard";
 import RowCard from "./RowCard";
 import TableComponent from "./Table";
 import RowCardMullite from "./RowCardMullite";
+import { RowToday } from "./RowToday";
+import { RowWeek } from "./RowWeek";
+import { RowMonth } from "./RowMonth";
 
 const RowComponent = () => {
   const { t } = getTranslation();
@@ -35,7 +38,7 @@ const RowComponent = () => {
       </div>
 
       <div className="gap-4  max-md:flex-col flex  w-full">
-        <RowCardMullite
+        {/* <RowCardMullite
           title={t("DashboardPage.ThisToday")}
           numberAbsent={currentData?.attendanceCounts.today.Absent}
           numberPresent={currentData?.attendanceCounts.today.Present}
@@ -44,8 +47,11 @@ const RowComponent = () => {
           titlePresent={t("DashboardPage.present")}
           titleVacation={t("DashboardPage.vacation")}
 
-        />
-        <RowCardMullite
+        /> */}
+        <RowToday data={currentData} />
+        <RowWeek data={currentData} />
+        <RowMonth data={currentData} />
+        {/* <RowCardMullite
           title={t("DashboardPage.ThisWeek")}
           numberAbsent={currentData?.attendanceCounts.week.Absent}
           numberPresent={currentData?.attendanceCounts.week.Present}
@@ -53,8 +59,8 @@ const RowComponent = () => {
           titleAbsent={t("DashboardPage.absent")}
           titlePresent={t("DashboardPage.present")}
           titleVacation={t("DashboardPage.vacation")}
-        />
-        <RowCardMullite
+        /> */}
+        {/* <RowCardMullite
           title={t("DashboardPage.ThisMonth")}
           numberAbsent={currentData?.attendanceCounts.month.Absent}
           numberPresent={currentData?.attendanceCounts.month.Present}
@@ -62,7 +68,7 @@ const RowComponent = () => {
           titleAbsent={t("DashboardPage.absent")}
           titlePresent={t("DashboardPage.present")}
           titleVacation={t("DashboardPage.vacation")}
-        />
+        /> */}
       </div>
       <TableComponent data={currentData?.passFailRates} isFetching={isFetching} />
     </div>

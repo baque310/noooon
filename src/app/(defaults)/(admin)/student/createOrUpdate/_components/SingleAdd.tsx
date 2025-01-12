@@ -29,7 +29,7 @@ const SingleAdd = ({
       initialValues={{
         fullName: DataStudentGetDataById?.fullName ?? "",
         address: DataStudentGetDataById?.address?? "",
-        email: DataStudentGetDataById?.email?? "",
+        email: DataStudentGetDataById?.email?? undefined,
         phone1: DataStudentGetDataById?.phone1 ?? "",
         phone2: DataStudentGetDataById?.phone2?? "",
         birth: DataStudentGetDataById?.birth?? "",

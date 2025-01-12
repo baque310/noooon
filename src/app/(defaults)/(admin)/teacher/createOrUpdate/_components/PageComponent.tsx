@@ -62,6 +62,11 @@ const PageComponent = () => {
         ).unwrap()
 
       } else {
+        Object.keys(values).forEach((key) => {
+          if ((values as any)[key] === undefined || (values as any)[key] === "") {
+            delete (values as any)[key];
+          }
+        });
         await TeacherCreate({
           ...values
 

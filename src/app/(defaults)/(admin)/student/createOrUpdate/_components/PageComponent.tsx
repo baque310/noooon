@@ -69,6 +69,13 @@ const PageComponent = () => {
                 ).unwrap()
 
             } else {
+                // remove if values is '' or undefined or null ?
+                Object.keys(values).forEach((key) => {
+                    if ((values as any)[key] === undefined || (values as any)[key] === "") {
+                        delete (values as any)[key];
+                    }
+                });
+
                 await StudentCreate({
                     ...values,
                     photo: undefined,
@@ -85,6 +92,10 @@ const PageComponent = () => {
             if (error) {
                 if (error.message == `Resource already exists. More details: {\"modelName\":\"Student\",\"target\":\"students_email_key\"}`) {
                     return toast.error(t('StudentPage.email-already-exists'), { autoClose: 30000 });
+                }
+                if (error.message == `email must be an email`) {
+                    return toast.error(t('common.invalid-email'), { autoClose: 30000 });
+
                 }
                 return toast.error(JSON.stringify(error), { autoClose: 30000 });
             }

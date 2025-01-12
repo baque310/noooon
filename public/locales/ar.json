@@ -602,6 +602,7 @@
         "TeacherSubjectCannotBeDeleted": "لا يمكن حذف المواد حسب المدرس لانه مرتبط بمواد اخرى"
     },
     "SchedulePage": {
+        "Schedule-is-related-with-other-models": "الجدول الدروس مرتبط بنماذج اخرى",
         "Schedule": "الجدول الدروس",
         "Schedules": "الجداول",
         "update-info": "تعديل الجدول الدروس",
