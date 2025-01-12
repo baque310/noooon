@@ -70,7 +70,8 @@ const PageComponent = () => {
 
             } else {
                 await StudentCreate({
-                    ...values
+                    ...values,
+                    photo: undefined,
 
                 }).unwrap()
             }

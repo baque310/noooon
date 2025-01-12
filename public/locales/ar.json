@@ -108,7 +108,7 @@
         "admins": "المدراء",
         "users": "المستخدمين",
         "homeworks": "الواجبات",
-        "lessons": "الدروس",
+        "lessons": "الدروس المنجزة",
         "dashboard": "لوحة التحكم",
         "admin": "الادمن",
         "school": "المدرسة",
@@ -246,9 +246,9 @@
         "StageName": "اسم المرحلة",
         "SubjectName": "اسم المادة",
         "SchoolYear": "السنة الدراسية",
-        "lesson": "الدرس",
-        "lessons": "الدروس",
-        "LessonsInformation": "معلومات الدرس "
+        "lesson": "الدرس المنجز",
+        "lessons": "الدروس المنجزة",
+        "LessonsInformation": "معلومات الدرس المنجز "
     },
     "HomeworksPage": {
         "title": "العنوان",
