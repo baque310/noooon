@@ -128,7 +128,7 @@ const CreateComponent = ({
                 options={
                   stageSubject?.map((item) => {
                     return {
-                      label: item.Subject.name + " - " + t(item.Stage.name as any),
+                      label: item.Subject.name + " - " + t(item.Stage.name as any) + " - " +  item.Class.name,
                       value: item.id,
                     };
                   }) ?? []
