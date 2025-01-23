@@ -171,7 +171,7 @@ const TableComponent = () => {
               router.push(`/stageSubject/${item.record.id}`);
             }}
             fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
+            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base  border border-dark-dark-light`}
             records={data as any}
             columns={[
               {

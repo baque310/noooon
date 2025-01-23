@@ -63,7 +63,7 @@ const TableComponent = () => {
   const handleSearch = (value?: string) => {
     if (search != Search) {
       allParams.set("search", value ?? Search);
-      router.push(`/?${allParams.toString()}`);
+      router.push(`/admin?${allParams.toString()}`);
       setPageNumber(1);
     }
   };
@@ -117,7 +117,7 @@ const TableComponent = () => {
               router.push(`/admin/${item.record.id}`);
             }}
             fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
+            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base  border border-dark-dark-light`}
             records={data?.data as any}
             columns={[
               {

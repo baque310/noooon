@@ -152,7 +152,7 @@ const TableComponent = () => {
               router.push(`/supperAdmin/${item.record.id}`);
             }}
             fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
+            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base  border border-dark-dark-light`}
             records={data?.data as any}
             columns={[
               {

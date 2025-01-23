@@ -20,7 +20,7 @@ const TableComponent = ({ isFetching, data }: { isFetching: boolean, data?: any[
       {isMounted && (
         <DataTable
           fetching={isFetching}
-          className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base  !h-full `}
+          className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base  border border-dark-dark-light !h-full `}
           records={data as any}
           columns={[
             {

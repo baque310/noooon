@@ -128,7 +128,7 @@ const TableComponent = () => {
                       className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === index ? '!text-primary' : ''}`}
                       onClick={() => togglePara(index)}
                     >
-                      <bdi className=' flex gap-1'>
+                      <bdi className=' flex gap-1 font-bold text-lg'>
                         <p>
                           {index + 1} {")"}
                         </p>
@@ -157,7 +157,7 @@ const TableComponent = () => {
                                 router.push(`/schedule/${item.record.id}`);
                               }}
                               fetching={isFetching}
-                              className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
+                              className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base  border border-dark-dark-light`}
                               records={data ? data[item.value as keyof typeof data] : [] as any}
                               columns={[
                                 // {

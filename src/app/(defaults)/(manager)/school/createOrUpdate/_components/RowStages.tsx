@@ -4,6 +4,8 @@ import { FieldArray } from 'formik';
 import React from 'react'
 import RowSections from './RowSections';
 import { InputForm } from '@/components/Form/inputForm';
+import { CheckBoxForm } from '@/components/Form/CheckBoxForm';
+import { sections } from './PageComponent';
 
 const RowStages = ({
     t,
@@ -85,12 +87,7 @@ const RowStages = ({
                                                                             name={`StageData.${index}.ClassData.${idx}.name`}
                                                                             title={t("SchoolPage.ClassName")}
                                                                             placeholder={t("SchoolPage.enter-ClassName")}
-                                                                            // options={ListClasses.map((item) => {
-                                                                            //     return {
-                                                                            //         label: t(item.label as any),
-                                                                            //         value: item.value
-                                                                            //     }
-                                                                            // })}
+
                                                                         />
                                                                         <button
                                                                             className='hover:bg-danger/10 border-danger/70 text-danger/70  hover:scale-[1.01] transition-transform py-[2px] px-2  rounded  font-bold'
@@ -106,6 +103,7 @@ const RowStages = ({
                                                                     <div className="py-1 text-base font-semibold text-black dark:text-white-dark  mb-2 ">
                                                                         {t('SchoolPage.sections')}
                                                                     </div>
+
                                                                     <RowSections
                                                                         props={props}
                                                                         index={index}
@@ -123,6 +121,7 @@ const RowStages = ({
                                                                 onClick={() => push({
                                                                     id: Math.random(),
                                                                     name: "",
+                                                                    sections: sections
 
                                                                 })}>
                                                                 {t('common.add')}

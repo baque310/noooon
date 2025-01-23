@@ -31,14 +31,14 @@ const PageComponent = () => {
                         <ItemList title={t('SchoolPage.phone1')} value={String(data?.phone1)} />
                         <ItemList title={t('SchoolPage.phone2')} value={String(data?.phone2)} />
                         <ItemList title={t('SchoolPage.email')} value={String(data?.email)} />
-                        <ItemList title={t('SchoolPage.hasBanner')} value={
+                        {/* <ItemList title={t('SchoolPage.hasBanner')} value={
                             <div className='flex gap-2 px-[2px]'>
                                 {data?.hasBanner == "TRUE" ?
                                     <div className={` rounded-md p-1 ltr:ml-2 rtl:ml-2  bg-success/20 text-success `}>{t("common.yes")}</div>
                                     : <div className={` rounded-md p-1 ltr:ml-2 rtl:ml-2  bg-danger/50 text-danger`}>{t("common.no")}</div>
                                 }
                             </div>
-                        } />
+                        } /> */}
                         <ItemList title={t('common.status')} value={
                             <div className='flex gap-2 px-[2px]'>
                                 {data?.isActive == "TRUE" ?

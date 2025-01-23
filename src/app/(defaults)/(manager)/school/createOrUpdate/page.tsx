@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   title: 'update info managerAdmin ',
 };
 const Page = () => {
-
   return <div className=''>
     <PageComponent />
   </div>;
