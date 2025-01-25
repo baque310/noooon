@@ -268,21 +268,7 @@ const TableComponent = () => {
             };
           }) ?? []
           }
-        />
-
-        {/* <SelectWithSearch
-          placeholder={t("StudentEnrollmentPage.StageName")}
-          isLoading={isFetchingStageData}
-          props={{
-            onChange: handleSelectStage
-          }}
-          options={StageData?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          })}
-        /> */}
+        /> 
         {param?.stageId &&
           <SelectFilter
             title={t("SectionPage.ClassName")}
@@ -296,24 +282,7 @@ const TableComponent = () => {
             }) ?? []
             }
           />
-        }
-        {/* {param?.stageId &&
-          <SelectWithSearch
-            placeholder={t("SectionPage.ClassName")}
-
-            props={{
-              onChange: handleSelectClass
-            }}
-            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
-              return {
-                value: item.id,
-                label: t(item.name as any),
-              };
-            })}
-          />
-
-        } */}
-
+        }  
         {param?.classId &&
           <SelectFilter
             title={t("StudentEnrollmentPage.SectionName")}
@@ -326,19 +295,7 @@ const TableComponent = () => {
               };
             }) ?? []
             }
-          />
-          // <SelectWithSearch
-          //   placeholder={t("StudentEnrollmentPage.SectionName")}
-          //   props={{
-          //     onChange: handleSelectSection
-          //   }}
-          // options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
-          //   return {
-          //     value: item.id,
-          //     label: t(item.name as any),
-          //   };
-          // })}
-          // />
+          /> 
         }
       </div>
       <div className="datatables pagination-padding mt-2">

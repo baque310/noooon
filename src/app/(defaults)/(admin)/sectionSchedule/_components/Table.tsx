@@ -22,7 +22,6 @@ import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import SelectFilter from "@/components/Filter/SelectFilter";
-import { useSectionGetDataQuery } from "@/services/admin/section";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 
 
@@ -33,7 +32,8 @@ const TableComponent = () => {
   const search = searchParams.get("search") || "";
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
+      classId?: string;
+      stageId?: string;
       search?: string;
       range?: string;
       teacherSubjectId?: string;
@@ -43,8 +43,9 @@ const TableComponent = () => {
     }
     | undefined
   >();
-  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({
-  });
+
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+
   const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
     // sectionId  :param.sectionId,
     schoolYearId: param?.schoolYearId
@@ -117,12 +118,29 @@ const TableComponent = () => {
   };
 
 
+  const handleSelectClass = (value: any) => {
+    if (value) {
+      setParam({ ...param, classId: value, sectionId: undefined });
+
+    } else {
+      setParam({ ...param, classId: undefined, sectionId: undefined });
+
+    }
+  }
   const handleSelectSection = (value: any) => {
     if (value) {
       setParam({ ...param, sectionId: value });
 
     } else {
       setParam({ ...param, sectionId: undefined });
+    }
+  }
+  const handleSelectStage = (value: any) => {
+    if (value) {
+      setParam({ ...param, stageId: value, classId: undefined, sectionId: undefined });
+
+    } else {
+      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
     }
   }
   const handleSelectTeacherSubject = (value: any) => {
@@ -190,21 +208,51 @@ const TableComponent = () => {
           }
         </div>
       </div>
+
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
         <SelectFilter
-          title={t("StudentEnrollmentPage.SectionName")}
+          value={param?.stageId}
           placement="bottom-end"
-          handleChange={handleSelectSection}
-          options={
-            SectionData?.map((item) => {
-              return {
-                label: t(item.name as any),
-                value: item.id,
-              };
-            }
-            ) ?? []
+          title={t("StudentEnrollmentPage.StageName")}
+          handleChange={handleSelectStage}
+          options={StageData?.map((item) => {
+            return {
+              value: item.id,
+              label: t(item.name as any),
+            };
+          }) ?? []
           }
         />
+        {param?.stageId &&
+          <SelectFilter
+            value={param?.classId}
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
+            }
+          />
+        }
+        {param?.classId &&
+          <SelectFilter
+            value={param?.sectionId}
+            title={t("StudentEnrollmentPage.SectionName")}
+            placement="bottom-end"
+            handleChange={handleSelectSection}
+            options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
+            }
+          />
+        }
         <div className="max-w-36">
           <SelectWithSearch
             placeholder={t("HomeworksPage.teacherFullName")}
@@ -224,8 +272,6 @@ const TableComponent = () => {
             }
           />
         </div>
-
-
       </div>
       <div className={'flex flex-col gap-4  mt-4'}>
 
@@ -252,7 +298,7 @@ const TableComponent = () => {
                             className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === index ? '!text-primary' : ''}`}
                             onClick={() => togglePara(index)}
                           >
-                            <bdi className=' flex gap-1'>
+                            <bdi className=' flex gap-1 font-bold text-lg'>
                               <p>
                                 {index + 1} {")"}
                               </p>

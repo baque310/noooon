@@ -1,14 +1,16 @@
 import { IRootState } from '@/store';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import Dropdown from '../dropdown';
 const SelectFilter = ({
     options,
     title,
     handleChange,
-    placement
+    placement,
+    value
 
 }: {
+    value?: string
     placement?: string,
     handleChange: (value?: string) => void,
     title: string,
@@ -19,7 +21,20 @@ const SelectFilter = ({
 }) => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
 
-    const [selected, setSelected] = React.useState<string | undefined>();
+    const [selected, setSelected] = React.useState<{
+        label: string,
+        value: string
+    }>();
+
+    useEffect(() => {
+        if (value) {
+            setSelected(options.find(item => item.value === value));
+        } else {
+            setSelected(undefined);
+        }
+
+    }, [value])
+
 
     return (
         <div className="dropdown shrink-0">
@@ -27,7 +42,7 @@ const SelectFilter = ({
                 offset={[0, 8]}
                 placement={
                     placement ? placement :
-                    `${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                        `${isRtl ? 'bottom-start' : 'bottom-end'}`}
                 btnClassName="block p-2 rounded bg-white dark:bg-black border-0 dark:!border-0 border-dark-dark-light hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
                 button={
                     <div className="" >
@@ -36,7 +51,7 @@ const SelectFilter = ({
                             <>
                                 <span className='mx-1' >|</span>
                                 <span className="text-primary">
-                                    {selected}
+                                    {selected.label}
                                 </span>
                             </>
                         }
@@ -51,21 +66,21 @@ const SelectFilter = ({
                                 <li
                                     key={index}
                                     className={`${index > 0 && "border-t"}
-                                ${selected === item.label && 'bg-primary text-white-light dark:bg-primary/90 dark:text-white group '}
+                                ${selected?.value === item.value && 'bg-primary text-white-light dark:bg-primary/90 dark:text-white group '}
                                 border-white-light dark:border-white-light/10 transition-all duration-200`}>
                                     <button
                                         onClick={() => {
-                                            if (selected === item.label) {
+                                            if (selected?.value === item.value) {
                                                 setSelected(undefined);
                                                 handleChange(undefined);
                                                 return;
 
                                             }
-                                            setSelected(item.label);
+                                            setSelected(item);
                                             handleChange(item.value);
                                         }}
                                         className={
-                                            `${selected === item.label && 'group-hover:text-white text-nowrap'} '}`
+                                            `${selected?.value === item.value && 'group-hover:text-white text-nowrap'} '}`
                                         }
                                     >
                                         {item.label}
