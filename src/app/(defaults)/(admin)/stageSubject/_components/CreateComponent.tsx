@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { Form, Formik, FormikProps } from 'formik';
+import { FieldArray, Form, Formik, FormikProps } from 'formik';
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import Model from '@/components/Model';
 import { InputForm } from '@/components/Form/inputForm';
@@ -14,10 +14,14 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
 import { useStageGetDataQuery } from '@/services/admin/stage';
-import { SelectForm } from '@/components/Form/SelectForm';
+import { OptionType, SelectForm } from '@/components/Form/SelectForm';
 import { useSubjectGetDataQuery } from '@/services/admin/Subject';
+import { MultiValue, SingleValue } from 'react-select';
 export interface FormValues extends AddStageSubjectPayload {
-
+  classIds?: {
+    label: string;
+    value: string;
+  }[]
 }
 const CreateComponent = ({
   open,
@@ -35,10 +39,9 @@ const CreateComponent = ({
   const [StageSubjectGetDataById, { currentData: data, isFetching }] = useLazyStageSubjectGetDataByIdQuery()
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: subject, isFetching: isFetchingSubject } = useSubjectGetDataQuery({
-    search:searchSubject
+    search: searchSubject
   });
-    console.log("subject",subject);
-    
+
   useEffect(() => {
     if (id) {
       StageSubjectGetDataById({ id: String(id) })
@@ -51,19 +54,30 @@ const CreateComponent = ({
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
+
       if (id) {
         await StageSubjectUpdate({
           id: id as string,
           body: values
-
         }).unwrap()
       }
       else {
-        await StageSubjectCreate(values).unwrap()
+        if (values.classIds) {
+          await Promise.all(
+            values.classIds.map(async (item) => {
+              await StageSubjectCreate({
+                classId: item.value,
+                subjectId: values.subjectId,
+                stageId: values.stageId
+              }).unwrap()
+            }))
+        }
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
       resetForm();
-      setOpen(false)
+      if (id) {
+        setOpen(false)
+      }
 
     } catch (error: any) {
       console.error("Failed to operation :", error);
@@ -78,9 +92,18 @@ const CreateComponent = ({
     }
   };
   const schoolSchema = Yup.object().shape({
-    classId: Yup.string().required(t("common.this-field-is-required")),
     subjectId: Yup.string().required(t("common.this-field-is-required")),
     stageId: Yup.string().required(t("common.this-field-is-required")),
+    ...id ?
+      {
+        classId: Yup.string().required(t("common.this-field-is-required"))
+
+      } :
+      {
+        classIds: Yup.array().of(Yup.object().shape({
+          value: Yup.string().required(t("common.this-field-is-required")),
+        })).required(t("common.this-field-is-required"))
+      }
 
   });
 
@@ -152,11 +175,11 @@ const CreateComponent = ({
                     props.setFieldValue("stageId", (e as any)?.value ?? "")
                   }
                 }}
-              /> 
+              />
 
               <SelectForm
                 formikProps={props}
-                name={"classId"}
+                name={id ? "classId" : "classIds"}
                 title={t("StudentEnrollmentPage.ClassName")}
                 placeholder={t("StudentEnrollmentPage.enter-ClassName")}
                 options={stage ? stage
@@ -168,14 +191,18 @@ const CreateComponent = ({
                   }) || [] : []
                 }
                 props={{
+                  isMulti: id ? false : true,
                   isLoading: isFetchingStage,
                   isClearable: true,
-                  onChange: (e) => {
-                    props.setFieldValue("classId", (e as any)?.value ?? "") 
+                  onChange: (newValue: MultiValue<OptionType> | SingleValue<OptionType>) => {
+                    if (id) {
+                      props.setFieldValue("classId", (newValue as any)?.value ?? "")
+                    } else {
+                      props.setFieldValue("classIds", (newValue as any) ?? [])
+                    }
                   }
                 }}
-              /> 
-
+              />
               <div className="flex flex-row-reverse gap-2">
                 <ButtonForm
                   props={{

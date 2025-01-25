@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "mantine-datatable";
-import React from "react"; 
+import React from "react";
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
@@ -10,7 +10,7 @@ import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { useSelector } from "react-redux"; 
+import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 
 
@@ -126,6 +126,9 @@ const TableComponent = () => {
                 title: t("GuidancePage.description"),
                 accessor: "description",
                 sortable: true,
+                render: ({ description }: any) => <div
+                  className="truncate" style={{ maxWidth: "200px" }}
+                >{description}</div>,
               },
               {
                 title: t("common.status"),

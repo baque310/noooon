@@ -81,7 +81,10 @@ const TableComponent = () => {
         },
         ...param?.schoolYearId && {
           schoolYearId: param.schoolYearId
-        }
+        },
+        ...param?.teacherSubjectId && {
+          teacherSubjectId: param.teacherSubjectId
+        },
       })
     }
 

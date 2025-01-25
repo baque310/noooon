@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import { AddIcons } from "@/components/common/icons/Actions";
 import CreateComponent from "./CreateComponent";
-import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { useClassGetDataQuery } from "@/services/admin/class";
@@ -48,6 +47,7 @@ const TableComponent = () => {
   const { isFetching: isFetchingClassData, currentData: ClassData } = useClassGetDataQuery({});
 
 
+
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
     const value = e.target.value;
@@ -71,7 +71,7 @@ const TableComponent = () => {
 
   const handleSelectClass = (value: any) => {
     if (value) {
-      setParam({ ...param, classId: value.value });
+      setParam({ ...param, classId: value });
 
     } else {
       setParam({ ...param, classId: undefined });
@@ -104,7 +104,7 @@ const TableComponent = () => {
               };
             }) ?? []
             }
-          /> 
+          />
           {
             <RolePageAndActionBasedComponent
               component={(props) => {

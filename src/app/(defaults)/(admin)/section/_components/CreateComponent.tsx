@@ -67,7 +67,9 @@ const CreateComponent = ({
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
       resetForm();
-      setOpen(false)
+      if (id) {
+        setOpen(false)
+      }
 
     } catch (error: any) {
       console.error("Failed to operation :", error);
@@ -92,8 +94,8 @@ const CreateComponent = ({
     { title: 'أ' },
     { title: 'ب' },
     { title: 'ج' },
-    { title: 'د' }, 
-    { title: 'و' }, 
+    { title: 'د' },
+    { title: 'و' },
   ];
 
   return (

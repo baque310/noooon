@@ -1,6 +1,6 @@
-"use client" 
+"use client"
 
-import React from 'react'; 
+import React from 'react';
 import { Form, Formik, FormikProps } from 'formik';
 import { ButtonForm } from '@/components/Form/ButtonForm';
 import Model from '@/components/Model';
@@ -16,8 +16,8 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from 'yup';
 export interface FormValues {
-    name: string
-    stageId: string
+  name: string
+  stageId: string
 }
 const CreateComponent = ({
   open,
@@ -35,10 +35,10 @@ const CreateComponent = ({
   const { id } = params
   const [ClassGetDataById, { currentData: data, isFetching }] = useLazyClassGetDataByIdQuery()
   useEffect(() => {
-      if (id) {
-          ClassGetDataById({ id: String(id) })
+    if (id) {
+      ClassGetDataById({ id: String(id) })
 
-      }
+    }
   }, [id])
 
 
@@ -47,40 +47,42 @@ const CreateComponent = ({
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
-      try {
-          if (id) {
-              await ClassUpdate({
-                  id: id as string,
-                  body: {
-                      name: values.name
-                  }
-
-              }).unwrap()
+    try {
+      if (id) {
+        await ClassUpdate({
+          id: id as string,
+          body: {
+            name: values.name
           }
-          else {
-              await ClassCreate({
-                  name: values.name,
-                  stageId: values.stageId
-              }).unwrap()
-          }
-          toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
-          resetForm();
-          setOpen(false)
 
-      } catch (error: any) {
-          console.error("Failed to operation :", error);
-          if (error) {
-              if (error.message == "name already exist") {
-                  return toast.error(t('ClassPage.name-already-exists'), { autoClose: 30000 });
-              }
-
-              return toast.error(JSON.stringify(error), { autoClose: 30000 });
-          }
-          toast.error(error, { autoClose: 30000 });
+        }).unwrap()
       }
+      else {
+        await ClassCreate({
+          name: values.name,
+          stageId: values.stageId
+        }).unwrap()
+      }
+      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
+      resetForm();
+      if (id) {
+        setOpen(false)
+      }
+
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error) {
+        if (error.message == "name already exist") {
+          return toast.error(t('ClassPage.name-already-exists'), { autoClose: 30000 });
+        }
+
+        return toast.error(JSON.stringify(error), { autoClose: 30000 });
+      }
+      toast.error(error, { autoClose: 30000 });
+    }
   };
   const schoolSchema = Yup.object().shape({
-      name: Yup.string().required(t("common.this-field-is-required")),
+    name: Yup.string().required(t("common.this-field-is-required")),
   });
 
 

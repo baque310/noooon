@@ -42,6 +42,7 @@ const PageComponent = ({
 
       toast.success(t("common.added-successfully"), { autoClose: 30000, });
       resetForm();
+  
 
     } catch (error: any) {
       console.error("Failed to operation :", error);
