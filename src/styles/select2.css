@@ -44,6 +44,6 @@
 /* Card */
 
 .Card { 
-    @apply relative rounded-xl bg-white p-5  dark:bg-black border border-dark-dark-light;
+    @apply relative rounded-xl bg-white p-5  dark:bg-black border border-white-light dark:border-white-light/10;
     box-shadow: 0 4px 24px 0 rgba(34,41,47,.1);
 }

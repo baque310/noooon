@@ -79,6 +79,9 @@ const PageComponent = () => {
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
+        if (error.message && error.message == "A schedule with the same details already exists.") {
+          return toast.error(t('SchedulePage.A-schedule-with-the-same-details-already-exists'), { autoClose: 30000 });
+        }
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
       toast.error(error, { autoClose: 30000 });

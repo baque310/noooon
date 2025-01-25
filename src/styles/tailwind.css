@@ -544,9 +544,6 @@ pre {
   @keyframes l3 {to{transform: rotate(1turn)}}
 
 
-
- 
-
  @font-face {
     font-family: 'Cairo';
     src: local('Cairo'), url('/Cairo.ttf') format('opentype');
@@ -568,11 +565,10 @@ pre {
 }
 
 .internalMenu {
-    @apply bg-white dark:bg-black  rounded-lg border border-dark-dark-light ;
+    @apply bg-white dark:bg-black  rounded-lg border border-white-light dark:border-white-light/10 ;
     box-shadow: 0 4px 24px 0 rgba(34,41,47,.1);
 }
-
-
+ 
 
 .lightbox-backdrop {
     position: fixed;
@@ -613,10 +609,7 @@ pre {
   }
     .dirRTL{
         direction: rtl;
-    }
-
-
-
+    } 
      /* Badge */
      .badge {
         @apply relative my-1 rounded-lg border border-transparent px-2 py-0.5 text-xs font-semibold text-white;

@@ -331,7 +331,7 @@ const TableComponent = () => {
                                       router.push(`/sectionSchedule/${item.record.id}`);
                                     }}
                                     fetching={isFetching}
-                                    className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base  border border-dark-dark-light`}
+                                    className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
                                     records={(data && data.data) ? data.data[item.value as keyof typeof data.data] : [] as any}
                                     columns={[
                                       {

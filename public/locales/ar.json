@@ -154,7 +154,7 @@
     "Setting": {
         "SettingInformation": " معلومات الاعدادات",
         "Setting": "الاعدادات",
-        "CurrentSchoolYear":"السنة الدراسية الحالية",
+        "CurrentSchoolYear": "السنة الدراسية الحالية",
         "update-info": "تعديل المعلومات"
     },
     "SchoolPage": {
@@ -602,6 +602,8 @@
         "TeacherSubjectCannotBeDeleted": "لا يمكن حذف المواد حسب المدرس لانه مرتبط بمواد اخرى"
     },
     "SchedulePage": {
+        "add":"اضافة",
+        "A-schedule-with-the-same-details-already-exists": "يوجد بالفعل جدول القسم بنفس التفاصيل.",
         "Schedule-is-related-with-other-models": "اوقات الدروس مرتبط بنماذج اخرى",
         "Schedule": "اوقات الدروس",
         "Schedules": "الجداول",
