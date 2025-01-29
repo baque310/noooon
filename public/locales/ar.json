@@ -330,7 +330,13 @@
         "DeleteStudent": "حذف الطالب",
         "email-already-exists": "البريد الالكتروني موجود بالفعل"
     },
+    "IQD": "دينار عراقي",
     "StudentEnrollmentPage": {
+        "amount": "السعر",
+        "AmountStudent":"السعر الافتراضي للطالب",
+        "enter-AmountStudent":"ادخل السعر الافتراضي للطالب",
+        "Students-and-Amount": "الطلاب والسعر",
+        "enter-Amount": "ادخل الكمية",
         "SectionName": "اسم الشعبة",
         "StudentFullName": "اسم الطالب",
         "SchoolYear": "السنة الدراسية",

@@ -27,6 +27,7 @@ import SelectFilter from "@/components/Filter/SelectFilter";
 const TableComponent = () => {
   const { t } = getTranslation();
   const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false)
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
@@ -110,7 +111,7 @@ const TableComponent = () => {
         studentEnrollmentIds: selectedRecords.map((record: any) => record.id)
       }).unwrap();
       toast.success(t('common.deleted-successfully'), { autoClose: 15000 });
-      router.back();
+      setOpenDelete(false)
     } catch (error: any) {
       console.error('Failed to operation :', error);
       if (error && error.message) {
@@ -119,7 +120,7 @@ const TableComponent = () => {
       toast.error(error, { autoClose: 15000 });
     }
   };
-  const [openDelete, setOpenDelete] = useState(false)
+
   const handleSelectClass = (value: any) => {
     if (value) {
       setParam({ ...param, classId: value });
@@ -153,6 +154,9 @@ const TableComponent = () => {
       setParam({ ...param, schoolYearId: undefined });
     }
   }
+
+  console.log(data);
+
 
 
   return (
@@ -199,7 +203,7 @@ const TableComponent = () => {
                     </button>
                     <div className="relative w-0 h-0">
                       <span className={`${selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"} badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
-                        {selectedRecords.length > 0 ? selectedRecords.length : 0}
+                        {selectedRecords.length > 0 ? selectedRecords.length : ''}
                       </span>
                     </div>
                     <div className="dropdown">
@@ -268,7 +272,7 @@ const TableComponent = () => {
             };
           }) ?? []
           }
-        /> 
+        />
         {param?.stageId &&
           <SelectFilter
             title={t("SectionPage.ClassName")}
@@ -282,7 +286,7 @@ const TableComponent = () => {
             }) ?? []
             }
           />
-        }  
+        }
         {param?.classId &&
           <SelectFilter
             title={t("StudentEnrollmentPage.SectionName")}
@@ -295,7 +299,7 @@ const TableComponent = () => {
               };
             }) ?? []
             }
-          /> 
+          />
         }
       </div>
       <div className="datatables pagination-padding mt-2">
@@ -331,6 +335,16 @@ const TableComponent = () => {
                 title: t("StudentEnrollmentPage.ClassName"),
                 accessor: "Class.name",
                 // sortable: true,
+              },
+              {
+                title: t("StudentEnrollmentPage.amount"),
+                accessor: "amount",
+                sortable: true,
+                render: ({ amount }: any) => amount && <div className="flex gap-1">
+                  {amount?.toLocaleString()}
+                  <span className='font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1'>{t("IQD")}</span>
+
+                </div>
               },
               {
                 title: t("StudentEnrollmentPage.SectionName"),

@@ -43,7 +43,10 @@ export interface AddStudentEnrollmentPayload {
     stageId: string
     classId: string
     sectionId: string
-    studentIds: string[]
+    students: {
+        studentId: string
+        amount: number
+    }[]
 }
 export interface UpdateStudentEnrollmentPayload {
     schoolYearId: string
@@ -95,7 +98,7 @@ export const StudentEnrollment = api.injectEndpoints({
 
         StudentEnrollmentRemove: build.mutation<void, { studentEnrollmentIds: string[] }>({
             query: (body) => ({
-                url: `admin/student-enrollment/{id}`,
+                url: `admin/student-enrollment`,
                 method: "DELETE",
                 body
             }),
