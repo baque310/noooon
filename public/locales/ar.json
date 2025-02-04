@@ -549,6 +549,10 @@
     "name-already-exist": "الاسم موجود بالفعل"
   },
   "ExamsPage": {
+    "score-must-be-less-than-100": "الدرجة يجب ان تكون اقل من 100",
+    "score-must-be-more-than-0": "الدرجة يجب ان تكون اكبر من 0",
+    "score": "الدرجة",
+    "enter-score": "ادخل الدرجة",
     "exam": "معلومات الامتحان",
     "ExamsInformation": "معلومات الامتحان",
     "ExamsInformationAndDate": "معلومات الامتحان وتاريخ",
