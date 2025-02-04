@@ -259,6 +259,15 @@ const Sidebar = () => {
                       isNoSub: true,
                       // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
                     },
+                    {
+                      number: 0,
+                      label: t("sidebar.studentInstallment"),
+                      resource: "student_installment",
+                      permission: ["read-any", "read-own"],
+                      to: "studentInstallment",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    }
                   ]}
                   toggleMenu={toggleMenu}
                   setCurrentMenu={setCurrentMenu}

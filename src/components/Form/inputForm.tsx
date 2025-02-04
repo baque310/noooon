@@ -132,7 +132,7 @@ export const InputCurrencyMaskForm = <T extends FormikValues>({
   };
   return (
       <div
-          className={`mb-3 w-full ${formikProps.submitCount ? (errorValue && touchedValue ? 'has-error' : '') : ''}`}>
+          className={`w-full ${formikProps.submitCount ? (errorValue && touchedValue ? 'has-error' : '') : ''}`}>
           <label className='font-normal' htmlFor={name}>{title}</label>
           <div className="relative w-full">
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">{iconLeft}</div>

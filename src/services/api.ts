@@ -246,12 +246,13 @@ export const api = createApi({
     "HomeworksUpdate",
     "HomeworksRemove",
 
-
-
-
-
-
-
+    // student-installment 
+    "StudentInstallmentGetData",
+    "StudentInstallmentGetDataById",
+    "StudentInstallmentCreate",
+    "StudentInstallmentUpdate",
+    "StudentInstallmentRemove",
+    "StudentEnrollmentUpdatePrice",
 
 
 

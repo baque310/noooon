@@ -40,6 +40,7 @@ export type PAGE_CODE =
 | "notification"
 | "user"
 | "dashboard"
+|"student_installment"
 
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
