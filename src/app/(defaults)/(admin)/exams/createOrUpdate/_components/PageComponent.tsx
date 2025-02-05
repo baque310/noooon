@@ -156,7 +156,9 @@ const PageComponent = () => {
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton title={t(id ? "ExamsPage.update-info" : "common.add")} />
+        <BackButton
+          title={t(id ? "SchedulePage.update-Content" : "common.add")}
+        />
 
         {isFetching ? (
           <LoadingForm />

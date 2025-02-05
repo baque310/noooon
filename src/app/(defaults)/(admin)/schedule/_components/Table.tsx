@@ -3,7 +3,10 @@ import { DataTable } from "mantine-datatable";
 import React from "react";
 
 import moment from "moment";
-import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import {
+  RolePageAndActionBasedComponent,
+  withRole,
+} from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { daysArray, useScheduleGetDataQuery } from "@/services/admin/Schedule";
@@ -17,22 +20,20 @@ import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
 import AnimateHeight from "react-animate-height";
 import CreateComponent from "./CreateComponent";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
 
-
-  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark =
+    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
-
 
   const [param, setParam] = useState<
     | {
-      search?: string;
-    }
+        search?: string;
+      }
     | undefined
   >();
   const params = {
@@ -57,7 +58,6 @@ const TableComponent = () => {
     if (search != Search) {
       allParams.set("search", value ?? Search);
       router.push(`/schedule?${allParams.toString()}`);
-
     }
   };
   const handleKeyPress = (event: any) => {
@@ -74,13 +74,22 @@ const TableComponent = () => {
   };
 
   const [open, setOpen] = useState(false);
-  const [dataCreate, setDataCreate] = useState<{
-    day: string;
-    schoolYearId: string;
-  } | {}>();
+  const [dataCreate, setDataCreate] = useState<
+    | {
+        day: string;
+        schoolYearId: string;
+      }
+    | {}
+  >();
 
+  const dataRow = daysArray.filter(
+    (item) =>
+      data && (data[item.value as keyof typeof data] as any[])?.length > 0
+  );
   return (
-    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
+    <div
+      className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}
+    >
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("SchedulePage.Schedule")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
@@ -98,11 +107,13 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/schedule/createOrUpdate");
-                    }}>
+                    }}
+                  >
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
                   </button>
@@ -115,113 +126,127 @@ const TableComponent = () => {
         </div>
       </div>
 
+      <div className={"flex flex-col gap-4  mt-4"}>
+        {isFetching ? (
+          <div className="flex w-full justify-center items-center h-72 ">
+            <div className="loader !bg-primary"></div>
+          </div>
+        ) : dataRow.length === 0 ? (
+          <div className="flex w-full justify-center items-center h-72 Card">
+            <p>{t("common.no-data")}</p>
+          </div>
+        ) : (
+          dataRow.map((item, index: number) => {
+            return (
+              <div key={index} className="">
+                <button
+                  type="button"
+                  className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${
+                    active === index ? "!text-primary" : ""
+                  }`}
+                  onClick={() => togglePara(index)}
+                >
+                  <bdi className=" flex gap-1 font-bold text-lg">
+                    <p>
+                      {index + 1} {")"}
+                    </p>
 
-
-      <div className={'flex flex-col gap-4  mt-4'}>
-
-        {
-          isFetching ?
-            <div className="flex w-full justify-center items-center h-72 ">
-              <div className="loader !bg-primary"></div>
-            </div>
-            :
-            daysArray
-              .filter((item) => data && (data[item.value as keyof typeof data] as any[])?.length > 0)
-              .map((item, index: number) => {
-                return (
-                  <div key={index} className="">
-                    <button
-                      type="button"
-                      className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === index ? '!text-primary' : ''}`}
-                      onClick={() => togglePara(index)}
-                    >
-                      <bdi className=' flex gap-1 font-bold text-lg'>
-                        <p>
-                          {index + 1} {")"}
-                        </p>
-
-                        <p>
-                          {t(item.label)}
-                        </p>
-
-                      </bdi>
-                      <div
-                        className={`ltr:ml-auto rtl:mr-auto ${active === index ? 'rotate-180' : ''}`}>
-                        <IconCaretsDown />
-                      </div>
-                    </button>
-                    <AnimateHeight duration={300}
-                      height={active === index ? 'auto' : 0}>
-                      <div className="mt-3 px-4">
-                        <button
-                          className={`flex rtl:mr-auto ltr:ml-auto justify-center  gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                          onClick={() => {
-                            setOpen(true)
-                            console.log("item.value", item);
-
-                            setDataCreate({
-                              day: item.value,
-                              schoolYearId: data && data[item.value as keyof typeof data].length > 0 ? data[item.value as keyof typeof data][0].schoolYearId : "",
-                            });
-                          }}>
-                          <AddIcons className="h-4 w-4" />
-                          {t("common.add")}
-                        </button>
-                      </div>
-
-
-
-                      <div className={'flex flex-col gap-4   p-2 '}
-                      >
-                        <div className="datatables pagination-padding mt-2">
-                          {isMounted && (
-                            <DataTable
-                              onRowClick={async (item) => {
-                                router.push(`/schedule/${item.record.id}`);
-                              }}
-                              fetching={isFetching}
-                              className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
-                              records={data ? data[item.value as keyof typeof data] : [] as any}
-                              columns={[
-                                // {
-                                //   title: t("SchedulePage.day"),
-                                //   accessor: "day",
-                                //   render: ({ day }) => t(day),
-
-                                // },
-                                {
-                                  title: t("SchedulePage.timeFrom"),
-                                  accessor: "timeFrom",
-                                  render: ({ timeFrom }: any) => (timeFrom ? <div>{moment.utc(timeFrom).format("hh:mm:ss A")}</div> : null),
-
-                                },
-
-                                {
-                                  title: t("SchedulePage.timeTo"),
-                                  accessor: "timeTo",
-                                  render: ({ timeTo }: any) => (timeTo ? <div>{moment.utc(timeTo).format("hh:mm:ss A")}</div> : null),
-
-                                },
-
-                              ]}
-                              customLoader={<div className="loader !bg-primary"></div>}
-                              noRecordsText={t("common.no-data")}
-                              noRecordsIcon={<></>}
-
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </AnimateHeight>
+                    <p>{t(item.label)}</p>
+                  </bdi>
+                  <div
+                    className={`ltr:ml-auto rtl:mr-auto ${
+                      active === index ? "rotate-180" : ""
+                    }`}
+                  >
+                    <IconCaretsDown />
                   </div>
-                );
-              })}
+                </button>
+                <AnimateHeight
+                  duration={300}
+                  height={active === index ? "auto" : 0}
+                >
+                  <div className="mt-3 px-4">
+                    <button
+                      className={`flex rtl:mr-auto ltr:ml-auto justify-center  gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                      onClick={() => {
+                        setOpen(true);
+                        console.log("item.value", item);
+
+                        setDataCreate({
+                          day: item.value,
+                          schoolYearId:
+                            data &&
+                            data[item.value as keyof typeof data].length > 0
+                              ? data[item.value as keyof typeof data][0]
+                                  .schoolYearId
+                              : "",
+                        });
+                      }}
+                    >
+                      <AddIcons className="h-4 w-4" />
+                      {t("common.add")}
+                    </button>
+                  </div>
+
+                  <div className={"flex flex-col gap-4   p-2 "}>
+                    <div className="datatables pagination-padding mt-2">
+                      {isMounted && (
+                        <DataTable
+                          onRowClick={async (item) => {
+                            router.push(`/schedule/${item.record.id}`);
+                          }}
+                          fetching={isFetching}
+                          className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base `}
+                          records={
+                            data
+                              ? data[item.value as keyof typeof data]
+                              : ([] as any)
+                          }
+                          columns={[
+                            // {
+                            //   title: t("SchedulePage.day"),
+                            //   accessor: "day",
+                            //   render: ({ day }) => t(day),
+
+                            // },
+                            {
+                              title: t("SchedulePage.timeFrom"),
+                              accessor: "timeFrom",
+                              render: ({ timeFrom }: any) =>
+                                timeFrom ? (
+                                  <div>
+                                    {moment.utc(timeFrom).format("hh:mm:ss A")}
+                                  </div>
+                                ) : null,
+                            },
+
+                            {
+                              title: t("SchedulePage.timeTo"),
+                              accessor: "timeTo",
+                              render: ({ timeTo }: any) =>
+                                timeTo ? (
+                                  <div>
+                                    {moment.utc(timeTo).format("hh:mm:ss A")}
+                                  </div>
+                                ) : null,
+                            },
+                          ]}
+                          customLoader={
+                            <div className="loader !bg-primary"></div>
+                          }
+                          noRecordsText={t("common.no-data")}
+                          noRecordsIcon={<></>}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </AnimateHeight>
+              </div>
+            );
+          })
+        )}
       </div>
-      <CreateComponent
-        open={open}
-        setOpen={setOpen}
-        data={dataCreate as any}
-      />
+      <CreateComponent open={open} setOpen={setOpen} data={dataCreate as any} />
     </div>
   );
 };

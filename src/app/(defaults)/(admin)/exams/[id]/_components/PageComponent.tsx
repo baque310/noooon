@@ -78,7 +78,7 @@ const PageComponent = () => {
                                     router.push(`/exams/createOrUpdate?id=${id}`)
                                 }
                             }}
-                            title={t('SchedulePage.update-info')}
+                            title={t('SchedulePage.update-Content')}
                             value={<ArrowIcons className='rtl:rotate-180 text-[#000]/50' />}
                         />
                         <ItemList

@@ -41,7 +41,7 @@ export interface UpdateExamsPayload {
 export interface AddExamsCreateSection {
   examDate: string;
   sectionId: string;
-  score: number;
+  score?: number;
 }
 
 export const Exams = api.injectEndpoints({

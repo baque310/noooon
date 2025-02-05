@@ -6,11 +6,7 @@ import { BackButton } from "@/components/common/BackButton";
 
 import { getTranslation } from "@/ni18n/i18n";
 import {
-  useLazyExamsGetDataByIdQuery,
-  useExamsCreateMutation,
-  useExamsUpdateMutation,
-  AddExamsPayload,
-  UpdateExamsPayload,
+  useLazyExamsGetDataByIdQuery, 
   AddExamsCreateSection,
   useExamsCreateSectionsMutation,
 } from "@/services/admin/Exams";
@@ -25,13 +21,9 @@ export interface FormValues extends AddExamsCreateSection {
 }
 
 import { ButtonForm } from "@/components/Form/ButtonForm";
-import { Form, Formik, FormikProps } from "formik";
-import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
-import AnimateHeight from "react-animate-height";
+import { Form, Formik, FormikProps } from "formik"; 
 import { SelectForm } from "@/components/Form/SelectForm";
-import { useStageGetDataQuery } from "@/services/admin/stage";
-import { isArray } from "lodash";
-import { InputForm } from "@/components/Form/inputForm";
+import { useStageGetDataQuery } from "@/services/admin/stage"; 
 import { useExamTypeGetDataQuery } from "@/services/admin/ExamType";
 import { useLazyStageSubjectGetDataQuery } from "@/services/admin/StageSubject";
 import { DateTimeForm } from "@/components/Form/DateTimeForm";
@@ -74,8 +66,7 @@ const PageComponent = () => {
         await CreateSections({
           body: {
             examDate: values.examDate,
-            sectionId: values.sectionId,
-            score: 0,
+            sectionId: values.sectionId, 
           },
           id: String(id),
         }).unwrap();
@@ -109,10 +100,6 @@ const PageComponent = () => {
   const sectionScheduleSchema = Yup.object().shape({
     examDate: Yup.string().required(t("common.this-field-is-required")),
     sectionId: Yup.string().required(t("common.this-field-is-required")),
-    score: Yup.number()
-      .max(100, t("ExamsPage.score-must-be-less-than-100"))
-      .min(0, t("ExamsPage.score-must-be-more-than-0"))
-      .required(t("common.this-field-is-required")),
   });
 
   return (
@@ -128,8 +115,7 @@ const PageComponent = () => {
               sectionId: "",
               examDate: "",
               stageId: data?.StageSubject.Stage.id ?? "",
-              classId: data?.StageSubject.Class.id ?? "",
-              score: data?.score ?? 0,
+              classId: data?.StageSubject.Class.id ?? "", 
             }}
             validationSchema={sectionScheduleSchema}
             onSubmit={handleSubmit}
@@ -137,18 +123,6 @@ const PageComponent = () => {
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
                 <div className="Card flex flex-col gap-1">
-                  <InputForm
-                    formikProps={props}
-                    name={`score`}
-                    title={t("ExamsPage.score")}
-                    placeholder={t("ExamsPage.enter-score")}
-                    props={{
-                      max: 100,
-                      min: 0,
-                      type: "number",
-                    }}
-                  />
-
                   <DateTimeForm
                     formikProps={props}
                     name={`examDate`}
