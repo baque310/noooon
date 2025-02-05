@@ -535,9 +535,9 @@ const PageComponent = () => {
                 {props.errors && Object.keys(props?.errors)?.length > 0 && (
                   <div className="Card !dark:bg-danger-dark-light !bg-danger-light">
                     <div className="flex flex-col  rounded bg-danger-light p-3.5 text-danger dark:bg-danger-dark-light">
-                      {Object.keys(props?.errors ?? {})?.map((item: any) => {
+                      {Object.keys(props?.errors ?? {})?.map((item: any,index) => {
                         return (
-                          <span className="ltr:pr-2 rtl:pl-2">
+                          <span key={index} className="ltr:pr-2 rtl:pl-2">
                             <strong className="ltr:mr-1 rtl:ml-1">
                               {t(item)}
                             </strong>
@@ -547,9 +547,9 @@ const PageComponent = () => {
                               : props?.errors &&
                                 props?.errors[item] &&
                                 Object.keys(props?.errors[item] as any)?.map(
-                                  (item2: any) => {
+                                  (item2: any,index) => {
                                     return (
-                                      <span className="flex flex-col ltr:pr-2 rtl:pl-2">
+                                      <span key={index} className="flex flex-col ltr:pr-2 rtl:pl-2">
                                         <strong className="ltr:mr-1 rtl:ml-1">
                                           {Number(item2.split(".")[0]) +
                                             1 +
@@ -559,9 +559,9 @@ const PageComponent = () => {
                                           (props?.errors as any)[item][item2] &&
                                           Object.keys(
                                             (props?.errors as any)[item][item2]
-                                          ).map((item3: any) => {
+                                          ).map((item3: any,index) => {
                                             return (
-                                              <span className="ltr:pr-2 rtl:pl-2">
+                                              <span key={index} className="ltr:pr-2 rtl:pl-2">
                                                 <strong className="ltr:mr-1 rtl:ml-1">
                                                   {t(item3)}
                                                 </strong>
