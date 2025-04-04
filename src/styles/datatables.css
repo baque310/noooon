@@ -55,7 +55,7 @@ table tr .mantine-Checkbox-root {
     @apply bg-white-light/20 dark:!bg-[#1a2941]/40;
 }
 .datatables table {
-    @apply font-nunito !text-black dark:!text-white-dark dark:bg-black min-h-48;
+    @apply font-nunito !text-black dark:!text-white-dark dark:bg-black ;
 }
 
 .datatables thead tr th .mantine-Group-root.mantine-1d34tqu div > svg {

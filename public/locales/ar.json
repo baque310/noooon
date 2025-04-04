@@ -105,6 +105,7 @@
     "user-information": "معلومات المستخدم"
   },
   "sidebar": {
+    "notifications": "الاشعارات",
     "studentInstallment": "الاقساط",
     "settings": "الاعدادات",
     "admins": "المدراء",
@@ -689,9 +690,31 @@
     "studentEnrollment": "تسجيل الطلاب",
     "enter-studentEnrollment": "ادخل تسجيل الطالب"
   },
-  "schedules" :"جداول المواد الدراسية",
-  "timeFrom" :"من الوقت",
-  "timeTo" :"الى الوقت",
-  "days" :"الايام",
-  "SectionSchedules" :"جدول الدروس حسب المواد"
+  "schedules": "جداول المواد الدراسية",
+  "timeFrom": "من الوقت",
+  "timeTo": "الى الوقت",
+  "days": "الايام",
+  "SectionSchedules": "جدول الدروس حسب المواد",
+  "NotificationPage": {
+    "allowedAllUsers": " جميع المستخدمين",
+    "Notification": "الاشعارات",
+    "Notifications": "الاشعارات",
+    "body": "المحتوى",
+    "isSeen": "تمت القراءة",
+    "seen": "تمت القراءة",
+    "notSeen": "لم تتم القراءة",
+    "title": "العنوان",
+    "enter-title": "ادخل العنوان",
+    "description": "الوصف",
+    "enter-description": "ادخل الوصف",
+    "url": "الصورة",
+    "update-info": "تعديل المعلومات",
+    "add": "اضافة",
+    "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
+    "NotificationInformation": "معلومات الاشعار",
+    "Are-you-sure-you-want-to-delete-this-Notification": "هل أنت متأكد أنك تريد حذف هذا الاشعار ؟",
+    "DeleteNotification": "حذف الاشعار",
+    "notification-already-exists": "الاشعار موجود بالفعل",
+    "enter-body": "ادخل المحتوى"
+  }
 }

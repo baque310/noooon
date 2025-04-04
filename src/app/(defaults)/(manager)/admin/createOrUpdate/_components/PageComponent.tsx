@@ -1,62 +1,63 @@
-"use client"
+"use client";
 
+import React from "react";
+import { LoadingForm } from "@/components/Form/loadingForm";
+import { BackButton } from "@/components/common/BackButton";
 
-import React from 'react';
-import { LoadingForm } from '@/components/Form/loadingForm';
-import { BackButton } from '@/components/common/BackButton';
-
-
-import { Form, Formik, FormikProps } from 'formik';
-import { InputForm } from '@/components/Form/inputForm';
-import { OptionType, SelectForm } from '@/components/Form/SelectForm';
-import { RolePageAndActionBasedComponent } from '@/components/Provider/RolePageAndActionBasedComponent';
-import { ButtonForm } from '@/components/Form/ButtonForm';
+import { Form, Formik, FormikProps } from "formik";
+import { InputForm } from "@/components/Form/inputForm";
+import { OptionType, SelectForm } from "@/components/Form/SelectForm";
+import { RolePageAndActionBasedComponent } from "@/components/Provider/RolePageAndActionBasedComponent";
+import { ButtonForm } from "@/components/Form/ButtonForm";
 import { getTranslation } from "@/ni18n/i18n";
-import { AddAdminPayload, useLazyAdminGetDataByIdQuery, useAdminUpdateMutation } from "@/services/Manager/Admin";
+import {
+  AddAdminPayload,
+  useLazyAdminGetDataByIdQuery,
+  useAdminUpdateMutation,
+} from "@/services/Manager/Admin";
 import { FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import * as Yup from 'yup';
-interface FormValues extends AddAdminPayload { }
+import * as Yup from "yup";
+interface FormValues extends AddAdminPayload {}
 const PageComponent = () => {
-
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const [AdminGetDataById, { currentData: DataAdminGetDataById, isFetching }] = useLazyAdminGetDataByIdQuery()
+  const [AdminGetDataById, { currentData: DataAdminGetDataById, isFetching }] =
+    useLazyAdminGetDataByIdQuery();
   useEffect(() => {
     if (id) {
-      AdminGetDataById({ id: String(id) })
-        .then((data) => {
-          if (!data.data) {
-            router.back();
-          }
-        });
+      AdminGetDataById({ id: String(id) }).then((data) => {
+        if (!data.data) {
+          router.back();
+        }
+      });
     }
-  }, [id])
-  const [AdminUpdate, { isLoading: isLoadingAdminUpdate }] = useAdminUpdateMutation();
+  }, [id]);
+  const [AdminUpdate, { isLoading: isLoadingAdminUpdate }] =
+    useAdminUpdateMutation();
 
-  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
+  const handleSubmit = async (
+    values: FormValues,
+    { setSubmitting, resetForm }: FormikHelpers<FormValues>
+  ) => {
     try {
-
       if (id) {
         if (!values.password) {
-          delete (values as any).password
-
+          delete (values as any).password;
         }
         await AdminUpdate({
           body: {
             ...values,
           },
           id: String(id),
-        }
-        ).unwrap()
-
+        }).unwrap();
       }
 
-      toast.success(t("common.updated-successfully"), { autoClose: 30000, });
+      toast.success(t("common.updated-successfully"), { autoClose: 30000 });
       resetForm();
       if (id) {
         router.back();
@@ -73,9 +74,7 @@ const PageComponent = () => {
     username: Yup.string()
       .matches(
         /^(?=.{5,20}$)(?![.])(?!.*[.]{2})[a-zA-Z0-9.\u0600-\u06FF]+(?<![.])$/,
-        t(
-          "common.username-must-be-5-20-characters"
-        )
+        t("common.username-must-be-5-20-characters")
       )
       .required(t("common.this-field-is-required")),
 
@@ -83,7 +82,9 @@ const PageComponent = () => {
       .nullable()
       .test(
         "is-strong-password",
-        t("common.password-must-contain-letters-numbers-and-special-characters"),
+        t(
+          "common.password-must-contain-letters-numbers-and-special-characters"
+        ),
         (value) => {
           if (!value) return true;
           return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
@@ -93,8 +94,7 @@ const PageComponent = () => {
       )
       .min(8, t("common.password-must-be-at-least-8-characters-long")),
     isActive: Yup.string().required(t("common.this-field-is-required")),
-  })
-
+  });
 
   type AdminSchema = Yup.InferType<typeof managerAdminSchema>;
 
@@ -110,7 +110,6 @@ const PageComponent = () => {
               username: DataAdminGetDataById?.username ?? "",
               isActive: DataAdminGetDataById?.isActive ?? "",
               password: undefined,
-
             }}
             validationSchema={managerAdminSchema}
             onSubmit={handleSubmit}
@@ -134,9 +133,7 @@ const PageComponent = () => {
                     title={t("signInPage.password")}
                     placeholder={t("signInPage.enter-password")}
                     isPassword={true}
-
                   />
-
 
                   <SelectForm
                     formikProps={props}
@@ -159,26 +156,12 @@ const PageComponent = () => {
                   />
                 </div>
 
-
                 <div className="flex flex-row-reverse gap-2">
-                  {
-                    <RolePageAndActionBasedComponent
-                      component={(props) => {
-                        return (
-                          <ButtonForm
-                            props={{
-                              className: `${props?.disabled && "hidden"}`,
-                            }}
-                            title={t("common.save")}
-                            isLoading={isLoadingAdminUpdate}
-                          />
-                        );
-                      }}
-                      resource={"admin"}
-                      permission={["update-any", "update-own"]}
-                    />
-                  }
-
+                  <ButtonForm
+                    props={{}}
+                    title={t("common.save")}
+                    isLoading={isLoadingAdminUpdate}
+                  />
                 </div>
               </Form>
             )}
@@ -189,5 +172,4 @@ const PageComponent = () => {
   );
 };
 
-export default PageComponent
-
+export default PageComponent;
