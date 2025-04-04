@@ -3,7 +3,7 @@
 const Footer = () => { 
     return (
         <div className="mt-auto p-6 text-center dark:text-white-dark ">
-            PureTik All rights reserved © {new Date().getFullYear()}
+            Opencode All rights reserved © {new Date().getFullYear()}
         </div>
 
     );

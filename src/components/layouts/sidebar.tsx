@@ -15,6 +15,21 @@ import { getTranslation } from "@/ni18n/i18n";
 import IconManagerAdmin from "../common/icons/sidebar/IconManagerAdmin";
 import MenuSubItem from "../common/Menu/MenuSubitems";
 import { useAdminGetDataByIdQuery } from "@/services/Manager/Admin";
+import IconNotification from "../common/icons/sidebar/IconNotification";
+import IconExam from "../common/icons/sidebar/IconExam";
+import IconSchedule from "../common/icons/sidebar/IconSchedule";
+import IconSubject from "../common/icons/sidebar/IconSubject";
+import IconLesson from "../common/icons/sidebar/IconLesson";
+import IconHomework from "../common/icons/sidebar/IconHomework";
+import IconGuidance from "../common/icons/sidebar/IconGuidance";
+import IconGallery from "../common/icons/sidebar/IconGallery";
+import IconBus from "../common/icons/sidebar/IconBus";
+import IconTeacher from "../common/icons/sidebar/IconTeacher";
+import IconStudent from "../common/icons/sidebar/IconStudent";
+import IconSchool from "../common/icons/sidebar/IconSchool";
+import IconDashboard from "../common/icons/sidebar/IconDashboard";
+import IconSetting from "../common/icons/sidebar/IconSetting";
+import IconStage from "../common/icons/sidebar/IconStage";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -141,7 +156,7 @@ const Sidebar = () => {
                       to={"/"}
                       label={t("sidebar.dashboard")}
                       icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconDashboard className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
                     <MenuItem
@@ -162,7 +177,7 @@ const Sidebar = () => {
                       to={"/school"}
                       label={t("sidebar.schools")}
                       icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
 
@@ -173,7 +188,7 @@ const Sidebar = () => {
                       to={"/managerBanner"}
                       label={t("sidebar.banner")}
                       icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
                     <MenuItem
@@ -183,7 +198,7 @@ const Sidebar = () => {
                       to={"/user"}
                       label={t("sidebar.users")}
                       icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconStudent className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
                     <MenuItem
@@ -193,7 +208,7 @@ const Sidebar = () => {
                       to={"/setting"}
                       label={t("sidebar.settings")}
                       icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconSetting className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
                   </>
@@ -207,7 +222,7 @@ const Sidebar = () => {
                       to={"/dashboard"}
                       label={t("sidebar.dashboard")}
                       icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconDashboard className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
                     <MenuItem
@@ -227,7 +242,7 @@ const Sidebar = () => {
                       to={"/adminSchool"}
                       label={t("sidebar.school")}
                       icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
                   </>
@@ -240,7 +255,7 @@ const Sidebar = () => {
                   currentMenu={currentMenu}
                   label={t("sidebar.stages")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconStage className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                   menuList={[
                     {
@@ -281,7 +296,7 @@ const Sidebar = () => {
                   currentMenu={currentMenu}
                   label={t("sidebar.students")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconStudent className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                   menuList={[
                     {
@@ -323,7 +338,7 @@ const Sidebar = () => {
                   to={"/teacher"}
                   label={t("sidebar.teacher")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
                 <MenuItem
@@ -333,7 +348,7 @@ const Sidebar = () => {
                   to={"/bus"}
                   label={t("sidebar.bus")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconBus className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
                 {!isManager && (
@@ -344,7 +359,7 @@ const Sidebar = () => {
                     to={"/banner"}
                     label={t("sidebar.banner")}
                     icon={
-                      <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                      <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
                     }
                   />
                 )}
@@ -356,7 +371,7 @@ const Sidebar = () => {
                   to={"/guidance"}
                   label={t("sidebar.guidance")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconGuidance className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
                 <MenuItem
@@ -366,7 +381,7 @@ const Sidebar = () => {
                   to={"/gallery"}
                   label={t("sidebar.gallery")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
                 <MenuItem
@@ -376,7 +391,7 @@ const Sidebar = () => {
                   to={"/homework"}
                   label={t("sidebar.homeworks")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
                 <MenuItem
@@ -386,7 +401,7 @@ const Sidebar = () => {
                   to={"/lesson"}
                   label={t("sidebar.lessons")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
 
@@ -397,7 +412,7 @@ const Sidebar = () => {
                   currentMenu={currentMenu}
                   label={t("sidebar.subjects")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconSubject className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                   menuList={[
                     {
@@ -438,7 +453,7 @@ const Sidebar = () => {
                   currentMenu={currentMenu}
                   label={t("sidebar.schedules")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                   menuList={[
                     {
@@ -470,7 +485,7 @@ const Sidebar = () => {
                   currentMenu={currentMenu}
                   label={t("sidebar.exams")}
                   icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    <IconExam className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                   menuList={[
                     {
@@ -504,16 +519,18 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   setCurrentMenu={setCurrentMenu}
                 />
-                <MenuItem
-                  permission={["read-any", "read-own"]}
-                  resource={"notification"}
-                  toggleMenu={toggleMenu}
-                  to={"/notification"}
-                  label={t("sidebar.notifications")}
-                  icon={
-                    <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
-                />
+                {!isManager && (
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"notification"}
+                    toggleMenu={toggleMenu}
+                    to={"/notification"}
+                    label={t("sidebar.notifications")}
+                    icon={
+                      <IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                    }
+                  />
+                )}
               </ul>
             )}
           </PerfectScrollbar>
