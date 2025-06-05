@@ -273,8 +273,8 @@ const PageComponent = () => {
                                 title={`${item.fullName}`}
                                 props={{
                                   className: "rtl",
-                                  checked: props.values.students.some((it: any) => it.studentId == item.id),
-                                  value: props.values.students.some((it: any) => it.studentId == item.id),
+                                  checked: props.values.students.some((it: any) => it?.studentId == item.id),
+                                  value: props.values.students.some((it: any) => it?.studentId == item.id),
                                   onChange: (e) => {
                                     if (e.target.checked) {
                                       props.setFieldValue(`students.${index}.studentId`, item.id);
@@ -293,7 +293,7 @@ const PageComponent = () => {
                                 title={""}
                                 placeholder={t("StudentEnrollmentPage.enter-Amount")}
                                 props={{
-                                  disabled: !props.values.students.some((it: any) => it.studentId == item.id),
+                                  disabled: !props.values?.students?.some((it: any) => it?.studentId == item?.id),
                                 }}
                                 iconRight={
                                   <span className='font-bold text-teal-500 bg-teal-500/20 h-full justify-center items-center rounded-md flex text-xs px-1'>{t("IQD")}</span>
