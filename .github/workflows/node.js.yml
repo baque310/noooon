@@ -8,7 +8,7 @@ on:
     branches: ["main"]
 jobs:
   build: 
-    runs-on: [noon-iraq]
+    runs-on: [aknan-hosted]
 
     strategy:
       matrix:
@@ -34,4 +34,4 @@ jobs:
         run: pm2 restart dashboard-noon-iraq-app
       # - run: pm2 describe dashboard-noon-iraq-app
       # - run: pm2 logs dashboard-noon-iraq-app
-      # - run: PORT=3000 pm2 start npm  --name "dashboard-noon-iraq-app" -- start
+        # run: PORT=3027 pm2 start npm  --name "dashboard-noon-iraq-app" -- start
