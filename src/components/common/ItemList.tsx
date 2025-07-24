@@ -13,12 +13,12 @@ export const ItemList = ({ title, value, props, children, isCopyToClipboard }:
     const { t } = getTranslation();
     return <div
         {...props}
-        className='available-item'>
-        <div className=" flex justify-between cursor-pointer ">
-            <div className='font-semibold  px-1 min-w-fit'>
+        className={`available-item ${props?.className || ''}`}>
+        <div className="flex justify-between items-center py-3 px-4">
+            <div className='font-medium text-gray-700 dark:text-gray-300 min-w-fit'>
                 {title}
             </div>
-            <div className='font-light' >
+            <div className='font-normal text-gray-600 dark:text-gray-400 text-right' >
                 {
                     isCopyToClipboard ?
                         <CopyToClipboard text={value as string} onCopy={(text, result) => {
@@ -28,15 +28,16 @@ export const ItemList = ({ title, value, props, children, isCopyToClipboard }:
                                 toast.error('Failed to copy to clipboard')
                             }
                         }}>
-                            <button className='flex gap-2 hover:text-primary'>
+                            <button className='flex items-center gap-2 hover:text-primary transition-colors duration-200 p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700'>
                                 <div>
                                     {value}
                                 </div>
                                 {<IconCopy />}
                             </button>
                         </CopyToClipboard>
-                        : <>{value}
-                        </>
+                        : <div className="flex items-center">
+                            {value}
+                        </div>
 
                 }
 

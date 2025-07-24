@@ -80,6 +80,9 @@
     "added-successfully": "تمت الاضافة بنجاح",
     "deleted-successfully": "تم الحذف بنجاح",
     "choses-status": "اختر الحالة",
+    "cancel": "إلغاء",
+    "loading-settings": "جاري تحميل الإعدادات...",
+    "error-occurred": "حدث خطأ",
     "email-must-be-a-valid-email": "يجب أن يكون البريد الإلكتروني صالحًا.",
     "username-must-be-5-20-characters": "يجب أن يكون اسم المستخدم مكونًا من 5-20 حرفًا ويمكن أن يحتوي على أحرف وأرقام ونقاط. لا يمكن أن يبدأ أو ينتهي بنقطة.",
     "password-must-be-at-least-8-characters-long": "يجب أن تكون كلمة المرور على الأقل 8 أحرف طويلة.",
@@ -158,7 +161,12 @@
     "SettingInformation": " معلومات الاعدادات",
     "Setting": "الاعدادات",
     "CurrentSchoolYear": "السنة الدراسية الحالية",
-    "update-info": "تعديل المعلومات"
+    "update-info": "تعديل المعلومات",
+    "manage-school-system": "إدارة إعدادات نظام المدرسة",
+    "school-year-info": "معلومات السنة الدراسية",
+    "click-to-update": "اضغط للتعديل",
+    "select-school-year-config": "اختيار إعدادات السنة الدراسية",
+    "choose-academic-year": "اختر السنة الأكاديمية النشطة لنظام مدرستك"
   },
   "SchoolPage": {
     "SchoolInformation": "معلومات المدرسة",

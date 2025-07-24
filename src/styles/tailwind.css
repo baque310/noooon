@@ -557,11 +557,19 @@ pre {
 
 
   .CardDetails .available-item:not(:last-child) {
-    border-bottom: 1px solid rgba(112,112,112,.12);
+    border-bottom: 1px solid rgba(112,112,112,.08);
 }
 
 .CardDetails .available-item {
-    @apply p-4;    
+    @apply p-0;    
+}
+
+.available-item:not(:last-child) {
+    border-bottom: 1px solid rgba(112,112,112,.08);
+}
+
+.available-item {
+    @apply transition-all duration-200;    
 }
 
 .internalMenu {
