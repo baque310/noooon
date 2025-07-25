@@ -84,6 +84,9 @@
     "cancel": "إلغاء",
     "loading-settings": "جاري تحميل الإعدادات...",
     "error-occurred": "حدث خطأ",
+    "systemInfo": "معلومات النظام",
+    "recordTimestamps": "طوابع زمنية لإنشاء وتعديل السجل",
+    "manageStudentRecord": "إدارة وتحديث سجل الطالب",
     "email-must-be-a-valid-email": "يجب أن يكون البريد الإلكتروني صالحًا.",
     "username-must-be-5-20-characters": "يجب أن يكون اسم المستخدم مكونًا من 5-20 حرفًا ويمكن أن يحتوي على أحرف وأرقام ونقاط. لا يمكن أن يبدأ أو ينتهي بنقطة.",
     "password-must-be-at-least-8-characters-long": "يجب أن تكون كلمة المرور على الأقل 8 أحرف طويلة.",
@@ -356,7 +359,8 @@
     "StudentInformation": "معلومات الطالب",
     "Are-you-sure-you-want-to-delete-this-Student": "هل أنت متأكد أنك تريد حذف هذا الطالب؟",
     "DeleteStudent": "حذف الطالب",
-    "email-already-exists": "البريد الالكتروني موجود بالفعل"
+    "email-already-exists": "البريد الالكتروني موجود بالفعل",
+    "studentPersonalDetails": "التفاصيل الشخصية والأكاديمية"
   },
   "IQD": "دينار عراقي",
   "StudentEnrollmentPage": {

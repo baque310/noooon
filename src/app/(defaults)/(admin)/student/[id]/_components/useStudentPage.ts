@@ -1,0 +1,57 @@
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { getTranslation } from "@/ni18n/i18n";
+import {
+  useLazyStudentGetDataByIdQuery,
+  useStudentRemoveMutation,
+} from "@/services/admin/student";
+import { StudentPageHookResult } from "./types";
+
+export const useStudentPage = (): StudentPageHookResult => {
+  const { t } = getTranslation();
+  const router = useRouter();
+  const params = useParams();
+  const { id } = params;
+
+  const [StudentGetDataById, { currentData: data, isFetching }] =
+    useLazyStudentGetDataByIdQuery();
+  const [StudentRemove, { isLoading: isLoadingStudentRemove }] =
+    useStudentRemoveMutation();
+
+  const [openDelete, setOpenDelete] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      StudentGetDataById({ id: String(id) }).then((data) => {
+        if (!data.data) {
+          router.back();
+        }
+      });
+    }
+  }, [id, StudentGetDataById, router]);
+
+  const handleRemove = async (): Promise<void> => {
+    try {
+      await StudentRemove({ id: String(id) }).unwrap();
+      toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
+      router.back();
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error && error.message) {
+        toast.error(error.message, { autoClose: 15000 });
+        return;
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
+
+  return {
+    data,
+    isFetching,
+    isLoadingStudentRemove,
+    openDelete,
+    setOpenDelete,
+    handleRemove,
+  };
+};

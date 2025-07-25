@@ -37,7 +37,10 @@
         "cancel": "Cancel",
         "remove": "Remove",
         "loading-settings": "Loading settings...",
-        "error-occurred": "An error occurred"
+        "error-occurred": "An error occurred",
+        "systemInfo": "System Information",
+        "recordTimestamps": "Record creation and modification timestamps",
+        "manageStudentRecord": "Manage and update student record"
     },
     "StudentPage": {
         "studentFullName": "Student Full Name",
@@ -84,7 +87,8 @@
         "StudentInformation": "Student Information",
         "Are-you-sure-you-want-to-delete-this-Student": "Are you sure you want to delete this student?",
         "DeleteStudent": "Delete Student",
-        "email-already-exists": "Email already exists"
+        "email-already-exists": "Email already exists",
+        "studentPersonalDetails": "Personal and academic details"
     },
     "Setting": {
         "SettingInformation": "Settings Information",
