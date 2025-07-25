@@ -26,6 +26,8 @@ export const InputForm = <T extends FormikValues>({
   isPassword = false,
   props,
   className,
+  iconLeft,
+  iconRight,
 }: InputFormProps<T>): React.ReactElement => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,12 +47,13 @@ export const InputForm = <T extends FormikValues>({
 
   return (
     <div
-      className={`w-full ${formikProps.submitCount
+      className={`w-full ${
+        formikProps.submitCount
           ? errorValue && touchedValue
             ? "has-error"
             : ""
           : ""
-        }`}
+      }`}
     >
       <label className="font-normal" htmlFor={name}>
         {title}
@@ -63,12 +66,22 @@ export const InputForm = <T extends FormikValues>({
           {...props}
           name={name}
           id={name}
-          {...isPassword && {
-            type: showPassword ? "text" : "password"
-          }}
+          {...(isPassword && {
+            type: showPassword ? "text" : "password",
+          })}
           placeholder={placeholder}
-          className={`${className} form-input text-sm font-normal ${props?.disabled ? "bg-gray-100 cursor-not-allowed dark:bg-gray-800" : ""}`}
+          className={`${className} form-input text-sm font-normal ${
+            props?.disabled
+              ? "bg-gray-100 cursor-not-allowed dark:bg-gray-800"
+              : ""
+          }`}
         />
+        <div className="absolute inset-y-0 flex items-center ltr:right-0 ltr:pl-3 rtl:left-0 rtl:pr-3">
+          {iconLeft}
+        </div>
+        <div className="absolute inset-y-0 flex items-center ltr:left-0 ltr:pr-3 rtl:right-0 rtl:pl-3">
+          {iconRight}
+        </div>
         {isPassword && (
           <button
             type="button"
@@ -104,7 +117,6 @@ export const InputForm = <T extends FormikValues>({
   );
 };
 
-
 export const InputCurrencyMaskForm = <T extends FormikValues>({
   formikProps,
   name,
@@ -116,45 +128,69 @@ export const InputCurrencyMaskForm = <T extends FormikValues>({
   iconRight,
 }: InputFormProps<T>): React.ReactElement => {
   // Helper function to navigate deep objects
-  const getNestedValue = (path: string, obj: any) => path.split('.').reduce((res, key) => (res ? res[key] : undefined), obj);
+  const getNestedValue = (path: string, obj: any) =>
+    path.split(".").reduce((res, key) => (res ? res[key] : undefined), obj);
   let errorValue = getNestedValue(name, formikProps.errors);
   let touchedValue = getNestedValue(name, formikProps.touched);
 
   const formatNumberWithCommas = (x: string): string => {
-      const parts = x?.toString().split(".") || [];
-      parts[0] = parts[0]?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      return parts.join(".");
+    const parts = x?.toString().split(".") || [];
+    parts[0] = parts[0]?.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
   };
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const numericValue = e.target.value.replace(/,/g, '');
-      formikProps.setFieldValue(name, numericValue);
+    const numericValue = e.target.value.replace(/,/g, "");
+    formikProps.setFieldValue(name, numericValue);
   };
   return (
-      <div
-          className={`w-full ${formikProps.submitCount ? (errorValue && touchedValue ? 'has-error' : '') : ''}`}>
-          <label className='font-normal' htmlFor={name}>{title}</label>
-          <div className="relative w-full">
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">{iconLeft}</div>
-              <Field
-                  {...props}
-                  as="input"
-                  name={name}
-                  id={name}
-                  placeholder={placeholder}
-                  className={`${className} form-input text-sm font-normal ${props?.disabled ? 'bg-gray-100 cursor-not-allowed dark:bg-gray-800' : ''}`}
-                  onChange={handleNumberChange}
-                  value={formatNumberWithCommas(getNestedValue(name, formikProps.values) as string)} />
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pr-3">{iconRight}</div>
-          </div>
-          {formikProps.submitCount ?
-              (errorValue && touchedValue ?
-                  <div className="mt-[2px] w-full p-1 text-sm text-danger">{errorValue}</div> : <></>
-              )
-              :
-              <>
-              </>
-          }
+    <div
+      className={`w-full ${
+        formikProps.submitCount
+          ? errorValue && touchedValue
+            ? "has-error"
+            : ""
+          : ""
+      }`}
+    >
+      <label className="font-normal" htmlFor={name}>
+        {title}
+      </label>
+      <div className="relative w-full">
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+          {iconLeft}
+        </div>
+        <Field
+          {...props}
+          as="input"
+          name={name}
+          id={name}
+          placeholder={placeholder}
+          className={`${className} form-input text-sm font-normal ${
+            props?.disabled
+              ? "bg-gray-100 cursor-not-allowed dark:bg-gray-800"
+              : ""
+          }`}
+          onChange={handleNumberChange}
+          value={formatNumberWithCommas(
+            getNestedValue(name, formikProps.values) as string
+          )}
+        />
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pr-3">
+          {iconRight}
+        </div>
       </div>
+      {formikProps.submitCount ? (
+        errorValue && touchedValue ? (
+          <div className="mt-[2px] w-full p-1 text-sm text-danger">
+            {errorValue}
+          </div>
+        ) : (
+          <></>
+        )
+      ) : (
+        <></>
+      )}
+    </div>
   );
 };
