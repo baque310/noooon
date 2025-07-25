@@ -40,7 +40,11 @@
         "error-occurred": "An error occurred",
         "systemInfo": "System Information",
         "recordTimestamps": "Record creation and modification timestamps",
-        "manageStudentRecord": "Manage and update student record"
+        "manageStudentRecord": "Manage and update student record",
+        "manageAndViewInfo": "Manage and view student information",
+        "searchStudents": "Search students...",
+        "noStudentsFound": "No students found. Try adjusting your search criteria.",
+        "loading": "Loading..."
     },
     "StudentPage": {
         "studentFullName": "Student Full Name",
