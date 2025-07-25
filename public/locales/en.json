@@ -46,7 +46,10 @@
         "noStudentsFound": "No students found. Try adjusting your search criteria.",
         "loading": "Loading...",
         "searchParents": "Search parents...",
-        "noParentsFound": "No parents found. Try adjusting your search criteria."
+        "noParentsFound": "No parents found. Try adjusting your search criteria.",
+        "male": "Male",
+        "female": "Female",
+        "gender": "Gender"
     },
     "StudentPage": {
         "studentFullName": "Student Full Name",

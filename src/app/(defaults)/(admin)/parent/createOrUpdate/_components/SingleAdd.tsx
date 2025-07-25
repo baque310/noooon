@@ -11,14 +11,12 @@ import { useStudentGetDataQuery } from "@/services/admin/student";
 import { getTranslation } from "@/ni18n/i18n";
 
 const SingleAdd = ({
- 
   data: DataParentGetDataById,
   parentSchema,
   handleSubmit,
   isLoadingParentUpdate,
   id,
 }: {
- 
   data: any;
   parentSchema: any;
   handleSubmit: any;
@@ -122,6 +120,12 @@ const SingleAdd = ({
                     { value: "Male", label: t("common.male") },
                     { value: "Female", label: t("common.female") },
                   ]}
+                  props={{
+                    isClearable: true,
+                    onChange: (e) => {
+                      props.setFieldValue(`gender`, (e as any)?.value ?? "");
+                    },
+                  }}
                 />
                 <SelectForm
                   formikProps={props}

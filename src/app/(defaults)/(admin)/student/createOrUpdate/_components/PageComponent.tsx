@@ -166,6 +166,9 @@ const PageComponent = () => {
       .required(t("common.this-field-is-required")),
     phone2: Yup.string().matches(/^07\d{9}$/, t("common.invalid-phone")),
     email: Yup.string().email(t("common.invalid-email")).optional(),
+    gender: Yup.string()
+      .oneOf(["Male", "Female"], t("common.invalid-gender"))
+      .required(t("common.this-field-is-required")),
   });
   const studentSchemaMulti = Yup.object().shape({
     studentsData: Yup.array().of(

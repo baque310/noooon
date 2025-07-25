@@ -11,6 +11,7 @@ interface StudentData {
   phone1?: string;
   phone2?: string;
   birth?: string;
+  gender?: string;
   enrollmentDate?: string;
   User?: {
     username?: string;
@@ -29,16 +30,16 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
-      toast.success("Copied to clipboard!", { 
-        autoClose: 2000 
+      toast.success("Copied to clipboard!", {
+        autoClose: 2000,
       });
-      
+
       // Reset copied state after 2 seconds
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
-      console.error('Failed to copy: ', err);
-      toast.error("Failed to copy", { 
-        autoClose: 2000 
+      console.error("Failed to copy: ", err);
+      toast.error("Failed to copy", {
+        autoClose: 2000,
       });
     }
   };
@@ -70,14 +71,20 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     fieldName = "",
   }) => {
     const isCopied = copiedField === fieldName;
-    
+
     return (
       <div className={`group relative ${colSpan}`}>
-        <div className={`absolute inset-0 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-2xl transform group-hover:scale-105 transition-transform duration-300`}></div>
-        <div className={`relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 border ${borderColor}`}>
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-2xl transform group-hover:scale-105 transition-transform duration-300`}
+        ></div>
+        <div
+          className={`relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 border ${borderColor}`}
+        >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 bg-gradient-to-br ${iconBgFrom} ${iconBgTo} rounded-lg flex items-center justify-center`}>
+              <div
+                className={`w-8 h-8 bg-gradient-to-br ${iconBgFrom} ${iconBgTo} rounded-lg flex items-center justify-center`}
+              >
                 {icon}
               </div>
               <h3 className="font-semibold text-gray-700 dark:text-gray-300 text-sm">
@@ -126,7 +133,11 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
   const personalInfoItems = [
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 8a3 3 0 00-3 3v3a1 1 0 002 0v-3a1 1 0 011-1h.01a1 1 0 011 1v3a1 1 0 002 0v-3a3 3 0 00-3-3z" />
         </svg>
       ),
@@ -140,7 +151,11 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     },
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path
             fillRule="evenodd"
             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
@@ -160,7 +175,11 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     },
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
           <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
         </svg>
@@ -178,7 +197,11 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     },
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path
             fillRule="evenodd"
             d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
@@ -197,7 +220,35 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     },
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fillRule="evenodd"
+            d="M8 14v3a1 1 0 001 1h2a1 1 0 001-1v-3a1 1 0 10-2 0v2H9v-2a1 1 0 10-2 0zM4 4a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ),
+      title: t("common.gender"),
+      value: data?.gender
+        ? t(`common.${data.gender.toLowerCase()}` as any)
+        : null,
+      gradientFrom: "from-teal-50",
+      gradientTo: "to-cyan-100 dark:from-teal-900/20 dark:to-cyan-900/30",
+      borderColor: "border-teal-200/30 dark:border-teal-700/30",
+      iconBgFrom: "from-teal-500",
+      iconBgTo: "to-cyan-600",
+    },
+    {
+      icon: (
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
         </svg>
       ),
@@ -213,7 +264,11 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     },
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
         </svg>
       ),
@@ -229,7 +284,11 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     },
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path
             fillRule="evenodd"
             d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
@@ -247,7 +306,11 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
     },
     {
       icon: (
-        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <svg
+          className="w-4 h-4 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
           <path
             fillRule="evenodd"
             d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
@@ -256,7 +319,9 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ data }) => {
         </svg>
       ),
       title: t("StudentPage.enrollmentDate"),
-      value: data?.enrollmentDate ? moment(data.enrollmentDate).format("YYYY-MM-DD") : null,
+      value: data?.enrollmentDate
+        ? moment(data.enrollmentDate).format("YYYY-MM-DD")
+        : null,
       gradientFrom: "from-rose-50",
       gradientTo: "to-pink-100 dark:from-rose-900/20 dark:to-pink-900/30",
       borderColor: "border-rose-200/30 dark:border-rose-700/30",
