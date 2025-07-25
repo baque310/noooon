@@ -261,6 +261,13 @@ export const api = createApi({
     "NotificationSendToAllForManager",
     "NotificationSendForManyAllForAdmin",
     "NotificationSendForManyAllForManager",
+
+    // Parent
+    "ParentGetData",
+    "ParentGetDataById",
+    "ParentCreate",
+    "ParentUpdate",
+    "ParentRemove",
   ],
   endpoints: (build) => ({}),
 });
