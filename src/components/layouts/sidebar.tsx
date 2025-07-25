@@ -343,6 +343,16 @@ const Sidebar = () => {
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
+                  resource={"parent"}
+                  toggleMenu={toggleMenu}
+                  to={"/parent"}
+                  label={t("sidebar.parent")}
+                  icon={
+                    <IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
+                />
+                <MenuItem
+                  permission={["read-any", "read-own"]}
                   resource={"bus"}
                   toggleMenu={toggleMenu}
                   to={"/bus"}

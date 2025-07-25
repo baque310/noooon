@@ -121,6 +121,7 @@
     "user-information": "معلومات المستخدم"
   },
   "sidebar": {
+    "parent" : "أولياء الأمور",
     "notifications": "الاشعارات",
     "studentInstallment": "الاقساط",
     "settings": "الاعدادات",

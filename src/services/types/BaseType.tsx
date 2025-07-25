@@ -13,37 +13,45 @@ export interface GetDataRequestParams {
 }
 
 export type PAGE_CODE =
-| "admin"
-| "school"
-| "stage"
-| "class"
-| "section"
-| "student"
-| "student_enrollment"
-| "teacher"
-| "bus"
-| "banner"
-| "guidance"
-| "gallery"
-| "subject"
-| "stage_subject"
-| "teacher_subject"
-| "schedule"
-| "section_schedule"
-| "exam"
-| "exam_type"
-| "exam_result"
-| "attendance"
-| "lesson"
-| "homework"
-| "setting"
-| "notification"
-| "user"
-| "dashboard"
-|"student_installment"
+  | "admin"
+  | "school"
+  | "stage"
+  | "class"
+  | "section"
+  | "student"
+  | "student_enrollment"
+  | "teacher"
+  | "bus"
+  | "banner"
+  | "guidance"
+  | "gallery"
+  | "subject"
+  | "stage_subject"
+  | "teacher_subject"
+  | "schedule"
+  | "section_schedule"
+  | "exam"
+  | "exam_type"
+  | "exam_result"
+  | "attendance"
+  | "lesson"
+  | "homework"
+  | "setting"
+  | "notification"
+  | "user"
+  | "dashboard"
+  | "parent"
+  | "student_installment";
 
-
-export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
+export type PERMISSION =
+  | "read-any"
+  | "read-own"
+  | "create-any"
+  | "create-own"
+  | "delete-any"
+  | "delete-own"
+  | "update-any"
+  | "update-own";
 
 export enum Days {
   SUNDAY = "SUNDAY",
@@ -52,6 +60,5 @@ export enum Days {
   WEDNESDAY = "WEDNESDAY",
   THURSDAY = "THURSDAY",
   FRIDAY = "FRIDAY",
-  SATURDAY = "SATURDAY"
+  SATURDAY = "SATURDAY",
 }
-
