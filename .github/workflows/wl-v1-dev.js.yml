@@ -7,9 +7,8 @@ on:
   push:
     branches: ["development"]
 jobs:
-  build: 
-    # runs-on: [aknan-hosted]
-    runs-on: [development]
+  build:
+    runs-on: [aknan-hosted]
 
     strategy:
       matrix:
@@ -29,10 +28,9 @@ jobs:
           export NODE_OPTIONS="--max_old_space_size=512"
           npm install --legacy-peer-deps --maxsockets=1
 
-
       - run: npm run build --if-present
       - name: Pm2 Start
         run: pm2 restart dashboard-noon-iraq-app
       # - run: pm2 describe dashboard-noon-iraq-app
       # - run: pm2 logs dashboard-noon-iraq-app
-        # run: PORT=3027 pm2 start npm  --name "dashboard-noon-iraq-app" -- start
+      # run: PORT=3027 pm2 start npm  --name "dashboard-noon-iraq-app" -- start

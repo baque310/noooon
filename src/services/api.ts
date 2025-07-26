@@ -268,6 +268,13 @@ export const api = createApi({
     "ParentCreate",
     "ParentUpdate",
     "ParentRemove",
+
+    // Complaint
+    "ComplaintGetDataForManager",
+    "ComplaintGetDataById",
+    "ComplaintCreate",
+    "ComplaintUpdate",
+    "ComplaintRemove",
   ],
   endpoints: (build) => ({}),
 });
