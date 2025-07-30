@@ -439,8 +439,7 @@ const TableComponent = () => {
                 </p>
               </div>
             }
-            {...((data?.data &&
-              data?.data?.length == 0 && { minHeight: 300 }) as any)}
+          {...({ minHeight: 300 } as any)}
             sortStatus={sortStatus}
             onSortStatusChange={(sort) => {
               setSortStatus(sort);

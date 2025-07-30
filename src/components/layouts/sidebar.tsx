@@ -6,7 +6,6 @@ import { toggleSidebar } from "@/store/themeConfigSlice";
 import { IRootState } from "@/store";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import IconCaretsDown from "../common/icons/sidebar/icon-carets-down";
 import { MenuItem } from "../common/Menu/MenuItem";
 import { useSession } from "next-auth/react";
 import useNotification from "@/hooks/useNotification";
@@ -30,6 +29,7 @@ import IconSchool from "../common/icons/sidebar/IconSchool";
 import IconDashboard from "../common/icons/sidebar/IconDashboard";
 import IconSetting from "../common/icons/sidebar/IconSetting";
 import IconStage from "../common/icons/sidebar/IconStage";
+import IconCaretsDown from "../common/icons/sidebar/icon-carets-down";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -245,6 +245,16 @@ const Sidebar = () => {
                         <IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
+                    <MenuItem
+                      permission={["read-any", "read-own"]}
+                      resource={"complaint"}
+                      toggleMenu={toggleMenu}
+                      to={"/complaint"}
+                      label={t("sidebar.complaint")}
+                      icon={
+                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                      }
+                    />
                   </>
                 )}
 
@@ -349,6 +359,16 @@ const Sidebar = () => {
                   label={t("sidebar.parent")}
                   icon={
                     <IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
+                />
+                <MenuItem
+                  permission={["read-any", "read-own"]}
+                  resource={"complaint"}
+                  toggleMenu={toggleMenu}
+                  to={"/adminComplaint"}
+                  label={t("sidebar.complaint")}
+                  icon={
+                    <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
                 <MenuItem

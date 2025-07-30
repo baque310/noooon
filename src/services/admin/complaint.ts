@@ -3,39 +3,41 @@ import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
 
 export interface IComplaint {
   id: string;
-  fullName: string;
-  birth: string;
-  Gender: Gender;
-  hiringDate: string;
-  address: string;
-  email: string;
-  phone1: string;
-  phone2: string;
-  photo: null | string;
+  title: string;
+  description: string;
+  approval_status: string; // TODO: Change to enum
+  reason: null | string;
   createdAt: string;
   updatedAt: string;
   userId: string;
-  schoolId: string;
-  schoolBusId: null | string;
-  User: {
+  ComplAttachment: {
+    id: string;
+    url: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    complaintId: string;
+  }[];
+  user: {
     id: string;
     username: string;
+    Student: {
+      id: string;
+      fullName: string;
+    };
+    Parent: null;
+    School: {
+      id: string;
+      name: string;
+    };
   };
 }
 
-export interface AddComplaintPayload {
-  fullName: string;
-  phone1: string;
-  birth?: string;
-  hiringDate?: string;
-  address?: string;
-  email?: string;
-  phone2?: string;
-  photo?: null | string;
-  Gender: Gender;
+export interface ComplaintChangeStatusPayload {
+  id: string;
+  status: string;
+  reason: string;
 }
-
-export type Gender = "Male" | "Female";
 
 export const Complaint = api.injectEndpoints({
   endpoints: (build) => ({
@@ -50,80 +52,70 @@ export const Complaint = api.injectEndpoints({
       }),
       providesTags: ["ComplaintGetDataForManager"],
       transformResponse: (response: BaseGetDataResponse<IComplaint>) => {
-        if (response.data.length > 0) {
-          response.data.map((data) => {
-            if (data.photo) {
-              data.photo = BASE_URL + "uploads/" + data.photo;
-            }
-            return data;
-          });
-        }
+        response.data.forEach((complaint) => {
+          if (complaint.ComplAttachment.length > 0) {
+            complaint.ComplAttachment.forEach((attachment) => {
+              attachment.url = BASE_URL + "uploads/" + attachment.url;
+            });
+          }
+        });
+        return response;
+      },
+    }),
+    ComplaintGetDataForAdmin: build.query<
+      BaseGetDataResponse<IComplaint>,
+      GetDataRequestParams
+    >({
+      query: (params) => ({
+        url: `complaint/forAdmin`,
+        params,
+        method: "GET",
+      }),
+      providesTags: ["ComplaintGetDataForAdmin"],
+      transformResponse: (response: BaseGetDataResponse<IComplaint>) => {
+        response.data.forEach((complaint) => {
+          if (complaint.ComplAttachment.length > 0) {
+            complaint.ComplAttachment.forEach((attachment) => {
+              attachment.url = BASE_URL + "uploads/" + attachment.url;
+            });
+          }
+        });
         return response;
       },
     }),
 
     ComplaintGetDataById: build.query<IComplaint, { id: string }>({
       query: ({ id }) => ({
-        url: `complaint/${id}`,
+        url: `complaint/forAdmin/${id}`,
         method: "GET",
       }),
       providesTags: ["ComplaintGetDataById"],
       transformResponse: (response: IComplaint) => {
-        if (response.photo) {
-          response.photo = BASE_URL + "uploads/" + response.photo;
+        if (response.ComplAttachment.length > 0) {
+          response.ComplAttachment.forEach((attachment) => {
+            attachment.url = BASE_URL + "uploads/" + attachment.url;
+          });
         }
         return response;
       },
     }),
 
-    ComplaintCreate: build.mutation<IComplaint, AddComplaintPayload>({
-      query: (body) => ({
-        url: `complaint`,
-        body,
-        method: "POST",
-      }),
-      invalidatesTags: [
-        "ComplaintCreate",
-        "ComplaintGetDataById",
-        "ComplaintGetDataForManager",
-      ],
-    }),
-
-    ComplaintUpdate: build.mutation<
-      IComplaint,
-      { id: string; body: AddComplaintPayload | FormData }
-    >({
-      query: ({ body, id }) => ({
-        url: `complaint/${id}`,
-        body,
+    ComplaintChangeStatus: build.mutation<void, ComplaintChangeStatusPayload>({
+      query: ({ id, status, reason }) => ({
+        url: `complaint/forAdmin/${id}/${status}`,
         method: "PATCH",
+        body: { reason },
       }),
-      invalidatesTags: [
-        "ComplaintUpdate",
-        "ComplaintGetDataById",
-        "ComplaintGetDataForManager",
-      ],
-    }),
-
-    ComplaintRemove: build.mutation<void, { id: string }>({
-      query: ({ id }) => ({
-        url: `complaint/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: [
-        "ComplaintRemove",
-        "ComplaintGetDataById",
-        "ComplaintGetDataForManager",
-      ],
+      invalidatesTags: ["ComplaintChangeStatus", "ComplaintGetDataForAdmin"],
     }),
   }),
 });
 export const {
   useComplaintGetDataForManagerQuery,
   useLazyComplaintGetDataForManagerQuery,
+  useComplaintGetDataForAdminQuery,
+  useLazyComplaintGetDataForAdminQuery,
   useComplaintGetDataByIdQuery,
   useLazyComplaintGetDataByIdQuery,
-  useComplaintCreateMutation,
-  useComplaintRemoveMutation,
-  useComplaintUpdateMutation,
+  useComplaintChangeStatusMutation,
 } = Complaint;

@@ -50,6 +50,11 @@
     "SchoolAddress": "العنوان"
   },
   "common": {
+    "image" : "الصورة",
+    "changeStatus": "تغيير الحالة",
+    "changeStatus-successfully": "تم تغيير الحالة بنجاح",
+    "searchComplaints": "البحث عن الشكاوى...",
+    "noComplaintsFound": "لا توجد شكاوى. حاول تعديل معايير البحث.",
     "invalid-gender": "الجنس غير صالح",
     "male": "ذكر",
     "female": "انثى",
@@ -122,7 +127,8 @@
     "user-information": "معلومات المستخدم"
   },
   "sidebar": {
-    "parent" : "أولياء الأمور",
+    "complaint": "الشكاوى",
+    "parent": "أولياء الأمور",
     "notifications": "الاشعارات",
     "studentInstallment": "الاقساط",
     "settings": "الاعدادات",
@@ -800,5 +806,27 @@
     "DeleteNotification": "حذف الاشعار",
     "notification-already-exists": "الاشعار موجود بالفعل",
     "enter-body": "ادخل المحتوى"
-  }
+  },
+  "ComplaintPage": {
+    "changeStatus-complaints": "تغيير حالة الشكاوى",
+    "complaints": "الشكاوى",
+    "manageAndViewComplaintInfo": "إدارة وعرض معلومات الشكاوى",
+    "approved": "موافق عليه",
+    "rejected": "مرفوض",
+    "pending": "قيد الانتظار",
+    "title": "العنوان",
+    "enter-title": "ادخل العنوان",
+    "description": "الوصف",
+    "enter-description": "ادخل الوصف",
+    "approval_status": "حالة الموافقة",
+    "select-approval_status": "اختر حالة الموافقة",
+    "reason": "السبب",
+    "enter-reason": "ادخل السبب",
+    "update-info": "تعديل المعلومات",
+    "add": "اضافة",
+    "complaint-information": "معلومات الشكوى"
+  },
+  "approved": "موافق عليه",
+  "pending": "قيد الانتظار",
+  "rejected": "مرفوض"
 }

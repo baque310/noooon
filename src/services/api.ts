@@ -271,10 +271,9 @@ export const api = createApi({
 
     // Complaint
     "ComplaintGetDataForManager",
-    "ComplaintGetDataById",
-    "ComplaintCreate",
-    "ComplaintUpdate",
-    "ComplaintRemove",
+    "ComplaintGetDataById", 
+    "ComplaintChangeStatus",
+    "ComplaintGetDataForAdmin",
   ],
   endpoints: (build) => ({}),
 });

@@ -34,8 +34,8 @@ jobs:
         run: npm install
 
       - run: npm run build --if-present
-      # - name: Pm2 Start
-      # run: pm2 restart wl-v1-dashboard-dev
+      - name: Pm2 Start
+        run: pm2 restart wl-v1-dashboard-dev
       # - run: pm2 describe wl-v1-dashboard-dev
       # - run: pm2 logs wl-v1-dashboard-dev
-      - run: PORT=2029 pm2 start npm  --name "wl-v1-dashboard-dev" -- start
+      # - run: PORT=2029 pm2 start npm  --name "wl-v1-dashboard-dev" -- start

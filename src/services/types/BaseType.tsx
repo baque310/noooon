@@ -41,6 +41,7 @@ export type PAGE_CODE =
   | "user"
   | "dashboard"
   | "parent"
+  | "complaint"
   | "student_installment";
 
 export type PERMISSION =
