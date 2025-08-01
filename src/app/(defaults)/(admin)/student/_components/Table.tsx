@@ -220,7 +220,7 @@ const TableComponent = () => {
                 render: ({ User }: any) => (
                   <div className="flex items-center gap-2">
                     <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">
-                      @{User?.username}
+                      {User?.username}
                     </span>
                   </div>
                 ),
@@ -439,7 +439,7 @@ const TableComponent = () => {
                 </p>
               </div>
             }
-          {...({ minHeight: 300 } as any)}
+            {...({ minHeight: 300 } as any)}
             sortStatus={sortStatus}
             onSortStatusChange={(sort) => {
               setSortStatus(sort);

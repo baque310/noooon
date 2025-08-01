@@ -5,6 +5,7 @@ export interface IStudent {
   id: string;
   fullName: string;
   birth: string;
+  gender?: string;
   enrollmentDate: string;
   address: string;
   email: string;
@@ -26,6 +27,7 @@ export interface AddStudentPayload {
   fullName: string;
   phone1: string;
   birth?: string;
+  gender?: string;
   enrollmentDate?: string;
   address?: string;
   email?: string;

@@ -50,6 +50,7 @@
     "SchoolAddress": "العنوان"
   },
   "common": {
+    "phone-already-exists" : "رقم الهاتف موجود بالفعل",
     "image" : "الصورة",
     "changeStatus": "تغيير الحالة",
     "changeStatus-successfully": "تم تغيير الحالة بنجاح",
@@ -377,7 +378,9 @@
     "Are-you-sure-you-want-to-delete-this-Student": "هل أنت متأكد أنك تريد حذف هذا الطالب؟",
     "DeleteStudent": "حذف الطالب",
     "email-already-exists": "البريد الالكتروني موجود بالفعل",
-    "studentPersonalDetails": "التفاصيل الشخصية والأكاديمية"
+    "studentPersonalDetails": "التفاصيل الشخصية والأكاديمية",
+    "gender": "الجنس",
+    "select-gender": "اختر نوع الجنس"
   },
   "ParentPage": {
     "enter-fullNameStudent": "ادخل اسم الطالب",

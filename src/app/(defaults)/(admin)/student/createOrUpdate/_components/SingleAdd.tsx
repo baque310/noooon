@@ -32,6 +32,7 @@ const SingleAdd = ({
         phone1: DataStudentGetDataById?.phone1 ?? "",
         phone2: DataStudentGetDataById?.phone2 ?? "",
         birth: DataStudentGetDataById?.birth ?? "",
+        gender: DataStudentGetDataById?.gender ?? "",
         enrollmentDate: DataStudentGetDataById?.enrollmentDate ?? "",
         photo: DataStudentGetDataById?.photo ?? "",
       }}
@@ -41,7 +42,7 @@ const SingleAdd = ({
       {(props: FormikProps<any>) => (
         <Form className={"px-4 flex flex-col gap-8"}>
           {/* Student Information Card */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 rounded-3xl border border-blue-100 dark:border-gray-700 shadow-xl">
+          <div className="relative   bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 rounded-3xl border border-blue-100 dark:border-gray-700 shadow-xl">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-5">
               <svg
@@ -111,6 +112,7 @@ const SingleAdd = ({
                 <SelectForm
                   formikProps={props}
                   name={"gender"}
+                  className=""
                   title={t("StudentPage.gender")}
                   placeholder={t("StudentPage.select-gender")}
                   options={[

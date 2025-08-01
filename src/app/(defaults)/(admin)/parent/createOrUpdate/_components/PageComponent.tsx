@@ -54,7 +54,7 @@ const PageComponent = () => {
 
   const handleSubmit = async (
     values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>
+    { resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
       const formData = new FormData();
@@ -110,6 +110,15 @@ const PageComponent = () => {
         if (error.message == `email must be an email`) {
           return toast.error(t("common.invalid-email"), { autoClose: 30000 });
         }
+        if (
+          error.message ==
+          `Resource already exists. More details: {"modelName":"Parent","target":"parents_phone1_key"}`
+        ) {
+          return toast.error(t("common.phone-already-exists"), {
+            autoClose: 30000,
+          });
+        }
+
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
       toast.error(error, { autoClose: 30000 });

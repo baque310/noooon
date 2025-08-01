@@ -144,6 +144,24 @@ export const StudentEnrollment = api.injectEndpoints({
         "StudentEnrollmentGetData",
       ],
     }),
+    StudentList: build.query<
+      {
+        userId: string;
+        fullName: string;
+      }[],
+      {
+        schoolYearId?: string;
+        stageId?: string;
+        classId?: string;
+        sectionId?: string;
+        search?: string;
+      }
+    >({
+      query: (params) => ({
+        url: `admin/student-enrollment/student/list`,
+        params,
+      }),
+    }),
   }),
 });
 export const {
@@ -155,4 +173,6 @@ export const {
   useStudentEnrollmentRemoveMutation,
   useStudentEnrollmentUpdateMutation,
   useStudentEnrollmentUpdatePriceMutation,
+  useLazyStudentListQuery,
+  useStudentListQuery,
 } = StudentEnrollment;

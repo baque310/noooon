@@ -49,7 +49,8 @@
         "noParentsFound": "No parents found. Try adjusting your search criteria.",
         "male": "Male",
         "female": "Female",
-        "gender": "Gender"
+        "gender": "Gender",
+        "invalid-gender": "Please select a valid gender"
     },
     "StudentPage": {
         "studentFullName": "Student Full Name",
@@ -97,7 +98,9 @@
         "Are-you-sure-you-want-to-delete-this-Student": "Are you sure you want to delete this student?",
         "DeleteStudent": "Delete Student",
         "email-already-exists": "Email already exists",
-        "studentPersonalDetails": "Personal and academic details"
+        "studentPersonalDetails": "Personal and academic details",
+        "gender": "Gender",
+        "select-gender": "Select gender"
     },
     "ParentPage": {
         "parentFullName": "Parent Full Name",

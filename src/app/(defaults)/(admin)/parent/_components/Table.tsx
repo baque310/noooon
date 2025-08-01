@@ -220,7 +220,7 @@ const TableComponent = () => {
                 render: ({ User }: any) => (
                   <div className="flex items-center gap-2">
                     <span className="text-sm bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-lg font-medium">
-                      @{User?.username}
+                      {User?.username}
                     </span>
                   </div>
                 ),
