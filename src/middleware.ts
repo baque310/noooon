@@ -9,6 +9,7 @@ export async function middleware(request: NextRequest) {
   if (!token) {
     return NextResponse.redirect(new URL("/signIn", request.url));
   }
+
   if ((token?.user as any).RoleType == "SuperAdmin") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -29,5 +30,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/"],
+  matcher: ["/:path*"],
 };

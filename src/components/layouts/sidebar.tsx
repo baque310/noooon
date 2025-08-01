@@ -59,9 +59,9 @@ const Sidebar = () => {
 
   const isLoading = session.status == "loading";
 
-  const isManager =
-    session.data?.user.RoleType == "Manager" ||
-    session.data?.user.RoleType == "Admin";
+  const isManager = session.data?.user.RoleType == "Manager";
+  // ||
+  // session.data?.user.RoleType == "Admin";
 
   const {
     currentData: DataAdminGetDataById,

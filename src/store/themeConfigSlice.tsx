@@ -14,7 +14,7 @@ const initialState = {
     locale: themeConfig.locale,
     semidark: themeConfig.semidark,
     languageList: [
-        // { code: 'en', name: 'English' },
+        { code: 'en', name: 'English' },
         { code: 'ar', name: 'Arabic' },
         // { code: 'ku', name: 'Kurdish' },
     ],

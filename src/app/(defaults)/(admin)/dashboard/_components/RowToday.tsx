@@ -26,17 +26,17 @@ export const RowToday = ({
   const chartData = [
     {
       name: t("DashboardPage.absent"),
-      value: data?.attendanceCounts.today.Absent ?? 0,
+      value: data?.attendanceCounts?.today?.Absent ?? 0,
        fill: "#c42727"
     },
     {
       name: t("DashboardPage.present"),
-      value: data?.attendanceCounts.today.Present ?? 0,
+      value: data?.attendanceCounts?.today?.Present ?? 0,
       fill: "#2aab68",
     },
     {
       name: t("DashboardPage.vacation"),
-      value: data?.attendanceCounts.today.Vacation ?? 0,
+      value: data?.attendanceCounts?.today?.Vacation ?? 0,
       fill: "#2544a3",
     },
 

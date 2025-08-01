@@ -86,7 +86,7 @@ export const InputForm = <T extends FormikValues>({
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute inset-y-0 left-4 px-2 flex items-center text-sm"
+            className="absolute inset-y-0 rtl:left-4 ltr:right-4 px-2 flex items-center text-sm"
           >
             {showPassword ? (
               <>
