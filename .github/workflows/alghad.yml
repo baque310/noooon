@@ -27,17 +27,17 @@ jobs:
       - name: cp .env
         run: cp /home/dashboard-noon-iraq/alghad.env /home/actions-runner-alghad/_work/dashboard-noon-iraq/dashboard-noon-iraq/.env
 
-      # - name: Install Dependencies
+      - name: Install Dependencies
         # run: |
         #   export NODE_OPTIONS="--max_old_space_size=512"
         #   npm install --legacy-peer-deps --maxsockets=1
-        # run: npm install
+        run: npm install
 
-      # - run: npm run build --if-present
-      # - name: Pm2 Start
-      #   run: pm2 restart alghad-dashboard
+      - run: npm run build --if-present
+      - name: Pm2 Start
+        run: pm2 restart alghad-dashboard
       # - run: pm2 describe alghad-dashboard
       # - run: pm2 logs alghad-dashboard
-      - run: PORT=3031 pm2 start npm  --name "alghad-dashboard" -- start
+      # - run: PORT=3031 pm2 start npm  --name "alghad-dashboard" -- start
       # - run: pm2 delete alghad-dashboard 
 
