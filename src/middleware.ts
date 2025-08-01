@@ -6,13 +6,15 @@ import { hasRoleAndPermissions } from "./utils/hasRoleAndPermissions";
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.SECRET });
 
-  if (!token) {
+  if (!token && !request.url.includes("/signIn")) {
     return NextResponse.redirect(new URL("/signIn", request.url));
   }
 
-  if ((token?.user as any).RoleType == "SuperAdmin") {
+  if ((token?.user as any)?.RoleType == "SuperAdmin") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
+
+  return NextResponse.next();
 
   // let hasPage = dataSideBar.navMain.find((item) => item.url === request.nextUrl.pathname) || dataSideBar.dataAdmin.find((item) => item.url === request.nextUrl.pathname) || otherPage.find((item) => item.url === request.nextUrl.pathname);
 
@@ -30,5 +32,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/:path*"],
+  matcher: ["/"],
 };
