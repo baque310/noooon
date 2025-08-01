@@ -5,20 +5,16 @@ import { withRole } from "@/components/Provider/RolePageAndActionBasedComponent"
 import { getTranslation } from "@/ni18n/i18n";
 import { useRouter } from "next/navigation";
 import RowCard from "./RowCard";
-import TableComponent from "./Table";
-import RowCardMullite from "./RowCardMullite";
 import { useDashboardGetDataQuery } from "@/services/Manager/Dashboard";
 
 const RowComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
 
-  const { currentData, isFetching } = useDashboardGetDataQuery()
-
+  const { currentData, isFetching } = useDashboardGetDataQuery();
 
   return (
     <div className={`m-4 flex-col flex gap-4`}>
-
       <div className="grid md:grid-cols-4 gap-4 ">
         <RowCard
           title={t("DashboardPage.adminCount")}
@@ -34,24 +30,21 @@ const RowComponent = () => {
         />
         <RowCard
           title={t("DashboardPage.schoolCount")}
-          number={currentData?.schoolCount.totalCount} 
+          number={currentData?.schoolCount.totalCount}
         />
-      </div> 
+      </div>
       <div className="grid md:grid-cols-2 gap-4 ">
-
         <RowCard
           title={t("DashboardPage.schoolCountHasBanner")}
           number={currentData?.schoolCount.hasBanner}
         />
         <RowCard
           title={t("DashboardPage.schoolCountHasNotBanner")}
-          number={currentData?.schoolCount.hasNotBanner} 
+          number={currentData?.schoolCount.hasNotBanner}
         />
-      </div> 
+      </div>
     </div>
   );
 };
 
 export default withRole(RowComponent, "dashboard", ["read-any", "read-own"]);
-
-

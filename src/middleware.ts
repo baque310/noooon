@@ -9,10 +9,7 @@ export async function middleware(request: NextRequest) {
   if (!token) {
     return NextResponse.redirect(new URL("/signIn", request.url));
   }
-  if (
-    (token?.user as any).RoleType == "SuperAdmin" ||
-    (token?.user as any).RoleType == "Admin"
-  ) {
+  if ((token?.user as any).RoleType == "SuperAdmin") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
