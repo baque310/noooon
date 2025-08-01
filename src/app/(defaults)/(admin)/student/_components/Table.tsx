@@ -226,6 +226,10 @@ const TableComponent = () => {
                 ),
               },
               {
+                title: t("StudentPage.fullNameParent"),
+                accessor: "Parent.fullName",
+              },
+              {
                 title: t("StudentPage.birth"),
                 accessor: "birth",
                 sortable: true,

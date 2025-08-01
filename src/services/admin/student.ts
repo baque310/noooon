@@ -21,6 +21,15 @@ export interface IStudent {
     id: string;
     username: string;
   };
+  Parent: {
+    id: string;
+    fullName: string;
+    phone1: string;
+    User: {
+      id: string;
+      username: string;
+    };
+  };
 }
 
 export interface AddStudentPayload {

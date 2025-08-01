@@ -333,6 +333,7 @@
     "this-section-connected-with-other-section": "هذا الشبة  مرتبطة مع اخرى "
   },
   "StudentPage": {
+    "fullNameParent" : "اسم ولي الأمر",
     "studentFullName": "اسم الطالب",
     "enter-studentFullName": "ادخل اسم الطالب",
     "studentPhone": "هاتف الطالب",

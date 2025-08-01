@@ -147,6 +147,11 @@ const PageComponent = () => {
               isCopyToClipboard
             />
             <ItemList
+              title={t("StudentPage.Username")}
+              value={String(data?.Parent?.fullName)}
+              isCopyToClipboard
+            />
+            <ItemList
               title={t("StudentPage.address")}
               value={String(data?.address)}
             />
