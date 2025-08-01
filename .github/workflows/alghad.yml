@@ -38,6 +38,6 @@ jobs:
       #   run: pm2 restart alghad-dashboard
       # - run: pm2 describe alghad-dashboard
       # - run: pm2 logs alghad-dashboard
-      # - run: PORT=3031 pm2 start npm  --name "alghad-dashboard" -- start
-      - run: pm2 delete alghad-dashboard 
+      - run: PORT=3031 pm2 start npm  --name "alghad-dashboard" -- start
+      # - run: pm2 delete alghad-dashboard 
 
