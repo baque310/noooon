@@ -147,6 +147,10 @@ const PageComponent = () => {
               isCopyToClipboard
             />
             <ItemList
+              title={t("ParentPage.gender")}
+              value={t(data?.gender.toLowerCase() as any)}
+            />
+            <ItemList
               title={t("ParentPage.address")}
               value={String(data?.address)}
             />

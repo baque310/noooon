@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
+import { exportJsonToExcel } from "@/utils/excelParser";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -147,6 +148,58 @@ const TableComponent = () => {
                 />
               </div>
 
+              {/* Export to Excel Button */}
+              <button
+                onClick={() => {
+                  exportJsonToExcel({
+                    data:
+                      data?.data.map((item) => {
+                        return {
+                          fullName: item.fullName,
+                          User: item.User?.username,
+                          birth: item.birth,
+                          gender: item.gender,
+                          address: item.address,
+                          email: item.email,
+                          phone1: item.phone1,
+                          phone2: item.phone2,
+                        };
+                      }) ?? [],
+                    fileName: "Parents",
+                    sheetName: "Parents",
+                  });
+                }}
+                disabled={!data?.data || data.data.length === 0 || isFetching}
+                className={`
+                                relative overflow-hidden group
+                                flex items-center gap-3 px-6 py-3
+                                bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700
+                                disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed
+                                text-white font-semibold rounded-xl
+                                shadow-lg hover:shadow-xl disabled:shadow-md
+                                transform hover:scale-105 active:scale-95 disabled:transform-none
+                                transition-all duration-200
+                                border border-green-500/20 disabled:border-gray-400/20
+                                min-w-fit whitespace-nowrap
+                              `}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                <svg
+                  className="h-5 w-5 relative z-10"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <span className="relative z-10">{t("common.ExportExcel")}</span>
+              </button>
+
               {/* Add Button */}
               <RolePageAndActionBasedComponent
                 component={(props) => {
@@ -221,6 +274,17 @@ const TableComponent = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-sm bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-lg font-medium">
                       {User?.username}
+                    </span>
+                  </div>
+                ),
+              },
+              {
+                title: t("ParentPage.gender"),
+                accessor: "gender",
+                render: ({ gender }: any) => (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">
+                      {t(gender.toLowerCase() as any)}
                     </span>
                   </div>
                 ),

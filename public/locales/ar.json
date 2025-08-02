@@ -52,6 +52,7 @@
   "male": "ذكر",
   "female": "انثى",
   "common": {
+    "ExportExcel" : "تصدير الى اكسل",
     "phone-already-exists": "رقم الهاتف موجود بالفعل",
     "image": "الصورة",
     "changeStatus": "تغيير الحالة",
@@ -391,6 +392,9 @@
     "select-gender": "اختر نوع الجنس"
   },
   "ParentPage": {
+    "excel-upload": "رفع ملف اكسل",
+    "excel-upload-description": "رفع ملف اكسل لاضافة أولياء الأمور",
+    "upload-excel": "رفع ملف اكسل",
     "enter-fullNameStudent": "ادخل اسم الطالب",
     "gender": "الجنس",
     "select-gender": "اختر نوع الجنس",
