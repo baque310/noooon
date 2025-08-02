@@ -27,16 +27,17 @@ export interface FormValuesMulti {
     p_phone: string;
   }[];
 }
-import { Tab } from "./Tab";
+import { Tab, TabOption } from "./Tab";
 import SingleAdd from "./SingleAdd";
 import MuiltAdd from "./MuiltAdd";
+import ExcelAdd from "./ExcelAdd";
 
 const PageComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const [selected, setSelected] = useState("add");
+  const [selected, setSelected] = useState<TabOption>("add");
   const [StudentGetDataById, { currentData: data, isFetching }] =
     useLazyStudentGetDataByIdQuery();
   useEffect(() => {
@@ -208,13 +209,15 @@ const PageComponent = () => {
                 handleSubmit={handleSubmit}
                 isLoadingStudentUpdate={isLoadingStudentCreate}
               />
-            ) : (
+            ) : selected == "muilt" ? (
               <MuiltAdd
                 t={t}
                 studentSchemaMulti={studentSchemaMulti}
                 handleSubmitMulti={handleSubmitMulti}
                 isLoadingStudentCreateMulti={isLoadingStudentCreateMulti}
               />
+            ) : (
+              <ExcelAdd />
             )}
           </>
         ) : (

@@ -91,6 +91,23 @@ export const Parent = api.injectEndpoints({
       }),
       invalidatesTags: ["ParentCreate", "ParentGetDataById", "ParentGetData"],
     }),
+    ParentMultipleForExcel: build.mutation<
+      IParent,
+      {
+        parents: AddParentPayload[];
+      }
+    >({
+      query: (body) => ({
+        url: `admin/parent/multipleForExcel`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: [
+        "ParentMultipleForExcel",
+        "ParentGetDataById",
+        "ParentGetData",
+      ],
+    }),
 
     ParentUpdate: build.mutation<
       IParent,
@@ -121,4 +138,5 @@ export const {
   useParentCreateMutation,
   useParentRemoveMutation,
   useParentUpdateMutation,
+  useParentMultipleForExcelMutation,
 } = Parent;

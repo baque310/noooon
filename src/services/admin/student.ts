@@ -115,6 +115,58 @@ export const Student = api.injectEndpoints({
         "StudentGetData",
       ],
     }),
+    StudentMultiStudentsForExcel: build.mutation<
+      IStudent,
+      {
+        students: AddMultiStudentPayload[];
+      }
+    >({
+      query: (body) => ({
+        url: `admin/student/multiStudentsForExcel`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: [
+        "StudentMultiStudentsForExcel",
+        "StudentGetDataById",
+        "StudentGetData",
+      ],
+    }),
+    StudentConnectParent: build.mutation<
+      IStudent,
+      {
+        studentId: string;
+        parentId: string;
+      }
+    >({
+      query: ({ studentId, parentId }) => ({
+        url: `admin/student/${studentId}/connect-parent/${parentId}`,
+
+        method: "PATCH",
+      }),
+      invalidatesTags: [
+        "StudentConnectParent",
+        "StudentGetDataById",
+        "StudentGetData",
+      ],
+    }),
+    StudentDisconnectParent: build.mutation<
+      IStudent,
+      {
+        studentId: string;
+      }
+    >({
+      query: ({ studentId }) => ({
+        url: `admin/student/${studentId}/disconnect-parent`,
+
+        method: "PATCH",
+      }),
+      invalidatesTags: [
+        "StudentDisconnectParent",
+        "StudentGetDataById",
+        "StudentGetData",
+      ],
+    }),
     StudentUpdate: build.mutation<
       IStudent,
       { id: string; body: AddStudentPayload | FormData }
@@ -153,4 +205,7 @@ export const {
   useStudentRemoveMutation,
   useStudentUpdateMutation,
   useStudentCreateMultiMutation,
+  useStudentConnectParentMutation,
+  useStudentDisconnectParentMutation,
+  useStudentMultiStudentsForExcelMutation,
 } = Student;

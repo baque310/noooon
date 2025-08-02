@@ -49,9 +49,11 @@
     "SchoolName": "اسم المدرسة",
     "SchoolAddress": "العنوان"
   },
+  "male": "ذكر",
+  "female": "انثى",
   "common": {
-    "phone-already-exists" : "رقم الهاتف موجود بالفعل",
-    "image" : "الصورة",
+    "phone-already-exists": "رقم الهاتف موجود بالفعل",
+    "image": "الصورة",
     "changeStatus": "تغيير الحالة",
     "changeStatus-successfully": "تم تغيير الحالة بنجاح",
     "searchComplaints": "البحث عن الشكاوى...",
@@ -333,7 +335,12 @@
     "this-section-connected-with-other-section": "هذا الشبة  مرتبطة مع اخرى "
   },
   "StudentPage": {
-    "fullNameParent" : "اسم ولي الأمر",
+    "excel-upload": "رفع اكسل",
+    "excel-upload-description": "رفع ملف اكسل لاضافة الطلاب",
+    "excel-upload-title": "رفع ملف اكسل",
+    "upload-excel": "رفع ملف اكسل",
+    "excelAdd": "اضافة اكسل",
+    "fullNameParent": "اسم ولي الأمر",
     "studentFullName": "اسم الطالب",
     "enter-studentFullName": "ادخل اسم الطالب",
     "studentPhone": "هاتف الطالب",

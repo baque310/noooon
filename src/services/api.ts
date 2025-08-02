@@ -124,6 +124,9 @@ export const api = createApi({
     "StudentUpdate",
     "StudentRemove",
     "StudentCreateMulti",
+    "StudentMultiStudentsForExcel",
+    "StudentConnectParent",
+    "StudentDisconnectParent",
 
     // Student Enrollment Tag
     "StudentEnrollmentGetData",
@@ -268,10 +271,11 @@ export const api = createApi({
     "ParentCreate",
     "ParentUpdate",
     "ParentRemove",
+    "ParentMultipleForExcel",
 
     // Complaint
     "ComplaintGetDataForManager",
-    "ComplaintGetDataById", 
+    "ComplaintGetDataById",
     "ComplaintChangeStatus",
     "ComplaintGetDataForAdmin",
   ],
