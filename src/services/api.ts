@@ -1,4 +1,4 @@
-import { BaseQueryFn, createApi } from "@reduxjs/toolkit/query/react";
+import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const BASE_URL = process.env.BASE_URL;
 import UniversalCookie from "universal-cookie";
@@ -70,11 +70,47 @@ const axiosBaseQuery =
     return result;
   };
 
+  const baseQuery = fetchBaseQuery({
+  baseUrl: BASE_URL, // Backend base API
+  prepareHeaders: async (headers: any) => {
+    // By default, if we have a token in the storage, add it to request Headers
+    // const session = await getSession();
+    let token: string | undefined;
+
+    // token = session?.accessToken;
+    // if (token) {
+    //   headers.set("Authorization", `Bearer ${token}`);
+    //   headers.set("x-api-key", X_API_KEY);
+    // }
+    return headers;
+  },
+});
+  const baseQueryWithReAuth = async (
+  args: string | FetchArgs,
+  api: any,
+  extraOptions: any
+) => {
+  let result = await baseQuery(args, api, extraOptions);
+  if (
+    (result?.error as any)?.originalStatus === 200 &&
+    ((args as any)?.method == "DELETE" || (args as any)?.method == "PATCH")
+  ) {
+    return {
+      meta: result.meta,
+      data: [],
+      error: undefined,
+    };
+  } else {
+    return result;
+  }
+};
+
 export const api = createApi({
   reducerPath: "api",
   baseQuery: axiosBaseQuery({
     baseUrl: BASE_URL as string,
   }),
+    // baseQuery: baseQueryWithReAuth as any,
   tagTypes: [
     // Admin Tag
 
