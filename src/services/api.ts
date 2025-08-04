@@ -278,6 +278,13 @@ export const api = createApi({
     "ComplaintGetDataById",
     "ComplaintChangeStatus",
     "ComplaintGetDataForAdmin",
+
+    // Video
+    "VideoGetData",
+    "VideoGetDataById",
+    "VideoCreate",
+    "VideoUpdate",
+    "VideoRemove",  
   ],
   endpoints: (build) => ({}),
 });

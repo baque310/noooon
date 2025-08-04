@@ -44,11 +44,15 @@ export interface AddStudentPayload {
   photo?: null | string;
 }
 export interface AddMultiStudentPayload {
-  studentsWithParents: {
-    s_name: string;
-    s_phone: string;
-    p_name: string;
-    p_phone: string;
+  groups: {
+    students: {
+      fullName: string;
+      phone1: string;
+    }[];
+    parent?: {
+      fullName: string;
+      phone1: string;
+    };
   }[];
 }
 

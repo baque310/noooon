@@ -23,9 +23,9 @@ export interface FormValuesMulti {
     id: number;
     s_name: string;
     s_phone: string;
-    p_name: string;
-    p_phone: string;
   }[];
+  p_name: string;
+  p_phone: string;
 }
 import { Tab, TabOption } from "./Tab";
 import SingleAdd from "./SingleAdd";
@@ -126,14 +126,20 @@ const PageComponent = () => {
   ) => {
     try {
       await StudentCreateMulti({
-        studentsWithParents: values.studentsData.map((item) => {
-          return {
-            s_name: item.s_name,
-            s_phone: item.s_phone,
-            p_name: item.p_name,
-            p_phone: item.p_phone,
-          };
-        }),
+        groups: [
+          {
+            students: values.studentsData.map((item) => {
+              return {
+                fullName: item.s_name,
+                phone1: item.s_phone,
+              };
+            }),
+            parent: {
+              fullName: values.p_name,
+              phone1: values.p_phone,
+            },
+          },
+        ],
       }).unwrap();
 
       toast.success(
@@ -179,13 +185,13 @@ const PageComponent = () => {
           // 07xxxxxxxxx
           .matches(/^07\d{9}$/, t("common.invalid-phone"))
           .required(t("common.this-field-is-required")),
-        p_name: Yup.string().required(t("common.this-field-is-required")),
-        p_phone: Yup.string()
-          // 07xxxxxxxxx
-          .matches(/^07\d{9}$/, t("common.invalid-phone"))
-          .required(t("common.this-field-is-required")),
       })
     ),
+    p_name: Yup.string().required(t("common.this-field-is-required")),
+    p_phone: Yup.string()
+      // 07xxxxxxxxx
+      .matches(/^07\d{9}$/, t("common.invalid-phone"))
+      .required(t("common.this-field-is-required")),
   });
 
   return (

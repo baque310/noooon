@@ -89,8 +89,7 @@ const PageComponent = () => {
             initialValues={{
               title: data?.title ?? "",
               description: data?.description ?? "",
-              url: data?.url ?? "",
-              priority: data?.priority ?? 0,
+              url: data?.url ?? "", 
             }}
             validationSchema={videoSchema}
             onSubmit={handleSubmit}

@@ -52,6 +52,7 @@
   "male": "ذكر",
   "female": "انثى",
   "common": {
+    "confirm": "تأكيد",
     "ExportExcel": "تصدير الى اكسل",
     "phone-already-exists": "رقم الهاتف موجود بالفعل",
     "image": "الصورة",
@@ -131,7 +132,7 @@
     "user-information": "معلومات المستخدم"
   },
   "sidebar": {
-    "video" : "الفيديوهات",
+    "video": "الفيديوهات",
     "complaint": "الشكاوى",
     "parent": "أولياء الأمور",
     "notifications": "الاشعارات",
@@ -153,7 +154,7 @@
     "students": "الطلاب",
     "student": "معلومات الطلاب",
     "studentEnrollment": "تسجيل الطلاب",
-    "teacher": "المدرسين",
+    "teacher": "الكادر التدريسي",
     "bus": "خطوط النقل",
     "banner": "الاعلانات",
     "guidance": "الارشادات",
@@ -337,6 +338,10 @@
     "this-section-connected-with-other-section": "هذا الشبة  مرتبطة مع اخرى "
   },
   "StudentPage": {
+    "disconnectParent": "فصل الطالب عن ولي الأمر",
+    "IsDo-disconnectParentMessage": "هل تريد فصل  الطالب عن ولي الأمر؟",
+    "enter-parent-full-name": "ادخل اسم ولي الأمر",
+    "ConnectedStudentWithParent": "ربط الطالب مع ولي الأمر",
     "excel-upload": "رفع اكسل",
     "excel-upload-description": "رفع ملف اكسل لاضافة الطلاب",
     "excel-upload-title": "رفع ملف اكسل",
@@ -478,7 +483,7 @@
     "Male": "ذكر",
     "Female": "انثى",
     "teacher": "المدرس",
-    "teachers": "المدرسين",
+    "teachers": "الكادر التدريسي",
     "fullName": "الاسم الكامل",
     "enter-fullName": "ادخل الاسم الكامل",
     "birth": "تاريخ الميلاد",
@@ -802,11 +807,13 @@
   "days": "الايام",
   "SectionSchedules": "جدول الدروس حسب المواد",
   "NotificationPage": {
+    "allowedAllStudents": " جميع الطلاب",
     "allowedAllUsers": " جميع المستخدمين",
     "Notification": "الاشعارات",
     "Notifications": "الاشعارات",
     "body": "المحتوى",
     "isSeen": "تمت القراءة",
+    "allStudentsThisASectionsORClasses": "جميع الطلاب في هذه الشعب أو الصفوف",
     "seen": "تمت القراءة",
     "notSeen": "لم تتم القراءة",
     "title": "العنوان",

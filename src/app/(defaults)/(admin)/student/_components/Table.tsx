@@ -1,7 +1,6 @@
 "use client";
 import { DataTable } from "mantine-datatable";
 import React from "react";
-import * as XLSX from "xlsx";
 
 import moment from "moment";
 import {
@@ -19,6 +18,7 @@ import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
 import { exportJsonToExcel } from "@/utils/excelParser";
+import { ConnectedStudentWithParent } from "./ConnectedStudentWithParent";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -286,6 +286,7 @@ const TableComponent = () => {
               {
                 title: t("StudentPage.fullNameParent"),
                 accessor: "Parent.fullName",
+                render: (data) => <ConnectedStudentWithParent data={data} />,
               },
               {
                 title: t("StudentPage.gender"),

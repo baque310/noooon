@@ -60,7 +60,6 @@ const PageComponent = () => {
         <LoadingForm />
       ) : (
         <>
-          <AttachmentsImage className="my-2 h-44" src={String(data?.url)} />
           <div className="CardDetails internalMenu ">
             <ItemList
               title={t("VideoPage.title")}

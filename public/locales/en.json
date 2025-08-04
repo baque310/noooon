@@ -59,6 +59,10 @@
     "invalid-gender": "Invalid gender",
     "male": "Male",
     "female": "Female",
+
+    "confirm": "Confirm",
+    "ExportExcel": "Export to Excel",
+
     "must-min-is-one": "Minimum must be 1",
     "statusDeleted": "Deletion Status",
     "isNotDeleted": "Not Deleted",
@@ -164,7 +168,8 @@
     "exams": "Exams",
     "exam": "Exam Information",
     "examType": "Exam Type",
-    "examResult": "Exam Results"
+    "examResult": "Exam Results",
+    "video": "Videos"
   },
   "SupperAdminPage": {
     "supperAdmin": "Super Admins",
@@ -333,6 +338,15 @@
     "this-section-connected-with-other-section": "This section is linked with another "
   },
   "StudentPage": {
+    "disconnectParent": "Disconnect Student from Guardian",
+    "IsDo-disconnectParentMessage": "Do you want to disconnect the student from the guardian?",
+    "enter-parent-full-name": "Enter guardian full name",
+    "ConnectedStudentWithParent": "Connect Student with Guardian",
+    "excel-upload": "Upload Excel",
+    "excel-upload-description": "Upload Excel file to add students",
+    "excel-upload-title": "Upload Excel File",
+    "upload-excel": "Upload Excel File",
+    "excelAdd": "Add Excel",
     "fullNameParent": "Guardian Name",
     "studentFullName": "Student Full Name",
     "enter-studentFullName": "Enter student full name",
@@ -384,6 +398,9 @@
     "select-gender": "Select gender"
   },
   "ParentPage": {
+    "excel-upload": "Upload Excel File",
+    "excel-upload-description": "Upload Excel file to add guardians",
+    "upload-excel": "Upload Excel File",
     "enter-fullNameStudent": "Enter student name",
     "gender": "Gender",
     "select-gender": "Select gender",
@@ -790,11 +807,13 @@
   "days": "Days",
   "SectionSchedules": "Lesson Schedule by Subjects",
   "NotificationPage": {
-    "allowedAllUsers": " All Users",
+    "allowedAllStudents": "All Students",
+    "allowedAllUsers": "All Users",
     "Notification": "Notifications",
     "Notifications": "Notifications",
     "body": "Content",
     "isSeen": "Seen",
+    "allStudentsThisASectionsORClasses": "All students in these sections or classes",
     "seen": "Seen",
     "notSeen": "Not Seen",
     "title": "Title",
@@ -832,5 +851,17 @@
   },
   "approved": "Approved",
   "pending": "Pending",
-  "rejected": "Rejected"
+  "rejected": "Rejected",
+  "video": "Videos",
+  "title": "Title",
+  "enter-title": "Enter title",
+  "url": "URL",
+  "enter-url": "Enter URL",
+  "enter-description": "Enter description",
+  "description": "Description",
+  "VideoInformation": "Video Information",
+  "update-info": "Update Information",
+  "Are-you-sure-you-want-to-delete-this-Video": "Are you sure you want to delete this video?",
+  "DeleteVideo": "Delete Video",
+  "add": "Add"
 }

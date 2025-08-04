@@ -354,6 +354,47 @@ const Sidebar = () => {
                     <IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
+                <MenuSubItem
+                  permission={["read-any", "read-own"]}
+                  resource={["subject", "stage_subject", "stage_subject"]}
+                  name={"subjects"}
+                  currentMenu={currentMenu}
+                  label={t("sidebar.subjects")}
+                  icon={
+                    <IconSubject className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
+                  menuList={[
+                    {
+                      number: 0,
+                      label: t("sidebar.subject"),
+                      resource: "subject",
+                      permission: ["read-any", "read-own"],
+                      to: "subject",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+                    {
+                      number: 0,
+                      label: t("sidebar.stageSubject"),
+                      resource: "stage_subject",
+                      permission: ["read-any", "read-own"],
+                      to: "stageSubject",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+                    {
+                      number: 0,
+                      label: t("sidebar.teacherSubject"),
+                      resource: "teacher_subject",
+                      permission: ["read-any", "read-own"],
+                      to: "teacherSubject",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+                  ]}
+                  toggleMenu={toggleMenu}
+                  setCurrentMenu={setCurrentMenu}
+                />
                 <MenuItem
                   permission={["read-any", "read-own"]}
                   resource={"parent"}
@@ -449,47 +490,6 @@ const Sidebar = () => {
                   }
                 />
 
-                <MenuSubItem
-                  permission={["read-any", "read-own"]}
-                  resource={["subject", "stage_subject", "stage_subject"]}
-                  name={"subjects"}
-                  currentMenu={currentMenu}
-                  label={t("sidebar.subjects")}
-                  icon={
-                    <IconSubject className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
-                  menuList={[
-                    {
-                      number: 0,
-                      label: t("sidebar.subject"),
-                      resource: "subject",
-                      permission: ["read-any", "read-own"],
-                      to: "subject",
-                      isNoSub: true,
-                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                    },
-                    {
-                      number: 0,
-                      label: t("sidebar.stageSubject"),
-                      resource: "stage_subject",
-                      permission: ["read-any", "read-own"],
-                      to: "stageSubject",
-                      isNoSub: true,
-                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                    },
-                    {
-                      number: 0,
-                      label: t("sidebar.teacherSubject"),
-                      resource: "teacher_subject",
-                      permission: ["read-any", "read-own"],
-                      to: "teacherSubject",
-                      isNoSub: true,
-                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                    },
-                  ]}
-                  toggleMenu={toggleMenu}
-                  setCurrentMenu={setCurrentMenu}
-                />
                 <MenuSubItem
                   permission={["read-any", "read-own"]}
                   resource={["schedule", "section_schedule"]}

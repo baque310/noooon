@@ -23,10 +23,10 @@ const MuiltAdd = ({
             id: Math.random(),
             s_name: "",
             s_phone: "",
-            p_name: "",
-            p_phone: "",
           },
         ],
+        p_name: "",
+        p_phone: "",
       }}
       validationSchema={studentSchemaMulti}
       onSubmit={handleSubmitMulti}
@@ -37,19 +37,40 @@ const MuiltAdd = ({
           <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 rounded-3xl p-8 border border-blue-100 dark:border-gray-700">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-5">
-              <svg className="w-full h-full" viewBox="0 0 100 100" fill="currentColor">
-                <pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <svg
+                className="w-full h-full"
+                viewBox="0 0 100 100"
+                fill="currentColor"
+              >
+                <pattern
+                  id="pattern"
+                  x="0"
+                  y="0"
+                  width="20"
+                  height="20"
+                  patternUnits="userSpaceOnUse"
+                >
                   <circle cx="10" cy="10" r="2" />
                 </pattern>
                 <rect width="100" height="100" fill="url(#pattern)" />
               </svg>
             </div>
-            
+
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
                   </svg>
                 </div>
                 <div>
@@ -63,12 +84,55 @@ const MuiltAdd = ({
               </div>
               <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20">
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {props.values.studentsData.length} {props.values.studentsData.length === 1 ? t("StudentPage.student") : t("StudentPage.students")}
+                  {props.values.studentsData.length}{" "}
+                  {props.values.studentsData.length === 1
+                    ? t("StudentPage.student")
+                    : t("StudentPage.students")}
                 </span>
               </div>
             </div>
           </div>
-          
+
+          {/* Parent Information Card */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 border border-purple-100 dark:border-purple-800/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                </svg>
+              </div>
+              <h4 className="text-lg font-semibold text-purple-800 dark:text-purple-300">
+                {t("StudentPage.parentInfo")}
+              </h4>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <InputForm
+                className="w-full"
+                formikProps={props}
+                name={`p_name`}
+                title={t("StudentPage.parentFullName")}
+                placeholder={t("StudentPage.enter-parentFullName")}
+              />
+              <InputForm
+                className="w-full"
+                formikProps={props}
+                name={`p_phone`}
+                title={t("StudentPage.parentPhone")}
+                placeholder={t("StudentPage.enter-parentPhone")}
+                props={{
+                  type: "tel",
+                  ...(props.values.p_phone && {
+                    dir: "ltr",
+                  }),
+                }}
+              />
+            </div>
+          </div>
+
           {/* Students Container */}
           <div className="space-y-6">
             <FieldArray name="studentsData">
@@ -98,11 +162,13 @@ const MuiltAdd = ({
                                       {t("StudentPage.student")} #{index + 1}
                                     </h3>
                                     <p className="text-gray-500 dark:text-gray-400 text-sm">
-                                      {t("StudentPage.completeStudentParentInfo")}
+                                      {t(
+                                        "StudentPage.completeStudentParentInfo"
+                                      )}
                                     </p>
                                   </div>
                                 </div>
-                                
+
                                 {/* Enhanced Remove Button */}
                                 {props.values.studentsData.length > 1 && (
                                   <button
@@ -111,8 +177,18 @@ const MuiltAdd = ({
                                     onClick={() => remove(index)}
                                     title={t("common.remove")}
                                   >
-                                    <svg className="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    <svg
+                                      className="w-5 h-5 transition-transform duration-300"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
                                     </svg>
                                   </button>
                                 )}
@@ -126,8 +202,16 @@ const MuiltAdd = ({
                             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border border-blue-100 dark:border-blue-800/30">
                               <div className="flex items-center gap-3 mb-4">
                                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                  <svg
+                                    className="w-4 h-4 text-white"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                      clipRule="evenodd"
+                                    />
                                   </svg>
                                 </div>
                                 <h4 className="text-lg font-semibold text-blue-800 dark:text-blue-300">
@@ -140,57 +224,24 @@ const MuiltAdd = ({
                                   formikProps={props}
                                   name={`studentsData.${index}.s_name`}
                                   title={t("StudentPage.studentFullName")}
-                                  placeholder={t("StudentPage.enter-studentFullName")}
+                                  placeholder={t(
+                                    "StudentPage.enter-studentFullName"
+                                  )}
                                 />
                                 <InputForm
                                   className="w-full"
                                   formikProps={props}
                                   name={`studentsData.${index}.s_phone`}
                                   title={t("StudentPage.studentPhone")}
-                                  placeholder={t("StudentPage.enter-studentPhone")}
+                                  placeholder={t(
+                                    "StudentPage.enter-studentPhone"
+                                  )}
                                   props={{
                                     type: "tel",
                                     ...(props.values.studentsData &&
                                       props.values.studentsData[index] &&
-                                      props.values.studentsData[index].s_phone && {
-                                        dir: "ltr",
-                                      }),
-                                  }}
-                                />
-                              </div>
-                            </div>
-
-                            {/* Parent Information Card */}
-                            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 border border-purple-100 dark:border-purple-800/30">
-                              <div className="flex items-center gap-3 mb-4">
-                                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
-                                  </svg>
-                                </div>
-                                <h4 className="text-lg font-semibold text-purple-800 dark:text-purple-300">
-                                  {t("StudentPage.parentInfo")}
-                                </h4>
-                              </div>
-                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                <InputForm
-                                  className="w-full"
-                                  formikProps={props}
-                                  name={`studentsData.${index}.p_name`}
-                                  title={t("StudentPage.parentFullName")}
-                                  placeholder={t("StudentPage.enter-parentFullName")}
-                                />
-                                <InputForm
-                                  className="w-full"
-                                  formikProps={props}
-                                  name={`studentsData.${index}.p_phone`}
-                                  title={t("StudentPage.parentPhone")}
-                                  placeholder={t("StudentPage.enter-parentPhone")}
-                                  props={{
-                                    type: "tel",
-                                    ...(props.values.studentsData &&
-                                      props.values.studentsData[index] &&
-                                      props.values.studentsData[index].p_phone && {
+                                      props.values.studentsData[index]
+                                        .s_phone && {
                                         dir: "ltr",
                                       }),
                                   }}
@@ -202,7 +253,7 @@ const MuiltAdd = ({
                       );
                     }
                   )}
-                  
+
                   {/* Enhanced Add Button */}
                   <div className="flex justify-center pt-8">
                     <button
@@ -213,18 +264,26 @@ const MuiltAdd = ({
                           id: Math.random(),
                           s_name: "",
                           s_phone: "",
-                          p_name: "",
-                          p_phone: "",
                         })
                       }
                     >
                       {/* Button Background Animation */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                      
+
                       <span className="relative flex items-center gap-3">
                         <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:rotate-90 transition-transform duration-300">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 4v16m8-8H4"
+                            />
                           </svg>
                         </div>
                         {t("common.add")} {t("StudentPage.student")}
@@ -243,17 +302,27 @@ const MuiltAdd = ({
               <ButtonForm
                 props={{
                   type: "submit",
-                  className: "group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform flex items-center gap-3"
+                  className:
+                    "group relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 transform flex items-center gap-3",
                 }}
                 title={
                   <span className="relative flex items-center gap-3">
                     <div className="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     </div>
                     {t("common.save")} {t("StudentPage.allStudents")}
-                    
                     {/* Loading Shimmer Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                   </span>
