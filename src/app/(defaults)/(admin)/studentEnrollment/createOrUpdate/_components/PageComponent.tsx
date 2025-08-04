@@ -19,13 +19,15 @@ import * as Yup from "yup";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { InputCurrencyMaskForm, InputForm } from "@/components/Form/inputForm";
-import { useStudentGetDataQuery } from "@/services/admin/student";
+import { useStudentGetDataHasNoEnrollmentQuery } from "@/services/admin/student";
 import { CheckBoxForm } from "@/components/Form/CheckBoxForm";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 
 import { useSettingGetDataQuery } from "@/services/Setting";
 
-export interface FormValues extends AddStudentEnrollmentPayload {}
+export interface FormValues extends AddStudentEnrollmentPayload {
+  amountStudent: string;
+}
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -49,11 +51,13 @@ const PageComponent = () => {
     StudentEnrollmentCreate,
     { isLoading: isLoadingStudentEnrollmentCreate },
   ] = useStudentEnrollmentCreateMutation();
+  const [SchoolYearId, setSchoolYearId] = useState<string | undefined>();
   const { currentData: StudentData, isFetching: isFetchingStudent } =
-    useStudentGetDataQuery({
+    useStudentGetDataHasNoEnrollmentQuery({
       search: searchStudent,
       skip: 1,
       take: 100,
+      schoolYearId: SchoolYearId,
     });
   const { currentData: stage, isFetching: isFetchingStage } =
     useStageGetDataQuery();
@@ -112,8 +116,21 @@ const PageComponent = () => {
     sectionId: Yup.string().required(t("common.this-field-is-required")),
     stageId: Yup.string().required(t("common.this-field-is-required")),
     schoolYearId: Yup.string().required(t("common.this-field-is-required")),
-    students: Yup.array().required(t("common.this-field-is-required")),
+    students: Yup.array()
+      // .of(
+      //   Yup.object().shape({
+      //     amount: Yup.string().required(t("common.this-field-is-required")),
+      //   })
+      // )
+      .required(t("common.this-field-is-required")),
+    amountStudent: Yup.string().required(t("common.this-field-is-required")),
   });
+
+  useEffect(() => {
+    if (Setting) {
+      setSchoolYearId(Setting.currentSchoolYearId);
+    }
+  }, [Setting]);
 
   return (
     <>
@@ -135,8 +152,8 @@ const PageComponent = () => {
               sectionId: data?.sectionId || "",
               stageId: data?.stageId || "",
               schoolYearId: Setting?.currentSchoolYearId || "",
-
               students: [],
+              amountStudent: "0",
             }}
             validationSchema={studentSchema}
             onSubmit={handleSubmit}
@@ -165,6 +182,7 @@ const PageComponent = () => {
                       isLoading: isFetchingSchoolYear,
                       isClearable: true,
                       onChange: (e) => {
+                        setSchoolYearId((e as any)?.value ?? "");
                         props.setFieldValue(
                           "schoolYearId",
                           (e as any)?.value ?? ""

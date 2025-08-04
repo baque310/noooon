@@ -80,6 +80,28 @@ export const Student = api.injectEndpoints({
         return response;
       },
     }),
+    StudentGetDataHasNoEnrollment: build.query<
+      BaseGetDataResponse<IStudent>,
+      GetDataRequestParams
+    >({
+      query: (params) => ({
+        url: `admin/student/has-no-enrollment`,
+        params,
+        method: "GET",
+      }),
+      providesTags: ["StudentGetDataHasNoEnrollment"],
+      transformResponse: (response: BaseGetDataResponse<IStudent>) => {
+        if (response.data.length > 0) {
+          response.data.map((data) => {
+            if (data.photo) {
+              data.photo = BASE_URL + "uploads/" + data.photo;
+            }
+            return data;
+          });
+        }
+        return response;
+      },
+    }),
 
     StudentGetDataById: build.query<IStudent, { id: string }>({
       query: ({ id }) => ({
@@ -212,4 +234,6 @@ export const {
   useStudentConnectParentMutation,
   useStudentDisconnectParentMutation,
   useStudentMultiStudentsForExcelMutation,
+  useStudentGetDataHasNoEnrollmentQuery,
+  useLazyStudentGetDataHasNoEnrollmentQuery,
 } = Student;

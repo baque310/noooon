@@ -163,6 +163,7 @@ export const api = createApi({
     "StudentMultiStudentsForExcel",
     "StudentConnectParent",
     "StudentDisconnectParent",
+    "StudentGetDataHasNoEnrollment",
 
     // Student Enrollment Tag
     "StudentEnrollmentGetData",

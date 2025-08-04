@@ -10,6 +10,8 @@ export interface GetDataRequestParams {
   take?: number;
   sortBy?: string;
   sortDirection?: "asc" | "desc";
+  schoolYearId?: string;
+
 }
 
 export type PAGE_CODE =

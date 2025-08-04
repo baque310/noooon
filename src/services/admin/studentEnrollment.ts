@@ -87,6 +87,7 @@ export const StudentEnrollment = api.injectEndpoints({
         method: "POST",
       }),
       invalidatesTags: [
+        "StudentGetDataHasNoEnrollment",
         "StudentEnrollmentCreate",
         "StudentEnrollmentGetDataById",
         "StudentEnrollmentGetData",
