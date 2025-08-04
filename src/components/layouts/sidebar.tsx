@@ -193,6 +193,7 @@ const Sidebar = () => {
                         <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
+
                     <MenuItem
                       permission={["read-any", "read-own"]}
                       resource={"user"}
@@ -395,6 +396,17 @@ const Sidebar = () => {
                     }
                   />
                 )}
+
+                <MenuItem
+                  permission={["read-any", "read-own"]}
+                  resource={"video"}
+                  toggleMenu={toggleMenu}
+                  to={"/video"}
+                  label={t("sidebar.video")}
+                  icon={
+                    <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
+                />
 
                 <MenuItem
                   permission={["read-any", "read-own"]}

@@ -41,6 +41,7 @@ export type PAGE_CODE =
   | "user"
   | "dashboard"
   | "parent"
+  | "video"
   | "complaint"
   | "student_installment";
 
