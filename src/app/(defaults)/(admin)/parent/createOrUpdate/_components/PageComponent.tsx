@@ -28,7 +28,7 @@ export interface FormValuesMulti {
 }
 import SingleAdd from "./SingleAdd";
 import { Tab, TabOption } from "./_components/Tab";
-import ExcelAdd from "./_components/ExcelAdd";
+import ExcelAdd from "./ExcelAdd";
 
 const PageComponent = () => {
   const { t } = getTranslation();
