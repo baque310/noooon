@@ -224,6 +224,8 @@ export const api = createApi({
     "GalleryCreate",
     "GalleryUpdate",
     "GalleryRemove",
+    "GalleryCreateImage",
+    "GalleryRemoveImage",
 
     // Subject Tag
     "SubjectGetData",

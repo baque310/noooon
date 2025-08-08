@@ -597,6 +597,12 @@
     "banner-already-exists": " الاعلان موجود بالفعل"
   },
   "GalleryPage": {
+    "No attachments available": "لا توجد مرفقات متاحة",
+    "This Lesson doesn't have any attached images": "لا تحتوي هذه الدرس على أي صور مرفقة",
+    "GalleryAttachment": "مرفقات المعرض",
+    "Are-you-sure-you-want-to-delete-this-attachment": "هل أنت متأكد أنك تريد حذف هذا المرفق؟",
+    "DeleteAttachment": "حذف المرفق",
+    "AddAttachment": "اضافة مرفق",
     "Gallery": "المعرض",
     "Gallerys": "المعرض",
     "title": "الاسم",
@@ -867,7 +873,7 @@
     "DeleteVideo": "حذف الفيديو",
     "add": "اضافة"
   },
-  "Attachments" :"المرفقات",
+  "Attachments": "المرفقات",
   "Student": "طالب",
   "Students": "الطلاب",
   "Assigned": "مكلف",

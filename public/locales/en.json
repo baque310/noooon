@@ -596,6 +596,12 @@
     "banner-already-exists": "Announcement already exists"
   },
   "GalleryPage": {
+    "No attachments available": "No attachments available",
+    "This Lesson doesn't have any attached images": "This gallery doesn't have any attached images",
+    "GalleryAttachment": "Gallery attachments",
+    "Are-you-sure-you-want-to-delete-this-attachment": "Are you sure you want to delete this attachment?",
+    "DeleteAttachment": "Delete attachment",
+    "AddAttachment": "Add attachment",
     "Gallery": "Gallery",
     "Gallerys": "Galleries",
     "title": "Title",
