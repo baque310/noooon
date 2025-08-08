@@ -38,8 +38,6 @@ export interface ITeacherLessons {
     } & IStudent;
     id: string;
     studentId: string;
-    LessonStatus: string;
-    completedAt: null;
     Lesson: {
       id: string;
       title: string;
@@ -70,7 +68,6 @@ export interface AddTeacherLessonsPayload {
   teacherId?: string;
   title: string;
   content: string;
-  dueDate: string;
   teacherSubjectId: string;
   attachments?: string[];
   studentIds: string | string[];
@@ -90,28 +87,24 @@ export const TeacherLessons = api.injectEndpoints({
       providesTags: ["TeacherLessonsGetData"],
     }),
 
-    TeacherLessonsGetDataById: build.query<ITeacherLessons, { id: string }>(
-      {
-        query: ({ id }) => ({
-          url: `super/teacher/lessons/${id}`,
-          method: "GET",
-        }),
-        providesTags: ["TeacherLessonsGetDataById"],
-        transformResponse: (response: ITeacherLessons) => {
-          if (response.LessonAttachment.length > 0) {
-            response.LessonAttachment = response.LessonAttachment.map(
-              (item) => {
-                return {
-                  ...item,
-                  url: BASE_URL + "uploads/" + item.url,
-                };
-              }
-            );
-          }
-          return response;
-        },
-      }
-    ),
+    TeacherLessonsGetDataById: build.query<ITeacherLessons, { id: string }>({
+      query: ({ id }) => ({
+        url: `super/teacher/lessons/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["TeacherLessonsGetDataById"],
+      transformResponse: (response: ITeacherLessons) => {
+        if (response.LessonAttachment.length > 0) {
+          response.LessonAttachment = response.LessonAttachment.map((item) => {
+            return {
+              ...item,
+              url: BASE_URL + "uploads/" + item.url,
+            };
+          });
+        }
+        return response;
+      },
+    }),
 
     TeacherLessonsCreate: build.mutation<
       ITeacherLessons,

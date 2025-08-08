@@ -8,89 +8,6 @@ export const StudentLesson = ({
   data: ITeacherLessons | undefined;
 }) => {
   const { t } = getTranslation();
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "from-green-500 to-emerald-500";
-      case "submitted":
-        return "from-blue-500 to-cyan-500";
-      case "pending":
-        return "from-yellow-500 to-orange-500";
-      case "overdue":
-        return "from-red-500 to-pink-500";
-      default:
-        return "from-gray-500 to-slate-500";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "assigned":
-        return (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        );
-      case "completed":
-        return (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        );
-      case "notcompleted":
-        return (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        );
-      default:
-        return (
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        );
-    }
-  };
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return t("TeacherLessonsPage.Not completed");
@@ -260,32 +177,6 @@ export const StudentLesson = ({
                       <h3 className="font-bold text-gray-900 dark:text-white text-lg">
                         {item.Student?.fullName}
                       </h3>
-                    </div>
-                  </div>
-
-                  {/* Status Badge */}
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r ${getStatusColor(
-                        item.LessonStatus
-                      )} text-white font-semibold shadow-lg`}
-                    >
-                      {getStatusIcon(item.LessonStatus)}
-                      <span className="text-sm capitalize">
-                        {t(item.LessonStatus as any)}
-                      </span>
-                    </div>
-
-                    {/* Completion Date */}
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                        {item.completedAt
-                          ? t("TeacherLessonsPage.Completed")
-                          : t("TeacherLessonsPage.Status")}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        {formatDate(item.completedAt ?? undefined)}
-                      </p>
                     </div>
                   </div>
                 </div>

@@ -9,7 +9,7 @@ export const StudentHomework = ({
 }) => {
   const { t } = getTranslation();
   const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "completed":
         return "from-green-500 to-emerald-500";
       case "submitted":
@@ -24,7 +24,7 @@ export const StudentHomework = ({
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "assigned":
         return (
           <svg

@@ -206,6 +206,16 @@ const Sidebar = () => {
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
+                      resource={"complaint"}
+                      toggleMenu={toggleMenu}
+                      to={"/complaint"}
+                      label={t("sidebar.complaint")}
+                      icon={
+                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                      }
+                    />
+                    <MenuItem
+                      permission={["read-any", "read-own"]}
                       resource={"setting"}
                       toggleMenu={toggleMenu}
                       to={"/setting"}
@@ -248,11 +258,12 @@ const Sidebar = () => {
                         <IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
+
                     <MenuItem
                       permission={["read-any", "read-own"]}
                       resource={"complaint"}
                       toggleMenu={toggleMenu}
-                      to={"/complaint"}
+                      to={"/adminComplaint"}
                       label={t("sidebar.complaint")}
                       icon={
                         <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
@@ -405,16 +416,7 @@ const Sidebar = () => {
                     <IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />
                   }
                 />
-                <MenuItem
-                  permission={["read-any", "read-own"]}
-                  resource={"complaint"}
-                  toggleMenu={toggleMenu}
-                  to={"/adminComplaint"}
-                  label={t("sidebar.complaint")}
-                  icon={
-                    <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
-                />
+
                 <MenuItem
                   permission={["read-any", "read-own"]}
                   resource={"bus"}

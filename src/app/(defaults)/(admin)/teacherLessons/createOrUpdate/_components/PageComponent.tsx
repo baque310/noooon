@@ -9,7 +9,6 @@ import * as Yup from "yup";
 // UI Components
 import { BackButton } from "@/components/common/BackButton";
 import { InputForm } from "@/components/Form/inputForm";
-import { DateTimeForm } from "@/components/Form/DateTimeForm";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import {
@@ -124,7 +123,7 @@ const PageComponent = () => {
     try {
       const formData = new FormData();
       formData.append("title", values.title);
-      formData.append("content", values.content); 
+      formData.append("content", values.content);
       formData.append("teacherSubjectId", values.teacherSubjectId);
       values.attachments?.map((file) => {
         formData.append("attachments", file);
@@ -148,7 +147,6 @@ const PageComponent = () => {
           body: {
             title: values.title,
             content: values.content,
-            dueDate: values.dueDate,
             teacherSubjectId: values.teacherSubjectId,
 
             studentIds:
