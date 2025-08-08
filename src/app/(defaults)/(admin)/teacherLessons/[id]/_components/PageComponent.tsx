@@ -38,10 +38,8 @@ const PageComponent = () => {
   }, [id]);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const [
-    TeacherLessonsRemove,
-    { isLoading: isLoadingTeacherLessonsRemove },
-  ] = useTeacherLessonsRemoveMutation();
+  const [TeacherLessonsRemove, { isLoading: isLoadingTeacherLessonsRemove }] =
+    useTeacherLessonsRemoveMutation();
 
   const handleRemove = async () => {
     try {
@@ -143,7 +141,8 @@ const PageComponent = () => {
                     </label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
                       <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.StageSubject?.Stage?.name || "N/A"}
+                        {data?.teacherSubject?.StageSubject?.Stage?.name ||
+                          "N/A"}
                       </p>
                     </div>
                   </div>
@@ -154,7 +153,8 @@ const PageComponent = () => {
                     </label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
                       <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.StageSubject?.Subject?.name || "N/A"}
+                        {data?.teacherSubject?.StageSubject?.Subject?.name ||
+                          "N/A"}
                       </p>
                     </div>
                   </div>
@@ -166,7 +166,9 @@ const PageComponent = () => {
                   </label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
                     <p className="text-gray-900 dark:text-white font-medium">
-                      {`${data?.SchoolYear?.from || ""} - ${data?.SchoolYear?.to || ""}`}
+                      {`${data?.SchoolYear?.from || ""} - ${
+                        data?.SchoolYear?.to || ""
+                      }`}
                     </p>
                   </div>
                 </div>
@@ -178,7 +180,9 @@ const PageComponent = () => {
                     </label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
                       <p className="text-gray-700 dark:text-gray-300 text-sm">
-                        {moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}
+                        {moment(data?.createdAt).format(
+                          "YYYY-MM-DD hh:mm:ss A"
+                        )}
                       </p>
                     </div>
                   </div>
@@ -189,7 +193,9 @@ const PageComponent = () => {
                     </label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
                       <p className="text-gray-700 dark:text-gray-300 text-sm">
-                        {moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
+                        {moment(data?.updatedAt).format(
+                          "YYYY-MM-DD hh:mm:ss A"
+                        )}
                       </p>
                     </div>
                   </div>
@@ -212,28 +218,6 @@ const PageComponent = () => {
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     {t("TeacherLessonsPage.totalStudents")}
-                  </div>
-                </div>
-
-                <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {data?.StudentLesson?.filter(
-                      (s) => s.LessonStatus === "Completed"
-                    )?.length || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("Completed")}
-                  </div>
-                </div>
-
-                <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {data?.StudentLesson?.filter(
-                      (s) => s.LessonStatus === "Assigned"
-                    )?.length || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("Assigned")}
                   </div>
                 </div>
 
@@ -325,4 +309,3 @@ const PageComponent = () => {
 };
 
 export default PageComponent;
-                 
