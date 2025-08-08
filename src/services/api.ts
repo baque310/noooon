@@ -1,4 +1,9 @@
-import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  BaseQueryFn,
+  createApi,
+  FetchArgs,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 
 export const BASE_URL = process.env.BASE_URL;
 import UniversalCookie from "universal-cookie";
@@ -70,7 +75,7 @@ const axiosBaseQuery =
     return result;
   };
 
-  const baseQuery = fetchBaseQuery({
+const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL, // Backend base API
   prepareHeaders: async (headers: any) => {
     // By default, if we have a token in the storage, add it to request Headers
@@ -85,7 +90,7 @@ const axiosBaseQuery =
     return headers;
   },
 });
-  const baseQueryWithReAuth = async (
+const baseQueryWithReAuth = async (
   args: string | FetchArgs,
   api: any,
   extraOptions: any
@@ -110,7 +115,7 @@ export const api = createApi({
   baseQuery: axiosBaseQuery({
     baseUrl: BASE_URL as string,
   }),
-    // baseQuery: baseQueryWithReAuth as any,
+  // baseQuery: baseQueryWithReAuth as any,
   tagTypes: [
     // Admin Tag
 
@@ -321,7 +326,16 @@ export const api = createApi({
     "VideoGetDataById",
     "VideoCreate",
     "VideoUpdate",
-    "VideoRemove",  
+    "VideoRemove",
+
+    // TeacherHomeworks
+    "TeacherHomeworksCreate",
+    "TeacherHomeworksGetData",
+    "TeacherHomeworksUpdate",
+    "TeacherHomeworksGetDataById",
+    "TeacherHomeworksRemove",
+    "TeacherHomeworksAttachmentsCreate",
+    "TeacherHomeworksAttachmentsRemove",
   ],
   endpoints: (build) => ({}),
 });

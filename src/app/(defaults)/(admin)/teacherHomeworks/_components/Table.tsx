@@ -3,7 +3,10 @@ import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
 
 import moment from "moment";
-import { withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import {
+  RolePageAndActionBasedComponent,
+  withRole,
+} from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
@@ -12,13 +15,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
-import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { useSettingGetDataQuery } from "@/services/Setting";
-import { useHomeworksGetDataQuery } from "@/services/admin/Homeworks";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useSectionGetDataQuery } from "@/services/admin/section";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
+import { useTeacherHomeworksGetDataQuery } from "@/services/admin/teacherHomeworks";
+import { AddIcons } from "@/components/common/icons/Actions";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -29,7 +32,6 @@ const TableComponent = () => {
     columnAccessor: "createdAt",
     direction: "desc",
   });
-  const [selectedRecords, setSelectedRecords] = useState([]);
   const isDark =
     useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
@@ -77,7 +79,7 @@ const TableComponent = () => {
   };
 
   const { isFetching: isFetching, currentData: data } =
-    useHomeworksGetDataQuery({
+    useTeacherHomeworksGetDataQuery({
       ...params,
     });
 
@@ -93,7 +95,7 @@ const TableComponent = () => {
   const handleSearch = (value?: string) => {
     if (search != Search) {
       allParams.set("search", value ?? Search);
-      router.push(`/homework?${allParams.toString()}`);
+      router.push(`/teacherHomeworks?${allParams.toString()}`);
       setPageNumber(1);
     }
   };
@@ -158,49 +160,71 @@ const TableComponent = () => {
           />
         </div>
       </div>
-      <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
-        <SelectFilter
-          title={t("StudentEnrollmentPage.SectionName")}
-          placement="bottom-end"
-          handleChange={handleSelectSection}
-          options={
-            SectionData?.map((item) => {
-              return {
-                label:
-                  item.name +
-                  " - " +
-                  (item?.Class?.name ?? "") +
-                  " - " +
-                  (item?.Class?.Stage?.name ?? ""),
-                value: item.id,
-              };
-            }) ?? []
-          }
-        />
-        <div className="max-w-36">
-          <SelectWithSearch
-            placeholder={t("HomeworksPage.teacherFullName")}
-            props={{
-              onChange: handleSelectTeacherSubject,
-            }}
+      <div className="flex justify-between items-center">
+        <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>
+          <SelectFilter
+            title={t("StudentEnrollmentPage.SectionName")}
+            placement="bottom-end"
+            handleChange={handleSelectSection}
             options={
-              TeacherSubjectData?.map((item) => {
+              SectionData?.map((item) => {
                 return {
-                  label: item.Teacher.fullName,
-                  //  + item.StageSubject.Subject.name,
+                  label:
+                    item.name +
+                    " - " +
+                    (item?.Class?.name ?? "") +
+                    " - " +
+                    (item?.Class?.Stage?.name ?? ""),
                   value: item.id,
                 };
               }) ?? []
             }
           />
+          <div className="max-w-36">
+            <SelectWithSearch
+              placeholder={t("HomeworksPage.teacherFullName")}
+              props={{
+                onChange: handleSelectTeacherSubject,
+              }}
+              options={
+                TeacherSubjectData?.map((item) => {
+                  return {
+                    label: item.Teacher.fullName,
+                    //  + item.StageSubject.Subject.name,
+                    value: item.id,
+                  };
+                }) ?? []
+              }
+            />
+          </div>
         </div>
+        {
+          <RolePageAndActionBasedComponent
+            component={(props) => {
+              return (
+                <button
+                  className={` ${
+                    props.disabled && "hidden"
+                  } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                  onClick={() => {
+                    router.push("/teacherHomeworks/createOrUpdate");
+                  }}
+                >
+                  <AddIcons className="h-4 w-4" />
+                  {t("common.add")}
+                </button>
+              );
+            }}
+            resource={"homework"}
+            permission={["create-any", "create-own"]}
+          />
+        }
       </div>
-
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
-              router.push(`/homework/${item.record.id}`);
+              router.push(`/teacherHomeworks/${item.record.id}`);
             }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}

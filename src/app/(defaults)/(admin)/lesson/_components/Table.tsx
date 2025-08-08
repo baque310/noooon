@@ -161,18 +161,22 @@ const TableComponent = () => {
         </div>
       </div>
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
-        <SelectFilter
+           <SelectFilter
           title={t("StudentEnrollmentPage.SectionName")}
           placement="bottom-end"
           handleChange={handleSelectSection}
           options={
             SectionData?.map((item) => {
               return {
-                label: t(item.name as any),
+                label:
+                  item.name +
+                  " - " +
+                  (item?.Class?.name ?? "") +
+                  " - " +
+                  (item?.Class?.Stage?.name ?? ""),
                 value: item.id,
               };
-            }
-            ) ?? []
+            }) ?? []
           }
         />
         <div className="max-w-36">
