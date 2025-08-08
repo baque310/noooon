@@ -126,7 +126,9 @@ export const Attachments = (props: FormikProps<any>) => {
                     {t("TeacherHomeworksPage.img-info")}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                    Upload and manage your assignment images
+                    {t(
+                      "TeacherHomeworksPage.Upload-and-manage-your-assignment-images"
+                    )}
                   </p>
                 </div>
               </div>
@@ -208,13 +210,22 @@ export const Attachments = (props: FormikProps<any>) => {
                     {dragOver ? "✨ Drop here!" : "🚀 Upload Images"}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                    Drag and drop your images here, or click to browse. JPG, PNG, GIF up to 10MB each.
+                    Drag and drop your images here, or click to browse. JPG,
+                    PNG, GIF up to 10MB each.
                   </p>
                   <div className="flex flex-wrap justify-center gap-1 text-xs text-gray-500">
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">JPG</span>
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">PNG</span>
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">GIF</span>
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">Max 10MB</span>
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      JPG
+                    </span>
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      PNG
+                    </span>
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      GIF
+                    </span>
+                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      Max 10MB
+                    </span>
                   </div>
                 </div>
 
@@ -266,7 +277,8 @@ export const Attachments = (props: FormikProps<any>) => {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-md"></div>
-                  Selected Images ({props.values.attachments.length})
+                  {t("TeacherHomeworksPage.selectedImages")} (
+                  {props.values.attachments.length})
                 </h3>
                 <button
                   type="button"
@@ -292,7 +304,7 @@ export const Attachments = (props: FormikProps<any>) => {
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    Clear All
+                    {t("TeacherHomeworksPage.clearAll")}
                   </span>
                 </button>
               </div>
@@ -384,10 +396,10 @@ export const Attachments = (props: FormikProps<any>) => {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                    No images uploaded yet
+                    {t("TeacherHomeworksPage.NoImagesUploadedYet")}
                   </h3>
                   <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
-                    Start by uploading some beautiful images for your assignment
+                    {t("TeacherHomeworksPage.StartByUploadingImages")}
                   </p>
                 </div>
               </div>
@@ -397,4 +409,4 @@ export const Attachments = (props: FormikProps<any>) => {
       </div>
     </div>
   );
-}; 
+};

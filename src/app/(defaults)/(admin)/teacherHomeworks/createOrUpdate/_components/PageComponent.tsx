@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
@@ -65,6 +65,7 @@ const PageComponent = () => {
   const [sectionId, setSectionId] = useState<string>();
   const [schoolYearId, setSchoolYearId] = useState<string>();
   const [teacherId, setTeacherId] = useState<string>();
+  const [studentSearch, setStudentSearch] = useState("");
 
   const { currentData: teacherSubjects, isFetching: isFetchingSubjects } =
     useTeacherSubjectGetDataQuery({
@@ -88,6 +89,28 @@ const PageComponent = () => {
       setSchoolYearId(settings.CurrentSchoolYear.id);
     }
   }, [settings]);
+
+  // Enhanced filtered students with search
+  const filteredStudents = useMemo(() => {
+    if (!students) return [];
+    if (!studentSearch.trim()) return students;
+
+    return students.filter((student) =>
+      student.fullName.toLowerCase().includes(studentSearch.toLowerCase())
+    );
+  }, [students, studentSearch]);
+
+  const handleSelectAllStudents = (
+    props: FormikProps<any>,
+    checked: boolean
+  ) => {
+    if (checked) {
+      const allStudentIds = filteredStudents.map((student) => student.id);
+      props.setFieldValue("studentIds", allStudentIds);
+    } else {
+      props.setFieldValue("studentIds", []);
+    }
+  };
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(t("common.this-field-is-required")),
@@ -156,14 +179,24 @@ const PageComponent = () => {
   };
 
   return (
-    <div className="mx-auto max-w-screen-md">
+    <div className="mx-auto max-w-4xl">
       <BackButton
         title={t(
           id ? "TeacherHomeworksPage.update-info" : "TeacherHomeworksPage.add"
         )}
       />
+
       {isFetching || isFetchingSettings ? (
-        <LoadingForm />
+        <div className="space-y-6 p-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg mb-6"></div>
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            </div>
+          </div>
+        </div>
       ) : (
         <Formik<FormValues>
           initialValues={{
@@ -178,198 +211,305 @@ const PageComponent = () => {
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          enableReinitialize
         >
           {(props: FormikProps<any>) => (
-            <Form className={"px-4 flex flex-col gap-4"}>
-              <div className="Card flex flex-col gap-1">
-                <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                  {t("TeacherHomeworksPage.infoTeacherHomeworks")}
+            <Form className="space-y-6 p-6">
+              {/* Basic Information Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="px-2 text-xl font-semibold text-gray-900 dark:text-white">
+                      {t("TeacherHomeworksPage.infoTeacherHomeworks")}
+                    </h2>
+                  </div>
                 </div>
-                <InputForm
-                  formikProps={props}
-                  name={"title"}
-                  title={t("TeacherHomeworksPage.title")}
-                  placeholder={t("TeacherHomeworksPage.enter-title")}
-                />
-                <InputForm
-                  formikProps={props}
-                  name={"content"}
-                  title={t("TeacherHomeworksPage.content")}
-                  placeholder={t("TeacherHomeworksPage.enter-content")}
-                  props={{
-                    ...({ as: "textArea" } as any),
-                  }}
-                />
-              </div>
-              <div className="Card flex flex-col gap-1">
-                <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                  {t("TeacherHomeworksPage.infoTeacherHomeworks")}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <SelectForm
-                    formikProps={props}
-                    name={`schoolYearId`}
-                    title={t("StudentEnrollmentPage.SchoolYear")}
-                    placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
-                    options={
-                      schoolYears?.map((item) => {
-                        return {
-                          label: item.from + " - " + item.to,
-                          value: item.id,
-                        };
-                      }) ?? []
-                    }
-                    props={{
-                      isLoading: isFetchingSchoolYears,
-                      isClearable: true,
-                      onChange: (e) => {
-                        props.setFieldValue(
-                          `schoolYearId`,
-                          (e as any)?.value ?? ""
-                        );
-                        setSchoolYearId((e as any)?.value ?? "");
-                      },
-                    }}
-                  />
 
-                  <SelectForm
+                <div className="p-6 space-y-6">
+                  <InputForm
                     formikProps={props}
-                    name={`stageId`}
-                    title={t("StageSubjectPage.StageName")}
-                    placeholder={t("SectionSchedulePage.select-StageName")}
-                    options={
-                      stages?.map((item) => {
-                        return {
-                          label: t(item.name as any),
-                          value: item.id,
-                        };
-                      }) ?? []
-                    }
-                    props={{
-                      isLoading: isFetchingStages,
-                      isClearable: true,
-                      onChange: (e) => {
-                        props.setFieldValue(`stageId`, (e as any)?.value ?? "");
-                        props.setFieldValue(`classId`, undefined);
-                        setStageId((e as any)?.value ?? "");
-                        setClassId(undefined);
-                        setSectionId(undefined);
-                      },
-                    }}
+                    name="title"
+                    title={t("TeacherHomeworksPage.title")}
+                    placeholder={t("TeacherHomeworksPage.enter-title")}
                   />
-                  {props.values?.stageId && (
+                  <InputForm
+                    formikProps={props}
+                    name="content"
+                    title={t("TeacherHomeworksPage.content")}
+                    placeholder={t("TeacherHomeworksPage.enter-content")}
+                    props={
+                      {
+                        as: "textarea",
+                        rows: 4,
+                        className: "min-h-[120px] resize-vertical",
+                      } as any
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Settings Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-green-600 dark:text-green-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="px-2 text-xl font-semibold text-gray-900 dark:text-white">
+                      {t("TeacherHomeworksPage.otherInfoTeacherHomeworks")}
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <SelectForm
                       formikProps={props}
-                      name={`classId`}
-                      title={t("SectionSchedulePage.ClassName")}
-                      placeholder={t("SectionSchedulePage.select-ClassName")}
+                      name="schoolYearId"
+                      title={t("StudentEnrollmentPage.SchoolYear")}
+                      placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
                       options={
-                        stages
-                          ? stages
-                              .find((item) => item.id === props.values?.stageId)
-                              ?.Class?.map((item) => {
-                                return {
-                                  label: t(item.name as any),
-                                  value: item.id,
-                                };
-                              }) || []
-                          : []
+                        schoolYears?.map((item) => ({
+                          label: `${item.from} - ${item.to}`,
+                          value: item.id,
+                        })) ?? []
                       }
                       props={{
-                        isLoading: isFetchingStages,
+                        isLoading: isFetchingSchoolYears,
                         isClearable: true,
                         onChange: (e) => {
-                          const value = (e as any)?.value ?? "";
-                          props.setFieldValue(`classId`, value);
-                          props.setFieldValue(`sectionId`, undefined);
-                          setClassId(value);
-                          setSectionId(undefined);
+                          props.setFieldValue(
+                            "schoolYearId",
+                            (e as any)?.value ?? ""
+                          );
+                          setSchoolYearId((e as any)?.value ?? "");
                         },
                       }}
                     />
-                  )}
-                  {props?.values?.classId && (
+
                     <SelectForm
                       formikProps={props}
-                      name={`sectionId`}
-                      title={t("SectionSchedulePage.SectionName")}
-                      placeholder={t("SectionSchedulePage.select-SectionName")}
+                      name="stageId"
+                      title={t("StageSubjectPage.StageName")}
+                      placeholder={t("SectionSchedulePage.select-StageName")}
                       options={
-                        stages
-                          ? stages
-                              .find(
-                                (item) => item.id === props?.values?.stageId
-                              )
-                              ?.Class?.find(
-                                (item) => item.id === props?.values?.classId
-                              )
-                              ?.Section?.map((item) => {
-                                return {
-                                  label: t(item.name as any),
-                                  value: item.id,
-                                };
-                              }) || []
-                          : []
+                        stages?.map((item) => ({
+                          label: t(item.name as any),
+                          value: item.id,
+                        })) ?? []
                       }
                       props={{
                         isLoading: isFetchingStages,
                         isClearable: true,
                         onChange: (e) => {
                           props.setFieldValue(
-                            `sectionId`,
+                            "stageId",
                             (e as any)?.value ?? ""
                           );
-                          setSectionId((e as any)?.value ?? "");
+                          props.setFieldValue("classId", undefined);
+                          setStageId((e as any)?.value ?? "");
+                          setClassId(undefined);
+                          setSectionId(undefined);
                         },
                       }}
                     />
-                  )}
 
-                  <SelectForm
-                    formikProps={props}
-                    name={`teacherSubjectId`}
-                    title={t("SectionSchedulePage.teacherSubject")}
-                    placeholder={t("SectionSchedulePage.select-teacherSubject")}
-                    options={
-                      teacherSubjects?.map((item, index) => {
-                        return {
+                    {/* Conditional class select */}
+                    {props.values?.stageId && (
+                      <SelectForm
+                        formikProps={props}
+                        name="classId"
+                        title={t("SectionSchedulePage.ClassName")}
+                        placeholder={t("SectionSchedulePage.select-ClassName")}
+                        options={
+                          stages
+                            ? stages
+                                .find(
+                                  (item) => item.id === props.values?.stageId
+                                )
+                                ?.Class?.map((item) => ({
+                                  label: t(item.name as any),
+                                  value: item.id,
+                                })) || []
+                            : []
+                        }
+                        props={{
+                          isLoading: isFetchingStages,
+                          isClearable: true,
+                          onChange: (e) => {
+                            const value = (e as any)?.value ?? "";
+                            props.setFieldValue("classId", value);
+                            props.setFieldValue("sectionId", undefined);
+                            setClassId(value);
+                            setSectionId(undefined);
+                          },
+                        }}
+                      />
+                    )}
+
+                    {/* Conditional section select */}
+                    {props?.values?.classId && (
+                      <SelectForm
+                        formikProps={props}
+                        name="sectionId"
+                        title={t("SectionSchedulePage.SectionName")}
+                        placeholder={t(
+                          "SectionSchedulePage.select-SectionName"
+                        )}
+                        options={
+                          stages
+                            ? stages
+                                .find(
+                                  (item) => item.id === props?.values?.stageId
+                                )
+                                ?.Class?.find(
+                                  (item) => item.id === props?.values?.classId
+                                )
+                                ?.Section?.map((item) => ({
+                                  label: t(item.name as any),
+                                  value: item.id,
+                                })) || []
+                            : []
+                        }
+                        props={{
+                          isLoading: isFetchingStages,
+                          isClearable: true,
+                          onChange: (e) => {
+                            props.setFieldValue(
+                              "sectionId",
+                              (e as any)?.value ?? ""
+                            );
+                            setSectionId((e as any)?.value ?? "");
+                          },
+                        }}
+                      />
+                    )}
+
+                    <SelectForm
+                      formikProps={props}
+                      name="teacherSubjectId"
+                      title={t("SectionSchedulePage.teacherSubject")}
+                      placeholder={t(
+                        "SectionSchedulePage.select-teacherSubject"
+                      )}
+                      options={
+                        teacherSubjects?.map((item) => ({
                           label: (
-                            <div className="flex gap-1">
-                              <div>{item.StageSubject.Subject.name}</div>
-                              <div>{"( "}</div>
-                              <div>{item.Teacher.fullName}</div>
-                              <div>{" )"}</div>
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium">
+                                {item.StageSubject.Subject.name}
+                              </span>
+                              <span className="text-gray-500 text-sm">
+                                ({item.Teacher.fullName})
+                              </span>
                             </div>
                           ),
                           value: item.id,
                           teacherId: item.Teacher.id,
-                        };
-                      }) || []
-                    }
-                    props={{
-                      isClearable: true,
-                      isLoading: isFetchingSubjects,
-                      onChange: (e) => {
-                        props.setFieldValue(
-                          `teacherSubjectId`,
-                          (e as any)?.value ?? ""
-                        );
-                        setTeacherId((e as any)?.teacherId ?? "");
-                      },
-                    }}
-                  />
-                  <DateTimeForm
-                    formikProps={props}
-                    name={"dueDate"}
-                    title={t("TeacherHomeworksPage.dueDate")}
-                    placeholder={t("TeacherHomeworksPage.enter-dueDate")}
-                  />
+                        })) || []
+                      }
+                      props={{
+                        isClearable: true,
+                        isLoading: isFetchingSubjects,
+                        onChange: (e) => {
+                          props.setFieldValue(
+                            "teacherSubjectId",
+                            (e as any)?.value ?? ""
+                          );
+                          setTeacherId((e as any)?.teacherId ?? "");
+                        },
+                      }}
+                    />
+
+                    <DateTimeForm
+                      formikProps={props}
+                      name="dueDate"
+                      title={t("TeacherHomeworksPage.dueDate")}
+                      placeholder={t("TeacherHomeworksPage.enter-dueDate")}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <>
-                <div className="Card">
-                  <div className="text-base font-semibold text-black dark:text-white-dark my-2">
+              {/* Students Selection Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                        <svg
+                          className="w-5 h-5 text-purple-600 dark:text-purple-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                          />
+                        </svg>
+                      </div>
+                      <div className="px-2">
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                          {t("TeacherHomeworksPage.students")}
+                        </h2>
+                        {students && (
+                          <p className="text-sm text-gray-500 mt-1">
+                            {props.values.allStudentsThisASectionsORClasses ===
+                            "TRUE"
+                              ? `${students.length} ${t(
+                                  "TeacherHomeworksPage.studentsSelected"
+                                )}`
+                              : `${props.values.studentIds.length}/${
+                                  students.length
+                                } ${t(
+                                  "TeacherHomeworksPage.studentsSelected"
+                                )}`}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-6">
+                  {/* Select All Students Option */}
+                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
                     <CheckBoxFormWithCustom
                       formikProps={props}
                       name="allStudentsThisASectionsORClasses"
@@ -378,68 +518,128 @@ const PageComponent = () => {
                       )}
                     />
                   </div>
-                </div>
 
-                <>
-                  {isFetchingStudents ? (
-                    <div className="flex justify-center">
-                      <div className="loader !bg-primary !w-8 !h-8" />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      {props.values.allStudentsThisASectionsORClasses !==
-                        "TRUE" &&
-                        students?.map((item, index) => (
-                          <div className="Card !p-3" key={item.id}>
-                            {/* Use item.value for key if it's unique */}
-                            <CheckBoxForm
-                              key={index}
-                              formikProps={props}
-                              name={`studentIds.${index}`}
-                              title={`${item.fullName}`}
-                              props={{
-                                checked: props.values.studentIds.some(
-                                  (it: any) => it == item.id
-                                ),
-                                value: props.values.studentIds.some(
-                                  (it: any) => it == item.id
-                                ),
-                                onChange: (e) => {
-                                  if (e.target.checked) {
-                                    let newValues =
-                                      props.values.studentIds.concat(item.id);
-                                    props.setFieldValue(
-                                      `studentIds`,
-                                      newValues
-                                    );
-                                  } else {
-                                    let newValues =
-                                      props.values.studentIds.filter(
-                                        (it: any) => it != item.id
-                                      );
-                                    props.setFieldValue(
-                                      `studentIds`,
-                                      newValues
-                                    );
-                                  }
-                                },
-                              }}
-                            />
-                          </div>
-                        ))}
+                  {/* Individual Student Selection */}
+                  {props.values.allStudentsThisASectionsORClasses !==
+                    "TRUE" && (
+                    <div className="space-y-4">
+                      {/* Students List */}
+                      {isFetchingStudents ? (
+                        <div className="flex justify-center py-12">
+                          <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
+                        </div>
+                      ) : (
+                        <div className="max-h-96 overflow-y-auto">
+                          {filteredStudents.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              {filteredStudents.map((student, index) => (
+                                <div
+                                  key={student.id}
+                                  className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600"
+                                >
+                                  <CheckBoxForm
+                                    formikProps={props}
+                                    name={`studentIds.${student.id}`}
+                                    title={student.fullName}
+                                    props={{
+                                      checked: props.values.studentIds.includes(
+                                        student.id
+                                      ),
+                                      onChange: (e) => {
+                                        const currentIds =
+                                          props.values.studentIds;
+                                        if (e.target.checked) {
+                                          props.setFieldValue("studentIds", [
+                                            ...currentIds,
+                                            student.id,
+                                          ]);
+                                        } else {
+                                          props.setFieldValue(
+                                            "studentIds",
+                                            currentIds.filter(
+                                              (id: string) => id !== student.id
+                                            )
+                                          );
+                                        }
+                                      },
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-12">
+                              <svg
+                                className="mx-auto h-16 w-16 text-gray-400 mb-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                                />
+                              </svg>
+                              <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                                {t("TeacherHomeworksPage.no-students-found")}
+                              </p>
+                              <p className="text-gray-500">
+                                {studentSearch
+                                  ? t(
+                                      "TeacherHomeworksPage.try-adjusting-your-search-terms"
+                                    )
+                                  : t(
+                                      "TeacherHomeworksPage.no-students-available-for-the-selected-criteria"
+                                    )}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
-                </>
-              </>
+                </div>
+              </div>
 
+              {/* Attachments Card */}
               {!id && <Attachments {...props} />}
 
-              <div className="flex flex-row-reverse gap-2">
+              {/* Submit Actions */}
+              <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <ButtonForm
                   props={{
                     type: "submit",
+                    className:
+                      "px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 font-medium",
                   }}
-                  title={t("common.save")}
+                  title={
+                    <div className="flex items-center space-x-2">
+                      {(isCreating || isUpdating) && (
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      )}
+                      <span>{t(id ? "common.update" : "common.save")}</span>
+                    </div>
+                  }
                   isLoading={isCreating || isUpdating}
                 />
               </div>
