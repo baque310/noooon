@@ -473,7 +473,7 @@ const Sidebar = () => {
                   permission={["read-any", "read-own"]}
                   resource={"homework"}
                   toggleMenu={toggleMenu}
-                  to={"/homework"}
+                  to={"/teacherHomeworks"}
                   label={t("sidebar.homeworks")}
                   icon={
                     <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
@@ -483,7 +483,7 @@ const Sidebar = () => {
                   permission={["read-any", "read-own"]}
                   resource={"lesson"}
                   toggleMenu={toggleMenu}
-                  to={"/lesson"}
+                  to={"/teacherLessons"}
                   label={t("sidebar.lessons")}
                   icon={
                     <IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />

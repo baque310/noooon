@@ -1,11 +1,11 @@
 import { getTranslation } from "@/ni18n/i18n";
-import { ITeacherHomeworks } from "@/services/admin/teacherHomeworks";
+import { ITeacherLessons } from "@/services/admin/teacherLessons";
 import React from "react";
 
-export const StudentHomework = ({
+export const StudentLesson = ({
   data,
 }: {
-  data: ITeacherHomeworks | undefined;
+  data: ITeacherLessons | undefined;
 }) => {
   const { t } = getTranslation();
   const getStatusColor = (status: string) => {
@@ -93,7 +93,7 @@ export const StudentHomework = ({
   };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return t("TeacherHomeworksPage.Not completed");
+    if (!dateString) return t("TeacherLessonsPage.Not completed");
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -104,7 +104,7 @@ export const StudentHomework = ({
     });
   };
 
-  if (!data?.StudentHomework || data.StudentHomework.length === 0) {
+  if (!data?.StudentLesson || data.StudentLesson.length === 0) {
     return (
       <div className="relative mt-4">
         {/* Floating background elements */}
@@ -134,11 +134,11 @@ export const StudentHomework = ({
                 <div>
                   <h2 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                     <span className="text-gray-900 dark:text-white">
-                      {t("TeacherHomeworksPage.Student Submissions")}
+                      {t("TeacherLessonsPage.Student Submissions")}
                     </span>
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                    {t("TeacherHomeworksPage.Track homework submission status")}
+                    {t("TeacherLessonsPage.Track Lesson submission status")}
                   </p>
                 </div>
               </div>
@@ -169,11 +169,11 @@ export const StudentHomework = ({
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                    {t("TeacherHomeworksPage.No student submissions")}
+                    {t("TeacherLessonsPage.No student submissions")}
                   </h3>
                   <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
                     {t(
-                      "TeacherHomeworksPage.No students have submitted this homework yet"
+                      "TeacherLessonsPage.No students have submitted this Lesson yet"
                     )}
                   </p>
                 </div>
@@ -219,18 +219,18 @@ export const StudentHomework = ({
                 </div>
                 <div>
                   <h2 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                    {t("TeacherHomeworksPage.Student Submissions")}
+                    {t("TeacherLessonsPage.Student Submissions")}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                    {t("TeacherHomeworksPage.Track homework submission status")}
+                    {t("TeacherLessonsPage.Track Lesson submission status")}
                   </p>
                 </div>
               </div>
 
               <div className="px-3 py-1 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 rounded-full border border-indigo-400/30">
                 <span className="text-xs font-semibold text-indigo-700 dark:text-indigo-400">
-                  {data.StudentHomework.length}{" "}
-                  {data.StudentHomework.length === 1
+                  {data.StudentLesson.length}{" "}
+                  {data.StudentLesson.length === 1
                     ? t("Student")
                     : t("Students")}
                 </span>
@@ -242,7 +242,7 @@ export const StudentHomework = ({
         {/* Student Cards */}
         <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {data.StudentHomework.map((item, index) => (
+            {data.StudentLesson.map((item, index) => (
               <div
                 key={index}
                 className="group relative backdrop-blur-sm bg-white/70 dark:bg-gray-800/70 rounded-xl shadow-md hover:shadow-xl border border-white/30 dark:border-gray-700/30 overflow-hidden transition-all duration-300 hover:scale-[1.02]"
@@ -267,12 +267,12 @@ export const StudentHomework = ({
                   <div className="flex items-center justify-between">
                     <div
                       className={`inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r ${getStatusColor(
-                        item.HomeworkStatus
+                        item.LessonStatus
                       )} text-white font-semibold shadow-lg`}
                     >
-                      {getStatusIcon(item.HomeworkStatus)}
+                      {getStatusIcon(item.LessonStatus)}
                       <span className="text-sm capitalize">
-                        {t(item.HomeworkStatus as any)}
+                        {t(item.LessonStatus as any)}
                       </span>
                     </div>
 
@@ -280,8 +280,8 @@ export const StudentHomework = ({
                     <div className="text-right">
                       <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                         {item.completedAt
-                          ? t("TeacherHomeworksPage.Completed")
-                          : t("TeacherHomeworksPage.Status")}
+                          ? t("TeacherLessonsPage.Completed")
+                          : t("TeacherLessonsPage.Status")}
                       </p>
                       <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         {formatDate(item.completedAt ?? undefined)}

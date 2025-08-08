@@ -336,6 +336,15 @@ export const api = createApi({
     "TeacherHomeworksRemove",
     "TeacherHomeworksAttachmentsCreate",
     "TeacherHomeworksAttachmentsRemove",
+
+    // TeacherLessons
+    "TeacherLessonsCreate",
+    "TeacherLessonsGetData",
+    "TeacherLessonsUpdate",
+    "TeacherLessonsGetDataById",
+    "TeacherLessonsRemove",
+    "TeacherLessonsAttachmentsCreate",
+    "TeacherLessonsAttachmentsRemove",
   ],
   endpoints: (build) => ({}),
 });

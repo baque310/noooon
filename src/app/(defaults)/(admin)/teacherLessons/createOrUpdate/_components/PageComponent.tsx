@@ -8,10 +8,8 @@ import * as Yup from "yup";
 
 // UI Components
 import { BackButton } from "@/components/common/BackButton";
-import { LoadingForm } from "@/components/Form/loadingForm";
 import { InputForm } from "@/components/Form/inputForm";
 import { DateTimeForm } from "@/components/Form/DateTimeForm";
-import { UploadFileForm } from "@/components/Form/uploadFileForm";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import {
@@ -21,11 +19,11 @@ import {
 
 // API Services
 import {
-  AddTeacherHomeworksPayload,
-  useLazyTeacherHomeworksGetDataByIdQuery,
-  useTeacherHomeworksCreateMutation,
-  useTeacherHomeworksUpdateMutation,
-} from "@/services/admin/teacherHomeworks";
+  AddTeacherLessonsPayload,
+  useLazyTeacherLessonsGetDataByIdQuery,
+  useTeacherLessonsCreateMutation,
+  useTeacherLessonsUpdateMutation,
+} from "@/services/admin/teacherLessons";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { useStudentListQuery } from "@/services/admin/studentEnrollment";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
@@ -34,7 +32,7 @@ import { useStageGetDataQuery } from "@/services/admin/stage";
 import { getTranslation } from "@/ni18n/i18n";
 import { Attachments } from "./Attachments";
 
-export interface FormValues extends AddTeacherHomeworksPayload {
+export interface FormValues extends AddTeacherLessonsPayload {
   schoolYearId?: string;
   allStudentsThisASectionsORClasses?: string;
 }
@@ -48,12 +46,12 @@ const PageComponent = () => {
   // Fetching data
   const { currentData: settings, isFetching: isFetchingSettings } =
     useSettingGetDataQuery();
-  const [fetchHomeworkById, { currentData: data, isFetching }] =
-    useLazyTeacherHomeworksGetDataByIdQuery();
-  const [createHomework, { isLoading: isCreating }] =
-    useTeacherHomeworksCreateMutation();
-  const [updateHomework, { isLoading: isUpdating }] =
-    useTeacherHomeworksUpdateMutation();
+  const [fetchLessonById, { currentData: data, isFetching }] =
+    useLazyTeacherLessonsGetDataByIdQuery();
+  const [createLesson, { isLoading: isCreating }] =
+    useTeacherLessonsCreateMutation();
+  const [updateLesson, { isLoading: isUpdating }] =
+    useTeacherLessonsUpdateMutation();
   const { currentData: schoolYears, isFetching: isFetchingSchoolYears } =
     useSchoolYearGetDataQuery();
   const { currentData: stages, isFetching: isFetchingStages } =
@@ -78,7 +76,7 @@ const PageComponent = () => {
 
   useEffect(() => {
     if (id) {
-      fetchHomeworkById({ id }).then((res) => {
+      fetchLessonById({ id }).then((res) => {
         if (!res.data) router.back();
       });
     }
@@ -115,7 +113,6 @@ const PageComponent = () => {
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(t("common.this-field-is-required")),
     content: Yup.string().required(t("common.this-field-is-required")),
-    dueDate: Yup.string().required(t("common.this-field-is-required")),
     teacherSubjectId: Yup.string().required(t("common.this-field-is-required")),
     // teacherId: Yup.string().required(t("common.this-field-is-required")),
   });
@@ -127,8 +124,7 @@ const PageComponent = () => {
     try {
       const formData = new FormData();
       formData.append("title", values.title);
-      formData.append("content", values.content);
-      formData.append("dueDate", values.dueDate);
+      formData.append("content", values.content); 
       formData.append("teacherSubjectId", values.teacherSubjectId);
       values.attachments?.map((file) => {
         formData.append("attachments", file);
@@ -144,7 +140,7 @@ const PageComponent = () => {
       }
 
       if (id) {
-        await updateHomework({
+        await updateLesson({
           id,
           teacherId:
             teacherSubjects?.find((item) => item.id === values.teacherSubjectId)
@@ -163,7 +159,7 @@ const PageComponent = () => {
         }).unwrap();
         toast.success(t("common.updated-successfully"));
       } else {
-        await createHomework({
+        await createLesson({
           teacherId: teacherId as string,
           body: formData,
         }).unwrap();
@@ -173,7 +169,7 @@ const PageComponent = () => {
 
       router.back();
     } catch (error: any) {
-      console.error("Homework operation failed:", error);
+      console.error("Lesson operation failed:", error);
       toast.error(error?.message || JSON.stringify(error));
     }
   };
@@ -182,7 +178,7 @@ const PageComponent = () => {
     <div className="mx-auto max-w-4xl">
       <BackButton
         title={t(
-          id ? "TeacherHomeworksPage.update-info" : "TeacherHomeworksPage.add"
+          id ? "TeacherLessonsPage.update-info" : "TeacherLessonsPage.add"
         )}
       />
 
@@ -202,11 +198,10 @@ const PageComponent = () => {
           initialValues={{
             title: data?.title ?? "",
             content: data?.content ?? "",
-            dueDate: data?.dueDate ?? "",
             teacherSubjectId: data?.teacherSubjectId ?? "",
             attachments: [],
             studentIds:
-              data?.StudentHomework?.map((item) => item.studentId) ?? [],
+              data?.StudentLesson?.map((item) => item.studentId) ?? [],
             schoolYearId: settings?.CurrentSchoolYear?.id ?? "",
           }}
           validationSchema={validationSchema}
@@ -216,7 +211,7 @@ const PageComponent = () => {
           {(props: FormikProps<any>) => (
             <Form className="space-y-6 p-6">
               {/* Basic Information Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 ">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="border-b border-gray-200 dark:border-gray-700 p-6">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
@@ -235,7 +230,7 @@ const PageComponent = () => {
                       </svg>
                     </div>
                     <h2 className="px-2 text-xl font-semibold text-gray-900 dark:text-white">
-                      {t("TeacherHomeworksPage.infoTeacherHomeworks")}
+                      {t("TeacherLessonsPage.infoTeacherLessons")}
                     </h2>
                   </div>
                 </div>
@@ -244,14 +239,14 @@ const PageComponent = () => {
                   <InputForm
                     formikProps={props}
                     name="title"
-                    title={t("TeacherHomeworksPage.title")}
-                    placeholder={t("TeacherHomeworksPage.enter-title")}
+                    title={t("TeacherLessonsPage.title")}
+                    placeholder={t("TeacherLessonsPage.enter-title")}
                   />
                   <InputForm
                     formikProps={props}
                     name="content"
-                    title={t("TeacherHomeworksPage.content")}
-                    placeholder={t("TeacherHomeworksPage.enter-content")}
+                    title={t("TeacherLessonsPage.content")}
+                    placeholder={t("TeacherLessonsPage.enter-content")}
                     props={
                       {
                         as: "textarea",
@@ -264,7 +259,7 @@ const PageComponent = () => {
               </div>
 
               {/* Settings Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 ">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="border-b border-gray-200 dark:border-gray-700 p-6">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
@@ -289,7 +284,7 @@ const PageComponent = () => {
                       </svg>
                     </div>
                     <h2 className="px-2 text-xl font-semibold text-gray-900 dark:text-white">
-                      {t("TeacherHomeworksPage.otherInfoTeacherHomeworks")}
+                      {t("TeacherLessonsPage.otherInfoTeacherLessons")}
                     </h2>
                   </div>
                 </div>
@@ -453,19 +448,12 @@ const PageComponent = () => {
                         },
                       }}
                     />
-
-                    <DateTimeForm
-                      formikProps={props}
-                      name="dueDate"
-                      title={t("TeacherHomeworksPage.dueDate")}
-                      placeholder={t("TeacherHomeworksPage.enter-dueDate")}
-                    />
                   </div>
                 </div>
               </div>
 
               {/* Students Selection Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 ">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="border-b border-gray-200 dark:border-gray-700 p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
@@ -486,20 +474,18 @@ const PageComponent = () => {
                       </div>
                       <div className="px-2">
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                          {t("TeacherHomeworksPage.students")}
+                          {t("TeacherLessonsPage.students")}
                         </h2>
                         {students && (
                           <p className="text-sm text-gray-500 mt-1">
                             {props.values.allStudentsThisASectionsORClasses ===
                             "TRUE"
                               ? `${students.length} ${t(
-                                  "TeacherHomeworksPage.studentsSelected"
+                                  "TeacherLessonsPage.studentsSelected"
                                 )}`
                               : `${props.values.studentIds.length}/${
                                   students.length
-                                } ${t(
-                                  "TeacherHomeworksPage.studentsSelected"
-                                )}`}
+                                } ${t("TeacherLessonsPage.studentsSelected")}`}
                           </p>
                         )}
                       </div>
@@ -583,15 +569,15 @@ const PageComponent = () => {
                                 />
                               </svg>
                               <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                                {t("TeacherHomeworksPage.no-students-found")}
+                                {t("TeacherLessonsPage.no-students-found")}
                               </p>
                               <p className="text-gray-500">
                                 {studentSearch
                                   ? t(
-                                      "TeacherHomeworksPage.try-adjusting-your-search-terms"
+                                      "TeacherLessonsPage.try-adjusting-your-search-terms"
                                     )
                                   : t(
-                                      "TeacherHomeworksPage.no-students-available-for-the-selected-criteria"
+                                      "TeacherLessonsPage.no-students-available-for-the-selected-criteria"
                                     )}
                               </p>
                             </div>
@@ -637,7 +623,9 @@ const PageComponent = () => {
                           ></path>
                         </svg>
                       )}
-                      <span className="px-3">{t(id ? "common.update" : "common.save")}</span>
+                      <span className="px-3">
+                        {t(id ? "common.update" : "common.save")}
+                      </span>
                     </div>
                   }
                   isLoading={false}
