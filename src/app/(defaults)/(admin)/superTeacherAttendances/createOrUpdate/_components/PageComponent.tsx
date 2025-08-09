@@ -199,6 +199,12 @@ const PageComponent = () => {
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
+        if (error && error.message==`A attendance with the same details already exists.`) {
+          return toast.error(t("SuperTeacherAttendancesPage.duplicate-attendance"), { autoClose: 30000 });
+        }
+        if (error && error.message) {
+          return toast.error(error.message, { autoClose: 30000 });
+        }
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
       toast.error(error, { autoClose: 30000 });

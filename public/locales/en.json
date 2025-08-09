@@ -1016,6 +1016,7 @@
     "Validation Error": "Validation Error",
     "Students": "Students",
     "Mark attendance for all students": "Mark attendance for all students",
-    "Please mark attendance for all students": "Please mark attendance for all students"
+    "Please mark attendance for all students": "Please mark attendance for all students",
+    "duplicate-attendance": "Duplicate attendance"
   }
 }

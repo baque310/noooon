@@ -1017,6 +1017,7 @@
     "Validation Error": "خطأ في التحقق",
     "Students": "الطلاب",
     "Mark attendance for all students": "تسجيل الحضور لجميع الطلاب",
-    "Please mark attendance for all students": "يرجى تسجيل الحضور لجميع الطلاب"
+    "Please mark attendance for all students": "يرجى تسجيل الحضور لجميع الطلاب",
+    "duplicate-attendance": "تكرار الحضور"
   }
 }
