@@ -3,10 +3,16 @@ import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
 
 import moment from "moment";
-import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import {
+  RolePageAndActionBasedComponent,
+  withRole,
+} from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazySectionScheduleGetDataQuery, useSectionScheduleGetDataQuery } from "@/services/admin/SectionSchedule";
+import {
+  useLazySectionScheduleGetDataQuery,
+  useSectionScheduleGetDataQuery,
+} from "@/services/admin/SectionSchedule";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -24,7 +30,6 @@ import { useSettingGetDataQuery } from "@/services/Setting";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -32,64 +37,63 @@ const TableComponent = () => {
   const search = searchParams.get("search") || "";
   const [param, setParam] = useState<
     | {
-      classId?: string;
-      stageId?: string;
-      search?: string;
-      range?: string;
-      teacherSubjectId?: string;
-      sectionId?: string;
-      schoolYearId?: string;
-
-    }
+        classId?: string;
+        stageId?: string;
+        search?: string;
+        range?: string;
+        teacherSubjectId?: string;
+        sectionId?: string;
+        schoolYearId?: string;
+      }
     | undefined
   >();
 
-  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+  const { isFetching: isFetchingStageData, currentData: StageData } =
+    useStageGetDataQuery();
 
-  const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+  const {
+    isFetching: isFetchingTeacherSubjectData,
+    currentData: TeacherSubjectData,
+  } = useTeacherSubjectGetDataQuery({
     // sectionId  :param.sectionId,
-    schoolYearId: param?.schoolYearId
-
+    schoolYearId: param?.schoolYearId,
   });
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
-  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
-  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } =
+    useSchoolYearGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } =
+    useSettingGetDataQuery();
+  const isDark =
+    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
-
 
   useEffect(() => {
     if (SchoolYearData) {
-      setParam(
-        {
-          ...param,
-          schoolYearId: Setting?.CurrentSchoolYear.id,
-
-        }
-      )
+      setParam({
+        ...param,
+        schoolYearId: Setting?.CurrentSchoolYear.id,
+      });
     }
-  }, [SchoolYearData, Setting])
+  }, [SchoolYearData, Setting]);
 
-
-  const [getData, { isFetching, currentData: data }] = useLazySectionScheduleGetDataQuery();
+  const [getData, { isFetching, currentData: data }] =
+    useLazySectionScheduleGetDataQuery();
 
   useEffect(() => {
-    if (param?.sectionId) {
-      getData({
-        ...(search && { search: search as string }),
-        ...param?.sectionId && {
-          sectionId: param.sectionId
-        },
-        ...param?.schoolYearId && {
-          schoolYearId: param.schoolYearId
-        },
-        ...param?.teacherSubjectId && {
-          teacherSubjectId: param.teacherSubjectId
-        },
-      })
-    }
-
-  }, [param])
-
+    // if (param?.sectionId) {
+    getData({
+      ...(search && { search: search as string }),
+      ...(param?.sectionId && {
+        sectionId: param.sectionId,
+      }),
+      ...(param?.schoolYearId && {
+        schoolYearId: param.schoolYearId,
+      }),
+      ...(param?.teacherSubjectId && {
+        teacherSubjectId: param.teacherSubjectId,
+      }),
+    });
+    // }
+  }, [param]);
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -104,7 +108,6 @@ const TableComponent = () => {
     if (search != Search) {
       allParams.set("search", value ?? Search);
       router.push(`/sectionSchedule?${allParams.toString()}`);
-
     }
   };
   const handleKeyPress = (event: any) => {
@@ -120,52 +123,59 @@ const TableComponent = () => {
     });
   };
 
-
   const handleSelectClass = (value: any) => {
     if (value) {
       setParam({ ...param, classId: value, sectionId: undefined });
-
     } else {
       setParam({ ...param, classId: undefined, sectionId: undefined });
-
     }
-  }
+  };
   const handleSelectSection = (value: any) => {
     if (value) {
       setParam({ ...param, sectionId: value });
-
     } else {
       setParam({ ...param, sectionId: undefined });
     }
-  }
+  };
   const handleSelectStage = (value: any) => {
     if (value) {
-      setParam({ ...param, stageId: value, classId: undefined, sectionId: undefined });
-
+      setParam({
+        ...param,
+        stageId: value,
+        classId: undefined,
+        sectionId: undefined,
+      });
     } else {
-      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
+      setParam({
+        ...param,
+        stageId: undefined,
+        classId: undefined,
+        sectionId: undefined,
+      });
     }
-  }
+  };
   const handleSelectTeacherSubject = (value: any) => {
     if (value) {
       setParam({ ...param, teacherSubjectId: value.value });
-
     } else {
       setParam({ ...param, teacherSubjectId: undefined });
     }
-  }
+  };
   const handleSelectSchoolYear = (value: any) => {
     if (value) {
       setParam({ ...param, schoolYearId: value.value });
-
     } else {
       setParam({ ...param, schoolYearId: undefined });
     }
-  }
+  };
   return (
-    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
+    <div
+      className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}
+    >
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">{t("SectionSchedulePage.SectionSchedule")}</div>
+        <div className="text-xl uppercase ">
+          {t("SectionSchedulePage.SectionSchedule")}
+        </div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
@@ -181,12 +191,12 @@ const TableComponent = () => {
             isLoading={isFetchingSchoolYearData || isFetchingSetting}
             props={{
               onChange: handleSelectSchoolYear,
-              value: param?.schoolYearId
+              value: param?.schoolYearId,
             }}
             options={SchoolYearData?.map((item) => {
               return {
                 value: item.id,
-                label: item.from + '-' + item.to
+                label: item.from + "-" + item.to,
               };
             })}
           />
@@ -195,11 +205,13 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/sectionSchedule/createOrUpdate");
-                    }}>
+                    }}
+                  >
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
                   </button>
@@ -218,44 +230,51 @@ const TableComponent = () => {
           placement="bottom-end"
           title={t("StudentEnrollmentPage.StageName")}
           handleChange={handleSelectStage}
-          options={StageData?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          }) ?? []
+          options={
+            StageData?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
           }
         />
-        {param?.stageId &&
+        {param?.stageId && (
           <SelectFilter
             value={param?.classId}
             title={t("SectionPage.ClassName")}
             placement="bottom-end"
             handleChange={handleSelectClass}
-            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
-              return {
-                value: item.id,
-                label: t(item.name as any),
-              };
-            }) ?? []
+            options={
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map(
+                (item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }
+              ) ?? []
             }
           />
-        }
-        {param?.classId &&
+        )}
+        {param?.classId && (
           <SelectFilter
             value={param?.sectionId}
             title={t("StudentEnrollmentPage.SectionName")}
             placement="bottom-end"
             handleChange={handleSelectSection}
-            options={StageData?.find(it => it.id == param?.stageId)?.Class.find(it => it.id == param?.classId)?.Section?.map((item) => {
-              return {
-                value: item.id,
-                label: t(item.name as any),
-              };
-            }) ?? []
+            options={
+              StageData?.find((it) => it.id == param?.stageId)
+                ?.Class.find((it) => it.id == param?.classId)
+                ?.Section?.map((item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }) ?? []
             }
           />
-        }
+        )}
         <div className="max-w-36">
           <SelectWithSearch
             placeholder={t("HomeworksPage.teacherFullName")}
@@ -265,134 +284,163 @@ const TableComponent = () => {
             options={
               TeacherSubjectData?.map((item) => {
                 return {
-                  label: item.Teacher.fullName
+                  label: item.Teacher.fullName,
                   //  + item.StageSubject.Subject.name,
-                  ,
                   value: item.id,
                 };
-              }
-              ) ?? []
+              }) ?? []
             }
           />
         </div>
       </div>
-      <div className={'flex flex-col gap-4  mt-4'}>
+      <div className={"flex flex-col gap-4  mt-4"}>
+        {isFetching ? (
+          <div className="flex w-full justify-center items-center min-h-64 Card ">
+            <div className="loader !bg-primary"></div>
+          </div>
+        ) : (
+          <>
+            {daysArray.filter(
+              (item) =>
+                data &&
+                data.data &&
+                (data.data[item.value as keyof typeof data.data] as any[])
+                  ?.length > 0
+            ).length == 0 ? (
+              <div className="flex justify-center items-center min-h-64 Card">
+                {t("common.no-data")}
+              </div>
+            ) : (
+              daysArray
+                .filter(
+                  (item) =>
+                    data &&
+                    data.data &&
+                    (data.data[item.value as keyof typeof data.data] as any[])
+                      ?.length > 0
+                )
+                .map((item, index: number) => {
+                  return (
+                    <div key={index} className="">
+                      <button
+                        type="button"
+                        className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${
+                          active === index ? "!text-primary" : ""
+                        }`}
+                        onClick={() => togglePara(index)}
+                      >
+                        <bdi className=" flex gap-1 font-bold text-lg">
+                          <p>
+                            {index + 1} {")"}
+                          </p>
 
-        {
-          isFetching ?
-            <div className="flex w-full justify-center items-center min-h-64 Card ">
-              <div className="loader !bg-primary"></div>
-            </div>
-            :
-            <>
-
-              {
-                (daysArray.filter((item) => data && data.data && (data.data[item.value as keyof typeof data.data] as any[])?.length > 0).length == 0) ?
-                  <div className="flex justify-center items-center min-h-64 Card">
-                    {t("common.no-data")}
-                  </div> :
-                  daysArray
-                    .filter((item) => data && data.data && (data.data[item.value as keyof typeof data.data] as any[])?.length > 0)
-                    .map((item, index: number) => {
-                      return (
-                        <div key={index} className="">
-                          <button
-                            type="button"
-                            className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === index ? '!text-primary' : ''}`}
-                            onClick={() => togglePara(index)}
-                          >
-                            <bdi className=' flex gap-1 font-bold text-lg'>
-                              <p>
-                                {index + 1} {")"}
-                              </p>
-
-                              <p>
-                                {t(item.label)}
-                              </p>
-
-                            </bdi>
-                            <div
-                              className={`ltr:ml-auto rtl:mr-auto ${active === index ? 'rotate-180' : ''}`}>
-                              <IconCaretsDown />
-                            </div>
-
-                          </button>
-
-                          <AnimateHeight duration={300}
-                            height={active === index ? 'auto' : 0}>
-
-                            <div className={'flex flex-col gap-4  mt-3 p-2 '}
-                            >
-
-                              <div className="datatables pagination-padding mt-2">
-                                {isMounted && (
-                                  <DataTable
-                                    onRowClick={async (item) => {
-                                      router.push(`/sectionSchedule/${item.record.id}`);
-                                    }}
-                                    fetching={isFetching}
-                                    className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-                                    records={(data && data.data) ? data.data[item.value as keyof typeof data.data] : [] as any}
-                                    columns={[
-                                      {
-                                        title: t("SectionSchedulePage.StageName"),
-                                        accessor: "teacherSubject.StageSubject.Stage.name",
-                                        render: ({ teacherSubject }) => t(teacherSubject.StageSubject.Stage.name),
-                                      },
-                                      {
-                                        title: t("SectionSchedulePage.ClassName"),
-                                        accessor: "section.Class.name",
-                                        // render: ({ section }) => t(section.name),
-                                      },
-                                      {
-                                        title: t("SectionSchedulePage.SectionName"),
-                                        accessor: "section.name",
-                                        render: ({ section }) => t(section.name),
-                                      },
-
-                                      {
-                                        title: t("SectionSchedulePage.TeacherName"),
-                                        accessor: "teacherSubject.Teacher.fullName",
-                                      },
-                                      {
-                                        title: t("SectionSchedulePage.SubjectName"),
-                                        accessor: "teacherSubject.StageSubject.Subject.name",
-                                      },
-                                      {
-                                        title: t("SectionSchedulePage.timeFrom"),
-                                        accessor: "Schedule.timeFrom",
-                                        render: ({ Schedule }: any) => (Schedule.timeFrom ? <div>{moment.utc(Schedule.timeFrom).format("hh:mm:ss A")}</div> : null),
-
-                                      },
-
-                                      {
-                                        title: t("SectionSchedulePage.timeTo"),
-                                        accessor: "Schedule.timeTo",
-                                        render: ({ Schedule }: any) => (Schedule.timeTo ? <div>{moment.utc(Schedule.timeTo).format("hh:mm:ss A")}</div> : null),
-                                      },
-                                      {
-                                        title: t("SectionSchedulePage.SchoolYear"),
-                                        accessor: "SchoolYear.from",
-                                      },
-
-                                    ]}
-                                    customLoader={<div className="loader !bg-primary"></div>}
-                                    noRecordsText={t("common.no-data")}
-                                    noRecordsIcon={<></>}
-
-                                  />
-                                )}
-                              </div>
-                            </div>
-                          </AnimateHeight>
+                          <p>{t(item.label)}</p>
+                        </bdi>
+                        <div
+                          className={`ltr:ml-auto rtl:mr-auto ${
+                            active === index ? "rotate-180" : ""
+                          }`}
+                        >
+                          <IconCaretsDown />
                         </div>
-                      );
-                    })
-              }
-            </>
-        }
+                      </button>
 
+                      <AnimateHeight
+                        duration={300}
+                        height={active === index ? "auto" : 0}
+                      >
+                        <div className={"flex flex-col gap-4  mt-3 p-2 "}>
+                          <div className="datatables pagination-padding mt-2">
+                            {isMounted && (
+                              <DataTable
+                                onRowClick={async (item) => {
+                                  router.push(
+                                    `/sectionSchedule/${item.record.id}`
+                                  );
+                                }}
+                                fetching={isFetching}
+                                className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
+                                records={
+                                  data && data.data
+                                    ? data.data[
+                                        item.value as keyof typeof data.data
+                                      ]
+                                    : ([] as any)
+                                }
+                                columns={[
+                                  {
+                                    title: t("SectionSchedulePage.StageName"),
+                                    accessor:
+                                      "teacherSubject.StageSubject.Stage.name",
+                                    render: ({ teacherSubject }) =>
+                                      t(teacherSubject.StageSubject.Stage.name),
+                                  },
+                                  {
+                                    title: t("SectionSchedulePage.ClassName"),
+                                    accessor: "section.Class.name",
+                                    // render: ({ section }) => t(section.name),
+                                  },
+                                  {
+                                    title: t("SectionSchedulePage.SectionName"),
+                                    accessor: "section.name",
+                                    render: ({ section }) => t(section.name),
+                                  },
 
+                                  {
+                                    title: t("SectionSchedulePage.TeacherName"),
+                                    accessor: "teacherSubject.Teacher.fullName",
+                                  },
+                                  {
+                                    title: t("SectionSchedulePage.SubjectName"),
+                                    accessor:
+                                      "teacherSubject.StageSubject.Subject.name",
+                                  },
+                                  {
+                                    title: t("SectionSchedulePage.timeFrom"),
+                                    accessor: "Schedule.timeFrom",
+                                    render: ({ Schedule }: any) =>
+                                      Schedule.timeFrom ? (
+                                        <div>
+                                          {moment
+                                            .utc(Schedule.timeFrom)
+                                            .format("hh:mm:ss A")}
+                                        </div>
+                                      ) : null,
+                                  },
+
+                                  {
+                                    title: t("SectionSchedulePage.timeTo"),
+                                    accessor: "Schedule.timeTo",
+                                    render: ({ Schedule }: any) =>
+                                      Schedule.timeTo ? (
+                                        <div>
+                                          {moment
+                                            .utc(Schedule.timeTo)
+                                            .format("hh:mm:ss A")}
+                                        </div>
+                                      ) : null,
+                                  },
+                                  {
+                                    title: t("SectionSchedulePage.SchoolYear"),
+                                    accessor: "SchoolYear.from",
+                                  },
+                                ]}
+                                customLoader={
+                                  <div className="loader !bg-primary"></div>
+                                }
+                                noRecordsText={t("common.no-data")}
+                                noRecordsIcon={<></>}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </AnimateHeight>
+                    </div>
+                  );
+                })
+            )}
+          </>
+        )}
       </div>
     </div>
   );

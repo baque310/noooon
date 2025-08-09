@@ -149,6 +149,7 @@ export const StudentEnrollment = api.injectEndpoints({
       {
         userId: string;
         id: string;
+        studentEnrollmentId: string;
         fullName: string;
       }[],
       {

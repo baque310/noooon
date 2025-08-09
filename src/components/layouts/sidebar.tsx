@@ -483,6 +483,16 @@ const Sidebar = () => {
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
+                  resource={"attendance"}
+                  toggleMenu={toggleMenu}
+                  to={"/superTeacherAttendances"}
+                  label={t("sidebar.superTeacherAttendances")}
+                  icon={
+                    <IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
+                />
+                <MenuItem
+                  permission={["read-any", "read-own"]}
                   resource={"lesson"}
                   toggleMenu={toggleMenu}
                   to={"/teacherLessons"}

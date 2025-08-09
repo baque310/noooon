@@ -347,6 +347,13 @@ export const api = createApi({
     "TeacherLessonsRemove",
     "TeacherLessonsAttachmentsCreate",
     "TeacherLessonsAttachmentsRemove",
+
+    // SuperTeacherAttendances
+    "SuperTeacherAttendancesGetData",
+    "SuperTeacherAttendancesGetDataById",
+    "SuperTeacherAttendancesCreate",
+    "SuperTeacherAttendancesUpdate",
+    "SuperTeacherAttendancesRemove",
   ],
   endpoints: (build) => ({}),
 });
