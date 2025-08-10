@@ -472,13 +472,7 @@
     "enter-SchoolYear": "ادخل السنة الدراسية",
     "enrollmentDate": "تاريخ التسجيل",
     "schoolYear-already-exists": " بعض الطلاب مسجلين مسبقا في هذه السنة الدراسية"
-  },
-  "A": "أ",
-  "B": "ب",
-  "C": "ج",
-  "D": "د",
-  "E": "ه",
-  "F": "و",
+  }, 
   "TeacherPage": {
     "Gender": "الجنس",
     "select-Gender": "اختر نوع الجنس",
