@@ -77,11 +77,13 @@ const PageComponent = () => {
             Class: stage.ClassData.map((classData) => {
               return {
                 name: classData.name,
-                Section: classData.sections.map((section) => {
-                  return {
-                    name: section.value,
-                  };
-                }),
+                Section: classData.sections
+                  .filter((item) => !!item.value)
+                  .map((section) => {
+                    return {
+                      name: section.value,
+                    };
+                  }),
               };
             }),
           };
@@ -101,24 +103,7 @@ const PageComponent = () => {
             id: String(id),
           }).unwrap();
         } else {
-          toast.success(
-            JSON.stringify({
-              username: values?.username ?? "",
-              password: values?.password ?? "",
-              School: {
-                name: values.name,
-                address: values.address,
-                email: values.email,
-                phone1: values.phone1,
-                phone2: values.phone2,
-                hasBanner: values.hasBanner,
-                Stage: Stage as any,
-              },
-            }),
-            {
-              autoClose: 30000,
-            }
-          );
+          
           await SchoolCreate({
             username: values?.username ?? "",
             password: values?.password ?? "",
@@ -203,7 +188,7 @@ const PageComponent = () => {
       .email(t("common.email-must-be-a-valid-email"))
       .required(t("common.this-field-is-required")),
     phone1: Yup.string().required(t("common.this-field-is-required")),
-    phone2: Yup.string().required(t("common.this-field-is-required")),
+    // phone2: Yup.string().required(t("common.this-field-is-required")),
     address: Yup.string().required(t("common.this-field-is-required")),
     hasBanner: Yup.string().required(t("common.this-field-is-required")),
     ...(id && {
