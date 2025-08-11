@@ -32,7 +32,7 @@ export const Notification = api.injectEndpoints({
       GetDataRequestParams
     >({
       query: (params) => ({
-        url: `notification/forAdmin`,
+        url: `notification/forAdmin/all`,
         params,
         method: "GET",
       }),
