@@ -34,10 +34,10 @@ jobs:
         run: npm install
 
       - run: npm run build --if-present
-      # - name: Pm2 Start
-        # run: pm2 restart almalak-dashboard
+      - name: Pm2 Start
+        run: pm2 restart almalak-dashboard
       # - run: pm2 describe almalak-dashboard
       # - run: pm2 logs almalak-dashboard
-      - run: PORT=3033 pm2 start npm  --name "almalak-dashboard" -- start
+      # - run: PORT=3033 pm2 start npm  --name "almalak-dashboard" -- start
       # - run: pm2 delete almalak-dashboard 
 
