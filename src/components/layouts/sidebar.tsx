@@ -30,6 +30,7 @@ import IconDashboard from "../common/icons/sidebar/IconDashboard";
 import IconSetting from "../common/icons/sidebar/IconSetting";
 import IconStage from "../common/icons/sidebar/IconStage";
 import IconCaretsDown from "../common/icons/sidebar/icon-carets-down";
+import { getTitleApp } from "@/utils/getTitleApp";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -120,15 +121,12 @@ const Sidebar = () => {
           } `}
         >
           <div className="flex items-center justify-between px-4 py-3">
-            <Link
-              href="/dashboard"
-              className="main-logo flex shrink-0 items-center"
-            >
+            <div className="main-logo flex shrink-0 items-center">
               {/* <img className="ml-[5px] w-10 h-10 rounded-full flex-none" src="/favicon.png" alt="logo" /> */}
               <span className="align-middle text-lg font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
-                {t("appName")}
+                {getTitleApp(window.location.origin)}
               </span>
-            </Link>
+            </div>
             <button
               type="button"
               className="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"

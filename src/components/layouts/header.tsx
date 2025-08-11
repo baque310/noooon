@@ -13,6 +13,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Dropdown from "../dropdown";
 import useNotification from "@/hooks/useNotification";
 import { getTranslation } from "@/ni18n/i18n";
+import { get } from "lodash";
+import { getTitleApp } from "@/utils/getTitleApp";
 
 export const Header = () => {
   const pathname = usePathname();
@@ -82,7 +84,7 @@ export const Header = () => {
             <Link href="/" className="main-logo flex shrink-0 items-center">
               {/* <img className="inline  w-10 h-10 rounded-full ltr:-ml-1 rtl:-mr-1" src="/favicon.png" alt="logo" /> */}
               <span className="hidden align-middle text-lg  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">
-                {t("appName")}
+                {getTitleApp(window.location.origin)}
               </span>
             </Link>
             <button

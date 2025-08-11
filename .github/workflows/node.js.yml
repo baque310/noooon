@@ -5,11 +5,10 @@ name: Node.js CI
 
 on:
   push:
-    branches: ["development"]
+    branches: ["main"]
 jobs:
   build: 
-    # runs-on: [aknan-hosted]
-    runs-on: [development]
+    runs-on: [aknan-hosted]
 
     strategy:
       matrix:
