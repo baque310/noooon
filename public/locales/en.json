@@ -241,6 +241,7 @@
     }
   },
   "Primary": "Primary",
+  "Secondary": "Secondary",
   "Intermediate": "Intermediate",
   "Preparatory": "Preparatory",
   "First": "First",
