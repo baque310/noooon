@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { IRootState } from "@/store";
@@ -15,6 +15,7 @@ import useNotification from "@/hooks/useNotification";
 import { getTranslation } from "@/ni18n/i18n";
 import { get } from "lodash";
 import { getTitleApp } from "@/utils/getTitleApp";
+import { ChangePasswordByAdminModel } from "../Model/ChangePasswordByAdminModel";
 
 export const Header = () => {
   const pathname = usePathname();
@@ -71,6 +72,7 @@ export const Header = () => {
   const session = useSession();
 
   const notification = useNotification();
+  const [openChangePassword, setOpenChangePassword] = useState(false);
 
   return (
     <header
@@ -344,6 +346,16 @@ export const Header = () => {
                       </div>
                     </div>
                   </li>
+                  {/* <li className="border-t border-white-light dark:border-white-light/10">
+                    <button
+                      onClick={async () => {
+                        setOpenChangePassword(true);
+                      }}
+                      className="!py-3 "
+                    >
+                      {t("common.changePassword")}
+                    </button>
+                  </li> */}
                   <li className="border-t border-white-light dark:border-white-light/10">
                     <button
                       onClick={async () => {
@@ -388,7 +400,18 @@ export const Header = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div>{" "}
+      {session.data?.user && openChangePassword && (
+        <ChangePasswordByAdminModel
+          open={openChangePassword}
+          setOpen={setOpenChangePassword}
+          data={{
+            username: session.data?.user.username as any,
+            userId: session.data?.user.id as any,
+          }}
+          isAdmin={session.data?.user.RoleType !== "Manager"}
+        />
+      )}
     </header>
   );
 };

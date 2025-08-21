@@ -32,7 +32,7 @@ export const User = api.injectEndpoints({
       }),
       // providesTags: ["UserGetData"],
     }),
-    UserUpdatePassword: build.mutation<
+    UserAdminUpdatePassword: build.mutation<
       BaseGetDataResponse<IUser>,
       {
         id: string;
@@ -44,14 +44,31 @@ export const User = api.injectEndpoints({
       query: ({ id, body }) => ({
         url: `user/admin/updatePassword/${id}`,
         body,
-        method: "POST",
+        method: "PATCH",
       }),
-      // providesTags: ["UserGetData"],
+      // providesTags: (res) => (res ? ["UserAdminUpdatePassword"] : []),
+    }),
+    UserManagerUpdatePassword: build.mutation<
+      BaseGetDataResponse<IUser>,
+      {
+        id: string;
+        body: {
+          newPassword: string;
+        };
+      }
+    >({
+      query: ({ id, body }) => ({
+        url: `user/manager/updatePassword/${id}`,
+        body,
+        method: "PATCH",
+      }),
+      // providesTags: (res) => (res ? ["UserManagerUpdatePassword"] : []),
     }),
   }),
 });
 export const {
   useUserGetDataQuery,
   useLazyUserGetDataQuery,
-  useUserUpdatePasswordMutation,
+  useUserAdminUpdatePasswordMutation,
+  useUserManagerUpdatePasswordMutation,
 } = User;

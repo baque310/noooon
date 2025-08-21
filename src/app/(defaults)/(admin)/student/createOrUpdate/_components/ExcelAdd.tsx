@@ -2,7 +2,6 @@ import React from "react";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import { UploadFileForm } from "@/components/Form/uploadFileForm";
-import { FormValues } from "./PageComponent";
 import { getTranslation } from "@/ni18n/i18n";
 import { useStudentMultiStudentsForExcelMutation } from "@/services/admin/student";
 import { toast } from "react-toastify";
@@ -13,7 +12,7 @@ const ExcelAdd = () => {
   const { t } = getTranslation();
   const [isLoadingStudentUpdate, setIsLoadingStudentUpdate] =
     React.useState(false);
-  const [StudentMultiStudentsForExcel, { isLoading }] =
+  const [StudentMultiStudentsForExcel, { isLoading, data }] =
     useStudentMultiStudentsForExcelMutation();
   const handleSubmit = async (
     values: {
@@ -32,7 +31,6 @@ const ExcelAdd = () => {
       setIsLoadingStudentUpdate(true);
 
       const studentsData = await getJsonFromExcel(file);
-      console.log(studentsData);
 
       await StudentMultiStudentsForExcel({
         students: studentsData.map((item) => ({
@@ -68,6 +66,9 @@ const ExcelAdd = () => {
           return toast.error(t("StudentPage.email-already-exists"), {
             autoClose: 30000,
           });
+        }
+        if (error.message) {
+          return toast.error(t(error.message), { autoClose: 30000 });
         }
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
@@ -126,6 +127,177 @@ const ExcelAdd = () => {
               />
             </div>
           </div>
+
+          {/* Results Section */}
+          {data && (
+            <div className="space-y-6">
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Success Count Card */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-green-900/20 dark:to-emerald-900/20 rounded-2xl border border-green-200 dark:border-gray-700 shadow-lg">
+                  <div className="relative p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg
+                          className="w-6 h-6 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-green-800 dark:text-green-300">
+                          {t("ParentPage.successCount")}
+                        </h3>
+                        <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                          {data?.successCount || 0}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Error Count Card */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 dark:from-gray-900 dark:via-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-gray-700 shadow-lg">
+                  <div className="relative p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg
+                          className="w-6 h-6 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-red-800 dark:text-red-300">
+                          {t("ParentPage.errorCount")}
+                        </h3>
+                        <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+                          {data?.errorCount || 0}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Successful Entries */}
+              {data?.success && data.success.length > 0 && (
+                <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-green-900/10 dark:to-emerald-900/10 rounded-2xl border border-green-200 dark:border-gray-700 shadow-lg">
+                  <div className="relative p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">
+                        {t("StudentPage.Successfully Added Students")}
+                      </h3>
+                    </div>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {data.success.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-xl border border-green-100 dark:border-gray-600"
+                        >
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-green-700 dark:text-green-300 font-medium">
+                            {item.fullName}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Error Entries */}
+              {data?.errors && data.errors.length > 0 && (
+                <div className="relative overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 dark:from-gray-900 dark:via-red-900/10 dark:to-rose-900/10 rounded-2xl border border-red-200 dark:border-gray-700 shadow-lg">
+                  <div className="relative p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg flex items-center justify-center">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-red-800 dark:text-red-300">
+                        {t("StudentPage.Failed Entries")}
+                      </h3>
+                    </div>
+                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                      {data.errors.map((error, index) => (
+                        <div
+                          key={index}
+                          className="p-4 bg-white/60 dark:bg-gray-800/60 rounded-xl border border-red-100 dark:border-gray-600"
+                        >
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span className="font-semibold text-red-700 dark:text-red-300">
+                              {error.student.fullName}
+                            </span>
+                          </div>
+                          <div className="ml-5 p-3 bg-red-100 dark:bg-red-900/20 rounded-lg border-l-4 border-red-400">
+                            <p className="text-sm text-red-600 dark:text-red-400">
+                              {error.error.includes("students_phone1_key")
+                                ? t("StudentPage.phone1-already-exists")
+                                : error.error.includes("students_phone2_key")
+                                ? t("StudentPage.phone2-already-exists")
+                                : error.error.includes("students_email_key")
+                                ? t("StudentPage.email-already-exists")
+                                : error.error.includes(
+                                    "Unique constraint failed on the constraint:"
+                                  )
+                                ? error.error.split(
+                                    "Unique constraint failed on the constraint:"
+                                  )[1]
+                                : error.error}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Action Bar */}
           <div className="relative bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg">

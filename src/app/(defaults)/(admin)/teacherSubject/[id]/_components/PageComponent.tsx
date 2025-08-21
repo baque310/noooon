@@ -45,7 +45,7 @@ const PageComponent = () => {
                 if (error.message ===`Foreign key constraint failed on the field. More details: {"modelName":"TeacherSubject","field_name":"teacherSubjectId"}`){
                     return toast.error(t('TeacherSubjectPage.TeacherSubjectCannotBeDeleted'), { autoClose: 15000 });
                 }
-                return toast.error(error.message, { autoClose: 15000 });
+                return toast.error(t(error.message), { autoClose: 15000 });
             }
             toast.error(error, { autoClose: 15000 });
         }

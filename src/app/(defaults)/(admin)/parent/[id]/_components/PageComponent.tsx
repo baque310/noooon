@@ -92,6 +92,7 @@ import { ArrowIcons } from "@/components/common/icons/Actions";
 import moment from "moment";
 import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
 import DeleteModel from "@/components/Model/DeleteModel";
+import { ChangePasswordByAdminModel } from "@/components/Model/ChangePasswordByAdminModel";
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -119,14 +120,25 @@ const PageComponent = () => {
       router.back();
     } catch (error: any) {
       console.error("Failed to operation :", error);
+      if (
+        error &&
+        error.message ==
+          `Foreign key constraint failed on the field. More details: {"modelName":"User","field_name":"userId"}`
+      ) {
+        return toast.error(t("Cannot delete user: User has related records"), {
+          autoClose: 15000,
+        });
+      }
       if (error && error.message) {
-        return toast.error(error.message, { autoClose: 15000 });
+        return toast.error(t(error.message), { autoClose: 15000 });
       }
       toast.error(error, { autoClose: 15000 });
     }
   };
 
   const [openDelete, setOpenDelete] = useState(false);
+    const [openChangePassword, setOpenChangePassword] = useState(false);
+  
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
       <BackButton title={t("ParentPage.ParentInformation")} />
@@ -193,17 +205,30 @@ const PageComponent = () => {
               title={t("ParentPage.update-info")}
               value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
             />
-            {/* <ItemList
-                            props={{
-                                onClick: () => {
-                                    setOpenDelete(true)
-                                }
-                            }}
-                            title={<div className='text-danger'>
-                                {t('common.delete')}
-                            </div>}
-                            value={<ArrowIcons className='rtl:rotate-180 text-danger/50' />}
-                        /> */}
+              {data?.User && (
+                                      <ItemList
+                                        props={{
+                                          onClick: () => {
+                                            setOpenChangePassword(true);
+                                          },
+                                        }}
+                                        title={
+                                          <div className="text-[#000]">
+                                            {t("common.changePassword")}
+                                          </div>
+                                        }
+                                        value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
+                                      />
+                                    )}
+            <ItemList
+              props={{
+                onClick: () => {
+                  setOpenDelete(true);
+                },
+              }}
+              title={<div className="text-danger">{t("common.delete")}</div>}
+              value={<ArrowIcons className="rtl:rotate-180 text-danger/50" />}
+            />
           </div>
         </>
       )}
@@ -219,6 +244,20 @@ const PageComponent = () => {
         isLoading={isLoadingParentRemove}
         name={data?.fullName ?? ""}
       />
+
+      {data?.User && (
+              <ChangePasswordByAdminModel
+                data={{
+                  username: data?.User?.username,
+                  userId: data?.User?.id,
+                }}
+                isAdmin
+                open={openChangePassword}
+                setOpen={setOpenChangePassword}
+              />
+            )}
+
+      
     </div>
   );
 };

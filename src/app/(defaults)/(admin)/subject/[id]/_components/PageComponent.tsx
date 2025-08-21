@@ -45,7 +45,7 @@ const PageComponent = () => {
                 if (error.message === 'Foreign key constraint failed on the field. More details: {"modelName":"Subject","field_name":"subjectId"}') {
                     return toast.error(t('SubjectPage.this-Subject-connected-with-other-stage'), { autoClose: 15000 });
                 }
-                return toast.error(error.message, { autoClose: 15000 });
+                return toast.error(t(error.message), { autoClose: 15000 });
             }
             toast.error(error, { autoClose: 15000 });
         }

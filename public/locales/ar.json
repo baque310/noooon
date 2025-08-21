@@ -52,6 +52,9 @@
   "male": "ذكر",
   "female": "انثى",
   "common": {
+    "action": "إجراء",
+    "changePassword": "تغيير كلمة المرور",
+    "changePassword-successfully": "تم تغيير كلمة المرور بنجاح",
     "images": "صور",
     "confirm": "تأكيد",
     "ExportExcel": "تصدير الى اكسل",
@@ -341,6 +344,14 @@
     "this-section-connected-with-other-section": "هذا الشبة  مرتبطة مع اخرى "
   },
   "StudentPage": {
+    "Successfully Added Students": "تمت إضافة الطلاب بنجاح",
+    "Failed Entries": "المدخلات الفاشلة",
+    "gender-must-be-male-or-female": "يجب أن يكون الجنس إما ذكرًا أو أنثى",
+    "phone1-already-exists": "الهاتف 1 موجود بالفعل",
+    "phone2-already-exists": "الهاتف 2 موجود بالفعل",
+    "successCount": "عدد الناجحين",
+    "errorCount": "عدد الأخطاء",
+    "errors": "الأخطاء",
     "disconnectParent": "فصل الطالب عن ولي الأمر",
     "IsDo-disconnectParentMessage": "هل تريد فصل  الطالب عن ولي الأمر؟",
     "enter-parent-full-name": "ادخل اسم ولي الأمر",
@@ -401,6 +412,14 @@
     "select-gender": "اختر نوع الجنس"
   },
   "ParentPage": {
+    " Successfully Added Parents": "تمت إضافة أولياء الأمور بنجاح",
+    "Failed Entries": "المدخلات الفاشلة",
+    "gender-must-be-male-or-female": "يجب أن يكون الجنس إما ذكرًا أو أنثى",
+    "phone1-already-exists": "الهاتف 1 موجود بالفعل",
+    "phone2-already-exists": "الهاتف 2 موجود بالفعل",
+    "successCount": "عدد الناجحين",
+    "errorCount": "عدد الأخطاء",
+    "errors": "الأخطاء",
     "excel-upload": "رفع ملف اكسل",
     "excel-upload-description": "رفع ملف اكسل لاضافة أولياء الأمور",
     "upload-excel": "رفع ملف اكسل",
@@ -473,7 +492,7 @@
     "enter-SchoolYear": "ادخل السنة الدراسية",
     "enrollmentDate": "تاريخ التسجيل",
     "schoolYear-already-exists": " بعض الطلاب مسجلين مسبقا في هذه السنة الدراسية"
-  }, 
+  },
   "TeacherPage": {
     "Gender": "الجنس",
     "select-Gender": "اختر نوع الجنس",
@@ -1014,5 +1033,8 @@
     "Mark attendance for all students": "تسجيل الحضور لجميع الطلاب",
     "Please mark attendance for all students": "يرجى تسجيل الحضور لجميع الطلاب",
     "duplicate-attendance": "تكرار الحضور"
-  }
+  },
+  "Cannot delete student: Student has enrollment records": "لا يمكن حذف الطالب: لدى الطالب سجلات تسجيل",
+  "Cannot delete user: User has related records": "لا يمكن حذف المستخدم: لدى المستخدم سجلات مرتبطة",
+  "Cannot delete teacher: Teacher has assigned subjects": "لا يمكن حذف المعلم: لدى المعلم مواد معينة"
 }
