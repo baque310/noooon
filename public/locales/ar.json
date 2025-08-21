@@ -1015,5 +1015,6 @@
     "Please mark attendance for all students": "يرجى تسجيل الحضور لجميع الطلاب",
     "duplicate-attendance": "تكرار الحضور"
   },
-  "Cannot delete student: Student has enrollment records": "لا يمكن حذف الطالب: لدى الطالب سجلات تسجيل"
+  "Cannot delete student: Student has enrollment records": "لا يمكن حذف الطالب: لدى الطالب سجلات تسجيل",
+  "Cannot delete user: User has related records": "لا يمكن حذف المستخدم: لدى المستخدم سجلات مرتبطة"
 }

@@ -980,7 +980,7 @@
     "Assignment attachments gallery": "Assignment attachments gallery",
     "No attachments available": "No attachments available",
     "This Lesson doesn't have any attached images": "This lesson doesn't have any attached images"
-},
+  },
   "SuperTeacherAttendancesPage": {
     "Present": "Present",
     "Absent": "Absent",
@@ -1019,5 +1019,7 @@
     "Mark attendance for all students": "Mark attendance for all students",
     "Please mark attendance for all students": "Please mark attendance for all students",
     "duplicate-attendance": "Duplicate attendance"
-  }
+  },
+  "Cannot delete student: Student has enrollment records": "Cannot delete student: Student has enrollment records",
+  "Cannot delete user: User has related records": "Cannot delete user: User has related records"
 }
