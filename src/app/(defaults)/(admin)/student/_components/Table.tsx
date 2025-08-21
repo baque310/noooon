@@ -19,7 +19,7 @@ import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
 import { exportJsonToExcel } from "@/utils/excelParser";
 import { ConnectedStudentWithParent } from "./ConnectedStudentWithParent";
-
+ 
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -477,7 +477,7 @@ const TableComponent = () => {
                       </div>
                     </div>
                   ) : null,
-              },
+              }
             ]}
             customLoader={
               <div className="flex items-center justify-center py-12">

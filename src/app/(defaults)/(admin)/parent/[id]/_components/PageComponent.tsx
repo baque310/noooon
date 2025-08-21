@@ -92,6 +92,7 @@ import { ArrowIcons } from "@/components/common/icons/Actions";
 import moment from "moment";
 import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
 import DeleteModel from "@/components/Model/DeleteModel";
+import { ChangePasswordByAdminModel } from "@/components/Model/ChangePasswordByAdminModel";
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -136,6 +137,8 @@ const PageComponent = () => {
   };
 
   const [openDelete, setOpenDelete] = useState(false);
+    const [openChangePassword, setOpenChangePassword] = useState(false);
+  
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
       <BackButton title={t("ParentPage.ParentInformation")} />
@@ -202,6 +205,21 @@ const PageComponent = () => {
               title={t("ParentPage.update-info")}
               value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
             />
+              {data?.User && (
+                                      <ItemList
+                                        props={{
+                                          onClick: () => {
+                                            setOpenChangePassword(true);
+                                          },
+                                        }}
+                                        title={
+                                          <div className="text-[#000]">
+                                            {t("common.changePassword")}
+                                          </div>
+                                        }
+                                        value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
+                                      />
+                                    )}
             <ItemList
               props={{
                 onClick: () => {
@@ -226,6 +244,20 @@ const PageComponent = () => {
         isLoading={isLoadingParentRemove}
         name={data?.fullName ?? ""}
       />
+
+      {data?.User && (
+              <ChangePasswordByAdminModel
+                data={{
+                  username: data?.User?.username,
+                  userId: data?.User?.id,
+                }}
+                isAdmin
+                open={openChangePassword}
+                setOpen={setOpenChangePassword}
+              />
+            )}
+
+      
     </div>
   );
 };

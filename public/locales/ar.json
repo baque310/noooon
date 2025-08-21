@@ -52,6 +52,9 @@
   "male": "ذكر",
   "female": "انثى",
   "common": {
+    "action": "إجراء",
+    "changePassword": "تغيير كلمة المرور",
+    "changePassword-successfully": "تم تغيير كلمة المرور بنجاح",
     "images": "صور",
     "confirm": "تأكيد",
     "ExportExcel": "تصدير الى اكسل",

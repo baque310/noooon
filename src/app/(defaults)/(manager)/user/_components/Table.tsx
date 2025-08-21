@@ -14,10 +14,9 @@ import { useSelector } from "react-redux";
 
 import { useUserGetDataQuery } from "@/services/Manager/User";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
+import { ChangePasswordByAdminModel } from "@/components/Model/ChangePasswordByAdminModel";
 
-
-const TableComponent = () => { 
-
+const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -27,16 +26,17 @@ const TableComponent = () => {
     direction: "desc",
   });
 
-  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark =
+    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
   const [pageNumber, setPageNumber] = useState(Number(1));
 
   const [param, setParam] = useState<
     | {
-      isActive?: string;
-      search?: string;
-    }
+        isActive?: string;
+        search?: string;
+      }
     | undefined
   >();
   const params = {
@@ -78,13 +78,14 @@ const TableComponent = () => {
   const handleSelect = (value: any) => {
     if (value) {
       setParam({ ...param, isActive: value.value });
-
     } else {
       setParam({ ...param, isActive: undefined });
     }
   };
   return (
-    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
+    <div
+      className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}
+    >
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("UserPage.Users")}</div>
         <div className={"flex gap-3"}>
@@ -101,7 +102,7 @@ const TableComponent = () => {
             placeholder={t("common.status")}
             isLoading={false}
             props={{
-              onChange: handleSelect
+              onChange: handleSelect,
             }}
             options={[
               { label: t("common.isActive"), value: "TRUE" },
@@ -137,9 +138,17 @@ const TableComponent = () => {
                 render: ({ isActive }) => (
                   <div className="flex gap-2 px-[2px]">
                     {isActive == "TRUE" ? (
-                      <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("common.isActive")}</div>
+                      <div
+                        className={` rounded-md p-1 text-center bg-success/20 text-success `}
+                      >
+                        {t("common.isActive")}
+                      </div>
                     ) : (
-                      <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t("common.isNotActive")}</div>
+                      <div
+                        className={` rounded-md p-1 text-center bg-danger/50 text-danger`}
+                      >
+                        {t("common.isNotActive")}
+                      </div>
                     )}
                   </div>
                 ),
@@ -151,9 +160,17 @@ const TableComponent = () => {
                 render: ({ isDeleted }) => (
                   <div className="flex gap-2 px-[2px]">
                     {isDeleted == "TRUE" ? (
-                      <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("common.isDeleted")}</div>
+                      <div
+                        className={` rounded-md p-1 text-center bg-success/20 text-success `}
+                      >
+                        {t("common.isDeleted")}
+                      </div>
                     ) : (
-                      <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t("common.isNotDeleted")}</div>
+                      <div
+                        className={` rounded-md p-1 text-center bg-danger/50 text-danger`}
+                      >
+                        {t("common.isNotDeleted")}
+                      </div>
                     )}
                   </div>
                 ),
@@ -163,13 +180,31 @@ const TableComponent = () => {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
                 sortable: true,
-                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: ({ updatedAt }: any) =>
+                  updatedAt ? (
+                    <div>
+                      {moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
+                    </div>
+                  ) : null,
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
                 sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: ({ createdAt }: any) =>
+                  createdAt ? (
+                    <div>
+                      {moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}
+                    </div>
+                  ) : null,
+              },
+              {
+                title: t("common.action"),
+                accessor: "action",
+                sortable: true,
+                render: ({ id, username }: any) => (
+                  <ChangePasswordButton userId={id} username={username} />
+                ),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
@@ -194,3 +229,33 @@ const TableComponent = () => {
 };
 
 export default withRole(TableComponent, "user", ["read-any", "read-own"]);
+
+const ChangePasswordButton = ({
+  userId,
+  username,
+}: {
+  userId: string;
+  username: string;
+}) => {
+  const { t } = getTranslation();
+  const [openChangePassword, setOpenChangePassword] = useState(false);
+
+  return (
+    <>
+      <button
+        className="hover:bg-primary hover:text-white py-1 px-2 rounded-md"
+        onClick={() => setOpenChangePassword(true)}
+      >
+        {t("common.changePassword")}
+      </button>
+      <ChangePasswordByAdminModel
+        open={openChangePassword}
+        setOpen={setOpenChangePassword}
+        data={{
+          username,
+          userId,
+        }}
+      />
+    </>
+  );
+};

@@ -67,6 +67,9 @@ const ExcelAdd = () => {
             autoClose: 30000,
           });
         }
+        if (error.message) {
+          return toast.error(t(error.message), { autoClose: 30000 });
+        }
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
       toast.error(error, { autoClose: 30000 });
