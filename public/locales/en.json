@@ -340,6 +340,14 @@
     "this-section-connected-with-other-section": "This section is linked with another "
   },
   "StudentPage": {
+    "SuccessfullyAddedStudents": "Students added successfully",
+    "FailedEntries": "Failed entries",
+    "gender-must-be-male-or-female": "Gender must be male or female",
+    "phone1-already-exists": "Phone 1 already exists",
+    "phone2-already-exists": "Phone 2 already exists",
+    "successCount": "Success count",
+    "errorCount": "Error count",
+    "errors": "Errors",
     "disconnectParent": "Disconnect Student from Guardian",
     "IsDo-disconnectParentMessage": "Do you want to disconnect the student from the guardian?",
     "enter-parent-full-name": "Enter guardian full name",
@@ -399,7 +407,15 @@
     "gender": "Gender",
     "select-gender": "Select gender"
   },
-  "ParentPage": {
+"ParentPage": {
+    "SuccessfullyAddedParents": "Parents added successfully",
+    "FailedEntries": "Failed entries",
+    "gender-must-be-male-or-female": "Gender must be male or female",
+    "phone1-already-exists": "Phone 1 already exists",
+    "phone2-already-exists": "Phone 2 already exists",
+    "successCount": "Success count",
+    "errorCount": "Error count",
+    "errors": "Errors",
     "excel-upload": "Upload Excel File",
     "excel-upload-description": "Upload Excel file to add guardians",
     "upload-excel": "Upload Excel File",

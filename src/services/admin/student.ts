@@ -56,6 +56,18 @@ export interface AddMultiStudentPayload {
   }[];
 }
 
+export interface IStudentMultipleForExcel {
+  success: IStudent[];
+  errors: {
+    index: number
+    student: IStudent;
+    error: string;
+  }[];
+  totalProcessed: number
+  successCount: number
+  errorCount: number
+}
+
 export const Student = api.injectEndpoints({
   endpoints: (build) => ({
     StudentGetData: build.query<
@@ -142,7 +154,7 @@ export const Student = api.injectEndpoints({
       ],
     }),
     StudentMultiStudentsForExcel: build.mutation<
-      IStudent,
+      IStudentMultipleForExcel,
       {
         students: AddMultiStudentPayload[];
       }

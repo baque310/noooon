@@ -341,6 +341,14 @@
     "this-section-connected-with-other-section": "هذا الشبة  مرتبطة مع اخرى "
   },
   "StudentPage": {
+    "Successfully Added Students": "تمت إضافة الطلاب بنجاح",
+    "Failed Entries": "المدخلات الفاشلة",
+    "gender-must-be-male-or-female": "يجب أن يكون الجنس إما ذكرًا أو أنثى",
+    "phone1-already-exists": "الهاتف 1 موجود بالفعل",
+    "phone2-already-exists": "الهاتف 2 موجود بالفعل",
+    "successCount": "عدد الناجحين",
+    "errorCount": "عدد الأخطاء",
+    "errors": "الأخطاء",
     "disconnectParent": "فصل الطالب عن ولي الأمر",
     "IsDo-disconnectParentMessage": "هل تريد فصل  الطالب عن ولي الأمر؟",
     "enter-parent-full-name": "ادخل اسم ولي الأمر",
@@ -401,6 +409,14 @@
     "select-gender": "اختر نوع الجنس"
   },
   "ParentPage": {
+    " Successfully Added Parents": "تمت إضافة أولياء الأمور بنجاح",
+    "Failed Entries": "المدخلات الفاشلة",
+    "gender-must-be-male-or-female": "يجب أن يكون الجنس إما ذكرًا أو أنثى",
+    "phone1-already-exists": "الهاتف 1 موجود بالفعل",
+    "phone2-already-exists": "الهاتف 2 موجود بالفعل",
+    "successCount": "عدد الناجحين",
+    "errorCount": "عدد الأخطاء",
+    "errors": "الأخطاء",
     "excel-upload": "رفع ملف اكسل",
     "excel-upload-description": "رفع ملف اكسل لاضافة أولياء الأمور",
     "upload-excel": "رفع ملف اكسل",
@@ -473,7 +489,7 @@
     "enter-SchoolYear": "ادخل السنة الدراسية",
     "enrollmentDate": "تاريخ التسجيل",
     "schoolYear-already-exists": " بعض الطلاب مسجلين مسبقا في هذه السنة الدراسية"
-  }, 
+  },
   "TeacherPage": {
     "Gender": "الجنس",
     "select-Gender": "اختر نوع الجنس",

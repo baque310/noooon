@@ -44,6 +44,18 @@ export interface AddParentPayload {
 
 export type Gender = "Male" | "Female";
 
+export interface IParentMultipleForExcel {
+  success: IParent[];
+  errors: {
+    index: number;
+    parent: IParent;
+    error: string;
+  }[];
+  totalProcessed: number;
+  successCount: number;
+  errorCount: number;
+}
+
 export const Parent = api.injectEndpoints({
   endpoints: (build) => ({
     ParentGetData: build.query<
@@ -92,7 +104,7 @@ export const Parent = api.injectEndpoints({
       invalidatesTags: ["ParentCreate", "ParentGetDataById", "ParentGetData"],
     }),
     ParentMultipleForExcel: build.mutation<
-      IParent,
+      IParentMultipleForExcel,
       {
         parents: AddParentPayload[];
       }
