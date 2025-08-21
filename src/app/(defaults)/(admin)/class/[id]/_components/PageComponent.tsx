@@ -45,7 +45,7 @@ const PageComponent = () => {
                 return toast.error(t("ClassPage.this-class-connected-with-other-class"), { autoClose: 15000 });
             }
             if (error && error.message) {
-                return toast.error(error.message, { autoClose: 15000 });
+                return toast.error(t(error.message), { autoClose: 15000 });
             }
             toast.error(error, { autoClose: 15000 });
         }

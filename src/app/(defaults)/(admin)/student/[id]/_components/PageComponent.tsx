@@ -120,7 +120,7 @@ const PageComponent = () => {
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error && error.message) {
-        return toast.error(error.message, { autoClose: 15000 });
+        return toast.error(t(error.message), { autoClose: 15000 });
       }
       toast.error(error, { autoClose: 15000 });
     }
@@ -205,17 +205,15 @@ const PageComponent = () => {
               title={t("StudentPage.update-info")}
               value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
             />
-            {/* <ItemList
-                            props={{
-                                onClick: () => {
-                                    setOpenDelete(true)
-                                }
-                            }}
-                            title={<div className='text-danger'>
-                                {t('common.delete')}
-                            </div>}
-                            value={<ArrowIcons className='rtl:rotate-180 text-danger/50' />}
-                        /> */}
+            <ItemList
+              props={{
+                onClick: () => {
+                  setOpenDelete(true);
+                },
+              }}
+              title={<div className="text-danger">{t("common.delete")}</div>}
+              value={<ArrowIcons className="rtl:rotate-180 text-danger/50" />}
+            />
           </div>
         </>
       )}

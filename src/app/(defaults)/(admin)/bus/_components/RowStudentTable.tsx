@@ -35,7 +35,7 @@ const RowStudentTable = ({ data, id }: { data: any[], id: string }) => {
     } catch (error: any) {
       console.error('Failed to operation :', error);
       if (error && error.message) {
-        return toast.error(error.message, { autoClose: 15000 });
+        return toast.error(t(error.message), { autoClose: 15000 });
       }
       toast.error(error, { autoClose: 15000 });
     }

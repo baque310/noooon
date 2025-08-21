@@ -46,7 +46,7 @@ const PageComponent = () => {
                     return toast.error(t('SchedulePage.Schedule-is-related-with-other-models'), { autoClose: 15000 });
                     
                 }
-                return toast.error(error.message, { autoClose: 15000 });
+                return toast.error(t(error.message), { autoClose: 15000 });
             }
             toast.error(error, { autoClose: 15000 });
         }
