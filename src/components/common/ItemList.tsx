@@ -13,7 +13,7 @@ export const ItemList = ({ title, value, props, children, isCopyToClipboard }:
     const { t } = getTranslation();
     return <div
         {...props}
-        className={`available-item ${props?.className || ''}`}>
+        className={`available-item cursor-pointer ${props?.className || ''}`}>
         <div className="flex justify-between items-center py-3 px-4">
             <div className='font-medium text-gray-700 dark:text-gray-300 min-w-fit'>
                 {title}

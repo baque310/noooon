@@ -1021,5 +1021,6 @@
     "duplicate-attendance": "Duplicate attendance"
   },
   "Cannot delete student: Student has enrollment records": "Cannot delete student: Student has enrollment records",
-  "Cannot delete user: User has related records": "Cannot delete user: User has related records"
+  "Cannot delete user: User has related records": "Cannot delete user: User has related records",
+  "Cannot delete teacher: Teacher has assigned subjects": "Cannot delete teacher: Teacher has assigned subjects"
 }

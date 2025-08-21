@@ -1,119 +1,160 @@
-"use client"
+"use client";
 
-
-import React, { useState } from 'react';
-import { LoadingForm } from '@/components/Form/loadingForm';
-import { BackButton } from '@/components/common/BackButton';
-import { ItemList } from '@/components/common/ItemList';
+import React, { useState } from "react";
+import { LoadingForm } from "@/components/Form/loadingForm";
+import { BackButton } from "@/components/common/BackButton";
+import { ItemList } from "@/components/common/ItemList";
 
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazyTeacherGetDataByIdQuery, useTeacherRemoveMutation } from "@/services/admin/teacher";
+import {
+  useLazyTeacherGetDataByIdQuery,
+  useTeacherRemoveMutation,
+} from "@/services/admin/teacher";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { ArrowIcons } from '@/components/common/icons/Actions';
-import moment from 'moment';
-import { AttachmentsImage } from '@/components/common/LightboxImagePreview';
-import DeleteModel from '@/components/Model/DeleteModel';
+import { ArrowIcons } from "@/components/common/icons/Actions";
+import moment from "moment";
+import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
+import DeleteModel from "@/components/Model/DeleteModel";
 
 const PageComponent = () => {
-    const { t } = getTranslation();
-    const router = useRouter()
-    const params = useParams()
-    const { id } = params
-    const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery()
-    const [TeacherRemove, { isLoading: isLoadingTeacherRemove }] = useTeacherRemoveMutation()
+  const { t } = getTranslation();
+  const router = useRouter();
+  const params = useParams();
+  const { id } = params;
+  const [TeacherGetDataById, { currentData: data, isFetching }] =
+    useLazyTeacherGetDataByIdQuery();
+  const [TeacherRemove, { isLoading: isLoadingTeacherRemove }] =
+    useTeacherRemoveMutation();
 
-    useEffect(() => {
-        if (id) {
-            TeacherGetDataById({ id: String(id) })
-                .then((data) => {
-                    if (!data.data) {
-                        router.back();
-                    }
-                });
+  useEffect(() => {
+    if (id) {
+      TeacherGetDataById({ id: String(id) }).then((data) => {
+        if (!data.data) {
+          router.back();
         }
-    }, [id])
-    const handleRemove = async () => {
-        try {
-            await TeacherRemove({ id: String(id) }).unwrap();
-            toast.success(t('common.deleted-successfully'), { autoClose: 15000 });
-            router.back();
-        } catch (error: any) {
-            console.error('Failed to operation :', error);
-            if (error && error.message) {
-                return toast.error(t(error.message), { autoClose: 15000 });
-            }
-            toast.error(error, { autoClose: 15000 });
-        }
-    };
+      });
+    }
+  }, [id]);
+  const handleRemove = async () => {
+    try {
+      await TeacherRemove({ id: String(id) }).unwrap();
+      toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
+      router.back();
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
 
-    const [openDelete, setOpenDelete] = useState(false)
-    return (
-        <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
-            <BackButton title={t('TeacherPage.TeacherInformation')} />
+  const [openDelete, setOpenDelete] = useState(false);
+  return (
+    <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
+      <BackButton title={t("TeacherPage.TeacherInformation")} />
 
-            {
-                isFetching ? <LoadingForm /> : <>
-                    <AttachmentsImage className="my-2 h-44" src={String(data?.photo)} />
-                    <div className='CardDetails internalMenu '>
-                        <ItemList title={t('TeacherPage.fullName')} value={String(data?.fullName)} />
-                        <ItemList title={t('TeacherPage.Username')}
-                            value={String(data?.User?.username)}
-                            isCopyToClipboard
-                        />
-                        <ItemList title={t('TeacherPage.address')} value={String(data?.address ?? "")} />
-                        <ItemList title={t('TeacherPage.Gender')} value={data?.Gender ? t("TeacherPage." + (data?.Gender ?? "") as any) : ""} />
-                        <ItemList title={t('TeacherPage.phone1')} value={String(data?.phone1 ?? "")} />
-                        <ItemList title={t('TeacherPage.phone2')} value={String(data?.phone2 ?? "")} />
-                        <ItemList title={t('TeacherPage.email')} value={String(data?.email ?? "")} />
-                        <ItemList title={t('TeacherPage.birth')} value={data?.birth && moment(data?.birth).format("YYYY-MM-DD")} />
-                        <ItemList title={t('TeacherPage.hiringDate')} value={data?.hiringDate && moment(data?.hiringDate).format("YYYY-MM-DD")} />
-                        <ItemList title={t('common.updatedAt')} value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
-                        <ItemList title={t('common.createdAt')} value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
-                    </div>
-
-                    <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">
-                        {t('common.settings')}
-                    </div>
-                    <div className='CardDetails internalMenu '>
-                        <ItemList
-                            props={{
-                                onClick: () => {
-                                    router.push(`/teacher/createOrUpdate?id=${id}`)
-                                }
-                            }}
-                            title={t('TeacherPage.update-info')}
-                            value={<ArrowIcons className='rtl:rotate-180 text-[#000]/50' />}
-                        />
-                        {/* <ItemList
-                            props={{
-                                onClick: () => {
-                                    setOpenDelete(true)
-                                }
-                            }}
-                            title={<div className='text-danger'>
-                                {t('common.delete')}
-                            </div>}
-                            value={<ArrowIcons className='rtl:rotate-180 text-danger/50' />}
-                        /> */}
-                    </div>
-                </>
-            }
-
-            <DeleteModel
-                description={t('TeacherPage.Are-you-sure-you-want-to-delete-this-Teacher')}
-                title={t('TeacherPage.DeleteTeacher')}
-                open={openDelete}
-                setOpen={setOpenDelete}
-                handleRemove={handleRemove}
-                isLoading={isLoadingTeacherRemove}
-                name={data?.fullName ?? ""}
+      {isFetching ? (
+        <LoadingForm />
+      ) : (
+        <>
+          <AttachmentsImage className="my-2 h-44" src={String(data?.photo)} />
+          <div className="CardDetails internalMenu ">
+            <ItemList
+              title={t("TeacherPage.fullName")}
+              value={String(data?.fullName)}
             />
+            <ItemList
+              title={t("TeacherPage.Username")}
+              value={String(data?.User?.username)}
+              isCopyToClipboard
+            />
+            <ItemList
+              title={t("TeacherPage.address")}
+              value={String(data?.address ?? "")}
+            />
+            <ItemList
+              title={t("TeacherPage.Gender")}
+              value={
+                data?.Gender
+                  ? t(("TeacherPage." + (data?.Gender ?? "")) as any)
+                  : ""
+              }
+            />
+            <ItemList
+              title={t("TeacherPage.phone1")}
+              value={String(data?.phone1 ?? "")}
+            />
+            <ItemList
+              title={t("TeacherPage.phone2")}
+              value={String(data?.phone2 ?? "")}
+            />
+            <ItemList
+              title={t("TeacherPage.email")}
+              value={String(data?.email ?? "")}
+            />
+            <ItemList
+              title={t("TeacherPage.birth")}
+              value={data?.birth && moment(data?.birth).format("YYYY-MM-DD")}
+            />
+            <ItemList
+              title={t("TeacherPage.hiringDate")}
+              value={
+                data?.hiringDate &&
+                moment(data?.hiringDate).format("YYYY-MM-DD")
+              }
+            />
+            <ItemList
+              title={t("common.updatedAt")}
+              value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
+            />
+            <ItemList
+              title={t("common.createdAt")}
+              value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}
+            />
+          </div>
 
-        </div>
-    );
+          <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">
+            {t("common.settings")}
+          </div>
+          <div className="CardDetails internalMenu ">
+            <ItemList
+              props={{
+                onClick: () => {
+                  router.push(`/teacher/createOrUpdate?id=${id}`);
+                },
+              }}
+              title={t("TeacherPage.update-info")}
+              value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
+            />
+            <ItemList
+              props={{
+                onClick: () => {
+                  setOpenDelete(true);
+                },
+              }}
+              title={<div className="text-danger">{t("common.delete")}</div>}
+              value={<ArrowIcons className="rtl:rotate-180 text-danger/50" />}
+            />
+          </div>
+        </>
+      )}
+
+      <DeleteModel
+        description={t(
+          "TeacherPage.Are-you-sure-you-want-to-delete-this-Teacher"
+        )}
+        title={t("TeacherPage.DeleteTeacher")}
+        open={openDelete}
+        setOpen={setOpenDelete}
+        handleRemove={handleRemove}
+        isLoading={isLoadingTeacherRemove}
+        name={data?.fullName ?? ""}
+      />
+    </div>
+  );
 };
 
-export default PageComponent
-
+export default PageComponent;
