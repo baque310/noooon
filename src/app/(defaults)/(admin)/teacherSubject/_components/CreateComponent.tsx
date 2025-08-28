@@ -4,7 +4,6 @@ import React from "react";
 import { Form, Formik, FormikProps } from "formik";
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import Model from "@/components/Model";
-import { InputForm } from "@/components/Form/inputForm";
 import { LoadingForm } from "@/components/Form/loadingForm";
 import { getTranslation } from "@/ni18n/i18n";
 import {
@@ -18,13 +17,10 @@ import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { useStageGetDataQuery } from "@/services/admin/stage";
 import { SelectForm } from "@/components/Form/SelectForm";
-import { useSubjectGetDataQuery } from "@/services/admin/Subject";
 import { useStageSubjectGetDataQuery } from "@/services/admin/StageSubject";
 import { useTeacherGetDataQuery } from "@/services/admin/teacher";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
-import moment from "moment";
 import { useSettingGetDataQuery } from "@/services/Setting";
 export interface FormValues extends AddTeacherSubjectPayload {}
 const CreateComponent = ({
@@ -49,6 +45,8 @@ const CreateComponent = ({
   const { currentData: teacher, isFetching: isFetchingTeacher } =
     useTeacherGetDataQuery({
       search: searchTeacher,
+      skip: 1,
+      take: 100,
     });
 
   const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } =
@@ -160,8 +158,8 @@ const CreateComponent = ({
                       (e as any)?.value ?? ""
                     );
                   },
-                  onInputChange: (e) => {
-                    // setSearchSubject(e.target.value)
+                  onInputChange: (value) => {
+                    setSearchSubject(value);
                   },
                 }}
               />
@@ -183,6 +181,9 @@ const CreateComponent = ({
                   isClearable: true,
                   onChange: (e) => {
                     props.setFieldValue("teacherId", (e as any)?.value ?? "");
+                  },
+                  onInputChange: (value) => {
+                    setSearchTeacher(value);
                   },
                 }}
               />
