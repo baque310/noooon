@@ -31,6 +31,7 @@ import IconSetting from "../common/icons/sidebar/IconSetting";
 import IconStage from "../common/icons/sidebar/IconStage";
 import IconCaretsDown from "../common/icons/sidebar/icon-carets-down";
 import { getTitleApp } from "@/utils/getTitleApp";
+import IconChat from "../common/icons/sidebar/IconChat";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -582,7 +583,7 @@ const Sidebar = () => {
                       to={"/chat"}
                       label={t("sidebar.chats")}
                       icon={
-                        <IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                        <IconChat className="shrink-0 group-hover:!text-white group-active:!text-white" />
                       }
                     />
                     <MenuItem
