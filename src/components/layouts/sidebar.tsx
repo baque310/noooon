@@ -574,16 +574,28 @@ const Sidebar = () => {
                   setCurrentMenu={setCurrentMenu}
                 />
                 {!isManager && (
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"notification"}
-                    toggleMenu={toggleMenu}
-                    to={"/notification"}
-                    label={t("sidebar.notifications")}
-                    icon={
-                      <IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                    }
-                  />
+                  <>
+                    <MenuItem
+                      permission={["read-any", "read-own"]}
+                      resource={"chat"}
+                      toggleMenu={toggleMenu}
+                      to={"/chat"}
+                      label={t("sidebar.chats")}
+                      icon={
+                        <IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                      }
+                    />
+                    <MenuItem
+                      permission={["read-any", "read-own"]}
+                      resource={"notification"}
+                      toggleMenu={toggleMenu}
+                      to={"/notification"}
+                      label={t("sidebar.notifications")}
+                      icon={
+                        <IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                      }
+                    />
+                  </>
                 )}
               </ul>
             )}

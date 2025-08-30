@@ -354,6 +354,15 @@ export const api = createApi({
     "SuperTeacherAttendancesCreate",
     "SuperTeacherAttendancesUpdate",
     "SuperTeacherAttendancesRemove",
+
+    // Chat
+    "ChatGetData",
+    "ChatDirect",
+    "ChatMessage",
+    "ChatCreateSchoolStaffGroup",
+    "ChatCreateSubjectTeachersGroup",
+    "ChatCreateClassParentsGroup",
+    "ChatToggleGroupChat",
   ],
   endpoints: (build) => ({}),
 });

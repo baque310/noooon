@@ -46,6 +46,7 @@ export type PAGE_CODE =
   | "video"
   | "attendance"
   | "complaint"
+  | "chat"
   | "student_installment";
 
 export type PERMISSION =

@@ -136,6 +136,7 @@
     "user-information": "معلومات المستخدم"
   },
   "sidebar": {
+    "chats": "الدردشات",
     "superTeacherAttendances": "حضور وغياب ",
     "video": "الفيديوهات",
     "complaint": "الشكاوى",
@@ -1036,5 +1037,39 @@
   },
   "Cannot delete student: Student has enrollment records": "لا يمكن حذف الطالب: لدى الطالب سجلات تسجيل",
   "Cannot delete user: User has related records": "لا يمكن حذف المستخدم: لدى المستخدم سجلات مرتبطة",
-  "Cannot delete teacher: Teacher has assigned subjects": "لا يمكن حذف المعلم: لدى المعلم مواد معينة"
+  "Cannot delete teacher: Teacher has assigned subjects": "لا يمكن حذف المعلم: لدى المعلم مواد معينة",
+  "error": "خطأ",
+  "disconnected": "غير متصل",
+  "connecting": "جارٍ الاتصال",
+  "connected": "متصل",
+  "PARENT": "ولي الأمر",
+  "TEACHER": "المعلم",
+  "ChatPage": {
+    "direct": "مباشر",
+    "message": "رسالة",
+    "enter-message": "ادخل الرسالة",
+    "enter-student": "ادخل اسم الطالب",
+    "add-chat": "اضافة محادثة",
+    "choose-chat-type": "اختر نوع المحادثة",
+    "group": "مجموعة",
+    "target-user-type": "نوع المستخدم ",
+    "initialMessage": "الرسالة الأولية",
+    "select-target-user-type": "اختر نوع المستخدم ",
+    "teacher": "معلم",
+    "student": "طالب",
+    "parent": "ولي الأمر",
+    "enter-parent": "ادخل اسم ولي الأمر",
+    "enter-teacher": "ادخل اسم المعلم",
+    "enter-room": "ادخل اسم الغرفة",
+    "room": "الغرفة",
+    "create-school-staff-group": "إنشاء مجموعة موظفي المدرسة",
+    "create-class-parents-group": "إنشاء مجموعة أولياء أمور الصف",
+    "create-subject-teachers-group": "إنشاء مجموعة معلمي المادة",
+    "group-name": "اسم المجموعة",
+    "enter-group-name": "ادخل اسم المجموعة",
+    "description": "الوصف",
+    "enter-description": "ادخل الوصف",
+    "class" :"الصفوف",
+    "enter-class": "ادخل اسم الصف"
+  }
 }
