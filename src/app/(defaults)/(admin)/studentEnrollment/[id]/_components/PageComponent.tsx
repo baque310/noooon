@@ -317,6 +317,9 @@ const PageComponent = () => {
                       {t("InstallmentPage.paidDate")}
                     </th>
                     <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
+                      {t("InstallmentPage.paid")}
+                    </th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
                       {t("InstallmentPage.paymentMethod")}
                     </th>
                     <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
@@ -363,6 +366,7 @@ const PageComponent = () => {
                             ? moment(item.paidDate).format("YYYY-MM-DD")
                             : "-"}
                         </td>
+                        <td className="px-3 py-2">{t(item.isPaid)}</td>
                         <td className="px-3 py-2">
                           {item.paymentMethod ?? "-"}
                         </td>

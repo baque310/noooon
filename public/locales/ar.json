@@ -1122,8 +1122,11 @@
     "action": "الإجراء",
     "detailInstallments": "تفاصيل الأقساط",
     "enter-paymentMethod": "ادخل طريقة الدفع",
-    "paid":  "دفع المبلغ ",
+    "paid": "دفع المبلغ ",
     "status": "الحالة",
-    "enter-status": "ادخل الحالة"
-  }
+    "enter-status": "ادخل الحالة",
+    "unpaid": "غير مدفوع"
+  },
+  "unpaid": "غير مدفوع",
+  "paid": "مدفوع"
 }

@@ -15,7 +15,7 @@ export interface IInstallmentPayments {
   amount: number;
   dueDate: string;
   paidDate: string | null;
-  isPaid: boolean;
+  isPaid: Status;
   paymentMethod: PaymentMethod;
   notes: string | null;
   createdAt: string;
@@ -38,13 +38,10 @@ export enum PaymentMethod {
 
 export interface InstallmentPaymentStatusPayload {
   status?: Status;
-  notes: string;
 }
 export enum Status {
-  Pending = "pending",
   Paid = "paid",
-  Overdue = "overdue",
-  Cancelled = "cancelled",
+  Unpaid = "unpaid",
 }
 
 export const InstallmentPaymentPayment = api.injectEndpoints({
@@ -79,11 +76,10 @@ export const InstallmentPaymentPayment = api.injectEndpoints({
     }),
     InstallmentPaymentUpdateStatus: build.mutation<
       IInstallmentPayment,
-      { id: string; body: InstallmentPaymentStatusPayload }
+      { id: string; status: Status }
     >({
-      query: ({ body, id }) => ({
-        url: `installment-payment/${id}/status`,
-        body,
+      query: ({ status, id }) => ({
+        url: `installment-payment/paidStatus/${id}/${status}`,
         method: "PATCH",
       }),
       invalidatesTags: (res) =>

@@ -10,15 +10,12 @@ import { FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-import { InputForm } from "@/components/Form/inputForm";
 import {
   IInstallmentPayments,
   InstallmentPaymentStatusPayload,
-  Status,
   useInstallmentPaymentUpdateStatusMutation,
 } from "@/services/admin/installmentPayment";
 import { SelectForm } from "@/components/Form/SelectForm";
-import { CheckBoxForm } from "@/components/Form/CheckBoxForm";
 export interface FormValues extends InstallmentPaymentStatusPayload {}
 const ChangeStatusInstallmentComponent = ({
   open,
@@ -44,7 +41,7 @@ const ChangeStatusInstallmentComponent = ({
     try {
       await InstallmentPaymentUpdate({
         id: data.id,
-        body: values,
+        status: values.status!,
       }).unwrap();
 
       toast.success(t("common.changeStatus-successfully"), {
@@ -66,7 +63,11 @@ const ChangeStatusInstallmentComponent = ({
       toast.error(error, { autoClose: 30000 });
     }
   };
-  const schema = Yup.object().shape({});
+  const schema = Yup.object().shape({
+    status: Yup.string()
+      .oneOf(["paid", "unpaid"])
+      .required(t("common.this-field-is-required")),
+  });
 
   return (
     <Model title={t("common.changeStatus")} open={open} setOpen={setOpen}>
@@ -75,8 +76,7 @@ const ChangeStatusInstallmentComponent = ({
       ) : (
         <Formik<FormValues>
           initialValues={{
-            notes: data?.notes ?? "",
-            status: undefined,
+            status: data.isPaid ?? "unpaid",
           }}
           validationSchema={schema}
           onSubmit={(values, formikHelpers) => {
@@ -90,24 +90,21 @@ const ChangeStatusInstallmentComponent = ({
                 name={"status"}
                 title={t("InstallmentPage.status")}
                 placeholder={t("InstallmentPage.enter-status")}
-                options={Object.values(Status).map((status) => ({
-                  label: status,
-                  value: status,
-                }))}
+                options={[
+                  {
+                    label: t("unpaid"),
+                    value: "unpaid",
+                  },
+                  {
+                    label: t("paid"),
+                    value: "paid",
+                  },
+                ]}
                 props={{
                   isClearable: true,
                   onChange: (e: any) => {
-                    props.setFieldValue("status", e.value ?? "");
+                    props.setFieldValue("status", e?.value ?? "");
                   },
-                }}
-              />
-              <InputForm
-                formikProps={props}
-                name={"notes"}
-                title={t("InstallmentPage.notes")}
-                placeholder={t("InstallmentPage.enter-notes")}
-                props={{
-                  ...({ as: "textarea", rows: 4 } as any),
                 }}
               />
 
