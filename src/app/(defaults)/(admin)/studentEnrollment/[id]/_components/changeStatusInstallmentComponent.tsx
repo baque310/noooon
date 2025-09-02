@@ -76,7 +76,7 @@ const ChangeStatusInstallmentComponent = ({
       ) : (
         <Formik<FormValues>
           initialValues={{
-            status: data.isPaid ?? "unpaid",
+            status: data?.isPaid ?? "unpaid",
           }}
           validationSchema={schema}
           onSubmit={(values, formikHelpers) => {

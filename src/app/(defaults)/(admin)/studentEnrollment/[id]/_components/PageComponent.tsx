@@ -9,7 +9,7 @@ import { useLazyStudentEnrollmentGetDataByIdQuery } from "@/services/admin/stude
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
-import { RestoreIcons, UpdateIcons } from "@/components/common/icons/Actions";
+import { RestoreIcons } from "@/components/common/icons/Actions";
 import {
   IInstallmentPayments,
   useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery,
