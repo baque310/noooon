@@ -10,7 +10,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
 import { RestoreIcons, UpdateIcons } from "@/components/common/icons/Actions";
-import UpdateInstallmentComponent from "./UpdateInstallmentComponent";
 import {
   IInstallmentPayments,
   useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery,
@@ -380,11 +379,6 @@ const PageComponent = () => {
           </div>
         </>
       )}
-      <UpdateInstallmentComponent
-        data={selectedInstallment as any}
-        open={installmentModalOpen}
-        setOpen={setInstallmentModalOpen}
-      />
       <ChangeStatusInstallmentComponent
         data={selectedInstallment as any}
         open={changeInstallmentModalOpen}
