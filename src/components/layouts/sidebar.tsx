@@ -343,9 +343,9 @@ const Sidebar = () => {
                     {
                       number: 0,
                       label: t("sidebar.studentInstallment"),
-                      resource: "student_installment",
+                      resource: "installment",
                       permission: ["read-any", "read-own"],
-                      to: "studentInstallment",
+                      to: "installment",
                       isNoSub: true,
                       // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
                     },

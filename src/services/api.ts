@@ -363,6 +363,24 @@ export const api = createApi({
     "ChatCreateSubjectTeachersGroup",
     "ChatCreateClassParentsGroup",
     "ChatToggleGroupChat",
+
+    //Admin Discount
+    "AdminDiscountGetData",
+    "AdminDiscountGetDataById",
+    "AdminDiscountCreate",
+    "AdminDiscountUpdate",
+    "AdminDiscountRemove",
+
+    // Installment
+    "InstallmentGetData",
+    "InstallmentGetDataById",
+    "InstallmentCreate",
+    "InstallmentUpdate",
+    "InstallmentRemove",
+    // Installment Payment
+    "InstallmentPaymentGetDataByStudentEnrollmentId",
+    "InstallmentPaymentUpdate",
+    "InstallmentPaymentUpdateStatus",
   ],
   endpoints: (build) => ({}),
 });

@@ -76,7 +76,7 @@ const PageComponent = () => {
           .map((item: any) => {
             return {
               studentId: item?.studentId,
-              amount: Number(item.amount),
+              // amount: Number(item.amount),
             };
           }),
         schoolYearId: values.schoolYearId,

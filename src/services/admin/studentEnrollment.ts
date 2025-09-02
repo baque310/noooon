@@ -25,6 +25,10 @@ export interface IStudentEnrollment {
   Section: ISection;
   Student: IStudent;
   amount: number;
+
+  paidInstallments: number;
+  remainingInstallments: number;
+  numberOfPaidInstallments: number;
 }
 
 export interface GetStudentDataRequestParams extends GetDataRequestParams {
@@ -41,7 +45,7 @@ export interface AddStudentEnrollmentPayload {
   sectionId: string;
   students: {
     studentId: string;
-    amount: number;
+    // amount: number;
   }[];
 }
 export interface UpdateStudentEnrollmentPayload {
