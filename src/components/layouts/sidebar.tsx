@@ -349,6 +349,15 @@ const Sidebar = () => {
                       isNoSub: true,
                       // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
                     },
+                    {
+                      number: 0,
+                      label: t("sidebar.discount"),
+                      resource: "discount",
+                      permission: ["read-any", "read-own"],
+                      to: "discount",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
                   ]}
                   toggleMenu={toggleMenu}
                   setCurrentMenu={setCurrentMenu}
