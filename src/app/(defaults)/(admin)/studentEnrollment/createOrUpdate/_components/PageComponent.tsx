@@ -278,7 +278,7 @@ const PageComponent = () => {
                   <div className=" text-sm font-semibold text-black dark:text-white-dark  mb-2 ">
                     {t("StudentEnrollmentPage.Students-and-Amount")}
                   </div>
-                  <InputCurrencyMaskForm
+                  {/* <InputCurrencyMaskForm
                     formikProps={props}
                     name={"amountStudent"}
                     title={t("StudentEnrollmentPage.AmountStudent")}
@@ -298,7 +298,7 @@ const PageComponent = () => {
                         });
                       },
                     }}
-                  />
+                  /> */}
                   <InputForm
                     formikProps={props}
                     name={"searchStudent"}
@@ -360,7 +360,7 @@ const PageComponent = () => {
                               }}
                             />
 
-                            <InputCurrencyMaskForm
+                            {/* <InputCurrencyMaskForm
                               formikProps={props}
                               name={`students.${index}.amount`}
                               title={""}
@@ -377,7 +377,7 @@ const PageComponent = () => {
                                   {t("IQD")}
                                 </span>
                               }
-                            />
+                            /> */}
                           </div>
                         ))}
                       </div>
