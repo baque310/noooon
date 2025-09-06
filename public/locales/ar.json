@@ -739,6 +739,7 @@
     "update-info": "تعديل المواد حسب المدرسين ",
     "add": "اضافة",
     "update": "تعديل",
+    "teacher-subject-already-exist": "المادة موجودة بالفعل",
     "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
     "TeacherSubjectInformation": "معلومات المواد حسب المدرس ",
     "Are-you-sure-you-want-to-delete-this-TeacherSubject": "هل أنت متأكد أنك تريد حذف هذا المواد حسب المدرسين ؟",

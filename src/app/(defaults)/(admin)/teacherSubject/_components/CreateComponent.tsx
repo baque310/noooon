@@ -22,6 +22,12 @@ import { useStageSubjectGetDataQuery } from "@/services/admin/StageSubject";
 import { useTeacherGetDataQuery } from "@/services/admin/teacher";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { useSettingGetDataQuery } from "@/services/Setting";
+import {
+  useSectionGetDataByIdQuery,
+  useSectionGetDataQuery,
+} from "@/services/admin/section";
+import { useStageGetDataByIdQuery } from "@/services/admin/stage";
+import { CheckBoxForm } from "@/components/Form/CheckBoxForm";
 export interface FormValues extends AddTeacherSubjectPayload {}
 const CreateComponent = ({
   open,
@@ -42,6 +48,16 @@ const CreateComponent = ({
     useStageSubjectGetDataQuery({
       search: searchSubject,
     });
+  const [stageId, setStageId] = React.useState<string>();
+
+  const { currentData: Stages, isFetching: isFetchingStage } =
+    useStageGetDataByIdQuery(
+      {
+        id: stageId as string,
+      },
+      { skip: !stageId }
+    );
+
   const { currentData: teacher, isFetching: isFetchingTeacher } =
     useTeacherGetDataQuery({
       search: searchTeacher,
@@ -77,7 +93,15 @@ const CreateComponent = ({
           body: values,
         }).unwrap();
       } else {
-        await TeacherSubjectCreate(values).unwrap();
+        const newSection = values.sections.filter((item) => !!item.sectionId);
+        console.log({
+          ...values,
+          sections: newSection,
+        });
+        await TeacherSubjectCreate({
+          ...values,
+          sections: newSection,
+        }).unwrap();
       }
       toast.success(
         t(id ? "common.updated-successfully" : "common.added-successfully"),
@@ -96,6 +120,22 @@ const CreateComponent = ({
             t("TeacherSubjectPage.teacher-name-already-exist"),
             { autoClose: 30000 }
           );
+        }
+        if (
+          error.message ==
+          `"Resource already exists. More details: {\"modelName\":\"TeacherSubject\",\"target\":\"teacher_subjects_schoolYearId_stageSubjectId_teacherId_key\"}"`
+        ) {
+          return toast.error(
+            t("TeacherSubjectPage.teacher-subject-already-exist"),
+            {
+              autoClose: 30000,
+            }
+          );
+        }
+        if (error.message) {
+          return toast.error(JSON.stringify(error.message), {
+            autoClose: 30000,
+          });
         }
 
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
@@ -123,14 +163,39 @@ const CreateComponent = ({
             teacherId: data?.teacherId || "",
             stageSubjectId: data?.stageSubjectId || "",
             schoolYearId: SettingGetData?.currentSchoolYearId || "",
+            sections: [],
           }}
           validationSchema={schoolSchema}
           onSubmit={(values, formikHelpers) => {
             handleSubmit(values, formikHelpers, setOpen);
           }}
         >
-          {(props: FormikProps<any>) => (
+          {(props: FormikProps<FormValues>) => (
             <Form className={"flex flex-col gap-4"}>
+              <SelectForm
+                formikProps={props}
+                name={"schoolYearId"}
+                title={t("TeacherSubjectPage.SchoolYear")}
+                placeholder={t("TeacherSubjectPage.enter-SchoolYear")}
+                options={
+                  SchoolYear?.map((item) => {
+                    return {
+                      label: item.from + " - " + item.to,
+                      value: item.id,
+                    };
+                  }) ?? []
+                }
+                props={{
+                  isLoading: isFetchingSchoolYear,
+                  isClearable: true,
+                  onChange: (e) => {
+                    props.setFieldValue(
+                      "schoolYearId",
+                      (e as any)?.value ?? ""
+                    );
+                  },
+                }}
+              />
               <SelectForm
                 formikProps={props}
                 name={"stageSubjectId"}
@@ -153,10 +218,13 @@ const CreateComponent = ({
                   isClearable: true,
                   isLoading: isFetchingStageSubject,
                   onChange: (e) => {
-                    props.setFieldValue(
-                      "stageSubjectId",
-                      (e as any)?.value ?? ""
-                    );
+                    const value = (e as any)?.value ?? "";
+                    props.setFieldValue("stageSubjectId", value);
+                    const stageId = stageSubject?.find(
+                      (item) => item.id == props.values.stageSubjectId
+                    )?.stageId;
+                    setStageId(stageId);
+                    props.setFieldValue("sections", []);
                   },
                   onInputChange: (value) => {
                     setSearchSubject(value);
@@ -188,30 +256,48 @@ const CreateComponent = ({
                 }}
               />
 
-              <SelectForm
-                formikProps={props}
-                name={"schoolYearId"}
-                title={t("TeacherSubjectPage.SchoolYear")}
-                placeholder={t("TeacherSubjectPage.enter-SchoolYear")}
-                options={
-                  SchoolYear?.map((item) => {
-                    return {
-                      label: item.from + " - " + item.to,
-                      value: item.id,
-                    };
-                  }) ?? []
-                }
-                props={{
-                  isLoading: isFetchingSchoolYear,
-                  isClearable: true,
-                  onChange: (e) => {
-                    props.setFieldValue(
-                      "schoolYearId",
-                      (e as any)?.value ?? ""
-                    );
-                  },
-                }}
-              />
+              <div>{t("SectionPage.Section")}</div>
+
+              <div className="grid gap-4 grid-cols-4 items-center">
+                {Stages?.Class.find(
+                  (item) =>
+                    item.id ==
+                    stageSubject?.find(
+                      (item) => item.id == props.values.stageSubjectId
+                    )?.classId
+                )?.Section.map((item, index) => {
+                  return (
+                    <div key={index}>
+                      <CheckBoxForm
+                        key={index}
+                        formikProps={props}
+                        name={`sections.${index}.sectionId` as any}
+                        title={`${item.name}`}
+                        props={{
+                          className: "rtl",
+                          checked: props.values.sections.some(
+                            (it: any) => it?.sectionId == item.id
+                          ),
+                          value: item.id,
+                          onChange: (e) => {
+                            if (e.target.checked) {
+                              props.setFieldValue(
+                                `sections.${index}.sectionId`,
+                                item.id
+                              );
+                            } else {
+                              props.setFieldValue(
+                                `sections.${index}.sectionId`,
+                                ""
+                              );
+                            }
+                          },
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
 
               <div className="flex flex-row-reverse gap-2">
                 <ButtonForm
