@@ -49,14 +49,22 @@ const CreateComponent = ({
       search: searchSubject,
     });
   const [stageId, setStageId] = React.useState<string>();
+  const [classId, setClassId] = React.useState<string>();
+  const [shouldFetchStage, setShouldFetchStage] = React.useState(false);
 
   const { currentData: Stages, isFetching: isFetchingStage } =
     useStageGetDataByIdQuery(
       {
         id: stageId as string,
       },
-      { skip: !stageId }
+      { skip: !stageId || !shouldFetchStage }
     );
+
+  useEffect(() => {
+    if (stageId && classId) {
+      setShouldFetchStage(true);
+    }
+  }, [stageId, classId]);
 
   const { currentData: teacher, isFetching: isFetchingTeacher } =
     useTeacherGetDataQuery({
@@ -93,7 +101,7 @@ const CreateComponent = ({
           body: values,
         }).unwrap();
       } else {
-        const newSection = values.sections.filter((item) => !!item.sectionId);
+        const newSection = values.sections.filter((item) => !!item?.sectionId);
         console.log({
           ...values,
           sections: newSection,
@@ -215,15 +223,14 @@ const CreateComponent = ({
                   }) ?? []
                 }
                 props={{
-                  isClearable: true,
-                  isLoading: isFetchingStageSubject,
                   onChange: (e) => {
                     const value = (e as any)?.value ?? "";
                     props.setFieldValue("stageSubjectId", value);
-                    const stageId = stageSubject?.find(
-                      (item) => item.id == props.values.stageSubjectId
-                    )?.stageId;
-                    setStageId(stageId);
+                    const selected = stageSubject?.find(
+                      (item) => item.id == value
+                    );
+                    setStageId(selected?.stageId);
+                    setClassId(selected?.classId);
                     props.setFieldValue("sections", []);
                   },
                   onInputChange: (value) => {
@@ -259,44 +266,40 @@ const CreateComponent = ({
               <div>{t("SectionPage.Section")}</div>
 
               <div className="grid gap-4 grid-cols-4 items-center">
-                {Stages?.Class.find(
-                  (item) =>
-                    item.id ==
-                    stageSubject?.find(
-                      (item) => item.id == props.values.stageSubjectId
-                    )?.classId
-                )?.Section.map((item, index) => {
-                  return (
-                    <div key={index}>
-                      <CheckBoxForm
-                        key={index}
-                        formikProps={props}
-                        name={`sections.${index}.sectionId` as any}
-                        title={`${item.name}`}
-                        props={{
-                          className: "rtl",
-                          checked: props.values.sections.some(
-                            (it: any) => it?.sectionId == item.id
-                          ),
-                          value: item.id,
-                          onChange: (e) => {
-                            if (e.target.checked) {
-                              props.setFieldValue(
-                                `sections.${index}.sectionId`,
-                                item.id
-                              );
-                            } else {
-                              props.setFieldValue(
-                                `sections.${index}.sectionId`,
-                                ""
-                              );
-                            }
-                          },
-                        }}
-                      />
-                    </div>
-                  );
-                })}
+                {Stages?.Class.find((item) => item.id == classId)?.Section.map(
+                  (item, index) => {
+                    return (
+                      <div key={index}>
+                        <CheckBoxForm
+                          key={index}
+                          formikProps={props}
+                          name={`sections.${index}.sectionId` as any}
+                          title={`${item.name}`}
+                          props={{
+                            className: "rtl",
+                            checked: props.values.sections.some(
+                              (it: any) => it?.sectionId == item.id
+                            ),
+                            value: item.id,
+                            onChange: (e) => {
+                              if (e.target.checked) {
+                                props.setFieldValue(
+                                  `sections.${index}.sectionId`,
+                                  item.id
+                                );
+                              } else {
+                                props.setFieldValue(
+                                  `sections.${index}.sectionId`,
+                                  ""
+                                );
+                              }
+                            },
+                          }}
+                        />
+                      </div>
+                    );
+                  }
+                )}
               </div>
 
               <div className="flex flex-row-reverse gap-2">

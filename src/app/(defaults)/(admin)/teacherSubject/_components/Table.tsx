@@ -71,6 +71,8 @@ const TableComponent = () => {
     ...params,
   });
 
+  console.log(data);
+  
   useEffect(() => {
     if (SchoolYearData && Setting) {
       setParam(
