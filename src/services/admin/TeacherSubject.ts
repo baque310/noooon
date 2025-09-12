@@ -1,6 +1,7 @@
 import { api } from "@/services/api";
 import { GetDataRequestParams } from "../types/BaseType";
 import { ITeacher } from "./teacher";
+import { ISection } from "./section";
 
 export interface ITeacherSubject {
   id: string;
@@ -39,6 +40,7 @@ export interface ITeacherSubject {
     };
   };
   Teacher: ITeacher;
+  Section: ISection;
 }
 
 export interface AddTeacherSubjectPayload {
