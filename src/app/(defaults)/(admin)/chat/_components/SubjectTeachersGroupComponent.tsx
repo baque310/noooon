@@ -1,4 +1,11 @@
 "use client";
+import {
+  BookOpen,
+  User,
+  Rows3,
+  SquareStack,
+  GraduationCap,
+} from "lucide-react";
 
 import React from "react";
 import { Form, Formik, FormikProps } from "formik";
@@ -107,15 +114,89 @@ const SubjectTeachersGroupComponent = ({
               placeholder={t("ChatPage.enter-teacher")}
               options={
                 teachers?.map((teacher) => ({
-                  label:
-                    teacher.StageSubject.Subject.name +
-                    " (" +
-                    teacher.StageSubject.Class.name +
-                    " - " +
-                    t(teacher.StageSubject.Stage.name as any) +
-                    " - " +
-                    teacher.Teacher.fullName +
-                    ")",
+                  label: (
+                    <div
+                      className="group relative rounded-2xl border border-gray-200 bg-white/60 p-4 shadow-sm
+             hover:shadow-md hover:bg-white transition-all duration-200 focus-within:ring-2
+             focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-900/60 dark:hover:bg-gray-900"
+                      tabIndex={0}
+                      aria-label="Teacher subject card"
+                    >
+                      {/* Header: Subject */}
+                      <div className="flex items-start gap-2">
+                        <span
+                          className="mt-0.5 rounded-lg p-1.5 bg-blue-50 text-blue-600 
+                     dark:bg-blue-400/10 dark:text-blue-300"
+                        >
+                          <BookOpen className="size-4" aria-hidden />
+                        </span>
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                          {teacher.StageSubject.Subject.name}
+                        </h3>
+                      </div>
+
+                      {/* Teacher */}
+                      <div className="mt-2 flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                        <User className="size-4 opacity-80" aria-hidden />
+                        <span className="font-medium">
+                          {teacher.Teacher.fullName}
+                        </span>
+                      </div>
+
+                      {/* Meta badges */}
+                      <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+                        <span
+                          className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
+                 text-gray-700 ring-1 ring-gray-200
+                 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                          title="Section"
+                        >
+                          <Rows3 className="size-4 opacity-70" aria-hidden />
+                          {teacher.Section.name}
+                        </span>
+
+                        <span
+                          className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
+                 text-gray-700 ring-1 ring-gray-200
+                 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                          title="Class"
+                        >
+                          <SquareStack
+                            className="size-4 opacity-70"
+                            aria-hidden
+                          />
+                          {teacher.StageSubject.Class.name}
+                        </span>
+
+                        <span
+                          className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
+                 text-gray-700 ring-1 ring-gray-200
+                 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                          title="Stage"
+                        >
+                          <GraduationCap
+                            className="size-4 opacity-70"
+                            aria-hidden
+                          />
+                          {t(teacher.StageSubject.Stage.name as any)}
+                        </span>
+                      </div>
+
+                      {/* Optional: subtle divider & right-caret affordance */}
+                      <div
+                        className="pointer-events-none absolute inset-y-0 right-2 hidden items-center 
+                  opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="size-4 fill-current"
+                        >
+                          <path d="M9 18l6-6-6-6" />
+                        </svg>
+                      </div>
+                    </div>
+                  ),
+
                   value: teacher.id,
                 })) || []
               }

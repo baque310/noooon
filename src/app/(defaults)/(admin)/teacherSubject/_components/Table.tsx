@@ -278,6 +278,11 @@ const TableComponent = () => {
                 // sortable: true,
               },
               {
+                title: t("SectionPage.name"),
+                accessor: "StageSubject.Section.name",
+                // sortable: true,
+              },
+              {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
                 sortable: true,
