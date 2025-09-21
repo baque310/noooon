@@ -142,7 +142,7 @@ const PageComponent = () => {
       .min(1, t("common.must-min-is-one"))
       .required(t("common.this-field-is-required")),
     startDate: Yup.string().required(t("common.this-field-is-required")),
-    discountId: Yup.string().required(t("common.this-field-is-required")),
+    // discountId: Yup.string().required(t("common.this-field-is-required")),
     ...(!id && {
       studentEnrollmentIds: Yup.array()
         // must be at least one

@@ -51,7 +51,7 @@ const TableComponent = () => {
   const { isFetching, currentData: data } = useComplaintGetDataForAdminQuery({
     ...params,
   });
-
+  console.log(data);
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
     const value = e.target.value;
@@ -157,7 +157,48 @@ const TableComponent = () => {
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
             records={data?.data as any}
+            // إضافة الأعمدة الجديدة في مصفوفة columns داخل DataTable
+
             columns={[
+              // إضافة عمود اسم الطالب
+              {
+                title: t("ComplaintPage.studentName"),
+                accessor: "user.Student",
+                sortable: true,
+                render: ({ user }: any) => (
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    {user?.Student?.fullName ||
+                      user?.Parent?.fullName ||
+                      t("common.notAvailable")}
+                  </div>
+                ),
+              },
+              // إضافة عمود الصف
+              {
+                title: t("ComplaintPage.grade"), // أو "الصف"
+                accessor: "user.Student.grade",
+                sortable: true,
+                render: ({ user }: any) => (
+                  <div className="text-center">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                      {user?.Student?.grade || t("common.notAvailable")}
+                    </span>
+                  </div>
+                ),
+              },
+              // إضافة عمود الشعبة
+              {
+                title: t("ComplaintPage.section"), // أو "الشعبة"
+                accessor: "user.Student.section",
+                sortable: true,
+                render: ({ user }: any) => (
+                  <div className="text-center">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
+                      {user?.Student?.section || t("common.notAvailable")}
+                    </span>
+                  </div>
+                ),
+              },
               {
                 title: t("ComplaintPage.title"),
                 accessor: "title",
@@ -170,7 +211,7 @@ const TableComponent = () => {
               },
               {
                 title: t("ComplaintPage.description"),
-                accessor: "User.description",
+                accessor: "description",
               },
               {
                 title: t("ComplaintPage.approval_status"),
@@ -206,7 +247,6 @@ const TableComponent = () => {
                 sortable: true,
                 render: ({ reason }: any) => reason ?? "",
               },
-
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
