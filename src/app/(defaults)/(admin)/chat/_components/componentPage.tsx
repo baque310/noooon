@@ -11,20 +11,19 @@ import Avatar from "@/components/common/Avatar";
 import { getTranslation } from "@/ni18n/i18n";
 import CreateComponent from "./CreateComponent";
 import { AddIcons } from "@/components/common/icons/Actions";
+import { useSearchParams } from "next/navigation";
+import { DataTableSortStatus } from "mantine-datatable";
+import SelectFilter from "@/components/Filter/SelectFilter";
+import { useStageGetDataQuery } from "@/services/admin/stage";
 
 interface ComponentPageProps {
   token_refresh: string;
   token_access: string;
 }
 
-const ComponentPage: React.FC<ComponentPageProps> = ({
-  token_refresh,
-  token_access,
-}) => {
+const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_access }) => {
   const [isRegistered, setIsRegistered] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<
-    "disconnected" | "connecting" | "connected" | "error"
-  >("disconnected");
+  const [connectionStatus, setConnectionStatus] = useState<"disconnected" | "connecting" | "connected" | "error">("disconnected");
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
 
@@ -72,15 +71,63 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
       SocketService.off("disconnect");
       SocketService.disconnect();
     };
-  }, [
-    token_access,
-    adminData.userId,
-    adminData.schoolId,
-    handleRegistered,
-    handleConnect,
-  ]);
+  }, [token_access, adminData.userId, adminData.schoolId, handleRegistered, handleConnect]);
 
-  const { currentData, isLoading, error, isFetching } = useChatGetDataQuery();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || "";
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+    columnAccessor: "createdAt",
+    direction: "desc",
+  });
+  const [param, setParam] = useState<
+    | {
+        search?: string;
+        range?: string;
+        classId?: string;
+        sectionId?: string;
+        stageId?: string;
+      }
+    | undefined
+  >();
+  const params = {
+    skip: 1,
+    take: 100,
+    sortBy: sortStatus.columnAccessor,
+    sortDirection: sortStatus.direction,
+    ...(search && { search: search as string }),
+    ...param,
+  };
+  const { currentData, isLoading, error, isFetching } = useChatGetDataQuery({ ...params });
+
+  const handleSelectClass = (value: any) => {
+    if (value) {
+      setParam({ ...param, classId: value });
+    } else {
+      setParam({ ...param, classId: undefined, sectionId: undefined });
+    }
+  };
+  const handleSelectSection = (value: any) => {
+    if (value) {
+      setParam({ ...param, sectionId: value });
+    } else {
+      setParam({ ...param, sectionId: undefined });
+    }
+  };
+  const handleSelectStage = (value: any) => {
+    if (value) {
+      setParam({ ...param, stageId: value });
+    } else {
+      setParam({
+        ...param,
+        stageId: undefined,
+        classId: undefined,
+        sectionId: undefined,
+      });
+    }
+  };
+
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+
   const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
 
   const formatTimestamp = useCallback((timestamp: string | number | Date) => {
@@ -100,13 +147,65 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center justify-center">
             <h1 className="text-2xl font-bold text-gray-900">المحادثات</h1>
-            <button
-              className="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100"
-              onClick={() => setOpen(true)}
-            >
+            <button className="flex items-center gap-2 border border-gray-300 rounded-md px-4 py-2 hover:bg-gray-100" onClick={() => setOpen(true)}>
               إضافة محادثة
               <AddIcons className="size-5" />
             </button>
+
+            <div className={"flex justify-start max-md:flex-col gap-3"}>
+              <div className="flex items-center gap-2 border border-gray-300 rounded-sm hover:bg-gray-100">
+                <SelectFilter
+                  placement="bottom-end"
+                  title={t("StudentEnrollmentPage.StageName")}
+                  handleChange={handleSelectStage}
+                  options={
+                    StageData?.map((item) => {
+                      return {
+                        value: item.id,
+                        label: t(item.name as any),
+                      };
+                    }) ?? []
+                  }
+                />
+              </div>
+
+              {param?.stageId && (
+                <div className="flex items-center gap-2 border border-gray-300 rounded-sm hover:bg-gray-100">
+                  <SelectFilter
+                    title={t("SectionPage.ClassName")}
+                    placement="bottom-end"
+                    handleChange={handleSelectClass}
+                    options={
+                      StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                        return {
+                          value: item.id,
+                          label: t(item.name as any),
+                        };
+                      }) ?? []
+                    }
+                  />
+                </div>
+              )}
+              {param?.classId && (
+                <div className="flex items-center gap-2 border border-gray-300 rounded-sm hover:bg-gray-100">
+                  <SelectFilter
+                    title={t("StudentEnrollmentPage.SectionName")}
+                    placement="bottom-end"
+                    handleChange={handleSelectSection}
+                    options={
+                      StageData?.find((it) => it.id == param?.stageId)
+                        ?.Class.find((it) => it.id == param?.classId)
+                        ?.Section?.map((item) => {
+                          return {
+                            value: item.id,
+                            label: t(item.name as any),
+                          };
+                        }) ?? []
+                    }
+                  />
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <div
@@ -118,8 +217,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
                   : connectionStatus === "error"
                   ? "bg-red-100 text-red-800"
                   : "bg-gray-100 text-gray-800"
-              }`}
-            >
+              }`}>
               <div
                 className={`w-2 h-2 rounded-full mr-2 px-1 ${
                   connectionStatus === "connected"
@@ -142,9 +240,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
         {/* Chat List */}
         <div className="col-span-4 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-900">
-              قائمة المحادثات
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-900">قائمة المحادثات</h2>
           </div>
 
           <div className="overflow-y-auto h-full">
@@ -162,12 +258,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
                   <div
                     key={index}
                     onClick={() => setSelectedChat(chat)}
-                    className={`p-4 cursor-pointer transition-all duration-200 hover:bg-primary/10 ${
-                      selectedChat?.rocketChatId === chat.rocketChatId
-                        ? "bg-primary/10 "
-                        : ""
-                    }`}
-                  >
+                    className={`p-4 cursor-pointer transition-all duration-200 hover:bg-primary/10 ${selectedChat?.rocketChatId === chat.rocketChatId ? "bg-primary/10 " : ""}`}>
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0">
                         <Avatar photo={""} username={chat?.name} />
@@ -177,33 +268,21 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
                           <h3 className="text-sm font-medium text-gray-900 truncate">
                             {chat?.name}
                             <span className="inline-flex px-1 items-center ml-2">
-                              <span
-                                className={
-                                  chat?.isActive
-                                    ? "w-2 h-2 rounded-full bg-green-400"
-                                    : "w-2 h-2 rounded-full bg-gray-400"
-                                }
-                              ></span>
+                              <span className={chat?.isActive ? "w-2 h-2 rounded-full bg-green-400" : "w-2 h-2 rounded-full bg-gray-400"}></span>
                             </span>
                           </h3>
                         </div>
 
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs text-gray-500">
-                            {chat?.membersCount} عضو
-                          </span>
+                          <span className="text-xs text-gray-500">{chat?.membersCount} عضو</span>
                         </div>
 
                         {chat?.lastMessage && (
                           <div className="rounded-lg p-2 space-y-1">
-                            <p className="text-xs text-gray-600 truncate">
-                              {chat.lastMessage.content}
-                            </p>
+                            <p className="text-xs text-gray-600 truncate">{chat.lastMessage.content}</p>
                             <div className="flex items-center justify-between text-xs text-gray-500">
                               <span>{chat.lastMessage.senderName}</span>
-                              <span>
-                                {formatTimestamp(chat.lastMessage.createdAt)}
-                              </span>
+                              <span>{formatTimestamp(chat.lastMessage.createdAt)}</span>
                             </div>
                           </div>
                         )}
@@ -215,12 +294,8 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
             ) : (
               <div className="flex flex-col items-center justify-center h-64 text-center p-6">
                 <div className="text-4xl mb-4">💬</div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  لا توجد محادثات
-                </h3>
-                <p className="text-sm text-gray-500">
-                  ستظهر المحادثات هنا عند توفرها
-                </p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">لا توجد محادثات</h3>
+                <p className="text-sm text-gray-500">ستظهر المحادثات هنا عند توفرها</p>
               </div>
             )}
           </div>
@@ -239,18 +314,10 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
                       <h2 className="text-lg font-semibold text-gray-900">
                         {selectedChat.name}
                         <span className="inline-flex px-1 items-center ml-2">
-                          <span
-                            className={
-                              selectedChat?.isActive
-                                ? "w-2 h-2 rounded-full bg-green-400"
-                                : "w-2 h-2 rounded-full bg-gray-400"
-                            }
-                          ></span>
+                          <span className={selectedChat?.isActive ? "w-2 h-2 rounded-full bg-green-400" : "w-2 h-2 rounded-full bg-gray-400"}></span>
                         </span>
                       </h2>
-                      <p className="text-sm text-gray-600">
-                        {selectedChat.participantInfo}
-                      </p>
+                      <p className="text-sm text-gray-600">{selectedChat.participantInfo}</p>
                     </div>
                   </div>
                 </div>
@@ -293,12 +360,8 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <div className="text-4xl mb-4">🚫</div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        لا يوجد معرف غرفة
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        لا يمكن عرض المحادثة بدون معرف الغرفة
-                      </p>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">لا يوجد معرف غرفة</h3>
+                      <p className="text-sm text-gray-500">لا يمكن عرض المحادثة بدون معرف الغرفة</p>
                     </div>
                   </div>
                 )}
@@ -308,12 +371,8 @@ const ComponentPage: React.FC<ComponentPageProps> = ({
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <div className="text-6xl mb-6">💬</div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  اختر محادثة
-                </h2>
-                <p className="text-sm text-gray-500">
-                  اختر محادثة من القائمة لعرض التفاصيل والرسائل
-                </p>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">اختر محادثة</h2>
+                <p className="text-sm text-gray-500">اختر محادثة من القائمة لعرض التفاصيل والرسائل</p>
               </div>
             </div>
           )}

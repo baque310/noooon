@@ -25,8 +25,7 @@ const TableComponent = () => {
     direction: "desc",
   });
 
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
   const [pageNumber, setPageNumber] = useState(Number(1));
@@ -79,10 +78,10 @@ const TableComponent = () => {
     }
   };
 
+  // console.log(data?.data);
+
   return (
-    <div
-      className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       {/* Header Section */}
       <div className="mb-8">
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
@@ -90,12 +89,7 @@ const TableComponent = () => {
             {/* Title Section */}
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -105,12 +99,8 @@ const TableComponent = () => {
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                  {t("ComplaintPage.complaints")}
-                </h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">
-                  {t("ComplaintPage.manageAndViewComplaintInfo")}
-                </p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{t("ComplaintPage.complaints")}</h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">{t("ComplaintPage.manageAndViewComplaintInfo")}</p>
               </div>
             </div>
 
@@ -119,18 +109,8 @@ const TableComponent = () => {
               {/* Search Input */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
                 <input
@@ -166,11 +146,7 @@ const TableComponent = () => {
                 accessor: "user.Student",
                 sortable: true,
                 render: ({ user }: any) => (
-                  <div className="font-medium text-gray-900 dark:text-white">
-                    {user?.Student?.fullName ||
-                      user?.Parent?.fullName ||
-                      t("common.notAvailable")}
-                  </div>
+                  <div className="font-medium text-gray-900 dark:text-white">{user?.Student?.fullName || user?.Parent?.fullName || t("common.notAvailable")}</div>
                 ),
               },
               // إضافة عمود الصف
@@ -203,11 +179,7 @@ const TableComponent = () => {
                 title: t("ComplaintPage.title"),
                 accessor: "title",
                 sortable: true,
-                render: ({ title }: any) => (
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    {title}
-                  </div>
-                ),
+                render: ({ title }: any) => <div className="font-semibold text-gray-900 dark:text-white">{title}</div>,
               },
               {
                 title: t("ComplaintPage.description"),
@@ -220,33 +192,21 @@ const TableComponent = () => {
                 render: ({ approval_status }) => (
                   <div className="flex gap-2 px-[2px]">
                     {approval_status == "approved" ? (
-                      <div
-                        className={` rounded-md p-1 text-center bg-success/20 text-success `}
-                      >
-                        {t(approval_status as any)}
-                      </div>
+                      <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t(approval_status as any)}</div>
                     ) : approval_status == "pending" ? (
-                      <div
-                        className={` rounded-md p-1 text-center bg-warning/20 text-warning `}
-                      >
-                        {t(approval_status as any)}
-                      </div>
+                      <div className={` rounded-md p-1 text-center bg-warning/20 text-warning `}>{t(approval_status as any)}</div>
                     ) : (
-                      <div
-                        className={` rounded-md p-1 text-center bg-danger/50 text-danger`}
-                      >
-                        {t(approval_status as any)}
-                      </div>
+                      <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t(approval_status as any)}</div>
                     )}
                   </div>
                 ),
               },
-              {
-                title: t("ComplaintPage.reason"),
-                accessor: "reason",
-                sortable: true,
-                render: ({ reason }: any) => reason ?? "",
-              },
+              // {
+              //   title: t("ComplaintPage.reason"),
+              //   accessor: "reason",
+              //   sortable: true,
+              //   render: ({ reason }: any) => reason ?? "",
+              // },
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
@@ -254,12 +214,8 @@ const TableComponent = () => {
                 render: ({ updatedAt }: any) =>
                   updatedAt ? (
                     <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">
-                        {moment(updatedAt).format("MMM DD, YYYY")}
-                      </div>
-                      <div className="text-gray-400 dark:text-gray-500">
-                        {moment(updatedAt).format("hh:mm A")}
-                      </div>
+                      <div className="text-gray-500 dark:text-gray-400 font-medium">{moment(updatedAt).format("MMM DD, YYYY")}</div>
+                      <div className="text-gray-400 dark:text-gray-500">{moment(updatedAt).format("hh:mm A")}</div>
                     </div>
                   ) : null,
               },
@@ -270,12 +226,8 @@ const TableComponent = () => {
                 render: ({ createdAt }: any) =>
                   createdAt ? (
                     <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">
-                        {moment(createdAt).format("MMM DD, YYYY")}
-                      </div>
-                      <div className="text-gray-400 dark:text-gray-500">
-                        {moment(createdAt).format("hh:mm A")}
-                      </div>
+                      <div className="text-gray-500 dark:text-gray-400 font-medium">{moment(createdAt).format("MMM DD, YYYY")}</div>
+                      <div className="text-gray-400 dark:text-gray-500">{moment(createdAt).format("hh:mm A")}</div>
                     </div>
                   ) : null,
               },
@@ -292,12 +244,7 @@ const TableComponent = () => {
             noRecordsIcon={
               <div className="text-center py-12">
                 <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    className="w-12 h-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -306,12 +253,8 @@ const TableComponent = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {t("common.no-data")}
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  {t("common.noComplaintsFound")}
-                </p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t("common.no-data")}</h3>
+                <p className="text-gray-500 dark:text-gray-400">{t("common.noComplaintsFound")}</p>
               </div>
             }
             {...({ minHeight: 300 } as any)}
