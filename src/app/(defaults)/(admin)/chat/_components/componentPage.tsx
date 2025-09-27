@@ -339,7 +339,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
         </div>
 
         {/* Chat Details */}
-        <div className="col-span-8 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col">
+        <div className="col-span-8 overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col">
           {selectedChat ? (
             <>
               {/* Chat Header */}
