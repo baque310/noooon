@@ -3,14 +3,14 @@
 import { IChat, useChatGetDataQuery } from "@/services/admin/chat";
 import SocketService from "@/services/socket-io/SocketService";
 import { useSession } from "next-auth/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, useRef } from "react";
 
-import ChatRoom from "./ChatRoom";
+import ChatRoom, { ChatRoomHandle } from "./ChatRoom";
 import { LoadingForm } from "@/components/Form/loadingForm";
 import Avatar from "@/components/common/Avatar";
 import { getTranslation } from "@/ni18n/i18n";
 import CreateComponent from "./CreateComponent";
-import { AddIcons } from "@/components/common/icons/Actions";
+import { AddIcons, DeleteIcons } from "@/components/common/icons/Actions";
 import { useSearchParams } from "next/navigation";
 import { DataTableSortStatus } from "mantine-datatable";
 import SelectFilter from "@/components/Filter/SelectFilter";
@@ -26,6 +26,9 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
   const [connectionStatus, setConnectionStatus] = useState<"disconnected" | "connecting" | "connected" | "error">("disconnected");
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
+  const [selectedMessagesCount, setSelectedMessagesCount] = useState<number>(0);
+  const chatRoomRef = useRef<ChatRoomHandle | null>(null);
 
   const adminData = useMemo(
     () => ({
@@ -79,9 +82,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
     columnAccessor: "createdAt",
     direction: "desc",
   });
-  // const [Search, setSearch] = useState(search);
   const [localSearch, setLocalSearch] = useState(search);
-
   const [showSearch, setShowSearch] = useState(false);
 
   const [param, setParam] = useState<{
@@ -107,7 +108,6 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
   const { currentData, isLoading, error, isFetching } = useChatGetDataQuery({ ...params });
 
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
-  const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
 
   const formatTimestamp = useCallback((timestamp: string | number | Date) => {
     return new Date(timestamp).toLocaleString("ar", {
@@ -144,6 +144,17 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
       });
     }
   };
+
+  // handler called from ChatRoom to notify selection changes
+  const handleSelectionChange = useCallback((ids: string[]) => {
+    setSelectedMessagesCount(ids.length);
+  }, []);
+
+  // call ChatRoom's exposed delete method
+  const handleDeleteSelectedFromHeader = useCallback(async () => {
+    await chatRoomRef.current?.deleteSelected();
+    setSelectedMessagesCount(0);
+  }, []);
 
   const { t } = getTranslation();
 
@@ -332,21 +343,36 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
           {selectedChat ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center gap-3">
-                <Avatar photo={""} username={selectedChat.name} />
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    {selectedChat.name}
-                    <span className={`w-2 h-2 rounded-full ${selectedChat?.isActive ? "bg-green-400" : "bg-gray-400"}`} />
-                  </h2>
-                  <p className="text-sm text-gray-500">{selectedChat.participantInfo}</p>
+              <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center gap-3 justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar photo={""} username={selectedChat.name} />
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      {selectedChat.name}
+                      <span className={`w-2 h-2 rounded-full ${selectedChat?.isActive ? "bg-green-400" : "bg-gray-400"}`} />
+                    </h2>
+                    <p className="text-sm text-gray-500">{selectedChat.participantInfo}</p>
+                  </div>
                 </div>
+
+                {/* Selected Messages Bar moved to header */}
+                {selectedMessagesCount > 0 && (
+                  <div className="inline-flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700">الرسائل المحددة: {selectedMessagesCount}</span>
+                    <button
+                      onClick={handleDeleteSelectedFromHeader}
+                      className="w-10 h-10 rounded-lg flex items-center justify-center bg-red-500 hover:bg-red-600 text-white shadow transition"
+                      title="حذف الرسائل المحددة">
+                      <DeleteIcons />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Chat Room */}
               <div className="flex-1 overflow-hidden">
                 {selectedChat.rocketChatId ? (
-                  <ChatRoom roomId={selectedChat.rocketChatId} />
+                  <ChatRoom ref={chatRoomRef} roomId={selectedChat.rocketChatId} onSelectionChange={handleSelectionChange} />
                 ) : (
                   <div className="flex items-center justify-center h-full text-center">
                     <div>

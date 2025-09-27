@@ -117,6 +117,14 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatToggleGroupChat", "ChatGetData"] : []),
     }),
+
+    ChatMessageRemove: build.mutation<void, { messageId: string }>({
+      query: ({ messageId }) => ({
+        url: `admin/chat/message/${messageId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ChatMessageRemoved", "ChatGetData"],
+    }),
   }),
 });
 export const {
@@ -128,4 +136,5 @@ export const {
   useChatToggleGroupChatMutation,
   useChatDirectMutation,
   useChatMessageMutation,
+  useChatMessageRemoveMutation,
 } = Chat;
