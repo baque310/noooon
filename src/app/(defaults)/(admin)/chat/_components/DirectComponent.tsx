@@ -54,7 +54,7 @@ const DirectComponent = ({
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await ChatDirect({
-        initialMessage: values.initialMessage,
+        initialMessage: values.initialMessage || " ",
         targetUserId: values.targetUserId,
         targetUserType: values.targetUserType,
       }).unwrap();
@@ -78,7 +78,7 @@ const DirectComponent = ({
     }
   };
   const ChatSchema = Yup.object().shape({
-    initialMessage: Yup.string().required(t("common.this-field-is-required")),
+    // initialMessage: Yup.string().required(t("common.this-field-is-required")),
     targetUserId: Yup.string().required(t("common.this-field-is-required")),
     targetUserType: Yup.string().required(t("common.this-field-is-required")),
   });
