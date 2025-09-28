@@ -1,5 +1,5 @@
 import { api } from "@/services/api";
-import { BaseGetDataResponse } from "../types/BaseType";
+import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
 
 export interface IChat {
   id: string;
@@ -56,7 +56,7 @@ export interface AddChatCreateClassParentsGroupPayload {
 
 export const Chat = api.injectEndpoints({
   endpoints: (build) => ({
-    ChatGetData: build.query<IChatGetDataResponse, void>({
+    ChatGetData: build.query<IChatGetDataResponse, GetDataRequestParams>({
       query: (params) => ({
         url: `admin/chat/my-chats`,
         params,
@@ -81,41 +81,29 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatMessage", "ChatGetData"] : []),
     }),
-    ChatCreateSchoolStaffGroup: build.mutation<
-      IChat,
-      AddChatCreateSchoolStaffGroupPayload
-    >({
+    ChatCreateSchoolStaffGroup: build.mutation<IChat, AddChatCreateSchoolStaffGroupPayload>({
       query: (body) => ({
         url: `admin/chat/create-school-staff-group`,
         body,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatCreateSchoolStaffGroup", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatCreateSchoolStaffGroup", "ChatGetData"] : []),
     }),
-    ChatCreateSubjectTeachersGroup: build.mutation<
-      IChat,
-      AddChatCreateSubjectTeachersGroupPayload
-    >({
+    ChatCreateSubjectTeachersGroup: build.mutation<IChat, AddChatCreateSubjectTeachersGroupPayload>({
       query: (body) => ({
         url: `admin/chat/create-subject-teachers-group`,
         body,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatCreateSubjectTeachersGroup", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatCreateSubjectTeachersGroup", "ChatGetData"] : []),
     }),
-    ChatCreateClassParentsGroup: build.mutation<
-      IChat,
-      AddChatCreateClassParentsGroupPayload
-    >({
+    ChatCreateClassParentsGroup: build.mutation<IChat, AddChatCreateClassParentsGroupPayload>({
       query: (body) => ({
         url: `admin/chat/create-class-parents-group`,
         body,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatCreateClassParentsGroup", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatCreateClassParentsGroup", "ChatGetData"] : []),
     }),
     ChatToggleGroupChat: build.mutation<
       IChat,
@@ -127,8 +115,15 @@ export const Chat = api.injectEndpoints({
         url: `a/admin/chat/toggle-group-chat/${roomId}`,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatToggleGroupChat", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatToggleGroupChat", "ChatGetData"] : []),
+    }),
+
+    ChatMessageRemove: build.mutation<void, { messageId: string }>({
+      query: ({ messageId }) => ({
+        url: `admin/chat/message/${messageId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ChatMessageRemoved", "ChatGetData"],
     }),
   }),
 });
@@ -141,4 +136,5 @@ export const {
   useChatToggleGroupChatMutation,
   useChatDirectMutation,
   useChatMessageMutation,
+  useChatMessageRemoveMutation,
 } = Chat;

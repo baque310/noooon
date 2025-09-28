@@ -30,39 +30,31 @@ const DirectComponent = ({
 }) => {
   const { t } = getTranslation();
 
-  const [ChatDirect, { isLoading: isLoadingChatDirect }] =
-    useChatDirectMutation();
+  const [ChatDirect, { isLoading: isLoadingChatDirect }] = useChatDirectMutation();
 
   const [searchStudent, setSearchStudent] = React.useState("");
-  const { currentData: students, isFetching: isFetchingStudents } =
-    useStudentEnrollmentGetDataQuery({
-      skip: 1,
-      take: 100,
-      search: searchStudent,
-    });
+  const { currentData: students, isFetching: isFetchingStudents } = useStudentEnrollmentGetDataQuery({
+    skip: 1,
+    take: 100,
+    search: searchStudent,
+  });
   const [searchTeacher, setSearchTeacher] = React.useState("");
-  const { currentData: teachers, isFetching: isFetchingTeachers } =
-    useTeacherGetDataQuery({
-      skip: 1,
-      take: 100,
-      search: searchTeacher,
-    });
+  const { currentData: teachers, isFetching: isFetchingTeachers } = useTeacherGetDataQuery({
+    skip: 1,
+    take: 100,
+    search: searchTeacher,
+  });
   const [searchParent, setSearchParent] = React.useState("");
-  const { currentData: parents, isFetching: isFetchingParents } =
-    useParentGetDataQuery({
-      skip: 1,
-      take: 100,
-      search: searchParent,
-    });
+  const { currentData: parents, isFetching: isFetchingParents } = useParentGetDataQuery({
+    skip: 1,
+    take: 100,
+    search: searchParent,
+  });
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-    setOpen: any
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await ChatDirect({
-        initialMessage: values.initialMessage,
+        initialMessage: values.initialMessage || " ",
         targetUserId: values.targetUserId,
         targetUserType: values.targetUserType,
       }).unwrap();
@@ -71,22 +63,22 @@ const DirectComponent = ({
       resetForm();
       setOpen(false);
       setOpenChat(false);
-     } catch (error: any) {
-          console.error("Failed to operation :", error);
-          if (error) {
-            if (error.message) {
-              return toast.error(t(error.message), {
-                autoClose: 30000,
-              });
-            }
-    
-            return toast.error(JSON.stringify(error), { autoClose: 30000 });
-          }
-          toast.error(error, { autoClose: 30000 });
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error) {
+        if (error.message) {
+          return toast.error(t(error.message), {
+            autoClose: 30000,
+          });
         }
+
+        return toast.error(JSON.stringify(error), { autoClose: 30000 });
+      }
+      toast.error(error, { autoClose: 30000 });
+    }
   };
   const ChatSchema = Yup.object().shape({
-    initialMessage: Yup.string().required(t("common.this-field-is-required")),
+    // initialMessage: Yup.string().required(t("common.this-field-is-required")),
     targetUserId: Yup.string().required(t("common.this-field-is-required")),
     targetUserType: Yup.string().required(t("common.this-field-is-required")),
   });
@@ -102,8 +94,7 @@ const DirectComponent = ({
         validationSchema={ChatSchema}
         onSubmit={(values, formikHelpers) => {
           handleSubmit(values, formikHelpers, setOpen);
-        }}
-      >
+        }}>
         {(props: FormikProps<any>) => (
           <Form className={"flex flex-col gap-4"}>
             <SelectForm
@@ -194,13 +185,13 @@ const DirectComponent = ({
               />
             )}
 
-            <InputForm
+            {/* <InputForm
               formikProps={props}
               name={"initialMessage"}
               title={t("ChatPage.message")}
               placeholder={t("ChatPage.enter-message")}
               props={{ ...({ as: "textarea" } as any) }}
-            />
+            /> */}
 
             <div className="flex flex-row-reverse gap-2">
               <ButtonForm

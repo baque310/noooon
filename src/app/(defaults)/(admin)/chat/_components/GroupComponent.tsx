@@ -12,11 +12,7 @@ import { FormikHelpers } from "formik";
 
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import {
-  AddChatMessagePayload,
-  useChatGetDataQuery,
-  useChatMessageMutation,
-} from "@/services/admin/chat";
+import { AddChatMessagePayload, useChatGetDataQuery, useChatMessageMutation } from "@/services/admin/chat";
 export interface FormValues extends AddChatMessagePayload {
   studentId?: string;
 }
@@ -31,17 +27,15 @@ const GroupComponent = ({
 }) => {
   const { t } = getTranslation();
 
-  const [ChatMessage, { isLoading: isLoadingChatMessage }] =
-    useChatMessageMutation();
+  const [ChatMessage, { isLoading: isLoadingChatMessage }] = useChatMessageMutation();
 
-  const { currentData: chats, isFetching: isFetchingChats } =
-    useChatGetDataQuery();
+  const params = {
+    skip: 1,
+    take: 100,
+  };
+  const { currentData: chats, isFetching: isFetchingChats } = useChatGetDataQuery({ ...params });
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-    setOpen: any
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await ChatMessage({
         message: values.message,
@@ -83,8 +77,7 @@ const GroupComponent = ({
         validationSchema={ChatSchema}
         onSubmit={(values, formikHelpers) => {
           handleSubmit(values, formikHelpers, setOpen);
-        }}
-      >
+        }}>
         {(props: FormikProps<any>) => (
           <Form className={"flex flex-col gap-4"}>
             <SelectForm
@@ -107,13 +100,7 @@ const GroupComponent = ({
               }}
             />
 
-            <InputForm
-              formikProps={props}
-              name={"message"}
-              title={t("ChatPage.message")}
-              placeholder={t("ChatPage.enter-message")}
-              props={{ ...({ as: "textarea" } as any) }}
-            />
+            <InputForm formikProps={props} name={"message"} title={t("ChatPage.message")} placeholder={t("ChatPage.enter-message")} props={{ ...({ as: "textarea" } as any) }} />
 
             <div className="flex flex-row-reverse gap-2">
               <ButtonForm
