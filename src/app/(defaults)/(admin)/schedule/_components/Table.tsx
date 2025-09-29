@@ -240,7 +240,6 @@ const TableComponent = () => {
                             {
                               title: t("SchedulePage.timeTo"),
                               accessor: "timeTo",
-                              // render: ({ timeTo }: any) => (timeTo ? <div>{moment.utc(timeTo).format("hh:mm:ss A")}</div> : null),
                               render: (record: any) => (
                                 <>
                                   <div className="items-right flex gap-6">
