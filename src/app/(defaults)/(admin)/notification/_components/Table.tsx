@@ -3,10 +3,7 @@ import { DataTable } from "mantine-datatable";
 import React from "react";
 
 import moment from "moment";
-import {
-  RolePageAndActionBasedComponent,
-  withRole,
-} from "@/components/Provider/RolePageAndActionBasedComponent";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
@@ -28,8 +25,7 @@ const TableComponent = () => {
     direction: "desc",
   });
 
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
   const [pageNumber, setPageNumber] = useState(Number(1));
@@ -51,11 +47,9 @@ const TableComponent = () => {
     ...param,
   };
 
-  const { isFetching, currentData: data } = useNotificationGetDataForAdminQuery(
-    {
-      ...params,
-    }
-  );
+  const { isFetching, currentData: data } = useNotificationGetDataForAdminQuery({
+    ...params,
+  });
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -80,13 +74,9 @@ const TableComponent = () => {
     }
   };
   return (
-    <div
-      className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">
-          {t("NotificationPage.Notifications")}
-        </div>
+        <div className="text-xl uppercase ">{t("NotificationPage.Notifications")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
@@ -107,8 +97,7 @@ const TableComponent = () => {
                     } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/notification/createOrUpdate");
-                    }}
-                  >
+                    }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
                   </button>
@@ -124,9 +113,7 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
-              router.push(
-                `/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`
-              );
+              router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
             }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
@@ -149,17 +136,9 @@ const TableComponent = () => {
                 render: ({ isSeen }) => (
                   <div className="flex gap-2 px-[2px]">
                     {isSeen == "TRUE" ? (
-                      <div
-                        className={` rounded-md p-1 text-center bg-success/20 text-success `}
-                      >
-                        {t("NotificationPage.seen")}
-                      </div>
+                      <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("NotificationPage.seen")}</div>
                     ) : (
-                      <div
-                        className={` rounded-md p-1 text-center bg-warning/50 text-warning`}
-                      >
-                        {t("NotificationPage.notSeen")}
-                      </div>
+                      <div className={` rounded-md p-1 text-center bg-warning/50 text-warning`}>{t("NotificationPage.notSeen")}</div>
                     )}
                   </div>
                 ),
@@ -169,23 +148,13 @@ const TableComponent = () => {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
                 sortable: true,
-                render: ({ updatedAt }: any) =>
-                  updatedAt ? (
-                    <div>
-                      {moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
                 sortable: true,
-                render: ({ createdAt }: any) =>
-                  createdAt ? (
-                    <div>
-                      {moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
@@ -209,7 +178,4 @@ const TableComponent = () => {
   );
 };
 
-export default withRole(TableComponent, "notification", [
-  "read-any",
-  "read-own",
-]);
+export default withRole(TableComponent, "notification", ["read-any", "read-own"]);

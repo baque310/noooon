@@ -52,6 +52,7 @@
   "male": "ذكر",
   "female": "انثى",
   "common": {
+    "notAvailable": "غير متوفر",
     "action": "إجراء",
     "changePassword": "تغيير كلمة المرور",
     "changePassword-successfully": "تم تغيير كلمة المرور بنجاح",
@@ -833,6 +834,7 @@
   "timeFrom": "من الوقت",
   "timeTo": "الى الوقت",
   "days": "الايام",
+  "copy-schedule-to-other-days": "نسخ الجدول الى ايام اخرى",
   "SectionSchedules": "جدول الدروس حسب المواد",
   "NotificationPage": {
     "allowedAllStudents": " جميع الطلاب",
@@ -861,6 +863,9 @@
   "ComplaintPage": {
     "changeStatus-complaints": "تغيير حالة الشكاوى",
     "complaints": "الشكاوى",
+    "studentName": "اسم الطالب",
+    "grade": "الصف",
+    "section": "الشعبة",
     "manageAndViewComplaintInfo": "إدارة وعرض معلومات الشكاوى",
     "approved": "موافق عليه",
     "rejected": "مرفوض",

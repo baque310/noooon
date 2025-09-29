@@ -3,10 +3,7 @@ import { DataTable } from "mantine-datatable";
 import React from "react";
 
 import moment from "moment";
-import {
-  RolePageAndActionBasedComponent,
-  withRole,
-} from "@/components/Provider/RolePageAndActionBasedComponent";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
@@ -28,8 +25,7 @@ const TableComponent = () => {
     direction: "desc",
   });
 
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
   const [pageNumber, setPageNumber] = useState(Number(1));
@@ -79,13 +75,9 @@ const TableComponent = () => {
   };
 
   return (
-    <div
-      className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">
-          {t("InstallmentPage.installments")}
-        </div>
+        <div className="text-xl uppercase ">{t("InstallmentPage.installments")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
@@ -106,8 +98,7 @@ const TableComponent = () => {
                     } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/installment/createOrUpdate");
-                    }}
-                  >
+                    }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
                   </button>
@@ -133,9 +124,7 @@ const TableComponent = () => {
                 title: t("InstallmentPage.StudentFullName"),
                 accessor: "title",
                 sortable: true,
-                render: ({ StudentEnrollment }: any) => (
-                  <div>{StudentEnrollment.Student.fullName}</div>
-                ),
+                render: ({ StudentEnrollment }: any) => <div>{StudentEnrollment.Student.fullName}</div>,
               },
               {
                 title: t("InstallmentPage.title"),
@@ -146,8 +135,7 @@ const TableComponent = () => {
                 title: t("StudentInstallmentPage.SchoolYear"),
                 accessor: "SchoolYear",
                 // sortable: true,
-                render: ({ SchoolYear }: any) =>
-                  SchoolYear.from + " - " + SchoolYear.to,
+                render: ({ SchoolYear }: any) => SchoolYear.from + " - " + SchoolYear.to,
               },
               {
                 title: t("InstallmentPage.numberOfInstallments"),
@@ -162,9 +150,7 @@ const TableComponent = () => {
                   totalAmount && (
                     <div className="flex gap-1">
                       {totalAmount?.toLocaleString()}
-                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">
-                        {t("IQD")}
-                      </span>
+                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">{t("IQD")}</span>
                     </div>
                   ),
               },
@@ -176,9 +162,7 @@ const TableComponent = () => {
                   installmentAmount && (
                     <div className="flex gap-1">
                       {installmentAmount?.toLocaleString()}
-                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">
-                        {t("IQD")}
-                      </span>
+                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">{t("IQD")}</span>
                     </div>
                   ),
               },
@@ -191,9 +175,7 @@ const TableComponent = () => {
                   discountAmount && (
                     <div className="flex gap-1">
                       {discountAmount?.toLocaleString()}
-                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">
-                        {t("IQD")}
-                      </span>
+                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">{t("IQD")}</span>
                     </div>
                   ),
               },
@@ -205,9 +187,7 @@ const TableComponent = () => {
                   finalTotalAmount && (
                     <div className="flex gap-1">
                       {finalTotalAmount?.toLocaleString()}
-                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">
-                        {t("IQD")}
-                      </span>
+                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">{t("IQD")}</span>
                     </div>
                   ),
               },
@@ -216,24 +196,13 @@ const TableComponent = () => {
                 accessor: "isActive",
                 sortable: true,
                 render: ({ isActive }: any) =>
-                  isActive ? (
-                    <div className="text-green-500">{t("common.isActive")}</div>
-                  ) : (
-                    <div className="text-red-500">
-                      {t("common.isNotActive")}
-                    </div>
-                  ),
+                  isActive ? <div className="text-green-500">{t("common.isActive")}</div> : <div className="text-red-500">{t("common.isNotActive")}</div>,
               },
               {
                 title: t("InstallmentPage.startDate"),
                 accessor: "startDate",
                 sortable: true,
-                render: ({ startDate }: any) =>
-                  startDate ? (
-                    <div>
-                      {moment(startDate).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ startDate }: any) => (startDate ? <div>{moment(startDate).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
               {
                 title: t("InstallmentPage.notes"),
@@ -245,23 +214,13 @@ const TableComponent = () => {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
                 sortable: true,
-                render: ({ updatedAt }: any) =>
-                  updatedAt ? (
-                    <div>
-                      {moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
                 sortable: true,
-                render: ({ createdAt }: any) =>
-                  createdAt ? (
-                    <div>
-                      {moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
@@ -285,7 +244,4 @@ const TableComponent = () => {
   );
 };
 
-export default withRole(TableComponent, "installment", [
-  "read-any",
-  "read-own",
-]);
+export default withRole(TableComponent, "installment", ["read-any", "read-own"]);
