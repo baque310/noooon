@@ -1,9 +1,4 @@
-import {
-  BaseQueryFn,
-  createApi,
-  FetchArgs,
-  fetchBaseQuery,
-} from "@reduxjs/toolkit/query/react";
+import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const BASE_URL = process.env.BASE_URL;
 import UniversalCookie from "universal-cookie";
@@ -42,11 +37,7 @@ const axiosBaseQuery =
       signOut();
     }
 
-    if (
-      result.data &&
-      result.data.token &&
-      (result.data.token as Authentication[]).length > 0
-    ) {
+    if (result.data && result.data.token && (result.data.token as Authentication[]).length > 0) {
       const cookies = new UniversalCookie();
       // cookies.
       result.data.token.forEach((token: any) => {
@@ -90,16 +81,9 @@ const baseQuery = fetchBaseQuery({
     return headers;
   },
 });
-const baseQueryWithReAuth = async (
-  args: string | FetchArgs,
-  api: any,
-  extraOptions: any
-) => {
+const baseQueryWithReAuth = async (args: string | FetchArgs, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
-  if (
-    (result?.error as any)?.originalStatus === 200 &&
-    ((args as any)?.method == "DELETE" || (args as any)?.method == "PATCH")
-  ) {
+  if ((result?.error as any)?.originalStatus === 200 && ((args as any)?.method == "DELETE" || (args as any)?.method == "PATCH")) {
     return {
       meta: result.meta,
       data: [],
@@ -363,6 +347,7 @@ export const api = createApi({
     "ChatCreateSubjectTeachersGroup",
     "ChatCreateClassParentsGroup",
     "ChatToggleGroupChat",
+    "ChatMessageRemoved",
 
     //Admin Discount
     "AdminDiscountGetData",

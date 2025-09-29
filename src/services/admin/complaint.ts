@@ -1,6 +1,5 @@
 import { api, BASE_URL } from "@/services/api";
 import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
-
 export interface IComplaint {
   id: string;
   title: string;
@@ -24,8 +23,13 @@ export interface IComplaint {
     Student: {
       id: string;
       fullName: string;
-    };
-    Parent: null;
+      grade: string;
+      section: string;
+    } | null;
+    Parent: {
+      id: string;
+      fullName: string;
+    } | null;
     School: {
       id: string;
       name: string;
@@ -38,7 +42,6 @@ export interface ComplaintChangeStatusPayload {
   status: string;
   reason: string;
 }
-
 export const Complaint = api.injectEndpoints({
   endpoints: (build) => ({
     ComplaintGetDataForManager: build.query<

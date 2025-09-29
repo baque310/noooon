@@ -3,22 +3,11 @@ import { DataTable } from "mantine-datatable";
 import React, { use, useEffect, useMemo } from "react";
 
 import moment from "moment";
-import {
-  RolePageAndActionBasedComponent,
-  withRole,
-} from "@/components/Provider/RolePageAndActionBasedComponent";
-import {
-  AddIcons,
-  ArrowIcons,
-  DeleteIcons,
-  UpdateIcons,
-} from "@/components/common/icons/Actions";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import { AddIcons, ArrowIcons, DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import {
-  useStudentEnrollmentGetDataQuery,
-  useStudentEnrollmentRemoveMutation,
-} from "@/services/admin/studentEnrollment";
+import { useStudentEnrollmentGetDataQuery, useStudentEnrollmentRemoveMutation } from "@/services/admin/studentEnrollment";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -46,16 +35,12 @@ const TableComponent = () => {
     direction: "desc",
   });
   const [selectedRecords, setSelectedRecords] = useState([]);
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
-  const { currentData: Setting, isFetching: isFetchingSetting } =
-    useSettingGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
-  const { isFetching: isFetchingStageData, currentData: StageData } =
-    useStageGetDataQuery();
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } =
-    useSchoolYearGetDataQuery();
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
   const [param, setParam] = useState<
     | {
@@ -90,11 +75,10 @@ const TableComponent = () => {
     [pageNumber, sortStatus, search, param]
   );
 
-  const { isFetching: isFetching, currentData: data } =
-    useStudentEnrollmentGetDataQuery({
-      ...params,
-      skip: pageNumber,
-    });
+  const { isFetching: isFetching, currentData: data } = useStudentEnrollmentGetDataQuery({
+    ...params,
+    skip: pageNumber,
+  });
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -117,14 +101,8 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-  const isRtl =
-    useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl"
-      ? true
-      : false;
-  const [
-    StudentEnrollmentRemove,
-    { isLoading: isLoadingStudentEnrollmentRemove },
-  ] = useStudentEnrollmentRemoveMutation();
+  const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl" ? true : false;
+  const [StudentEnrollmentRemove, { isLoading: isLoadingStudentEnrollmentRemove }] = useStudentEnrollmentRemoveMutation();
 
   const handleRemove = async () => {
     try {
@@ -179,13 +157,9 @@ const TableComponent = () => {
   console.log(data);
 
   return (
-    <div
-      className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">
-          {t("StudentEnrollmentPage.studentEnrollment")}
-        </div>
+        <div className="text-xl uppercase ">{t("StudentEnrollmentPage.studentEnrollment")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
@@ -222,21 +196,15 @@ const TableComponent = () => {
                       } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border  ltr:rounded-r-none rtl:rounded-l-none`}
                       onClick={() => {
                         router.push("/studentEnrollment/createOrUpdate");
-                      }}
-                    >
+                      }}>
                       {t("common.add")}
                     </button>
                     <div className="relative w-0 h-0">
                       <span
                         className={`${
-                          selectedRecords.length > 0
-                            ? "bg-danger"
-                            : "bg-transparent text-transparent"
-                        } badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}
-                      >
-                        {selectedRecords.length > 0
-                          ? selectedRecords.length
-                          : ""}
+                          selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
+                        } badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
+                        {selectedRecords.length > 0 ? selectedRecords.length : ""}
                       </span>
                     </div>
                     <div className="dropdown">
@@ -245,50 +213,32 @@ const TableComponent = () => {
                         btnClassName="dropdown-toggle h-full transition-all"
                         button={
                           <button
-                            className={`relative h-full ltr:rounded-l-none rtl:rounded-r-none flex justify-center gap-1 items-center  border-primary/70 text-primary hover:scale-[1.01] transition-transform py-1 px-2    rounded border  `}
-                          >
+                            className={`relative h-full ltr:rounded-l-none rtl:rounded-r-none flex justify-center gap-1 items-center  border-primary/70 text-primary hover:scale-[1.01] transition-transform py-1 px-2    rounded border  `}>
                             {t("common.options")}
                             <ArrowIcons className="h-4 w-4 rotate-90" />
                           </button>
-                        }
-                      >
+                        }>
                         <ul className="!min-w-[170px]">
                           <li>
                             <button
                               disabled={selectedRecords.length == 0}
-                              className={` ${
-                                selectedRecords.length > 0
-                                  ? ""
-                                  : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "
-                              } flex justify-between`}
+                              className={` ${selectedRecords.length > 0 ? "" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "} flex justify-between`}
                               onClick={() => {
                                 setOpen(true);
                               }}
-                              type="button"
-                            >
+                              type="button">
                               {t("common.update")}
                               <UpdateIcons className="h-4 w-4" />
                             </button>
                           </li>
-                          <li
-                            className={`${
-                              selectedRecords.length > 0
-                                ? "text-danger hover:bg-danger/20 hover:!text-danger"
-                                : ""
-                            }`}
-                          >
+                          <li className={`${selectedRecords.length > 0 ? "text-danger hover:bg-danger/20 hover:!text-danger" : ""}`}>
                             <button
                               disabled={selectedRecords.length == 0}
                               onClick={() => {
                                 setOpenDelete(true);
                               }}
                               type="button"
-                              className={`${
-                                selectedRecords.length > 0
-                                  ? "!text-danger"
-                                  : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "
-                              }  flex justify-between`}
-                            >
+                              className={`${selectedRecords.length > 0 ? "!text-danger" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "}  flex justify-between`}>
                               {t("common.delete")}
                               <DeleteIcons className="h-4 w-4" />
                             </button>
@@ -325,14 +275,12 @@ const TableComponent = () => {
             placement="bottom-end"
             handleChange={handleSelectClass}
             options={
-              StageData?.find((it) => it.id == param?.stageId)?.Class?.map(
-                (item) => {
-                  return {
-                    value: item.id,
-                    label: t(item.name as any),
-                  };
-                }
-              ) ?? []
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
             }
           />
         )}
@@ -373,8 +321,7 @@ const TableComponent = () => {
                 title: t("StudentEnrollmentPage.SchoolYear"),
                 accessor: "SchoolYear",
                 // sortable: true,
-                render: ({ SchoolYear }: any) =>
-                  SchoolYear.from + " - " + SchoolYear.to,
+                render: ({ SchoolYear }: any) => SchoolYear.from + " - " + SchoolYear.to,
               },
               {
                 title: t("StudentEnrollmentPage.StageName"),
@@ -395,9 +342,7 @@ const TableComponent = () => {
                   amount && (
                     <div className="flex gap-1">
                       {amount?.toLocaleString()}
-                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">
-                        {t("IQD")}
-                      </span>
+                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">{t("IQD")}</span>
                     </div>
                   ),
               },
@@ -427,23 +372,13 @@ const TableComponent = () => {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
                 sortable: true,
-                render: ({ updatedAt }: any) =>
-                  updatedAt ? (
-                    <div>
-                      {moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
                 sortable: true,
-                render: ({ createdAt }: any) =>
-                  createdAt ? (
-                    <div>
-                      {moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
@@ -470,15 +405,9 @@ const TableComponent = () => {
           />
         )}
       </div>
-      <UpdateComponent
-        open={open}
-        setOpen={setOpen}
-        data={selectedRecords.map((record: any) => record.id)}
-      />
+      <UpdateComponent open={open} setOpen={setOpen} data={selectedRecords.map((record: any) => record.id)} />
       <DeleteModel
-        description={t(
-          "StudentEnrollmentPage.Are-you-sure-you-want-to-delete-this-StudentEnrollment"
-        )}
+        description={t("StudentEnrollmentPage.Are-you-sure-you-want-to-delete-this-StudentEnrollment")}
         title={t("StudentEnrollmentPage.DeleteStudentEnrollment")}
         open={openDelete}
         setOpen={setOpenDelete}
@@ -490,7 +419,4 @@ const TableComponent = () => {
   );
 };
 
-export default withRole(TableComponent, "student_enrollment", [
-  "read-any",
-  "read-own",
-]);
+export default withRole(TableComponent, "student_enrollment", ["read-any", "read-own"]);
