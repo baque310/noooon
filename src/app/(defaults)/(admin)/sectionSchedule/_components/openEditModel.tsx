@@ -1,16 +1,24 @@
-"use client";
-
-import React, { FC } from "react";
-import { LoadingForm } from "@/components/Form/loadingForm";
-import { BackButton } from "@/components/common/BackButton";
-
-import { getTranslation, TranslationKeys } from "@/ni18n/i18n";
-import { useLazySectionScheduleGetDataByIdQuery, useSectionScheduleCreateMutation, useSectionScheduleUpdateMutation } from "@/services/admin/SectionSchedule";
-import { FieldArray, FormikHelpers } from "formik";
+import { ButtonForm } from "@/components/Form/ButtonForm";
+import { SelectForm } from "@/components/Form/SelectForm";
+import SideModel from "@/components/Model/SideModel";
+import { getTranslation } from "@/ni18n/i18n";
+import { Days } from "@/services/types/BaseType";
+import { FieldArray, Form, Formik, FormikHelpers, FormikProps } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import TeacherSubjectAndSchedule from "../createOrUpdate/_components/TeacherSubjectAndSchedule";
+import AnimateHeight from "react-animate-height";
+import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
+import { useLazySectionScheduleGetDataByIdQuery, useSectionScheduleCreateMutation, useSectionScheduleUpdateMutation } from "@/services/admin/SectionSchedule";
+import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
+import { useStageGetDataQuery } from "@/services/admin/stage";
+import { useSettingGetDataQuery } from "@/services/Setting";
+import { useLazyTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
+import { daysArray } from "@/services/admin/Schedule";
+import { isArray } from "lodash";
+
 export interface FormValues {
   teacherSubjectId: string;
   classId: string;
@@ -27,32 +35,31 @@ export interface FormValues {
   }[];
 }
 
-import { ButtonForm } from "@/components/Form/ButtonForm";
-import { Form, Formik, FormikProps } from "formik";
-import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
-import AnimateHeight from "react-animate-height";
-import { SelectForm } from "@/components/Form/SelectForm";
-import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
-
-import { useLazyTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
-import { useStageGetDataQuery } from "@/services/admin/stage";
-import { useSettingGetDataQuery } from "@/services/Setting";
-import { daysArray } from "@/services/admin/Schedule";
-import { Days } from "@/services/types/BaseType";
-import TeacherSubjectAndSchedule from "./TeacherSubjectAndSchedule";
-import { isArray } from "lodash";
-
-const PageComponent = () => {
+const EditModel = ({
+  setOpen,
+  open,
+  title,
+  isLoading,
+}: {
+  setOpen: any;
+  open: boolean;
+  name?: string;
+  title: string;
+  handleRemove?: any;
+  isLoading?: boolean;
+  description: string;
+}) => {
   const { t } = getTranslation();
   const router = useRouter();
+
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [SectionScheduleGetDataById, { currentData: data, isFetching }] = useLazySectionScheduleGetDataByIdQuery();
   const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
-
   const [getTeacherSubject, { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject }] = useLazyTeacherSubjectGetDataQuery();
+
   useEffect(() => {
     if (id) {
       SectionScheduleGetDataById({ id: String(id) }).then((data) => {
@@ -177,27 +184,22 @@ const PageComponent = () => {
     });
   };
 
-  return (
-    <>
-      <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton title={t(id ? "SectionSchedulePage.update-info" : "common.add")} />
+  const FormValues: FormValues = {
+    teacherSubjectId: data?.teacherSubjectId || "",
+    schoolYearId: data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
+    stageId: data?.section?.Class?.Stage?.id || "",
+    classId: data?.section?.Class?.id || "",
+    sectionId: data?.sectionId || "",
+    days: daysArray as any,
+  };
 
-        {isFetching || isFetchingSetting ? (
-          <LoadingForm />
-        ) : (
-          <Formik<FormValues>
-            initialValues={{
-              teacherSubjectId: data?.teacherSubjectId || "",
-              schoolYearId: data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
-              stageId: data?.section?.Class?.Stage?.id || "",
-              classId: data?.section?.Class?.id || "",
-              sectionId: data?.sectionId || "",
-              days: daysArray as any,
-            }}
-            validationSchema={sectionScheduleSchema}
-            onSubmit={handleSubmit}>
-            {(props: FormikProps<any>) => (
-              <Form className={"px-4 flex flex-col gap-4"}>
+  return (
+    <SideModel title={title} open={open} setOpen={setOpen}>
+      <Formik<typeof FormValues> initialValues={FormValues} validationSchema={sectionScheduleSchema} onSubmit={handleSubmit}>
+        {(props: FormikProps<any>) => {
+          return (
+            <Form className="flex h-full flex-col">
+              <div className="flex-1 space-y-5 overflow-y-auto px-7 py-5">
                 <div className="Card flex flex-col gap-1">
                   <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("SectionSchedulePage.SectionScheduleInformation")}</div>
                   <SelectForm
@@ -416,22 +418,6 @@ const PageComponent = () => {
                   </div>
                 )}
 
-                {/* <MessageErrorComponent
-                  errors={props.errors}
-                  data={
-                    [
-                      {
-                        name: 'stageId',
-                        title: 'SectionSchedulePage.StageName'
-                      },
-                      {
-                        name: 'days',
-                        title: 'SectionSchedulePage.days'
-                      },
-
-                    ]}
-                /> */}
-
                 {props.errors && Object.keys(props?.errors)?.length > 0 && (
                   <div className="Card !dark:bg-danger-dark-light !bg-danger-light">
                     <div className="flex flex-col  rounded bg-danger-light p-3.5 text-danger dark:bg-danger-dark-light">
@@ -465,50 +451,35 @@ const PageComponent = () => {
                     </div>
                   </div>
                 )}
+              </div>
 
+              <div className="border-t border-slate-300 bg-white px-4 py-5 dark:border-white-dark dark:bg-[#111827]">
                 <div className="flex flex-row-reverse gap-2">
                   <ButtonForm
                     props={{
+                      className: "!w-44 self-stretch rounded-md !bg-primary !px-2.5 !py-2",
                       type: "submit",
+                      onClick: () => {
+                        if (!props.isValid) {
+                          toast.error(t("SectionSchedulePage.A-section-schedule-with-the-same-details-already-exists"), { autoClose: 2000 });
+                        }
+                        setOpen(false);
+                      },
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingSectionScheduleUpdate || isLoadingSectionScheduleCreate}
+                    isLoading={isLoading || false}
                   />
+                  <button type="button" onClick={() => setOpen(false)} className="rounded-md border border-gray-300 px-5 text-gray-700">
+                    {t("common.cancel")}
+                  </button>
                 </div>
-              </Form>
-            )}
-          </Formik>
-        )}
-      </div>
-    </>
-  );
-};
-
-export default PageComponent;
-
-interface MessageComponentProps {
-  errors: any;
-  data: {
-    name: string;
-    title: TranslationKeys;
-  }[];
-}
-export const MessageErrorComponent: FC<MessageComponentProps> = ({ errors, data }) => {
-  const { t } = getTranslation();
-  return (
-    <>
-      {errors && (
-        <div className="Card flex flex-col gap-1 bg-danger-light border-danger">
-          {data.map((item, index) => {
-            return (
-              <div key={index} className="mt-[2px] w-full p-1 text-sm text-danger">
-                <span className="font-bold">{t(item.title as any)} :</span>
-                {errors[item.name]}
               </div>
-            );
-          })}
-        </div>
-      )}
-    </>
+            </Form>
+          );
+        }}
+      </Formik>
+    </SideModel>
   );
 };
+
+export default EditModel;
