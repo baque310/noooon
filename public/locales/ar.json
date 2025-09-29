@@ -755,6 +755,7 @@
     "TeacherSubjectCannotBeDeleted": "لا يمكن حذف المواد حسب المدرس لانه مرتبط بمواد اخرى"
   },
   "SchedulePage": {
+    "UpdateSchedule": "تعديل اوقات الدروس",
     "update-Content": "تعديل محتوى الامتحان",
     "add": "اضافة",
     "A-schedule-with-the-same-details-already-exists": "يوجد بالفعل جدول القسم بنفس التفاصيل.",
