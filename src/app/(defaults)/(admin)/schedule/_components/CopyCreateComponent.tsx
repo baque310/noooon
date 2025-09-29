@@ -12,13 +12,14 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { listTime } from "@/utils/time";
-import { useScheduleCreateMutation } from "@/services/admin/Schedule";
+import { daysArray, useScheduleCreateMutation } from "@/services/admin/Schedule";
 import moment from "moment";
 export interface FormValues {
+  day?: { value: string; label: string } | null;
   timeFrom: string;
   timeTo: string;
 }
-const CreateComponent = ({
+const CopyCreateComponent = ({
   open,
   setOpen,
   data,
@@ -28,35 +29,26 @@ const CreateComponent = ({
   data: {
     day: string;
     schoolYearId: string;
+    itemLabel?: string;
+    daySchedule?: any[];
   };
 }) => {
   const { t } = getTranslation();
-  console.log(data);
-
   const [ScheduleCreate, { isLoading: isLoadingScheduleCreate }] = useScheduleCreateMutation();
-
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
-      console.log(values);
-      console.log(moment.utc(values.timeFrom, "hh:mm a").format("HH:mm:ss"));
-      console.log(moment.utc(values.timeTo, "hh:mm a").format("HH:mm:ss"));
-      console.log({
-        day: data.day as any,
-        timeFrom: moment.utc(values.timeFrom, "hh:mm a").format("HH:mm:ss"),
-        timeTo: moment.utc(values.timeTo, "hh:mm a").format("HH:mm:ss"),
-        schoolYearId: data.schoolYearId,
+      data.daySchedule?.map(async (item) => {
+        await ScheduleCreate({
+          schedules: [
+            {
+              day: values.day as any,
+              timeFrom: moment(item.timeFrom).utc().format("HH:mm:ss"),
+              timeTo: moment(item.timeTo).utc().format("HH:mm:ss"),
+              schoolYearId: data.schoolYearId,
+            },
+          ],
+        }).unwrap();
       });
-
-      await ScheduleCreate({
-        schedules: [
-          {
-            day: data.day as any,
-            timeFrom: moment.utc(values.timeFrom, "hh:mm a").format("HH:mm:ss"),
-            timeTo: moment.utc(values.timeTo, "hh:mm a").format("HH:mm:ss"),
-            schoolYearId: data.schoolYearId,
-          },
-        ],
-      }).unwrap();
 
       toast.success(t("common.added-successfully"), { autoClose: 30000 });
       resetForm();
@@ -73,8 +65,8 @@ const CreateComponent = ({
     }
   };
   const schoolSchema = Yup.object().shape({
-    timeFrom: Yup.string().required(t("common.this-field-is-required")),
-    timeTo: Yup.string().required(t("common.this-field-is-required")),
+    // timeFrom: Yup.string().required(t("common.this-field-is-required")),
+    // timeTo: Yup.string().required(t("common.this-field-is-required")),
   });
 
   return (
@@ -90,29 +82,22 @@ const CreateComponent = ({
         }}>
         {(props: FormikProps<any>) => (
           <Form className={"flex flex-col gap-4"}>
+            <p>نسخ جميع الاوقات من يوم: {t(data.itemLabel as any)}</p>
             <SelectForm
               formikProps={props}
-              name={`timeFrom`}
-              title={t("SchedulePage.timeFrom")}
-              placeholder={t("SchedulePage.select-timeFrom")}
-              options={listTime}
+              name={`day`}
+              title={t("SchedulePage.day")}
+              placeholder={t("SchedulePage.select-day")}
+              options={daysArray.map((day) => {
+                return {
+                  value: day.value,
+                  label: t(day.label as any),
+                };
+              })}
               props={{
                 isClearable: true,
                 onChange: (e) => {
-                  props.setFieldValue(`timeFrom`, (e as any)?.value ?? "");
-                },
-              }}
-            />
-            <SelectForm
-              formikProps={props}
-              name={`timeTo`}
-              title={t("SchedulePage.timeTo")}
-              placeholder={t("SchedulePage.select-timeTo")}
-              options={listTime}
-              props={{
-                isClearable: true,
-                onChange: (e) => {
-                  props.setFieldValue(`timeTo`, (e as any)?.value ?? "");
+                  props.setFieldValue(`day`, (e as any)?.value ?? "");
                 },
               }}
             />
@@ -134,4 +119,4 @@ const CreateComponent = ({
   );
 };
 
-export default CreateComponent;
+export default CopyCreateComponent;
