@@ -72,13 +72,16 @@ const EditModel = ({
 
   useEffect(() => {
     if (id) {
-      getTeacherSubject({
-        classId: data?.section.Class.id,
-        stageId: data?.section.Class.Stage.id,
-        schoolYearId: data?.schoolYearId,
-      });
+      // run only when we have the fetched schedule data so we use the correct class/stage
+      if (data?.section?.Class && data?.schoolYearId) {
+        getTeacherSubject({
+          classId: data.section.Class.id,
+          stageId: data.section.Class.Stage.id,
+          schoolYearId: data.schoolYearId,
+        });
+      }
     }
-  }, [id]);
+  }, [id, data, getTeacherSubject]);
 
   const [SectionScheduleCreate, { isLoading: isLoadingSectionScheduleCreate }] = useSectionScheduleCreateMutation();
   const [SectionScheduleUpdate, { isLoading: isLoadingSectionScheduleUpdate }] = useSectionScheduleUpdateMutation();
@@ -195,7 +198,7 @@ const EditModel = ({
 
   return (
     <SideModel title={title} open={open} setOpen={setOpen}>
-      <Formik<typeof FormValues> initialValues={FormValues} validationSchema={sectionScheduleSchema} onSubmit={handleSubmit}>
+      <Formik<typeof FormValues> initialValues={FormValues} enableReinitialize validationSchema={sectionScheduleSchema} onSubmit={handleSubmit}>
         {(props: FormikProps<any>) => {
           return (
             <Form className="flex h-full flex-col">
@@ -464,6 +467,7 @@ const EditModel = ({
                           toast.error(t("SectionSchedulePage.A-section-schedule-with-the-same-details-already-exists"), { autoClose: 2000 });
                         }
                         setOpen(false);
+                        window.location.reload();
                       },
                     }}
                     title={t("common.save")}

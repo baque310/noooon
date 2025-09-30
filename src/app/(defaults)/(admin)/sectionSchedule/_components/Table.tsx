@@ -105,11 +105,44 @@ const TableComponent = () => {
     }
   };
 
-  const [active, setActive] = useState<number>(-1);
+  // const [active, setActive] = useState<number>(-1);
+  // const togglePara = (value: number) => {
+  //   setActive((oldValue) => {
+  //     return oldValue === value ? -1 : value;
+  //   });
+  // };
+
+  // persist active accordion index in URL param `active` so it survives reloads
+  const activeParam = searchParams.get("active");
+  const [active, setActive] = useState<number>(activeParam ? Number(activeParam) : -1);
+
+  useEffect(() => {
+    const v = searchParams.get("active");
+    setActive(v ? Number(v) : -1);
+  }, [searchParams]);
+
   const togglePara = (value: number) => {
-    setActive((oldValue) => {
-      return oldValue === value ? -1 : value;
+    const allParams = new URLSearchParams(searchParams);
+    const newValue = active === value ? -1 : value;
+    if (newValue === -1) {
+      allParams.delete("active");
+    } else {
+      allParams.set("active", String(newValue));
+    }
+    // update URL (keeps other query params intact)
+    router.push(`/sectionSchedule?${allParams.toString()}`);
+    setActive(newValue);
+  };
+
+  // helper: push while preserving existing query params (including `active`)
+  const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
+    const allParams = new URLSearchParams(searchParams);
+    Object.entries(extra).forEach(([k, v]) => {
+      if (v === undefined || v === null) allParams.delete(k);
+      else allParams.set(k, String(v));
     });
+    const query = allParams.toString();
+    router.push(`${path}${query ? `?${query}` : ""}`);
   };
 
   const handleSelectClass = (value: any) => {
@@ -177,6 +210,8 @@ const TableComponent = () => {
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  // const [selectedItem, setSelectedItem] = useState<{ event: React.MouseEvent<Element, globalThis.MouseEvent>; record: any; index: number } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string>("");
 
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -333,6 +368,9 @@ const TableComponent = () => {
                             {isMounted && (
                               <DataTable
                                 onRowClick={async (item) => {
+                                  console.log(item);
+
+                                  setSelectedItem(item.record.id);
                                   router.push(`/sectionSchedule/${item.record.id}`);
                                 }}
                                 fetching={isFetching}
@@ -385,9 +423,8 @@ const TableComponent = () => {
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
-                                                // router.push(`/sectionSchedule/createOrUpdate?id=${record.id}`);
-                                                router.push(`?id=${record.id}`);
-                                                setOpenEdit(true);
+                                                setSelectedItem(record.id);
+                                                pushWithCurrentParams("/sectionSchedule/createOrUpdate", { id: record.id });
                                               }}
                                               title={t("common.update")}>
                                               <UpdateIcons className="h-5 w-5" />
@@ -395,7 +432,10 @@ const TableComponent = () => {
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
-                                                router.push(`?id=${record.id}&selectedClassName=${record.teacherSubject.StageSubject.Stage.name}`);
+                                                pushWithCurrentParams("/sectionSchedule", {
+                                                  id: record.id,
+                                                  selectedClassName: record.teacherSubject.StageSubject.Stage.name,
+                                                });
                                                 setOpenDelete(true);
                                               }}
                                               title={t("common.delete")}>
@@ -422,7 +462,13 @@ const TableComponent = () => {
           </>
         )}
       </div>
-      <EditModel description={t("SchedulePage.Are-you-sure-you-want-to-delete-this-Schedule")} title={t("SchedulePage.UpdateSchedule")} open={openEdit} setOpen={setOpenEdit} />
+      <EditModel
+        // selectedItemId={selectedItem}
+        description={t("SchedulePage.Are-you-sure-you-want-to-delete-this-Schedule")}
+        title={t("SchedulePage.UpdateSchedule")}
+        open={openEdit}
+        setOpen={setOpenEdit}
+      />
       <DeleteModel
         description={t("SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule")}
         title={t("SchedulePage.DeleteSchedule")}
