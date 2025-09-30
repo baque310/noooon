@@ -93,11 +93,13 @@ const TableComponent = () => {
     }
   };
   const allParams = new URLSearchParams(searchParams);
+
+  // unified handleSearch: update state and push merged params (preserves `active` etc.)
   const handleSearch = (value?: string) => {
-    if (search != Search) {
-      allParams.set("search", value ?? Search);
-      router.push(`/sectionSchedule?${allParams.toString()}`);
-    }
+    const v = value ?? Search;
+    setSearch(v);
+    // if empty -> remove search from URL; otherwise set it
+    pushWithCurrentParams("/sectionSchedule", { search: v || undefined });
   };
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
@@ -136,61 +138,70 @@ const TableComponent = () => {
 
   // helper: push while preserving existing query params (including `active`)
   const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
-    const allParams = new URLSearchParams(searchParams);
-    Object.entries(extra).forEach(([k, v]) => {
-      if (v === undefined || v === null) allParams.delete(k);
-      else allParams.set(k, String(v));
+    const allParams = new URLSearchParams();
+    // copy existing params without spread/iteration syntax that requires downlevelIteration
+    searchParams.forEach((value, key) => {
+      allParams.set(key, value);
     });
+
+    Object.entries(extra).forEach(([k, v]) => {
+      if (v === undefined || v === null) {
+        allParams.delete(k);
+      } else {
+        allParams.set(k, String(v));
+      }
+    });
+
     const query = allParams.toString();
     router.push(`${path}${query ? `?${query}` : ""}`);
   };
 
+  useEffect(() => {
+    // initialize local filters from URL params so they persist on reload/navigation
+    const init: any = {};
+    searchParams.forEach((value, key) => {
+      if (key === "stageId") init.stageId = value;
+      if (key === "classId") init.classId = value;
+      if (key === "sectionId") init.sectionId = value;
+      if (key === "teacherSubjectId") init.teacherSubjectId = value;
+      if (key === "schoolYearId") init.schoolYearId = value;
+      if (key === "search") setSearch(value);
+      if (key === "active") {
+        // handled by existing active state effect, skip or set if you prefer
+      }
+    });
+    setParam((old) => ({ ...(old ?? {}), ...init }));
+  }, [searchParams]);
+
   const handleSelectClass = (value: any) => {
-    if (value) {
-      setParam({ ...param, classId: value, sectionId: undefined });
-    } else {
-      setParam({ ...param, classId: undefined, sectionId: undefined });
-    }
+    // update local state and URL (clears section when class changes)
+    const classId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
+    pushWithCurrentParams("/sectionSchedule", { classId, sectionId: undefined });
   };
   const handleSelectSection = (value: any) => {
-    if (value) {
-      setParam({ ...param, sectionId: value });
-    } else {
-      setParam({ ...param, sectionId: undefined });
-    }
+    const sectionId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), sectionId }));
+    pushWithCurrentParams("/sectionSchedule", { sectionId });
   };
   const handleSelectStage = (value: any) => {
-    if (value) {
-      setParam({
-        ...param,
-        stageId: value,
-        classId: undefined,
-        sectionId: undefined,
-      });
-    } else {
-      setParam({
-        ...param,
-        stageId: undefined,
-        classId: undefined,
-        sectionId: undefined,
-      });
-    }
+    const stageId = value ?? undefined;
+    // changing stage should clear class/section
+    setParam((old) => ({ ...(old ?? {}), stageId, classId: undefined, sectionId: undefined }));
+    pushWithCurrentParams("/sectionSchedule", { stageId, classId: undefined, sectionId: undefined });
   };
   const handleSelectTeacherSubject = (value: any) => {
-    if (value) {
-      setParam({ ...param, teacherSubjectId: value.value });
-    } else {
-      setParam({ ...param, teacherSubjectId: undefined });
-    }
+    const teacherSubjectId = value ? value.value : undefined;
+    setParam((old) => ({ ...(old ?? {}), teacherSubjectId }));
+    pushWithCurrentParams("/sectionSchedule", { teacherSubjectId });
   };
   const handleSelectSchoolYear = (value: any) => {
-    if (value) {
-      setParam({ ...param, schoolYearId: value.value });
-    } else {
-      setParam({ ...param, schoolYearId: undefined });
-    }
+    const schoolYearId = value ? value.value : undefined;
+    setParam((old) => ({ ...(old ?? {}), schoolYearId }));
+    pushWithCurrentParams("/sectionSchedule", { schoolYearId });
   };
 
+  // ensure the "add" button preserves params (including active) when navigating
   const selectedClassName = searchParams.get("selectedClassName");
   const id = searchParams.get("id");
   const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useSectionScheduleRemoveMutation();
@@ -331,6 +342,7 @@ const TableComponent = () => {
           />
         </div>
       </div>
+
       <div className={"flex flex-col gap-4 mt-4"}>
         {isFetching ? (
           <div className="flex w-full justify-center items-center min-h-64 Card ">
