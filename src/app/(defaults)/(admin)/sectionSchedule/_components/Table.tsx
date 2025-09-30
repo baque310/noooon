@@ -68,7 +68,6 @@ const TableComponent = () => {
   const [getData, { isFetching, currentData: data }] = useLazySectionScheduleGetDataQuery();
 
   useEffect(() => {
-    // if (param?.sectionId) {
     getData({
       ...(search && { search: search as string }),
       ...(param?.sectionId && {
@@ -81,7 +80,6 @@ const TableComponent = () => {
         teacherSubjectId: param.teacherSubjectId,
       }),
     });
-    // }
   }, [param]);
 
   const [Search, setSearch] = useState(search);
@@ -94,11 +92,9 @@ const TableComponent = () => {
   };
   const allParams = new URLSearchParams(searchParams);
 
-  // unified handleSearch: update state and push merged params (preserves `active` etc.)
   const handleSearch = (value?: string) => {
     const v = value ?? Search;
     setSearch(v);
-    // if empty -> remove search from URL; otherwise set it
     pushWithCurrentParams("/sectionSchedule", { search: v || undefined });
   };
   const handleKeyPress = (event: any) => {
@@ -107,14 +103,6 @@ const TableComponent = () => {
     }
   };
 
-  // const [active, setActive] = useState<number>(-1);
-  // const togglePara = (value: number) => {
-  //   setActive((oldValue) => {
-  //     return oldValue === value ? -1 : value;
-  //   });
-  // };
-
-  // persist active accordion index in URL param `active` so it survives reloads
   const activeParam = searchParams.get("active");
   const [active, setActive] = useState<number>(activeParam ? Number(activeParam) : -1);
 
@@ -136,10 +124,8 @@ const TableComponent = () => {
     setActive(newValue);
   };
 
-  // helper: push while preserving existing query params (including `active`)
   const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
     const allParams = new URLSearchParams();
-    // copy existing params without spread/iteration syntax that requires downlevelIteration
     searchParams.forEach((value, key) => {
       allParams.set(key, value);
     });
@@ -157,7 +143,6 @@ const TableComponent = () => {
   };
 
   useEffect(() => {
-    // initialize local filters from URL params so they persist on reload/navigation
     const init: any = {};
     searchParams.forEach((value, key) => {
       if (key === "stageId") init.stageId = value;
@@ -167,14 +152,12 @@ const TableComponent = () => {
       if (key === "schoolYearId") init.schoolYearId = value;
       if (key === "search") setSearch(value);
       if (key === "active") {
-        // handled by existing active state effect, skip or set if you prefer
       }
     });
     setParam((old) => ({ ...(old ?? {}), ...init }));
   }, [searchParams]);
 
   const handleSelectClass = (value: any) => {
-    // update local state and URL (clears section when class changes)
     const classId = value ?? undefined;
     setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
     pushWithCurrentParams("/sectionSchedule", { classId, sectionId: undefined });
