@@ -112,19 +112,14 @@ const TableComponent = () => {
   }, [searchParams]);
 
   const togglePara = (value: number) => {
-    const allParams = new URLSearchParams(searchParams);
     const newValue = active === value ? -1 : value;
-    if (newValue === -1) {
-      allParams.delete("active");
-    } else {
-      allParams.set("active", String(newValue));
-    }
-    // update URL (keeps other query params intact)
-    router.push(`/sectionSchedule?${allParams.toString()}`);
     setActive(newValue);
+    // update URL without causing a navigation / full page refresh
+    pushWithCurrentParams("/sectionSchedule", { active: newValue === -1 ? undefined : newValue });
   };
 
   const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
+    // build new query string keeping existing params
     const allParams = new URLSearchParams();
     searchParams.forEach((value, key) => {
       allParams.set(key, value);
@@ -139,7 +134,15 @@ const TableComponent = () => {
     });
 
     const query = allParams.toString();
-    router.push(`${path}${query ? `?${query}` : ""}`);
+    const newUrl = `${path}${query ? `?${query}` : ""}`;
+
+    // update the browser URL without triggering a Next.js navigation/reload
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", newUrl);
+    } else {
+      // fallback to router push if history API not available
+      router.push(newUrl);
+    }
   };
 
   useEffect(() => {
@@ -327,7 +330,7 @@ const TableComponent = () => {
       </div>
 
       <div className={"flex flex-col gap-4 mt-4"}>
-        {isFetching ? (
+        {!daysArray ? (
           <div className="flex w-full justify-center items-center min-h-64 Card ">
             <div className="loader !bg-primary"></div>
           </div>
