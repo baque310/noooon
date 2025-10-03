@@ -475,6 +475,7 @@
     "remainingInstallments": "المدفوعات المتبقية",
     "numberOfPaidInstallments": "عدد المدفوعات",
     "amount": "السعر",
+    "StudentUsername": "اسم مستخدم",
     "AmountStudent": "السعر الافتراضي للطالب",
     "enter-AmountStudent": "ادخل السعر الافتراضي للطالب",
     "Students-and-Amount": "الطلاب والسعر",
@@ -556,14 +557,20 @@
     "Username": "اسم المستخدم",
     "photo": "صورة",
     "update-info": "تعديل المعلومات",
-    "add": "اضافة",
     "img-info": "الصورة يجب ان تكون بصيغة jpg, jpeg, png",
     "infoBus": "معلومات خط النقل",
     "infoContact": "معلومات الاتصال",
     "BusInformation": "معلومات خط النقل",
     "Are-you-sure-you-want-to-delete-this-Bus": "هل أنت متأكد أنك تريد حذف هذا خط النقل؟",
     "DeleteBus": "حذف خط النقل",
-    "bus-already-exists": "خط النقل موجود بالفعل"
+    "bus-already-exists": "خط النقل موجود بالفعل",
+    "paidAmount": "المبلغ المدفوع",
+    "paymentMethod": "طريقة الدفع",
+    "notes": "ملاحظات",
+    "enter-paidAmount": "ادخل المبلغ المدفوع",
+    "enter-paymentMethod": "ادخل طريقة الدفع",
+    "enter-notes": "ادخل الملاحظات",
+    "add": "اضافة"
   },
   "BannerPage": {
     "priority": "الاولوية",
@@ -1102,7 +1109,9 @@
     "InstallmentInformation": "معلومات القسط",
     "enter-title": "ادخل العنوان",
     "enter-numberOfInstallments": "ادخل عدد الاقساط",
+    "allPartialPaymentsHasBeenDone": "كل المبالغ من المدفوعات الجزئية تم دفعها.",
     "add": "إضافة",
+    "outstandingAmountSection": "الاقساط المؤجلة",
     "update-info": "تعديل المعلومات",
     "Are-you-sure-you-want-to-delete-this-Installment": "هل أنت متأكد أنك تريد حذف هذا القسط؟",
     "DeleteInstallment": "حذف القسط",
@@ -1136,5 +1145,9 @@
     "unpaid": "غير مدفوع"
   },
   "unpaid": "غير مدفوع",
-  "paid": "مدفوع"
+  "paid": "مدفوع",
+  "Cash": "نقداً",
+  "ZainCash": "زين كاش",
+  "QiCard": "كي كارد",
+  "partial": "مدفوع جزئي"
 }
