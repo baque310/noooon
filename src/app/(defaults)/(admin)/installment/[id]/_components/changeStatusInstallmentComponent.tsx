@@ -10,38 +10,30 @@ import { FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-import {
-  IInstallmentPayments,
-  InstallmentPaymentStatusPayload,
-  useInstallmentPaymentUpdateStatusMutation,
-} from "@/services/admin/installmentPayment";
+import { IInstallmentPayments, InstallmentPaymentStatusPayload, Status, useInstallmentPaymentUpdateStatusMutation } from "@/services/admin/installmentPayment";
 import { SelectForm } from "@/components/Form/SelectForm";
-export interface FormValues extends InstallmentPaymentStatusPayload {}
-const ChangeStatusInstallmentComponent = ({
-  open,
-  setOpen,
-  data,
-}: {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: IInstallmentPayments;
-}) => {
+import { InputForm } from "@/components/Form/inputForm";
+
+// Correct form values type
+export interface FormValues extends InstallmentPaymentStatusPayload {
+  status: Status;
+}
+
+const ChangeStatusInstallmentComponent = ({ open, setOpen, data }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>>; data: IInstallmentPayments }) => {
   const { t } = getTranslation();
 
-  const [
-    InstallmentPaymentUpdate,
-    { isLoading: isLoadingInstallmentPaymentUpdate },
-  ] = useInstallmentPaymentUpdateStatusMutation();
+  const [InstallmentPaymentUpdate, { isLoading: isLoadingInstallmentPaymentUpdate }] = useInstallmentPaymentUpdateStatusMutation();
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-    setOpen: any
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await InstallmentPaymentUpdate({
         id: data.id,
-        status: values.status!,
+        status: values.status,
+        body: {
+          paidAmount: Number(values.paidAmount),
+          paymentMethod: values.paymentMethod,
+          notes: values.notes,
+        },
       }).unwrap();
 
       toast.success(t("common.changeStatus-successfully"), {
@@ -51,22 +43,18 @@ const ChangeStatusInstallmentComponent = ({
       setOpen(false);
     } catch (error: any) {
       console.error("Failed to operation :", error);
-      if (error) {
-        if (error.message == "name already exist") {
-          return toast.error(t("ClassPage.name-already-exists"), {
-            autoClose: 30000,
-          });
-        }
-
-        return toast.error(JSON.stringify(error), { autoClose: 30000 });
+      if (error?.message === "name already exist") {
+        return toast.error(t("ClassPage.name-already-exists"), {
+          autoClose: 30000,
+        });
       }
-      toast.error(error, { autoClose: 30000 });
+      toast.error(JSON.stringify(error), { autoClose: 30000 });
     }
   };
+
+  // Yup schema with enum validation
   const schema = Yup.object().shape({
-    status: Yup.string()
-      .oneOf(["paid", "unpaid"])
-      .required(t("common.this-field-is-required")),
+    status: Yup.mixed<Status>().oneOf([Status.Paid, Status.Unpaid, Status.Partial]).required(t("common.this-field-is-required")),
   });
 
   return (
@@ -76,29 +64,26 @@ const ChangeStatusInstallmentComponent = ({
       ) : (
         <Formik<FormValues>
           initialValues={{
-            status: data?.isPaid ?? "unpaid",
+            status: data?.isPaid ?? Status.Unpaid,
+            paidAmount: data?.amount ?? 0,
+            paymentMethod: data?.paymentMethod ?? "",
+            notes: data?.notes ?? "",
           }}
           validationSchema={schema}
           onSubmit={(values, formikHelpers) => {
             handleSubmit(values, formikHelpers, setOpen);
-          }}
-        >
-          {(props: FormikProps<any>) => (
-            <Form className={"flex flex-col gap-4"}>
+          }}>
+          {(props: FormikProps<FormValues>) => (
+            <Form className="flex flex-col gap-4">
               <SelectForm
                 formikProps={props}
-                name={"status"}
+                name="status"
                 title={t("InstallmentPage.status")}
                 placeholder={t("InstallmentPage.enter-status")}
                 options={[
-                  {
-                    label: t("unpaid"),
-                    value: "unpaid",
-                  },
-                  {
-                    label: t("paid"),
-                    value: "paid",
-                  },
+                  { label: t("unpaid"), value: Status.Unpaid },
+                  { label: t("paid"), value: Status.Paid },
+                  { label: t("partial"), value: Status.Partial },
                 ]}
                 props={{
                   isClearable: true,
@@ -107,6 +92,11 @@ const ChangeStatusInstallmentComponent = ({
                   },
                 }}
               />
+              {props.values.status === Status.Partial && (
+                <InputForm formikProps={props} name={"paidAmount"} title={t("BusPage.paidAmount")} placeholder={t("BusPage.enter-paidAmount")} />
+              )}
+              <InputForm formikProps={props} name={"paymentMethod"} title={t("BusPage.paymentMethod")} placeholder={t("BusPage.enter-paymentMethod")} />
+              <InputForm formikProps={props} name={"notes"} title={t("BusPage.notes")} placeholder={t("BusPage.enter-notes")} />
 
               <div className="flex flex-row-reverse gap-2">
                 <ButtonForm

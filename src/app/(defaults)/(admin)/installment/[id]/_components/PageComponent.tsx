@@ -9,10 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
 import { RestoreIcons } from "@/components/common/icons/Actions";
-import {
-  IInstallmentPayments,
-  useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery,
-} from "@/services/admin/installmentPayment";
+import { IInstallmentPayments, useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery } from "@/services/admin/installmentPayment";
 import ChangeStatusInstallmentComponent from "./changeStatusInstallmentComponent";
 import { useInstallmentGetDataByIdQuery } from "@/services/admin/Installment";
 const PageComponent = () => {
@@ -26,27 +23,21 @@ const PageComponent = () => {
       skip: !id,
     }
   );
-  const [
-    InstallmentPaymentGetDataByStudentEnrollmentId,
-    { currentData: installmentData, isFetching: isFetchingInstallment },
-  ] = useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery();
+  const [InstallmentPaymentGetDataByStudentEnrollmentId, { currentData: installmentData, isFetching: isFetchingInstallment }] =
+    useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery();
 
   useEffect(() => {
     if (data) {
       if (!data) {
         router.back();
       }
-      InstallmentPaymentGetDataByStudentEnrollmentId({
-        studentEnrollmentId: data?.studentEnrollmentId as string,
-      });
+      InstallmentPaymentGetDataByStudentEnrollmentId({ studentEnrollmentId: data?.studentEnrollmentId as string });
     }
   }, [data]);
 
-  const [selectedInstallment, setSelectedInstallment] =
-    useState<IInstallmentPayments | null>(null);
+  const [selectedInstallment, setSelectedInstallment] = useState<IInstallmentPayments | null>(null);
   const [installmentModalOpen, setInstallmentModalOpen] = useState(false);
-  const [changeInstallmentModalOpen, setChangeInstallmentModalOpen] =
-    useState(false);
+  const [changeInstallmentModalOpen, setChangeInstallmentModalOpen] = useState(false);
 
   // Handler for update button
   const handleUpdateInstallment = (installment: IInstallmentPayments) => {
@@ -57,6 +48,8 @@ const PageComponent = () => {
     setSelectedInstallment(installment);
     setChangeInstallmentModalOpen(true);
   };
+  // console.log(installmentData?.installment?.studentEnrollmentId);
+  console.log(installmentData?.installment);
 
   return (
     <div className="mx-auto my-0 mb-20 px-2 ">
@@ -140,65 +133,32 @@ const PageComponent = () => {
             <div className="flex items-center gap-3 mb-6">
               <span className="inline-block bg-indigo-500/30 text-indigo-700 rounded-full p-3 shadow">
                 <svg width="28" height="28" fill="none">
-                  <rect
-                    x="6"
-                    y="6"
-                    width="16"
-                    height="16"
-                    rx="4"
-                    fill="#6366f1"
-                  />
+                  <rect x="6" y="6" width="16" height="16" rx="4" fill="#6366f1" />
                 </svg>
               </span>
-              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                {t("InstallmentPage.detailInstallments")}
-              </h2>
+              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">{t("InstallmentPage.detailInstallments")}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
-              <ItemList
-                title={t("InstallmentPage.title")}
-                value={String(installmentData?.installment?.title)}
-              />
+              <ItemList title={t("InstallmentPage.title")} value={String(installmentData?.installment?.title)} />
               <ItemList
                 title={t("common.status")}
                 value={
                   installmentData?.installment?.isActive ? (
-                    <div className="text-green-500 font-semibold">
-                      {t("common.isActive")}
-                    </div>
+                    <div className="text-green-500 font-semibold">{t("common.isActive")}</div>
                   ) : (
-                    <div className="text-red-500 font-semibold">
-                      {t("common.isNotActive")}
-                    </div>
+                    <div className="text-red-500 font-semibold">{t("common.isNotActive")}</div>
                   )
                 }
               />
-              <ItemList
-                title={t("InstallmentPage.notes")}
-                value={String(installmentData?.installment?.notes)}
-              />
-              <ItemList
-                title={t("InstallmentPage.numberOfInstallments")}
-                value={String(
-                  installmentData?.installment?.numberOfInstallments
-                )}
-              />
-              <ItemList
-                title={t("InstallmentPage.daysBetweenInstallments")}
-                value={String(
-                  installmentData?.installment?.daysBetweenInstallments
-                )}
-              />
+              <ItemList title={t("InstallmentPage.notes")} value={String(installmentData?.installment?.notes)} />
+              <ItemList title={t("InstallmentPage.numberOfInstallments")} value={String(installmentData?.installment?.numberOfInstallments)} />
+              <ItemList title={t("InstallmentPage.daysBetweenInstallments")} value={String(installmentData?.installment?.daysBetweenInstallments)} />
               <ItemList
                 title={t("InstallmentPage.installmentAmount")}
                 value={
                   <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">
-                      {installmentData?.installment?.installmentAmount?.toLocaleString()}
-                    </span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">
-                      {t("IQD")}
-                    </span>
+                    <span className="font-bold text-indigo-600">{installmentData?.installment?.installmentAmount?.toLocaleString()}</span>
+                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
                   </div>
                 }
               />
@@ -206,12 +166,8 @@ const PageComponent = () => {
                 title={t("InstallmentPage.totalAmount")}
                 value={
                   <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">
-                      {installmentData?.installment?.totalAmount?.toLocaleString()}
-                    </span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">
-                      {t("IQD")}
-                    </span>
+                    <span className="font-bold text-indigo-600">{installmentData?.installment?.totalAmount?.toLocaleString()}</span>
+                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
                   </div>
                 }
               />
@@ -219,12 +175,8 @@ const PageComponent = () => {
                 title={t("InstallmentPage.discountAmount")}
                 value={
                   <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">
-                      {installmentData?.installment?.discountAmount?.toLocaleString()}
-                    </span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">
-                      {t("IQD")}
-                    </span>
+                    <span className="font-bold text-indigo-600">{installmentData?.installment?.discountAmount?.toLocaleString()}</span>
+                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
                   </div>
                 }
               />
@@ -232,48 +184,16 @@ const PageComponent = () => {
                 title={t("InstallmentPage.finalTotalAmount")}
                 value={
                   <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">
-                      {installmentData?.installment?.finalTotalAmount?.toLocaleString()}
-                    </span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">
-                      {t("IQD")}
-                    </span>
+                    <span className="font-bold text-indigo-600">{installmentData?.installment?.finalTotalAmount?.toLocaleString()}</span>
+                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
                   </div>
                 }
               />
-              <ItemList
-                title={t("InstallmentPage.startDate")}
-                value={moment(installmentData?.installment?.startDate).format(
-                  "YYYY-MM-DD"
-                )}
-              />
-              <ItemList
-                title={t("InstallmentPage.discount")}
-                value={
-                  String(
-                    installmentData?.installment?.Discount.percentage ?? ""
-                  ) + " %"
-                }
-              />
-              <ItemList
-                title={t("InstallmentPage.discountTitle")}
-                value={
-                  String(installmentData?.installment?.Discount.title ?? "") +
-                  " %"
-                }
-              />
-              <ItemList
-                title={t("common.updatedAt")}
-                value={moment(installmentData?.installment?.updatedAt).format(
-                  "YYYY-MM-DD hh:mm:ss A"
-                )}
-              />
-              <ItemList
-                title={t("common.createdAt")}
-                value={moment(installmentData?.installment?.createdAt).format(
-                  "YYYY-MM-DD hh:mm:ss A"
-                )}
-              />
+              <ItemList title={t("InstallmentPage.startDate")} value={moment(installmentData?.installment?.startDate).format("YYYY-MM-DD")} />
+              <ItemList title={t("InstallmentPage.discount")} value={String(installmentData?.installment?.Discount.percentage ?? "") + " %"} />
+              <ItemList title={t("InstallmentPage.discountTitle")} value={String(installmentData?.installment?.Discount.title ?? "") + " %"} />
+              <ItemList title={t("common.updatedAt")} value={moment(installmentData?.installment?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
+              <ItemList title={t("common.createdAt")} value={moment(installmentData?.installment?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
             </div>
           </div>
 
@@ -282,108 +202,59 @@ const PageComponent = () => {
             <div className="flex items-center gap-3 mb-6">
               <span className="inline-block bg-amber-500/30 text-amber-700 rounded-full p-3 shadow">
                 <svg width="28" height="28" fill="none">
-                  <rect
-                    x="8"
-                    y="8"
-                    width="12"
-                    height="12"
-                    rx="3"
-                    fill="#f59e42"
-                  />
+                  <rect x="8" y="8" width="12" height="12" rx="3" fill="#f59e42" />
                 </svg>
               </span>
-              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                {t("InstallmentPage.installments")}
-              </h2>
+              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">{t("InstallmentPage.installments")}</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                 <thead className="bg-gray-100 dark:bg-[#333]">
                   <tr>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white text-center">
-                      {t("InstallmentPage.action")}
-                    </th>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white text-center">
-                      #
-                    </th>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
-                      {t("StudentInstallmentPage.amount")}
-                    </th>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
-                      {t("InstallmentPage.dueDate")}
-                    </th>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
-                      {t("InstallmentPage.paidDate")}
-                    </th>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
-                      {t("InstallmentPage.paid")}
-                    </th>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
-                      {t("InstallmentPage.paymentMethod")}
-                    </th>
-                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">
-                      {t("InstallmentPage.notes")}
-                    </th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white text-center">{t("InstallmentPage.action")}</th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white text-center">#</th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("StudentInstallmentPage.amount")}</th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.dueDate")}</th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.paidDate")}</th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.paid")}</th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.paymentMethod")}</th>
+                    <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.notes")}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {installmentData?.installment.InstallmentPayments?.map(
-                    (item, index) => (
-                      <tr
-                        key={index}
-                        className="hover:bg-teal-50 dark:hover:bg-teal-900/20 transition"
-                      >
-                        <td className="px-3 py-2 text-center flex items-center justify-center gap-2">
-                          {/* <button
+                  {installmentData?.installment.InstallmentPayments?.map((item, index) => (
+                    <tr key={index} className="hover:bg-teal-50 dark:hover:bg-teal-900/20 transition">
+                      <td className="px-3 py-2 text-center flex items-center justify-center gap-2">
+                        {/* <button
                             className="bg-indigo-500 hover:bg-indigo-600 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1"
                             onClick={() => handleUpdateInstallment(item)}
                             title={t("common.update")}
                           >
                             <UpdateIcons className="size-4" />
                           </button> */}
-                          <button
-                            className="bg-indigo-500 hover:bg-indigo-600 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1"
-                            onClick={() => handleChangeInstallment(item)}
-                            title={t("common.changeStatus")}
-                          >
-                            <RestoreIcons className="size-4" />
-                          </button>
-                        </td>
-                        <td className="px-3 py-2 text-center">
-                          {item.installmentNumber}
-                        </td>
-                        <td className="px-3 py-2 text-right font-bold text-teal-600">
-                          {item.amount?.toLocaleString()}
-                        </td>
-                        <td className="px-3 py-2">
-                          {item.dueDate
-                            ? moment(item.dueDate).format("YYYY-MM-DD")
-                            : "-"}
-                        </td>
-                        <td className="px-3 py-2">
-                          {item.paidDate
-                            ? moment(item.paidDate).format("YYYY-MM-DD")
-                            : "-"}
-                        </td>
-                        <td className="px-3 py-2">{t(item.isPaid)}</td>
-                        <td className="px-3 py-2">
-                          {item.paymentMethod ?? "-"}
-                        </td>
-                        <td className="px-3 py-2">{item.notes ?? "-"}</td>
-                      </tr>
-                    )
-                  )}
+                        <button
+                          className="bg-indigo-500 hover:bg-indigo-600 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1"
+                          onClick={() => handleChangeInstallment(item)}
+                          title={t("common.changeStatus")}>
+                          <RestoreIcons className="size-4" />
+                        </button>
+                      </td>
+                      <td className="px-3 py-2 text-center">{item.installmentNumber}</td>
+                      <td className="px-3 py-2 text-right font-bold text-teal-600">{item.amount?.toLocaleString()}</td>
+                      <td className="px-3 py-2">{item.dueDate ? moment(item.dueDate).format("YYYY-MM-DD") : "-"}</td>
+                      <td className="px-3 py-2">{item.paidDate ? moment(item.paidDate).format("YYYY-MM-DD") : "-"}</td>
+                      <td className="px-3 py-2">{t(item.isPaid)}</td>
+                      <td className="px-3 py-2">{item.paymentMethod ?? "-"}</td>
+                      <td className="px-3 py-2">{item.notes ?? "-"}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           </div>
         </>
       )}
-      <ChangeStatusInstallmentComponent
-        data={selectedInstallment as any}
-        open={changeInstallmentModalOpen}
-        setOpen={setChangeInstallmentModalOpen}
-      />
+      <ChangeStatusInstallmentComponent data={selectedInstallment as any} open={changeInstallmentModalOpen} setOpen={setChangeInstallmentModalOpen} />
     </div>
   );
 };
