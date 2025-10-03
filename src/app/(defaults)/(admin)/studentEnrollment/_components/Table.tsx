@@ -22,6 +22,7 @@ import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import SelectFilter from "@/components/Filter/SelectFilter";
+import { exportJsonToExcel } from "@/utils/excelParser";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -189,6 +190,41 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <div className="inline-flex relative">
+                    {/* Export to Excel Button */}
+                    <button
+                      onClick={() => {
+                        exportJsonToExcel({
+                          data:
+                            (data?.data ?? []).map((item: any) => {
+                              return {
+                                StudentFullName: item.Student?.fullName ?? "",
+                                Username: item.Student?.User?.username ?? "",
+                                SchoolYear: item.SchoolYear ? `${item.SchoolYear.from} - ${item.SchoolYear.to}` : "",
+                                Stage: item.Stage ? t(item.Stage.name as any) : "",
+                                Class: item.Class?.name ?? "",
+                                Section: item.Section?.name ?? "",
+                                UpdatedAt: item.updatedAt ? moment(item.updatedAt).format("YYYY-MM-DD hh:mm:ss A") : "",
+                                CreatedAt: item.createdAt ? moment(item.createdAt).format("YYYY-MM-DD hh:mm:ss A") : "",
+                              };
+                            }) ?? [],
+                          fileName: "students",
+                          sheetName: "Students",
+                        });
+                      }}
+                      disabled={!data?.data || data.data.length === 0 || isFetching}
+                      className={`relative overflow-hidden group flex items-center gap-3 mx-2 px-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:shadow-md transform hover:scale-105 active:scale-95 disabled:transform-none transition-all duration-200 border border-green-500/20 disabled:border-gray-400/20 min-w-fit whitespace-nowrap`}>
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                      <svg className="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+
+                      <span className="relative z-10">{t("common.ExportExcel")}</span>
+                    </button>
                     <button
                       className={` ${
                         props.disabled && "hidden"
@@ -254,7 +290,7 @@ const TableComponent = () => {
           }
         </div>
       </div>
-      <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
+      <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>
         <SelectFilter
           placement="bottom-end"
           title={t("StudentEnrollmentPage.StageName")}
