@@ -6,6 +6,7 @@ export interface IInstallmentPayment {
   installment: IInstallment & {
     InstallmentPayments: IInstallmentPayments[];
     Discount: IAdminDiscount;
+    outstandingAmount?: number;
   };
 }
 
@@ -37,19 +38,20 @@ export enum PaymentMethod {
 }
 
 export interface InstallmentPaymentStatusPayload {
-  status?: Status;
+  paidAmount?: number;
+  paymentMethod?: string;
+  notes?: string;
 }
+
 export enum Status {
   Paid = "paid",
   Unpaid = "unpaid",
+  Partial = "partial",
 }
 
 export const InstallmentPaymentPayment = api.injectEndpoints({
   endpoints: (build) => ({
-    InstallmentPaymentGetDataByStudentEnrollmentId: build.query<
-      IInstallmentPayment,
-      { studentEnrollmentId: string }
-    >({
+    InstallmentPaymentGetDataByStudentEnrollmentId: build.query<IInstallmentPayment, { studentEnrollmentId: string }>({
       query: ({ studentEnrollmentId }) => ({
         url: `installment-payment/installment/${studentEnrollmentId}`,
         method: "GET",
@@ -57,38 +59,30 @@ export const InstallmentPaymentPayment = api.injectEndpoints({
       providesTags: ["InstallmentPaymentGetDataByStudentEnrollmentId"],
     }),
 
-    InstallmentPaymentUpdate: build.mutation<
-      IInstallmentPayment,
-      { id: string; body: InstallmentPaymentPayload }
-    >({
+    InstallmentPaymentCreate: build.mutation<IInstallmentPayment, { id: string; body: InstallmentPaymentStatusPayload }>({
+      query: ({ id, body }) => ({
+        url: `installment-payment/pay-outstanding/${id}`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: (res) => (res ? ["InstallmentPaymentUpdateStatus", "InstallmentPaymentGetDataByStudentEnrollmentId"] : []),
+    }),
+
+    InstallmentPaymentUpdate: build.mutation<IInstallmentPayment, { id: string; body: InstallmentPaymentPayload }>({
       query: ({ body, id }) => ({
         url: `installment-payment/${id}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "InstallmentPaymentUpdate",
-              "InstallmentPaymentGetDataByStudentEnrollmentId",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["InstallmentPaymentUpdate", "InstallmentPaymentGetDataByStudentEnrollmentId"] : []),
     }),
-    InstallmentPaymentUpdateStatus: build.mutation<
-      IInstallmentPayment,
-      { id: string; status: Status }
-    >({
-      query: ({ status, id }) => ({
+    InstallmentPaymentUpdateStatus: build.mutation<IInstallmentPayment, { id: string; status: Status; body: InstallmentPaymentStatusPayload }>({
+      query: ({ status, id, body }) => ({
         url: `installment-payment/paidStatus/${id}/${status}`,
         method: "PATCH",
+        body,
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "InstallmentPaymentUpdateStatus",
-              "InstallmentPaymentGetDataByStudentEnrollmentId",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["InstallmentPaymentUpdateStatus", "InstallmentPaymentGetDataByStudentEnrollmentId"] : []),
     }),
   }),
 });
@@ -96,5 +90,6 @@ export const {
   useInstallmentPaymentUpdateMutation,
   useInstallmentPaymentGetDataByStudentEnrollmentIdQuery,
   useInstallmentPaymentUpdateStatusMutation,
+  useInstallmentPaymentCreateMutation,
   useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery,
 } = InstallmentPaymentPayment;
