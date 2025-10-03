@@ -6,6 +6,7 @@ export interface IInstallmentPayment {
   installment: IInstallment & {
     InstallmentPayments: IInstallmentPayments[];
     Discount: IAdminDiscount;
+    outstandingAmount?: number;
   };
 }
 
@@ -58,13 +59,13 @@ export const InstallmentPaymentPayment = api.injectEndpoints({
       providesTags: ["InstallmentPaymentGetDataByStudentEnrollmentId"],
     }),
 
-    InstallmentPaymentCreate: build.mutation<IInstallmentPayment, { installmentId: string; body: InstallmentPaymentPayload }>({
-      query: ({ installmentId, body }) => ({
-        url: `installment-payment/pay-outstanding/${installmentId}`,
+    InstallmentPaymentCreate: build.mutation<IInstallmentPayment, { id: string; body: InstallmentPaymentStatusPayload }>({
+      query: ({ id, body }) => ({
+        url: `installment-payment/pay-outstanding/${id}`,
         body,
         method: "POST",
       }),
-      invalidatesTags: ["InstallmentPaymentCreate", "InstallmentPaymentUpdate", "InstallmentPaymentGetDataByStudentEnrollmentId"],
+      invalidatesTags: (res) => (res ? ["InstallmentPaymentUpdateStatus", "InstallmentPaymentGetDataByStudentEnrollmentId"] : []),
     }),
 
     InstallmentPaymentUpdate: build.mutation<IInstallmentPayment, { id: string; body: InstallmentPaymentPayload }>({

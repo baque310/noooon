@@ -9,7 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
 import { RestoreIcons } from "@/components/common/icons/Actions";
-import { IInstallmentPayments, useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery } from "@/services/admin/installmentPayment";
+import { IInstallmentPayments, PaymentMethod, Status, useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery } from "@/services/admin/installmentPayment";
 import ChangeStatusInstallmentComponent from "./changeStatusInstallmentComponent";
 import { useInstallmentGetDataByIdQuery } from "@/services/admin/Installment";
 const PageComponent = () => {
@@ -38,6 +38,7 @@ const PageComponent = () => {
   const [selectedInstallment, setSelectedInstallment] = useState<IInstallmentPayments | null>(null);
   const [installmentModalOpen, setInstallmentModalOpen] = useState(false);
   const [changeInstallmentModalOpen, setChangeInstallmentModalOpen] = useState(false);
+  // console.log(selectedInstallment);
 
   // Handler for update button
   const handleUpdateInstallment = (installment: IInstallmentPayments) => {
@@ -49,7 +50,7 @@ const PageComponent = () => {
     setChangeInstallmentModalOpen(true);
   };
   // console.log(installmentData?.installment?.studentEnrollmentId);
-  console.log(installmentData?.installment);
+  // console.log(installmentData?.installment);
 
   return (
     <div className="mx-auto my-0 mb-20 px-2 ">
@@ -233,8 +234,9 @@ const PageComponent = () => {
                             <UpdateIcons className="size-4" />
                           </button> */}
                         <button
-                          className="bg-indigo-500 hover:bg-indigo-600 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1"
+                          className="bg-indigo-500 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1hover:bg-indigo-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed"
                           onClick={() => handleChangeInstallment(item)}
+                          disabled={item.isPaid === "partial"}
                           title={t("common.changeStatus")}>
                           <RestoreIcons className="size-4" />
                         </button>
@@ -251,10 +253,102 @@ const PageComponent = () => {
                 </tbody>
               </table>
             </div>
+
+            {/* if outstandingAmount <= 0 and there is one or move InstallmentPayments with status "partial" than show a text "all partial payments done" */}
+            {(installmentData?.installment?.outstandingAmount ?? 0) <= 0 && installmentData?.installment?.InstallmentPayments?.some((p) => p.isPaid === Status.Partial) && (
+              <div className="my-6 border-t border-dashed border-gray-300 pt-4">
+                <div className="text-center text-sm font-semibold text-green-600">{t("InstallmentPage.allPartialPaymentsHasBeenDone")}</div>
+              </div>
+            )}
+            {/* {(installmentData?.installment?.outstandingAmount ?? 0) <= 0 && <div className="my-6 border-t border-dashed border-gray-300"></div>} */}
+
+            {(installmentData?.installment?.outstandingAmount ?? 0) > 0 && (
+              <>
+                <div className="flex items-center gap-3 my-6">
+                  <span className="inline-block bg-amber-500/30 text-amber-700 rounded-full p-3 shadow">
+                    <svg width="28" height="28" fill="none">
+                      <rect x="8" y="8" width="12" height="12" rx="3" fill="#f59e42" />
+                    </svg>
+                  </span>
+                  <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">{t("InstallmentPage.outstandingAmountSection")}</h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                    <thead className="bg-gray-100 dark:bg-[#333]">
+                      <tr>
+                        <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white text-center">{t("InstallmentPage.action")}</th>
+                        <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white text-center">#</th>
+                        <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("StudentInstallmentPage.amount")}</th>
+                        <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.paid")}</th>
+                        <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.paymentMethod")}</th>
+                        <th className="px-3 py-2 font-semibold text-gray-700 dark:text-white">{t("InstallmentPage.notes")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="hover:bg-teal-50 dark:hover:bg-teal-900/20 transition">
+                        <td className="px-3 py-2 text-center flex items-center justify-center gap-2">
+                          <button
+                            className="bg-indigo-500 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1 hover:bg-indigo-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed"
+                            onClick={() =>
+                              handleChangeInstallment({
+                                id: "temp-id",
+                                installmentNumber: 0,
+                                amount: installmentData?.installment?.outstandingAmount as number,
+                                dueDate: "",
+                                paidDate: null,
+                                isPaid: Status.Partial,
+                                paymentMethod: PaymentMethod.Cash,
+                                notes: null,
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
+                                installmentId: installmentData?.installment.id as string,
+                                schoolId: "",
+                              })
+                            }
+                            title={t("common.changeStatus")}>
+                            <RestoreIcons className="size-4" />
+                          </button>
+                        </td>
+                        <td className="px-3 py-2 text-center">-</td>
+                        <td className="px-3 py-2 text-right font-bold text-teal-600">{installmentData?.installment?.outstandingAmount?.toLocaleString()}</td>
+                        <td className="px-3 py-2">{t("partial")}</td>
+                        <td className="px-3 py-2">{"Cash"}</td>
+                        <td className="px-3 py-2">{"-"}</td>
+                      </tr>
+                      {/*  */}
+                      {/* {installmentData?.installment.InstallmentPayments?.filter((item) => item.isPaid === "partial").map((item, index) => (
+                        <tr key={index} className="hover:bg-teal-50 dark:hover:bg-teal-900/20 transition">
+                          <td className="px-3 py-2 text-center flex items-center justify-center gap-2">
+                            <button
+                              className="bg-indigo-500 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1 hover:bg-indigo-600 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed"
+                              onClick={() => handleChangeInstallment(item)}
+                              title={t("common.changeStatus")}>
+                              <RestoreIcons className="size-4" />
+                            </button>
+                          </td>
+                          <td className="px-3 py-2 text-center">{item.installmentNumber}</td>
+                          <td className="px-3 py-2 text-right font-bold text-teal-600">{installmentData?.installment?.outstandingAmount?.toLocaleString()}</td>
+                          <td className="px-3 py-2">{item.dueDate ? moment(item.dueDate).format("YYYY-MM-DD") : "-"}</td>
+                          <td className="px-3 py-2">{item.paidDate ? moment(item.paidDate).format("YYYY-MM-DD") : "-"}</td>
+                          <td className="px-3 py-2">{t(item.isPaid)}</td>
+                          <td className="px-3 py-2">{item.paymentMethod ?? "-"}</td>
+                          <td className="px-3 py-2">{item.notes ?? "-"}</td>
+                        </tr>
+                      ))} */}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}
-      <ChangeStatusInstallmentComponent data={selectedInstallment as any} open={changeInstallmentModalOpen} setOpen={setChangeInstallmentModalOpen} />
+      <ChangeStatusInstallmentComponent
+        data={selectedInstallment as any}
+        outstandingAmount={installmentData?.installment?.outstandingAmount}
+        open={changeInstallmentModalOpen}
+        setOpen={setChangeInstallmentModalOpen}
+      />
     </div>
   );
 };

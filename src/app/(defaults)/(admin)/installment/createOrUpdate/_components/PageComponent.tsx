@@ -53,18 +53,18 @@ const PageComponent = () => {
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
       if (id) {
-        console.log({
-          numberOfInstallments: Number(values.numberOfInstallments),
-          totalAmount: Number(values.totalAmount),
-          installmentAmount: Number(values.installmentAmount),
-          daysBetweenInstallments: Number(values.daysBetweenInstallments),
-          discountId: values.discountId,
-          notes: values.notes,
-          startDate: values.startDate,
-          studentEnrollmentIds: values.allStudentsThisASectionsORClasses == "TRUE" ? dataUserGetData?.map((item) => item.studentEnrollmentId) ?? [] : values.studentEnrollmentIds,
-          title: values.title,
-          isActive: values.isActive,
-        });
+        // console.log({
+        //   numberOfInstallments: Number(values.numberOfInstallments),
+        //   totalAmount: Number(values.totalAmount),
+        //   installmentAmount: Number(values.installmentAmount),
+        //   daysBetweenInstallments: Number(values.daysBetweenInstallments),
+        //   discountId: values.discountId,
+        //   notes: values.notes,
+        //   startDate: values.startDate,
+        //   studentEnrollmentIds: values.allStudentsThisASectionsORClasses == "TRUE" ? dataUserGetData?.map((item) => item.studentEnrollmentId) ?? [] : values.studentEnrollmentIds,
+        //   title: values.title,
+        //   isActive: values.isActive,
+        // });
 
         await InstallmentUpdate({
           body: {
@@ -158,6 +158,10 @@ const PageComponent = () => {
     skip: 1,
     take: 30,
   });
+
+  // console.log(dataUserGetData);
+  // console.log(installmentData?.data);
+  // console.log(dataUserGetData?.filter((item) => !installmentData?.data.some((inst) => inst.StudentEnrollment.id === item.studentEnrollmentId)));
 
   return (
     <>
