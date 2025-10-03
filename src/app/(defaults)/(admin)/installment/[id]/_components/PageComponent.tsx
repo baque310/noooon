@@ -254,13 +254,11 @@ const PageComponent = () => {
               </table>
             </div>
 
-            {/* if outstandingAmount <= 0 and there is one or move InstallmentPayments with status "partial" than show a text "all partial payments done" */}
             {(installmentData?.installment?.outstandingAmount ?? 0) <= 0 && installmentData?.installment?.InstallmentPayments?.some((p) => p.isPaid === Status.Partial) && (
               <div className="my-6 border-t border-dashed border-gray-300 pt-4">
                 <div className="text-center text-sm font-semibold text-green-600">{t("InstallmentPage.allPartialPaymentsHasBeenDone")}</div>
               </div>
             )}
-            {/* {(installmentData?.installment?.outstandingAmount ?? 0) <= 0 && <div className="my-6 border-t border-dashed border-gray-300"></div>} */}
 
             {(installmentData?.installment?.outstandingAmount ?? 0) > 0 && (
               <>
@@ -315,7 +313,7 @@ const PageComponent = () => {
                         <td className="px-3 py-2">{"Cash"}</td>
                         <td className="px-3 py-2">{"-"}</td>
                       </tr>
-                      {/*  */}
+                      {/* if you need to show the specific installment payments */}
                       {/* {installmentData?.installment.InstallmentPayments?.filter((item) => item.isPaid === "partial").map((item, index) => (
                         <tr key={index} className="hover:bg-teal-50 dark:hover:bg-teal-900/20 transition">
                           <td className="px-3 py-2 text-center flex items-center justify-center gap-2">
