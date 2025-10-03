@@ -475,6 +475,7 @@
     "remainingInstallments": "المدفوعات المتبقية",
     "numberOfPaidInstallments": "عدد المدفوعات",
     "amount": "السعر",
+    "StudentUsername": "اسم مستخدم",
     "AmountStudent": "السعر الافتراضي للطالب",
     "enter-AmountStudent": "ادخل السعر الافتراضي للطالب",
     "Students-and-Amount": "الطلاب والسعر",

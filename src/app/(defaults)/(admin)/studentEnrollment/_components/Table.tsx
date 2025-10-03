@@ -153,8 +153,7 @@ const TableComponent = () => {
       setParam({ ...param, schoolYearId: undefined });
     }
   };
-
-  console.log(data);
+  // console.log(data);
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -318,6 +317,11 @@ const TableComponent = () => {
                 // sortable: true,
               },
               {
+                title: t("StudentEnrollmentPage.StudentUsername"),
+                accessor: "Student.User.username",
+                // sortable: true,
+              },
+              {
                 title: t("StudentEnrollmentPage.SchoolYear"),
                 accessor: "SchoolYear",
                 // sortable: true,
@@ -335,39 +339,11 @@ const TableComponent = () => {
                 // sortable: true,
               },
               {
-                title: t("StudentEnrollmentPage.amount"),
-                accessor: "amount",
-                sortable: true,
-                render: ({ amount }: any) =>
-                  amount && (
-                    <div className="flex gap-1">
-                      {amount?.toLocaleString()}
-                      <span className="font-bold text-teal-500 bg-teal-500/20 w-fit justify-center items-center rounded-md flex text-xs px-1">{t("IQD")}</span>
-                    </div>
-                  ),
-              },
-              {
-                title: t("StudentEnrollmentPage.paidInstallments"),
-                accessor: "paidInstallments",
-                sortable: true,
-              },
-              {
-                title: t("StudentEnrollmentPage.remainingInstallments"),
-                accessor: "remainingInstallments",
-                sortable: true,
-              },
-              {
-                title: t("StudentEnrollmentPage.numberOfPaidInstallments"),
-                accessor: "numberOfPaidInstallments",
-                sortable: true,
-              },
-              {
                 title: t("StudentEnrollmentPage.SectionName"),
                 accessor: "Section.name",
                 // sortable: true,
                 render: ({ Section }: any) => t(Section.name),
               },
-
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
