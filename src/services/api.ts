@@ -364,6 +364,7 @@ export const api = createApi({
     "InstallmentRemove",
     // Installment Payment
     "InstallmentPaymentGetDataByStudentEnrollmentId",
+    "InstallmentPaymentCreate",
     "InstallmentPaymentUpdate",
     "InstallmentPaymentUpdateStatus",
   ],

@@ -330,7 +330,7 @@ const TableComponent = () => {
       </div>
 
       <div className={"flex flex-col gap-4 mt-4"}>
-        {!daysArray ? (
+        {!daysArray && isFetching ? (
           <div className="flex w-full justify-center items-center min-h-64 Card ">
             <div className="loader !bg-primary"></div>
           </div>

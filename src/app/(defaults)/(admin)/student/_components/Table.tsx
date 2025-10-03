@@ -3,10 +3,7 @@ import { DataTable } from "mantine-datatable";
 import React from "react";
 
 import moment from "moment";
-import {
-  RolePageAndActionBasedComponent,
-  withRole,
-} from "@/components/Provider/RolePageAndActionBasedComponent";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { useStudentGetDataQuery } from "@/services/admin/student";
@@ -19,7 +16,7 @@ import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
 import { exportJsonToExcel } from "@/utils/excelParser";
 import { ConnectedStudentWithParent } from "./ConnectedStudentWithParent";
- 
+
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -30,8 +27,7 @@ const TableComponent = () => {
     direction: "desc",
   });
 
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
   const [pageNumber, setPageNumber] = useState(Number(1));
@@ -85,9 +81,7 @@ const TableComponent = () => {
   };
 
   return (
-    <div
-      className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       {/* Header Section */}
       <div className="mb-8">
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
@@ -95,12 +89,7 @@ const TableComponent = () => {
             {/* Title Section */}
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -110,12 +99,8 @@ const TableComponent = () => {
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                  {t("StudentPage.students")}
-                </h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">
-                  {t("common.manageAndViewInfo")}
-                </p>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{t("StudentPage.students")}</h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">{t("common.manageAndViewInfo")}</p>
               </div>
             </div>
 
@@ -124,18 +109,8 @@ const TableComponent = () => {
               {/* Search Input */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
+                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
                 <input
@@ -184,15 +159,9 @@ const TableComponent = () => {
                   transition-all duration-200
                   border border-green-500/20 disabled:border-gray-400/20
                   min-w-fit whitespace-nowrap
-                `}
-              >
+                `}>
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                <svg
-                  className="h-5 w-5 relative z-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -221,8 +190,7 @@ const TableComponent = () => {
                         min-w-fit whitespace-nowrap`}
                       onClick={() => {
                         router.push("/student/createOrUpdate");
-                      }}
-                    >
+                      }}>
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
                       <AddIcons className="h-5 w-5 relative z-10" />
                       <span className="relative z-10">{t("common.add")}</span>
@@ -266,20 +234,14 @@ const TableComponent = () => {
                 title: t("StudentPage.fullName"),
                 accessor: "fullName",
                 sortable: true,
-                render: ({ fullName }: any) => (
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    {fullName}
-                  </div>
-                ),
+                render: ({ fullName }: any) => <div className="font-semibold text-gray-900 dark:text-white">{fullName}</div>,
               },
               {
                 title: t("StudentPage.Username"),
                 accessor: "User.username",
                 render: ({ User }: any) => (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">
-                      {User?.username}
-                    </span>
+                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">{User?.username}</span>
                   </div>
                 ),
               },
@@ -306,12 +268,7 @@ const TableComponent = () => {
                 render: ({ birth }: any) =>
                   birth ? (
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -330,18 +287,8 @@ const TableComponent = () => {
                 render: ({ enrollmentDate }: any) =>
                   enrollmentDate ? (
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       {moment(enrollmentDate).format("MMM DD, YYYY")}
                     </div>
@@ -353,24 +300,9 @@ const TableComponent = () => {
                 sortable: true,
                 render: ({ address }: any) => (
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 max-w-48 truncate">
-                    <svg
-                      className="w-4 h-4 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
+                    <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <span title={address}>{address}</span>
                   </div>
@@ -382,12 +314,7 @@ const TableComponent = () => {
                 sortable: true,
                 render: ({ email }: any) => (
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -405,12 +332,7 @@ const TableComponent = () => {
                 sortable: true,
                 render: ({ phone1 }: any) => (
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -429,12 +351,7 @@ const TableComponent = () => {
                 render: ({ phone2 }: any) =>
                   phone2 ? (
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -453,12 +370,8 @@ const TableComponent = () => {
                 render: ({ updatedAt }: any) =>
                   updatedAt ? (
                     <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">
-                        {moment(updatedAt).format("MMM DD, YYYY")}
-                      </div>
-                      <div className="text-gray-400 dark:text-gray-500">
-                        {moment(updatedAt).format("hh:mm A")}
-                      </div>
+                      <div className="text-gray-500 dark:text-gray-400 font-medium">{moment(updatedAt).format("MMM DD, YYYY")}</div>
+                      <div className="text-gray-400 dark:text-gray-500">{moment(updatedAt).format("hh:mm A")}</div>
                     </div>
                   ) : null,
               },
@@ -469,15 +382,11 @@ const TableComponent = () => {
                 render: ({ createdAt }: any) =>
                   createdAt ? (
                     <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">
-                        {moment(createdAt).format("MMM DD, YYYY")}
-                      </div>
-                      <div className="text-gray-400 dark:text-gray-500">
-                        {moment(createdAt).format("hh:mm A")}
-                      </div>
+                      <div className="text-gray-500 dark:text-gray-400 font-medium">{moment(createdAt).format("MMM DD, YYYY")}</div>
+                      <div className="text-gray-400 dark:text-gray-500">{moment(createdAt).format("hh:mm A")}</div>
                     </div>
                   ) : null,
-              }
+              },
             ]}
             customLoader={
               <div className="flex items-center justify-center py-12">
@@ -491,12 +400,7 @@ const TableComponent = () => {
             noRecordsIcon={
               <div className="text-center py-12">
                 <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    className="w-12 h-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -505,12 +409,8 @@ const TableComponent = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {t("common.no-data")}
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  {t("common.noStudentsFound")}
-                </p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t("common.no-data")}</h3>
+                <p className="text-gray-500 dark:text-gray-400">{t("common.noStudentsFound")}</p>
               </div>
             }
             {...({ minHeight: 300 } as any)}
