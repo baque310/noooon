@@ -158,136 +158,138 @@ const TableComponent = () => {
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
-      <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">{t("StudentEnrollmentPage.studentEnrollment")}</div>
-        <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
-          <input
-            value={Search ?? ""}
-            placeholder={`${t("common.search")} ...`}
-            onKeyDown={handleKeyPress}
-            onChange={handleChange}
-            id="search"
-            className="form-input text-white-dark"
-            name="search"
-          />
-
-          <SelectWithSearch
-            placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
-            isLoading={isFetchingSchoolYearData || isFetchingSetting}
-            props={{
-              onChange: handleSelectSchoolYear,
-              value: param?.schoolYearId,
-            }}
-            options={SchoolYearData?.map((item) => {
-              return {
-                value: item.id,
-                label: item.from + "-" + item.to,
-              };
-            })}
-          />
-          {
-            <RolePageAndActionBasedComponent
-              component={(props) => {
-                return (
-                  <div className="inline-flex relative">
-                    {/* Export to Excel Button */}
-                    <button
-                      onClick={() => {
-                        exportJsonToExcel({
-                          data:
-                            (data?.data ?? []).map((item: any) => {
-                              return {
-                                StudentFullName: item.Student?.fullName ?? "",
-                                Username: item.Student?.User?.username ?? "",
-                                SchoolYear: item.SchoolYear ? `${item.SchoolYear.from} - ${item.SchoolYear.to}` : "",
-                                Stage: item.Stage ? t(item.Stage.name as any) : "",
-                                Class: item.Class?.name ?? "",
-                                Section: item.Section?.name ?? "",
-                                UpdatedAt: item.updatedAt ? moment(item.updatedAt).format("YYYY-MM-DD hh:mm:ss A") : "",
-                                CreatedAt: item.createdAt ? moment(item.createdAt).format("YYYY-MM-DD hh:mm:ss A") : "",
-                              };
-                            }) ?? [],
-                          fileName: "students",
-                          sheetName: "Students",
-                        });
-                      }}
-                      disabled={!data?.data || data.data.length === 0 || isFetching}
-                      className={`relative overflow-hidden group flex items-center gap-3 mx-2 px-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:shadow-md transform hover:scale-105 active:scale-95 disabled:transform-none transition-all duration-200 border border-green-500/20 disabled:border-gray-400/20 min-w-fit whitespace-nowrap`}>
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                      <svg className="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-
-                      <span className="relative z-10">{t("common.ExportExcel")}</span>
-                    </button>
-                    <button
-                      className={` ${
-                        props.disabled && "hidden"
-                      } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border  ltr:rounded-r-none rtl:rounded-l-none`}
-                      onClick={() => {
-                        router.push("/studentEnrollment/createOrUpdate");
-                      }}>
-                      {t("common.add")}
-                    </button>
-                    <div className="relative w-0 h-0">
-                      <span
-                        className={`${
-                          selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
-                        } badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
-                        {selectedRecords.length > 0 ? selectedRecords.length : ""}
-                      </span>
-                    </div>
-                    <div className="dropdown">
-                      <Dropdown
-                        placement={`${isRtl ? "bottom-start" : "bottom-end"}`}
-                        btnClassName="dropdown-toggle h-full transition-all"
-                        button={
-                          <button
-                            className={`relative h-full ltr:rounded-l-none rtl:rounded-r-none flex justify-center gap-1 items-center  border-primary/70 text-primary hover:scale-[1.01] transition-transform py-1 px-2    rounded border  `}>
-                            {t("common.options")}
-                            <ArrowIcons className="h-4 w-4 rotate-90" />
-                          </button>
-                        }>
-                        <ul className="!min-w-[170px]">
-                          <li>
-                            <button
-                              disabled={selectedRecords.length == 0}
-                              className={` ${selectedRecords.length > 0 ? "" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "} flex justify-between`}
-                              onClick={() => {
-                                setOpen(true);
-                              }}
-                              type="button">
-                              {t("common.update")}
-                              <UpdateIcons className="h-4 w-4" />
-                            </button>
-                          </li>
-                          <li className={`${selectedRecords.length > 0 ? "text-danger hover:bg-danger/20 hover:!text-danger" : ""}`}>
-                            <button
-                              disabled={selectedRecords.length == 0}
-                              onClick={() => {
-                                setOpenDelete(true);
-                              }}
-                              type="button"
-                              className={`${selectedRecords.length > 0 ? "!text-danger" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "}  flex justify-between`}>
-                              {t("common.delete")}
-                              <DeleteIcons className="h-4 w-4" />
-                            </button>
-                          </li>
-                        </ul>
-                      </Dropdown>
-                    </div>
-                  </div>
-                );
-              }}
-              resource={"admin"}
-              permission={["create-any", "create-own"]}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className={"flex justify-between max-md:flex-col gap-2 "}>
+          <div className="text-xl uppercase ">{t("StudentEnrollmentPage.studentEnrollment")}</div>
+          <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
+            <input
+              value={Search ?? ""}
+              placeholder={`${t("common.search")} ...`}
+              onKeyDown={handleKeyPress}
+              onChange={handleChange}
+              id="search"
+              className="form-input text-white-dark"
+              name="search"
             />
-          }
+
+            <SelectWithSearch
+              placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
+              isLoading={isFetchingSchoolYearData || isFetchingSetting}
+              props={{
+                onChange: handleSelectSchoolYear,
+                value: param?.schoolYearId,
+              }}
+              options={SchoolYearData?.map((item) => {
+                return {
+                  value: item.id,
+                  label: item.from + "-" + item.to,
+                };
+              })}
+            />
+            {
+              <RolePageAndActionBasedComponent
+                component={(props) => {
+                  return (
+                    <div className="inline-flex relative">
+                      {/* Export to Excel Button */}
+                      <button
+                        onClick={() => {
+                          exportJsonToExcel({
+                            data:
+                              (data?.data ?? []).map((item: any) => {
+                                return {
+                                  StudentFullName: item.Student?.fullName ?? "",
+                                  Username: item.Student?.User?.username ?? "",
+                                  SchoolYear: item.SchoolYear ? `${item.SchoolYear.from} - ${item.SchoolYear.to}` : "",
+                                  Stage: item.Stage ? t(item.Stage.name as any) : "",
+                                  Class: item.Class?.name ?? "",
+                                  Section: item.Section?.name ?? "",
+                                  UpdatedAt: item.updatedAt ? moment(item.updatedAt).format("YYYY-MM-DD hh:mm:ss A") : "",
+                                  CreatedAt: item.createdAt ? moment(item.createdAt).format("YYYY-MM-DD hh:mm:ss A") : "",
+                                };
+                              }) ?? [],
+                            fileName: "students",
+                            sheetName: "Students",
+                          });
+                        }}
+                        disabled={!data?.data || data.data.length === 0 || isFetching}
+                        className={`relative overflow-hidden group flex items-center gap-3 mx-2 px-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:shadow-md transform hover:scale-105 active:scale-95 disabled:transform-none transition-all duration-200 border border-green-500/20 disabled:border-gray-400/20 min-w-fit whitespace-nowrap`}>
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                        <svg className="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+
+                        <span className="relative z-10">{t("common.ExportExcel")}</span>
+                      </button>
+                      <button
+                        className={` ${
+                          props.disabled && "hidden"
+                        } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border  ltr:rounded-r-none rtl:rounded-l-none`}
+                        onClick={() => {
+                          router.push("/studentEnrollment/createOrUpdate");
+                        }}>
+                        {t("common.add")}
+                      </button>
+                      <div className="relative w-0 h-0">
+                        <span
+                          className={`${
+                            selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
+                          } badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
+                          {selectedRecords.length > 0 ? selectedRecords.length : ""}
+                        </span>
+                      </div>
+                      <div className="dropdown">
+                        <Dropdown
+                          placement={`${isRtl ? "bottom-start" : "bottom-end"}`}
+                          btnClassName="dropdown-toggle h-full transition-all"
+                          button={
+                            <button
+                              className={`relative h-full ltr:rounded-l-none rtl:rounded-r-none flex justify-center gap-1 items-center  border-primary/70 text-primary hover:scale-[1.01] transition-transform py-1 px-2    rounded border  `}>
+                              {t("common.options")}
+                              <ArrowIcons className="h-4 w-4 rotate-90" />
+                            </button>
+                          }>
+                          <ul className="!min-w-[170px]">
+                            <li>
+                              <button
+                                disabled={selectedRecords.length == 0}
+                                className={` ${selectedRecords.length > 0 ? "" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "} flex justify-between`}
+                                onClick={() => {
+                                  setOpen(true);
+                                }}
+                                type="button">
+                                {t("common.update")}
+                                <UpdateIcons className="h-4 w-4" />
+                              </button>
+                            </li>
+                            <li className={`${selectedRecords.length > 0 ? "text-danger hover:bg-danger/20 hover:!text-danger" : ""}`}>
+                              <button
+                                disabled={selectedRecords.length == 0}
+                                onClick={() => {
+                                  setOpenDelete(true);
+                                }}
+                                type="button"
+                                className={`${selectedRecords.length > 0 ? "!text-danger" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "}  flex justify-between`}>
+                                {t("common.delete")}
+                                <DeleteIcons className="h-4 w-4" />
+                              </button>
+                            </li>
+                          </ul>
+                        </Dropdown>
+                      </div>
+                    </div>
+                  );
+                }}
+                resource={"admin"}
+                permission={["create-any", "create-own"]}
+              />
+            }
+          </div>
         </div>
       </div>
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>

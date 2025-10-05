@@ -1,89 +1,79 @@
-"use client"
+"use client";
 
-import React from 'react';
-import { FieldArray, Form, Formik, FormikProps } from 'formik';
-import { ButtonForm } from '@/components/Form/ButtonForm';
-import Model from '@/components/Model';
-import { InputForm } from '@/components/Form/inputForm';
-import { LoadingForm } from '@/components/Form/loadingForm';
+import React from "react";
+import { FieldArray, Form, Formik, FormikProps } from "formik";
+import { ButtonForm } from "@/components/Form/ButtonForm";
+import Model from "@/components/Model";
+import { InputForm } from "@/components/Form/inputForm";
+import { LoadingForm } from "@/components/Form/loadingForm";
 import { getTranslation } from "@/ni18n/i18n";
 import { useStageSubjectCreateMutation, useStageSubjectUpdateMutation, useLazyStageSubjectGetDataByIdQuery, AddStageSubjectPayload } from "@/services/admin/StageSubject";
 import { FormikHelpers } from "formik";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import * as Yup from 'yup';
-import { useStageGetDataQuery } from '@/services/admin/stage';
-import { OptionType, SelectForm } from '@/components/Form/SelectForm';
-import { useSubjectGetDataQuery } from '@/services/admin/Subject';
-import { MultiValue, SingleValue } from 'react-select';
+import * as Yup from "yup";
+import { useStageGetDataQuery } from "@/services/admin/stage";
+import { OptionType, SelectForm } from "@/components/Form/SelectForm";
+import { useSubjectGetDataQuery } from "@/services/admin/Subject";
+import { MultiValue, SingleValue } from "react-select";
 export interface FormValues extends AddStageSubjectPayload {
   classIds?: {
     label: string;
     value: string;
-  }[]
+  }[];
 }
-const CreateComponent = ({
-  open,
-  setOpen
-}: {
-  open: boolean,
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
-) => {
+const CreateComponent = ({ open, setOpen }: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { t } = getTranslation();
 
-  const params = useParams()
-  const { id } = params
+  const params = useParams();
+  const { id } = params;
   const [searchSubject, setSearchSubject] = React.useState<string>("");
-  const [StageSubjectGetDataById, { currentData: data, isFetching }] = useLazyStageSubjectGetDataByIdQuery()
+  const [StageSubjectGetDataById, { currentData: data, isFetching }] = useLazyStageSubjectGetDataByIdQuery();
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: subject, isFetching: isFetchingSubject } = useSubjectGetDataQuery({
-    search: searchSubject
+    search: searchSubject,
   });
 
   useEffect(() => {
     if (id) {
-      StageSubjectGetDataById({ id: String(id) })
+      StageSubjectGetDataById({ id: String(id) });
     }
-  }, [id])
-
+  }, [id]);
 
   const [StageSubjectCreate, { isLoading: isLoadingStageSubjectCreate }] = useStageSubjectCreateMutation();
   const [StageSubjectUpdate, { isLoading: isLoadingStageSubjectUpdate }] = useStageSubjectUpdateMutation();
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
-
       if (id) {
         await StageSubjectUpdate({
           id: id as string,
-          body: values
-        }).unwrap()
-      }
-      else {
+          body: values,
+        }).unwrap();
+      } else {
         if (values.classIds) {
           await Promise.all(
             values.classIds.map(async (item) => {
               await StageSubjectCreate({
                 classId: item.value,
                 subjectId: values.subjectId,
-                stageId: values.stageId
-              }).unwrap()
-            }))
+                stageId: values.stageId,
+              }).unwrap();
+            })
+          );
         }
       }
-      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
+      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
       if (id) {
-        setOpen(false)
+        setOpen(false);
       }
-
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
         if (error.message == "subject already exists in the specified class" || error.message == "StageSubject already exists") {
-          return toast.error(t('StageSubjectPage.name-already-exist'), { autoClose: 30000 });
+          return toast.error(t("StageSubjectPage.name-already-exist"), { autoClose: 30000 });
         }
 
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
@@ -94,44 +84,38 @@ const CreateComponent = ({
   const schoolSchema = Yup.object().shape({
     subjectId: Yup.string().required(t("common.this-field-is-required")),
     stageId: Yup.string().required(t("common.this-field-is-required")),
-    ...id ?
-      {
-        classId: Yup.string().required(t("common.this-field-is-required"))
-
-      } :
-      {
-        classIds: Yup.array().of(Yup.object().shape({
-          value: Yup.string().required(t("common.this-field-is-required")),
-        })).required(t("common.this-field-is-required"))
-      }
-
+    ...(id
+      ? {
+          classId: Yup.string().required(t("common.this-field-is-required")),
+        }
+      : {
+          classIds: Yup.array()
+            .of(
+              Yup.object().shape({
+                value: Yup.string().required(t("common.this-field-is-required")),
+              })
+            )
+            .required(t("common.this-field-is-required")),
+        }),
   });
 
-
   return (
-    <Model title={t(id ? "StageSubjectPage.update" : "StageSubjectPage.add")}
-      open={open}
-      setOpen={setOpen}
-    >
+    <Model title={t(id ? "StageSubjectPage.update" : "StageSubjectPage.add")} open={open} setOpen={setOpen}>
       {isFetching ? (
-        <LoadingForm className='!h-36' />
+        <LoadingForm className="!h-36" />
       ) : (
         <Formik<FormValues>
           initialValues={{
             classId: data?.classId ?? "",
             subjectId: data?.subjectId ?? "",
             stageId: data?.stageId ?? "",
-
           }}
           validationSchema={schoolSchema}
           onSubmit={(values, formikHelpers) => {
-            handleSubmit(values, formikHelpers, setOpen)
-
-          }}
-        >
+            handleSubmit(values, formikHelpers, setOpen);
+          }}>
           {(props: FormikProps<any>) => (
             <Form className={"flex flex-col gap-4"}>
-
               <SelectForm
                 formikProps={props}
                 name={"subjectId"}
@@ -149,11 +133,11 @@ const CreateComponent = ({
                   isClearable: true,
                   isLoading: isFetchingSubject,
                   onChange: (e) => {
-                    props.setFieldValue("subjectId", (e as any)?.value ?? "")
+                    props.setFieldValue("subjectId", (e as any)?.value ?? "");
                   },
                   onInputChange: (e) => {
                     // setSearchSubject(e.target.value)
-                  }
+                  },
                 }}
               />
               <SelectForm
@@ -161,34 +145,38 @@ const CreateComponent = ({
                 name={"stageId"}
                 title={t("StageSubjectPage.StageName")}
                 placeholder={t("StageSubjectPage.enter-StageName")}
-                options={stage?.map((item) => {
-                  return {
-                    label: t(item.name as any),
-                    value: item.id,
-                  };
-                }) ?? []
+                options={
+                  stage?.map((item) => {
+                    return {
+                      label: t(item.name as any),
+                      value: item.id,
+                    };
+                  }) ?? []
                 }
                 props={{
                   isLoading: isFetchingStage,
                   isClearable: true,
                   onChange: (e) => {
-                    props.setFieldValue("stageId", (e as any)?.value ?? "")
-                  }
+                    props.setFieldValue("stageId", (e as any)?.value ?? "");
+                  },
                 }}
               />
-
               <SelectForm
                 formikProps={props}
                 name={id ? "classId" : "classIds"}
                 title={t("StudentEnrollmentPage.ClassName")}
                 placeholder={t("StudentEnrollmentPage.enter-ClassName")}
-                options={stage ? stage
-                  .find((item) => item.id === props.values.stageId)?.Class?.map((item) => {
-                    return {
-                      label: t(item.name as any),
-                      value: item.id,
-                    };
-                  }) || [] : []
+                options={
+                  stage
+                    ? stage
+                        .find((item) => item.id === props.values.stageId)
+                        ?.Class?.map((item) => {
+                          return {
+                            label: t(item.name as any),
+                            value: item.id,
+                          };
+                        }) || []
+                    : []
                 }
                 props={{
                   isMulti: id ? false : true,
@@ -196,13 +184,14 @@ const CreateComponent = ({
                   isClearable: true,
                   onChange: (newValue: MultiValue<OptionType> | SingleValue<OptionType>) => {
                     if (id) {
-                      props.setFieldValue("classId", (newValue as any)?.value ?? "")
+                      props.setFieldValue("classId", (newValue as any)?.value ?? "");
                     } else {
-                      props.setFieldValue("classIds", (newValue as any) ?? [])
+                      props.setFieldValue("classIds", (newValue as any) ?? []);
                     }
-                  }
+                  },
                 }}
               />
+
               <div className="flex flex-row-reverse gap-2">
                 <ButtonForm
                   props={{
@@ -215,10 +204,10 @@ const CreateComponent = ({
               </div>
             </Form>
           )}
-        </Formik>)}
+        </Formik>
+      )}
     </Model>
   );
 };
 
-export default CreateComponent
-
+export default CreateComponent;
