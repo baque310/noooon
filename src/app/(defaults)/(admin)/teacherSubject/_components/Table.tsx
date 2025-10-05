@@ -22,7 +22,6 @@ import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import { useTeacherGetDataQuery } from "@/services/admin/teacher";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -43,14 +42,14 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      teacherId?: string;
-      classId?: string;
-      sectionId?: string;
-      stageId?: string;
-      search?: string;
-      range?: string;
-      schoolYearId?: string;
-    }
+        teacherId?: string;
+        classId?: string;
+        sectionId?: string;
+        stageId?: string;
+        search?: string;
+        range?: string;
+        schoolYearId?: string;
+      }
     | undefined
   >();
   const params = {
@@ -66,25 +65,20 @@ const TableComponent = () => {
     take: 100,
   });
 
-
   const { isFetching, currentData: data } = useTeacherSubjectGetDataQuery({
     ...params,
   });
 
   console.log(data);
-  
+
   useEffect(() => {
     if (SchoolYearData && Setting) {
-      setParam(
-        {
-          ...params,
-          schoolYearId: Setting?.currentSchoolYearId
-
-        }
-      )
+      setParam({
+        ...params,
+        schoolYearId: Setting?.currentSchoolYearId,
+      });
     }
-  }, [SchoolYearData, Setting])
-
+  }, [SchoolYearData, Setting]);
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -108,42 +102,37 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   const handleSelectClass = (value: any) => {
     if (value) {
       setParam({ ...param, classId: value });
-
     } else {
       setParam({ ...param, classId: undefined, sectionId: undefined });
-
     }
-  }
+  };
 
   const handleSelectStage = (value: any) => {
     if (value) {
       setParam({ ...param, stageId: value });
-
     } else {
       setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
     }
-  }
+  };
   const handleSelectSchoolYear = (value: any) => {
     if (value) {
       setParam({ ...param, schoolYearId: value.value });
-
     } else {
       setParam({ ...param, schoolYearId: undefined });
     }
-  }
+  };
   const handleSelectTeacher = (value: any) => {
     if (value) {
       setParam({ ...param, teacherId: value.value });
-
     } else {
       setParam({ ...param, teacherId: undefined });
     }
-  }
+  };
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -164,12 +153,12 @@ const TableComponent = () => {
             isLoading={isFetchingSchoolYearData || isFetchingSetting}
             props={{
               onChange: handleSelectSchoolYear,
-              value: param?.schoolYearId
+              value: param?.schoolYearId,
             }}
             options={SchoolYearData?.map((item) => {
               return {
                 value: item.id,
-                label: item.from + '-' + item.to
+                label: item.from + "-" + item.to,
               };
             })}
           />
@@ -178,10 +167,11 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
-                      setOpen(true)
+                      setOpen(true);
                     }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
@@ -199,33 +189,33 @@ const TableComponent = () => {
           placement="bottom-end"
           title={t("StudentEnrollmentPage.StageName")}
           handleChange={handleSelectStage}
-          options={StageData?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          }) ?? []
-          }
-        />
-
-
-        {param?.stageId &&
-          <SelectFilter
-            title={t("SectionPage.ClassName")}
-            placement="bottom-end"
-            handleChange={handleSelectClass}
-            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
+          options={
+            StageData?.map((item) => {
               return {
                 value: item.id,
                 label: t(item.name as any),
               };
             }) ?? []
+          }
+        />
+
+        {param?.stageId && (
+          <SelectFilter
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
             }
           />
-        }
+        )}
 
         <div className="max-w-36">
-
           <SelectWithSearch
             placeholder={t("TeacherSubjectPage.enter-TeacherName")}
             isLoading={isFetchingTeacherData}
@@ -234,17 +224,16 @@ const TableComponent = () => {
               value: param?.teacherId,
               onInputChange: (value: string) => {
                 setSearchTeacher(value);
-              }
+              },
             }}
             options={TeacherData?.data?.map((item) => {
               return {
                 value: item.id,
-                label: item.fullName
+                label: item.fullName,
               };
             })}
           />
         </div>
-
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
@@ -279,7 +268,7 @@ const TableComponent = () => {
               },
               {
                 title: t("SectionPage.name"),
-                accessor: "StageSubject.Section.name",
+                accessor: "Section.name",
                 // sortable: true,
               },
               {
