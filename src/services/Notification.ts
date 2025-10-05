@@ -19,7 +19,7 @@ export interface NotificationToAll {
   body: string;
   imageUrl?: string | null;
   data?: {
-    [key: string]: string;
+    [key: string]: string | null;
   };
   userIds?: string[];
 }
@@ -27,10 +27,7 @@ export interface NotificationToAll {
 export const Notification = api.injectEndpoints({
   endpoints: (build) => ({
     //    For Admin
-    NotificationGetDataForAdmin: build.query<
-      BaseGetDataResponse<INotification>,
-      GetDataRequestParams
-    >({
+    NotificationGetDataForAdmin: build.query<BaseGetDataResponse<INotification>, GetDataRequestParams>({
       query: (params) => ({
         url: `notification/forAdmin/all`,
         params,
@@ -39,18 +36,12 @@ export const Notification = api.injectEndpoints({
       providesTags: ["NotificationGetDataForAdmin"],
     }),
 
-    NotificationChangeStatusForAdmin: build.mutation<
-      INotification,
-      { id: string; status: string }
-    >({
+    NotificationChangeStatusForAdmin: build.mutation<INotification, { id: string; status: string }>({
       query: ({ id, status }) => ({
         url: `notification/forAdmin/${id}/${status}`,
         method: "PATCH",
       }),
-      invalidatesTags: [
-        "NotificationGetDataForAdmin",
-        "NotificationChangeStatusForAdmin",
-      ],
+      invalidatesTags: ["NotificationGetDataForAdmin", "NotificationChangeStatusForAdmin"],
     }),
 
     NotificationSendToAllForManager: build.mutation<any, NotificationToAll>({
@@ -67,10 +58,7 @@ export const Notification = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [
-        "NotificationSendToAllForAdmin",
-        "NotificationGetDataForAdmin",
-      ],
+      invalidatesTags: ["NotificationSendToAllForAdmin", "NotificationGetDataForAdmin"],
     }),
     NotificationSendForManyAllForAdmin: build.mutation<any, NotificationToAll>({
       query: (body) => ({
@@ -78,10 +66,7 @@ export const Notification = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [
-        "NotificationSendForManyAllForAdmin",
-        "NotificationGetDataForAdmin",
-      ],
+      invalidatesTags: ["NotificationSendForManyAllForAdmin", "NotificationGetDataForAdmin"],
     }),
   }),
 });

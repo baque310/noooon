@@ -18,7 +18,6 @@ import CreateComponent from "./CreateComponent";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import SelectFilter from "@/components/Filter/SelectFilter";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -36,11 +35,11 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      stageId?: string;
-      classId?: string;
-      search?: string;
-      range?: string;
-    }
+        stageId?: string;
+        classId?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
   const params = {
@@ -54,7 +53,6 @@ const TableComponent = () => {
   const { isFetching, currentData: data } = useStageSubjectGetDataQuery({
     ...params,
   });
-
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -78,25 +76,25 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const handleSelectClass = (value: any) => {
     if (value) {
       setParam({ ...param, classId: value });
-
     } else {
-      setParam({ ...param, classId: undefined, });
-
+      setParam({ ...param, classId: undefined });
     }
-  }
+  };
 
   const handleSelectStage = (value: any) => {
     if (value) {
       setParam({ ...param, stageId: value });
-
     } else {
       setParam({ ...param, stageId: undefined, classId: undefined });
     }
-  }
+  };
+
+  console.log(data);
+
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -116,10 +114,11 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
-                      setOpen(true)
+                      setOpen(true);
                     }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
@@ -137,33 +136,33 @@ const TableComponent = () => {
           placement="bottom-end"
           title={t("StudentEnrollmentPage.StageName")}
           handleChange={handleSelectStage}
-          options={StageData?.map((item) => {
-            return {
-              value: item.id,
-              label: t(item.name as any),
-            };
-          }) ?? []
-          }
-        />
-
-        {param?.stageId &&
-          <SelectFilter
-            title={t("SectionPage.ClassName")}
-            placement="bottom-end"
-            handleChange={handleSelectClass}
-            options={StageData?.find(it => it.id == param?.stageId)?.Class?.map((item) => {
+          options={
+            StageData?.map((item) => {
               return {
                 value: item.id,
                 label: t(item.name as any),
               };
             }) ?? []
+          }
+        />
+
+        {param?.stageId && (
+          <SelectFilter
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
             }
           />
-        }
-
-
-
+        )}
       </div>
+
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
@@ -188,6 +187,11 @@ const TableComponent = () => {
               {
                 title: t("StageSubjectPage.ClassName"),
                 accessor: "Class.name",
+                // sortable: true,
+              },
+              {
+                title: t("StageSubjectPage.StageName"),
+                accessor: "Stage.name",
                 // sortable: true,
               },
               {
