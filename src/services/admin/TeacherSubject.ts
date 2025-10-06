@@ -52,8 +52,11 @@ export interface AddTeacherSubjectPayload {
   }[];
 }
 
-export interface GetTeacherSubjectDataRequestParams
-  extends GetDataRequestParams {
+// export interface TeacherSectionOptionType {
+//   value: string;
+// }
+
+export interface GetTeacherSubjectDataRequestParams extends GetDataRequestParams {
   classId?: string;
   stageId?: string;
   teacherId?: string;
@@ -62,10 +65,7 @@ export interface GetTeacherSubjectDataRequestParams
 
 export const TeacherSubject = api.injectEndpoints({
   endpoints: (build) => ({
-    TeacherSubjectGetData: build.query<
-      ITeacherSubject[],
-      GetTeacherSubjectDataRequestParams
-    >({
+    TeacherSubjectGetData: build.query<ITeacherSubject[], GetTeacherSubjectDataRequestParams>({
       query: (params) => ({
         url: `admin/teacher-subject`,
         params,
@@ -82,36 +82,22 @@ export const TeacherSubject = api.injectEndpoints({
       providesTags: ["TeacherSubjectGetDataById"],
     }),
 
-    TeacherSubjectCreate: build.mutation<
-      ITeacherSubject,
-      AddTeacherSubjectPayload
-    >({
+    TeacherSubjectCreate: build.mutation<ITeacherSubject, AddTeacherSubjectPayload>({
       query: (body) => ({
         url: `admin/teacher-subject`,
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "TeacherSubjectCreate",
-        "TeacherSubjectGetDataById",
-        "TeacherSubjectGetData",
-      ],
+      invalidatesTags: ["TeacherSubjectCreate", "TeacherSubjectGetDataById", "TeacherSubjectGetData"],
     }),
 
-    TeacherSubjectUpdate: build.mutation<
-      ITeacherSubject,
-      { id: string; body: AddTeacherSubjectPayload }
-    >({
+    TeacherSubjectUpdate: build.mutation<ITeacherSubject, { id: string; body: { sectionId: string } }>({
       query: ({ body, id }) => ({
-        url: `admin/teacher-subject/${id}`,
+        url: `admin/teacher-subject/${id}/section`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: [
-        "TeacherSubjectUpdate",
-        "TeacherSubjectGetDataById",
-        "TeacherSubjectGetData",
-      ],
+      invalidatesTags: ["TeacherSubjectUpdate", "TeacherSubjectGetDataById", "TeacherSubjectGetData"],
     }),
 
     TeacherSubjectRemove: build.mutation<void, { id: string }>({
@@ -119,11 +105,7 @@ export const TeacherSubject = api.injectEndpoints({
         url: `admin/teacher-subject/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [
-        "TeacherSubjectRemove",
-        "TeacherSubjectGetDataById",
-        "TeacherSubjectGetData",
-      ],
+      invalidatesTags: ["TeacherSubjectRemove", "TeacherSubjectGetDataById", "TeacherSubjectGetData"],
     }),
   }),
 });
