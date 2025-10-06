@@ -57,14 +57,14 @@ const PageComponent = () => {
         await NotificationSendToAll({
           title: values.title,
           body: values.body,
-          data: { type: "global", id: null },
+          data: { type: "global", id: "" },
         }).unwrap();
       } else {
         await NotificationSendForMany({
           title: values.title,
           body: values.body,
           userIds: values.allStudentsThisASectionsORClasses === "TRUE" ? dataUserGetData?.map((item) => item.userId) : values.userIds,
-          data: { type: "global", id: null },
+          data: { type: "global", id: "" },
         }).unwrap();
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
