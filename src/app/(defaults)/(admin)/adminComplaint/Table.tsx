@@ -78,8 +78,6 @@ const TableComponent = () => {
     }
   };
 
-  // console.log(data?.data);
-
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       {/* Header Section */}
@@ -151,29 +149,35 @@ const TableComponent = () => {
               },
               // إضافة عمود الصف
               {
-                title: t("ComplaintPage.grade"), // أو "الصف"
-                accessor: "user.Student.grade",
+                title: t("ComplaintPage.grade"),
+                accessor: "user.Student.StudentEnrollment[0].Class.name",
                 sortable: true,
-                render: ({ user }: any) => (
-                  <div className="text-center">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
-                      {user?.Student?.grade || t("common.notAvailable")}
-                    </span>
-                  </div>
-                ),
+                render: ({ user }: any) => {
+                  const grade = user?.Student?.StudentEnrollment?.[0]?.Class?.name || t("common.notAvailable");
+                  return (
+                    <div className="text-center">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                        {grade}
+                      </span>
+                    </div>
+                  );
+                },
               },
               // إضافة عمود الشعبة
               {
-                title: t("ComplaintPage.section"), // أو "الشعبة"
-                accessor: "user.Student.section",
+                title: t("ComplaintPage.section"),
+                accessor: "user.Student.StudentEnrollment[0].Section.name",
                 sortable: true,
-                render: ({ user }: any) => (
-                  <div className="text-center">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
-                      {user?.Student?.section || t("common.notAvailable")}
-                    </span>
-                  </div>
-                ),
+                render: ({ user }: any) => {
+                  const section = user?.Student?.StudentEnrollment?.[0]?.Section?.name || t("common.notAvailable");
+                  return (
+                    <div className="text-center">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">
+                        {section}
+                      </span>
+                    </div>
+                  );
+                },
               },
               {
                 title: t("ComplaintPage.title"),
