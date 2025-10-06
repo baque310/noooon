@@ -16,15 +16,8 @@ export interface FormValues extends NotificationToAll {
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import { Form, Formik, FormikProps } from "formik";
 import { InputForm } from "@/components/Form/inputForm";
-import {
-  NotificationToAll,
-  useNotificationSendForManyAllForAdminMutation,
-  useNotificationSendToAllForAdminMutation,
-} from "@/services/Notification";
-import {
-  CheckBoxForm,
-  CheckBoxFormWithCustom,
-} from "@/components/Form/CheckBoxForm";
+import { NotificationToAll, useNotificationSendForManyAllForAdminMutation, useNotificationSendToAllForAdminMutation } from "@/services/Notification";
+import { CheckBoxForm, CheckBoxFormWithCustom } from "@/components/Form/CheckBoxForm";
 import { useStudentListQuery } from "@/services/admin/studentEnrollment";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
@@ -39,22 +32,15 @@ const PageComponent = () => {
   const id = searchParams.get("id");
   const title = searchParams.get("title") || "";
   const body = searchParams.get("body") || "";
-  const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } =
-    useSchoolYearGetDataQuery();
-  const { currentData: SettingGetData, isFetching: isFetchingSettingGetData } =
-    useSettingGetDataQuery();
+  const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
+  const { currentData: SettingGetData, isFetching: isFetchingSettingGetData } = useSettingGetDataQuery();
   const [searchUser, setSearchUser] = useState("");
-  const [schoolYearId, setSchoolYearId] = useState<string | undefined>(
-    SettingGetData?.CurrentSchoolYear?.id ?? ""
-  );
+  const [schoolYearId, setSchoolYearId] = useState<string | undefined>(SettingGetData?.CurrentSchoolYear?.id ?? "");
   const [stageId, setStageId] = useState<string | undefined>(undefined);
   const [classId, setClassId] = useState<string | undefined>(undefined);
   const [sectionId, setSectionId] = useState<string | undefined>(undefined);
 
-  const {
-    currentData: dataUserGetData,
-    isFetching: isFetchingUserGetDataForAdmin,
-  } = useStudentListQuery({
+  const { currentData: dataUserGetData, isFetching: isFetchingUserGetDataForAdmin } = useStudentListQuery({
     // search: searchUser,
     schoolYearId: schoolYearId,
     stageId: stageId,
@@ -62,37 +48,26 @@ const PageComponent = () => {
     sectionId: sectionId,
   });
 
-  const [NotificationSendToAll, { isLoading: isLoadingNotificationSendToAll }] =
-    useNotificationSendToAllForAdminMutation();
-  const [
-    NotificationSendForMany,
-    { isLoading: isLoadingNotificationSendForMany },
-  ] = useNotificationSendForManyAllForAdminMutation();
+  const [NotificationSendToAll, { isLoading: isLoadingNotificationSendToAll }] = useNotificationSendToAllForAdminMutation();
+  const [NotificationSendForMany, { isLoading: isLoadingNotificationSendForMany }] = useNotificationSendForManyAllForAdminMutation();
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
       if (values.all == "TRUE") {
         await NotificationSendToAll({
           title: values.title,
           body: values.body,
+          data: { type: "global", id: null },
         }).unwrap();
       } else {
         await NotificationSendForMany({
           title: values.title,
           body: values.body,
-          userIds:
-            values.allStudentsThisASectionsORClasses === "TRUE"
-              ? dataUserGetData?.map((item) => item.userId)
-              : values.userIds,
+          userIds: values.allStudentsThisASectionsORClasses === "TRUE" ? dataUserGetData?.map((item) => item.userId) : values.userIds,
+          data: { type: "global", id: null },
         }).unwrap();
       }
-      toast.success(
-        t(id ? "common.updated-successfully" : "common.added-successfully"),
-        { autoClose: 30000 }
-      );
+      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
       if (id) {
         router.back();
@@ -117,17 +92,12 @@ const PageComponent = () => {
 
   const defaultSchoolYearId = SettingGetData?.CurrentSchoolYear?.id ?? "";
 
-  const { currentData: stage, isFetching: isFetchingStage } =
-    useStageGetDataQuery();
+  const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
 
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton
-          title={t(
-            id ? "NotificationPage.update-info" : "NotificationPage.add"
-          )}
-        />
+        <BackButton title={t(id ? "NotificationPage.update-info" : "NotificationPage.add")} />
         {isFetchingSettingGetData || isFetchingSchoolYear || isFetchingStage ? (
           <LoadingForm />
         ) : (
@@ -141,20 +111,12 @@ const PageComponent = () => {
               schoolYearId: defaultSchoolYearId,
             }}
             validationSchema={notificationSchema}
-            onSubmit={handleSubmit}
-          >
+            onSubmit={handleSubmit}>
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
                 <div className="Card flex flex-col gap-1">
-                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                    {t("NotificationPage.NotificationInformation")}
-                  </div>
-                  <InputForm
-                    formikProps={props}
-                    name={"title"}
-                    title={t("NotificationPage.title")}
-                    placeholder={t("NotificationPage.enter-title")}
-                  />
+                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("NotificationPage.NotificationInformation")}</div>
+                  <InputForm formikProps={props} name={"title"} title={t("NotificationPage.title")} placeholder={t("NotificationPage.enter-title")} />
 
                   <InputForm
                     formikProps={props}
@@ -170,11 +132,7 @@ const PageComponent = () => {
                 <>
                   <div className="Card">
                     <div className="text-base font-semibold text-black dark:text-white-dark mb-2">
-                      <CheckBoxFormWithCustom
-                        formikProps={props}
-                        name="all"
-                        title={t("NotificationPage.allowedAllStudents")}
-                      />
+                      <CheckBoxFormWithCustom formikProps={props} name="all" title={t("NotificationPage.allowedAllStudents")} />
                     </div>
                     {props.values.all !== "TRUE" && (
                       // <InputForm
@@ -194,9 +152,7 @@ const PageComponent = () => {
                           formikProps={props}
                           name={`schoolYearId`}
                           title={t("StudentEnrollmentPage.SchoolYear")}
-                          placeholder={t(
-                            "StudentEnrollmentPage.enter-SchoolYear"
-                          )}
+                          placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
                           options={
                             SchoolYear?.map((item) => {
                               return {
@@ -209,10 +165,7 @@ const PageComponent = () => {
                             isLoading: isFetchingSchoolYear,
                             isClearable: true,
                             onChange: (e) => {
-                              props.setFieldValue(
-                                `schoolYearId`,
-                                (e as any)?.value ?? ""
-                              );
+                              props.setFieldValue(`schoolYearId`, (e as any)?.value ?? "");
                               setSchoolYearId((e as any)?.value ?? "");
                             },
                           }}
@@ -222,9 +175,7 @@ const PageComponent = () => {
                           formikProps={props}
                           name={`stageId`}
                           title={t("StageSubjectPage.StageName")}
-                          placeholder={t(
-                            "SectionSchedulePage.select-StageName"
-                          )}
+                          placeholder={t("SectionSchedulePage.select-StageName")}
                           options={
                             stage?.map((item) => {
                               return {
@@ -237,10 +188,7 @@ const PageComponent = () => {
                             isLoading: isFetchingStage,
                             isClearable: true,
                             onChange: (e) => {
-                              props.setFieldValue(
-                                `stageId`,
-                                (e as any)?.value ?? ""
-                              );
+                              props.setFieldValue(`stageId`, (e as any)?.value ?? "");
                               props.setFieldValue(`classId`, undefined);
                               setStageId((e as any)?.value ?? "");
                               setClassId(undefined);
@@ -253,16 +201,11 @@ const PageComponent = () => {
                             formikProps={props}
                             name={`classId`}
                             title={t("SectionSchedulePage.ClassName")}
-                            placeholder={t(
-                              "SectionSchedulePage.select-ClassName"
-                            )}
+                            placeholder={t("SectionSchedulePage.select-ClassName")}
                             options={
                               stage
                                 ? stage
-                                    .find(
-                                      (item) =>
-                                        item.id === props.values?.stageId
-                                    )
+                                    .find((item) => item.id === props.values?.stageId)
                                     ?.Class?.map((item) => {
                                       return {
                                         label: t(item.name as any),
@@ -289,20 +232,12 @@ const PageComponent = () => {
                             formikProps={props}
                             name={`sectionId`}
                             title={t("SectionSchedulePage.SectionName")}
-                            placeholder={t(
-                              "SectionSchedulePage.select-SectionName"
-                            )}
+                            placeholder={t("SectionSchedulePage.select-SectionName")}
                             options={
                               stage
                                 ? stage
-                                    .find(
-                                      (item) =>
-                                        item.id === props?.values?.stageId
-                                    )
-                                    ?.Class?.find(
-                                      (item) =>
-                                        item.id === props?.values?.classId
-                                    )
+                                    .find((item) => item.id === props?.values?.stageId)
+                                    ?.Class?.find((item) => item.id === props?.values?.classId)
                                     ?.Section?.map((item) => {
                                       return {
                                         label: t(item.name as any),
@@ -315,10 +250,7 @@ const PageComponent = () => {
                               isLoading: isFetchingStage,
                               isClearable: true,
                               onChange: (e) => {
-                                props.setFieldValue(
-                                  `sectionId`,
-                                  (e as any)?.value ?? ""
-                                );
+                                props.setFieldValue(`sectionId`, (e as any)?.value ?? "");
                                 setSectionId((e as any)?.value ?? "");
                               },
                             }}
@@ -326,13 +258,7 @@ const PageComponent = () => {
                         )}
 
                         <div className="text-base font-semibold text-black dark:text-white-dark my-2">
-                          <CheckBoxFormWithCustom
-                            formikProps={props}
-                            name="allStudentsThisASectionsORClasses"
-                            title={t(
-                              "NotificationPage.allStudentsThisASectionsORClasses"
-                            )}
-                          />
+                          <CheckBoxFormWithCustom formikProps={props} name="allStudentsThisASectionsORClasses" title={t("NotificationPage.allStudentsThisASectionsORClasses")} />
                         </div>
                       </>
                     )}
@@ -346,8 +272,7 @@ const PageComponent = () => {
                         </div>
                       ) : (
                         <div className="flex flex-col gap-2">
-                          {props.values.allStudentsThisASectionsORClasses !==
-                            "TRUE" &&
+                          {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
                             dataUserGetData?.map((item, index) => (
                               <div className="Card !p-3" key={item.userId}>
                                 {/* Use item.value for key if it's unique */}
@@ -357,31 +282,15 @@ const PageComponent = () => {
                                   name={`userIds.${index}`}
                                   title={`${item.fullName}`}
                                   props={{
-                                    checked: props.values.userIds.some(
-                                      (it: any) => it == item.userId
-                                    ),
-                                    value: props.values.userIds.some(
-                                      (it: any) => it == item.userId
-                                    ),
+                                    checked: props.values.userIds.some((it: any) => it == item.userId),
+                                    value: props.values.userIds.some((it: any) => it == item.userId),
                                     onChange: (e) => {
                                       if (e.target.checked) {
-                                        let newValues =
-                                          props.values.userIds.concat(
-                                            item.userId
-                                          );
-                                        props.setFieldValue(
-                                          `userIds`,
-                                          newValues
-                                        );
+                                        let newValues = props.values.userIds.concat(item.userId);
+                                        props.setFieldValue(`userIds`, newValues);
                                       } else {
-                                        let newValues =
-                                          props.values.userIds.filter(
-                                            (it: any) => it != item.userId
-                                          );
-                                        props.setFieldValue(
-                                          `userIds`,
-                                          newValues
-                                        );
+                                        let newValues = props.values.userIds.filter((it: any) => it != item.userId);
+                                        props.setFieldValue(`userIds`, newValues);
                                       }
                                     },
                                   }}
@@ -400,10 +309,7 @@ const PageComponent = () => {
                       type: "submit",
                     }}
                     title={t("common.save")}
-                    isLoading={
-                      isLoadingNotificationSendForMany ||
-                      isLoadingNotificationSendToAll
-                    }
+                    isLoading={isLoadingNotificationSendForMany || isLoadingNotificationSendToAll}
                   />
                 </div>
               </Form>
