@@ -1,10 +1,10 @@
 import { io, Socket } from "socket.io-client";
 
-type SocketConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+type SocketConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
 
 interface AdminData {
   userId: string;
-  userType: 'ADMIN' | 'MANAGER';
+  userType: "ADMIN" | "MANAGER";
   schoolId: string;
 }
 
@@ -15,12 +15,12 @@ interface SocketError {
 
 class AdminSocketService {
   private socket: Socket | null = null;
-  private connectionStatus: SocketConnectionStatus = 'disconnected';
+  private connectionStatus: SocketConnectionStatus = "disconnected";
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 3;
 
   get isConnected(): boolean {
-    return this.connectionStatus === 'connected';
+    return this.connectionStatus === "connected";
   }
 
   get status(): SocketConnectionStatus {
@@ -32,16 +32,16 @@ class AdminSocketService {
       return this.socket;
     }
 
-    this.connectionStatus = 'connecting';
-    
-    this.socket = io("wss://wl-v1-dev-api.noon-iraq.com/chat", {
+    this.connectionStatus = "connecting";
+
+    this.socket = io("wss://alghad-api.noon-iraq.com/chat", {
       transports: ["websocket"],
       upgrade: false,
       auth: { token },
       extraHeaders: { Authorization: `Bearer ${token}` },
       query: { token },
       timeout: 20000,
-      forceNew: true
+      forceNew: true,
     });
 
     this.setupEventListeners();
@@ -50,10 +50,10 @@ class AdminSocketService {
 
   register(adminData: AdminData): void {
     if (!this.socket?.connected) {
-      console.warn('Socket not connected. Cannot register admin.');
+      console.warn("Socket not connected. Cannot register admin.");
       return;
     }
-    
+
     this.socket.emit("register", adminData);
   }
 
@@ -74,28 +74,28 @@ class AdminSocketService {
 
     this.socket.on("connect", () => {
       console.log("Connected to socket:", this.socket?.id);
-      this.connectionStatus = 'connected';
+      this.connectionStatus = "connected";
       this.reconnectAttempts = 0;
     });
 
     this.socket.on("disconnect", (reason: string) => {
       console.log("Socket disconnected:", reason);
-      this.connectionStatus = 'disconnected';
-      
-      if (reason === 'io server disconnect') {
+      this.connectionStatus = "disconnected";
+
+      if (reason === "io server disconnect") {
         this.handleReconnect();
       }
     });
 
     this.socket.on("connect_error", (error: Error) => {
       console.error("Socket connection error:", error);
-      this.connectionStatus = 'error';
+      this.connectionStatus = "error";
       this.handleReconnect();
     });
 
     this.socket.on("error", (error: SocketError) => {
       console.error("Socket error:", error);
-      this.connectionStatus = 'error';
+      this.connectionStatus = "error";
     });
   }
 
@@ -103,7 +103,7 @@ class AdminSocketService {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       console.log(`Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
-      
+
       setTimeout(() => {
         if (this.socket && !this.socket.connected) {
           this.socket.connect();
@@ -117,7 +117,7 @@ class AdminSocketService {
       this.socket.removeAllListeners();
       this.socket.disconnect();
       this.socket = null;
-      this.connectionStatus = 'disconnected';
+      this.connectionStatus = "disconnected";
       this.reconnectAttempts = 0;
     }
   }
