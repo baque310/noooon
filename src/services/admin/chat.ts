@@ -53,6 +53,11 @@ export interface AddChatCreateClassParentsGroupPayload {
   groupName: string;
   description: string;
 }
+export interface AddChatCreateClassStudentsGroupPayload {
+  stageId: string;
+  classId: string;
+  sectionId: string;
+}
 
 export const Chat = api.injectEndpoints({
   endpoints: (build) => ({
@@ -105,6 +110,14 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatCreateClassParentsGroup", "ChatGetData"] : []),
     }),
+    ChatCreateClassStudentsGroup: build.mutation<IChat, AddChatCreateClassStudentsGroupPayload>({
+      query: (body) => ({
+        url: `admin/chat/create-class-group`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: (res) => (res ? ["ChatCreateClassStudentsGroup", "ChatGetData"] : []),
+    }),
     ChatToggleGroupChat: build.mutation<
       IChat,
       {
@@ -133,6 +146,7 @@ export const {
   useChatCreateClassParentsGroupMutation,
   useChatCreateSchoolStaffGroupMutation,
   useChatCreateSubjectTeachersGroupMutation,
+  useChatCreateClassStudentsGroupMutation,
   useChatToggleGroupChatMutation,
   useChatDirectMutation,
   useChatMessageMutation,
