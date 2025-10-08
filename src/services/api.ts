@@ -346,6 +346,7 @@ export const api = createApi({
     "ChatCreateSchoolStaffGroup",
     "ChatCreateSubjectTeachersGroup",
     "ChatCreateClassParentsGroup",
+    "ChatCreateClassStudentsGroup",
     "ChatToggleGroupChat",
     "ChatMessageRemoved",
 
