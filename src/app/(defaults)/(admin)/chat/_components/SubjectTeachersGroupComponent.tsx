@@ -1,11 +1,5 @@
 "use client";
-import {
-  BookOpen,
-  User,
-  Rows3,
-  SquareStack,
-  GraduationCap,
-} from "lucide-react";
+import { BookOpen, User, Rows3, SquareStack, GraduationCap } from "lucide-react";
 
 import React from "react";
 import { Form, Formik, FormikProps } from "formik";
@@ -20,10 +14,7 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 
 import { useSession } from "next-auth/react";
-import {
-  AddChatCreateSubjectTeachersGroupPayload,
-  useChatCreateSubjectTeachersGroupMutation,
-} from "@/services/admin/chat";
+import { AddChatCreateSubjectTeachersGroupPayload, useChatCreateSubjectTeachersGroupMutation } from "@/services/admin/chat";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { SelectForm } from "@/components/Form/SelectForm";
 export interface FormValues extends AddChatCreateSubjectTeachersGroupPayload {}
@@ -39,22 +30,14 @@ const SubjectTeachersGroupComponent = ({
   const { t } = getTranslation();
   const session = useSession();
 
-  const [
-    CreateSubjectTeachersGroup,
-    { isLoading: isLoadingCreateSubjectTeachersGroup },
-  ] = useChatCreateSubjectTeachersGroupMutation();
+  const [CreateSubjectTeachersGroup, { isLoading: isLoadingCreateSubjectTeachersGroup }] = useChatCreateSubjectTeachersGroupMutation();
 
   const [searchTeacher, setSearchTeacher] = React.useState("");
-  const { currentData: teachers, isFetching: isFetchingTeachers } =
-    useTeacherSubjectGetDataQuery({
-      search: searchTeacher,
-    });
+  const { currentData: teachers, isFetching: isFetchingTeachers } = useTeacherSubjectGetDataQuery({
+    search: searchTeacher,
+  });
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-    setOpen: any
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await CreateSubjectTeachersGroup({
         description: values.description,
@@ -88,11 +71,7 @@ const SubjectTeachersGroupComponent = ({
   });
 
   return (
-    <Model
-      title={t("ChatPage.create-subject-teachers-group")}
-      open={open}
-      setOpen={setOpen}
-    >
+    <Model title={t("ChatPage.create-subject-teachers-group")} open={open} setOpen={setOpen}>
       <Formik<FormValues>
         initialValues={{
           description: "",
@@ -103,8 +82,7 @@ const SubjectTeachersGroupComponent = ({
         validationSchema={ChatSchema}
         onSubmit={(values, formikHelpers) => {
           handleSubmit(values, formikHelpers, setOpen);
-        }}
-      >
+        }}>
         {(props: FormikProps<any>) => (
           <Form className={"flex flex-col gap-4"}>
             <SelectForm
@@ -120,27 +98,21 @@ const SubjectTeachersGroupComponent = ({
              hover:shadow-md hover:bg-white transition-all duration-200 focus-within:ring-2
              focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-900/60 dark:hover:bg-gray-900"
                       tabIndex={0}
-                      aria-label="Teacher subject card"
-                    >
+                      aria-label="Teacher subject card">
                       {/* Header: Subject */}
                       <div className="flex items-start gap-2">
                         <span
                           className="mt-0.5 rounded-lg p-1.5 bg-blue-50 text-blue-600 
-                     dark:bg-blue-400/10 dark:text-blue-300"
-                        >
+                     dark:bg-blue-400/10 dark:text-blue-300">
                           <BookOpen className="size-4" aria-hidden />
                         </span>
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                          {teacher.StageSubject.Subject.name}
-                        </h3>
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{teacher.StageSubject.Subject.name}</h3>
                       </div>
 
                       {/* Teacher */}
                       <div className="mt-2 flex items-center gap-2 text-gray-700 dark:text-gray-300">
                         <User className="size-4 opacity-80" aria-hidden />
-                        <span className="font-medium">
-                          {teacher.Teacher.fullName}
-                        </span>
+                        <span className="font-medium">{teacher.Teacher.fullName}</span>
                       </div>
 
                       {/* Meta badges */}
@@ -149,22 +121,17 @@ const SubjectTeachersGroupComponent = ({
                           className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
                  text-gray-700 ring-1 ring-gray-200
                  dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
-                          title="Section"
-                        >
+                          title="Section">
                           <Rows3 className="size-4 opacity-70" aria-hidden />
-                          {teacher.Section.name}
+                          {teacher?.Section?.name}
                         </span>
 
                         <span
                           className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
                  text-gray-700 ring-1 ring-gray-200
                  dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
-                          title="Class"
-                        >
-                          <SquareStack
-                            className="size-4 opacity-70"
-                            aria-hidden
-                          />
+                          title="Class">
+                          <SquareStack className="size-4 opacity-70" aria-hidden />
                           {teacher.StageSubject.Class.name}
                         </span>
 
@@ -172,12 +139,8 @@ const SubjectTeachersGroupComponent = ({
                           className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
                  text-gray-700 ring-1 ring-gray-200
                  dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
-                          title="Stage"
-                        >
-                          <GraduationCap
-                            className="size-4 opacity-70"
-                            aria-hidden
-                          />
+                          title="Stage">
+                          <GraduationCap className="size-4 opacity-70" aria-hidden />
                           {t(teacher.StageSubject.Stage.name as any)}
                         </span>
                       </div>
@@ -185,12 +148,8 @@ const SubjectTeachersGroupComponent = ({
                       {/* Optional: subtle divider & right-caret affordance */}
                       <div
                         className="pointer-events-none absolute inset-y-0 right-2 hidden items-center 
-                  opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          className="size-4 fill-current"
-                        >
+                  opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40">
+                        <svg viewBox="0 0 24 24" className="size-4 fill-current">
                           <path d="M9 18l6-6-6-6" />
                         </svg>
                       </div>
@@ -211,12 +170,7 @@ const SubjectTeachersGroupComponent = ({
                 },
               }}
             />
-            <InputForm
-              formikProps={props}
-              name={"groupName"}
-              title={t("ChatPage.group-name")}
-              placeholder={t("ChatPage.enter-group-name")}
-            />
+            <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
             <InputForm
               formikProps={props}
               name={"description"}
