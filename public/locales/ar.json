@@ -139,6 +139,7 @@
   "sidebar": {
     "discount": "الخصومات",
     "chats": "الدردشات",
+    "studentOtherPayment": "مصاريف اخرى",
     "superTeacherAttendances": "حضور وغياب ",
     "video": "الفيديوهات",
     "complaint": "الشكاوى",
@@ -1109,6 +1110,28 @@
     "update-info": "تعديل المعلومات",
     "Are-you-sure-you-want-to-delete-this-Discount": "هل أنت متأكد أنك تريد حذف هذا الخصم؟",
     "DeleteDiscount": "حذف الخصم"
+  },
+  "OtherPaymentPage": {
+    "title": "العنوان",
+    "amount": "المبلغ",
+    "notes": "الملاحظات",
+    "payment-method": "طريقة الدفع",
+    "enter-title": "ادخل العنوان",
+    "enter-amount": "ادخل المبلغ",
+    "enter-notes": "ادخل الملاحظات",
+    "select-payment-method": "اختر طريقة الدفع",
+    "OtherPaymentInformation": "معلومات المدفوعات الأخرى",
+    "add": "إضافة",
+    "status": "الحالة",
+    "enter-status": "ادخل الحالة",
+    "enter-paymentMethod": "ادخل طريقة الدفع",
+    "detailOtherPayments": "تفاصيل المدفوعات الأخرى",
+    "paymentStatus": "حالة الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "fullName": "اسم الطالب",
+    "update-info": "تعديل معلومات المدفوعات الأخرى",
+    "otherPayment": "المدفوعات الأخرى",
+    "enter-payment-method": "ادخل طريقة الدفع"
   },
   "InstallmentPage": {
     "installments": "الاقساط",

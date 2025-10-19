@@ -357,6 +357,13 @@ export const api = createApi({
     "AdminDiscountUpdate",
     "AdminDiscountRemove",
 
+    //Admin OtherPayment
+    "OtherPaymentGetData",
+    "OtherPaymentGetDataById",
+    "OtherPaymentCreate",
+    "OtherPaymentUpdate",
+    "OtherPaymentRemove",
+
     // Installment
     "InstallmentGetData",
     "InstallmentGetDataById",

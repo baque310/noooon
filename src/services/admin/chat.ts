@@ -32,7 +32,9 @@ export type ChatTargetUserType = "teacher" | "student" | "parent";
 export interface AddChatMessagePayload {
   roomId: string;
   message: string;
-  messageType: "text";
+  messageType?: "text";
+  duration?: string;
+  file?: string;
 }
 
 export interface AddChatCreateSchoolStaffGroupPayload {
@@ -81,6 +83,14 @@ export const Chat = api.injectEndpoints({
     ChatMessage: build.mutation<IChat, AddChatMessagePayload>({
       query: (body) => ({
         url: `admin/chat/message`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: (res) => (res ? ["ChatMessage", "ChatGetData"] : []),
+    }),
+    ChatWithFileMessage: build.mutation<IChat, AddChatMessagePayload>({
+      query: (body) => ({
+        url: `admin/chat/files/upload`,
         body,
         method: "POST",
       }),
@@ -150,5 +160,6 @@ export const {
   useChatToggleGroupChatMutation,
   useChatDirectMutation,
   useChatMessageMutation,
+  useChatWithFileMessageMutation,
   useChatMessageRemoveMutation,
 } = Chat;

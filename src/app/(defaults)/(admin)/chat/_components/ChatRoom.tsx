@@ -1,6 +1,6 @@
 "use client";
 
-import { useChatMessageRemoveMutation } from "@/services/admin/chat";
+import { useChatMessageRemoveMutation, useChatWithFileMessageMutation } from "@/services/admin/chat";
 import SocketService from "@/services/socket-io/SocketService";
 import React, { useState, useEffect, useRef, useCallback, useImperativeHandle } from "react";
 import { IJoinedRoom, IMessage } from "@/services/socket-io/types";
@@ -93,7 +93,9 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  const sendMessage = useCallback(() => {
+  const [ChatWithFileMessage, { isLoading: isLoadingChatWithFileMessage }] = useChatWithFileMessageMutation();
+
+  const sendMessage = useCallback(async () => {
     const trimmedMessage = newMessage.trim();
     if ((!trimmedMessage && !attachedImage) || !roomStatus?.canSendMessages) return;
 
@@ -101,14 +103,16 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
       roomId,
       message: trimmedMessage || "",
       messageType: attachedImage ? "image+text" : "text",
-      file: attachedImage || null,
+      file: attachedImage || undefined,
     };
 
-    // ✅ Log payload before sending
-    console.log("%c[ChatRoom] Sending Message Payload:", "color: #2563eb; font-weight: bold;");
-    console.log(payload);
-
     SocketService.emit("sendMessage", payload);
+    attachedImage &&
+      (await ChatWithFileMessage({
+        roomId,
+        message: trimmedMessage || "",
+        file: attachedImage || undefined,
+      }).unwrap());
 
     setNewMessage("");
     setAttachedImage(null);
