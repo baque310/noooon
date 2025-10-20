@@ -68,7 +68,7 @@ export const OtherPayment = api.injectEndpoints({
     }),
     OtherPaymentChangeStatus: build.mutation<IOtherPayment, { id: string; order_status: string }>({
       query: ({ order_status, id }) => ({
-        url: `/other-payment/paidStatus/${id}/${order_status}`,
+        url: `other-payment/paidStatus/${id}/${order_status}`,
         method: "PATCH",
       }),
       invalidatesTags: (res) => (res ? ["OtherPaymentUpdate", "OtherPaymentGetDataById", "OtherPaymentGetData"] : []),

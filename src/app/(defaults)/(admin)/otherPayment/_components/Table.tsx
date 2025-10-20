@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import { useOtherPaymentGetDataQuery } from "@/services/admin/other-payment";
+import { ChangeStatusOtherPaymentsComponent } from "./ChangeStatusOtherPaymentsComponent";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -71,7 +72,6 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-  console.log(data);
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -149,7 +149,7 @@ const TableComponent = () => {
                 title: t("OtherPaymentPage.paymentStatus"),
                 accessor: "paymentStatus",
                 sortable: true,
-                // render: (data) => <ChangeStatusOtherPaymentsComponent data={data} />,
+                render: (data) => <ChangeStatusOtherPaymentsComponent data={data} />,
               },
               {
                 title: t("StudentInstallmentPage.SchoolYear"),

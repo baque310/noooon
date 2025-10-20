@@ -59,10 +59,8 @@
     "invalid-gender": "Invalid gender",
     "male": "Male",
     "female": "Female",
-
     "confirm": "Confirm",
     "ExportExcel": "Export to Excel",
-
     "must-min-is-one": "Minimum must be 1",
     "statusDeleted": "Deletion Status",
     "isNotDeleted": "Not Deleted",
@@ -1083,6 +1081,28 @@
     "update-info": "Update information",
     "Are-you-sure-you-want-to-delete-this-Discount": "Are you sure you want to delete this discount?",
     "DeleteDiscount": "Delete Discount"
+  },
+  "OtherPaymentPage": {
+    "title": "Title",
+    "amount": "Amount",
+    "notes": "Notes",
+    "payment-method": "Payment Method",
+    "enter-title": "Enter title",
+    "enter-amount": "Enter amount",
+    "enter-notes": "Enter notes",
+    "select-payment-method": "Select payment method",
+    "OtherPaymentInformation": "Other Payment Information",
+    "add": "Add",
+    "status": "Status",
+    "enter-status": "Enter status",
+    "enter-paymentMethod": "Enter payment method",
+    "detailOtherPayments": "Other Payment Details",
+    "paymentStatus": "Payment Status",
+    "paymentMethod": "Payment Method",
+    "fullName": "Student Name",
+    "update-info": "Update Other Payment Information",
+    "otherPayment": "Other Payments",
+    "enter-payment-method": "Enter payment method"
   },
   "InstallmentPage": {
     "installments": "Installments",

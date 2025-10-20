@@ -8,39 +8,29 @@ import { getTranslation } from "@/ni18n/i18n";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
-import { RestoreIcons } from "@/components/common/icons/Actions";
+import { ArrowIcons, DeleteIcons, RestoreIcons, UpdateIcons } from "@/components/common/icons/Actions";
 import { IInstallmentPayments, PaymentMethod, Status, useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery } from "@/services/admin/installmentPayment";
 import ChangeStatusInstallmentComponent from "./changeStatusInstallmentComponent";
-import { IOtherPayment, useOtherPaymentGetDataByIdQuery } from "@/services/admin/other-payment";
+import { IOtherPayment, useOtherPaymentGetDataByIdQuery, useOtherPaymentRemoveMutation } from "@/services/admin/other-payment";
+import DeleteModel from "@/components/Model/DeleteModel";
+import { toast } from "react-toastify";
+import { ChangeStatusOtherPaymentsComponent } from "../../_components/ChangeStatusOtherPaymentsComponent";
 const PageComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const params = useParams();
   const { id } = params;
+  const [openDelete, setOpenDelete] = useState(false);
   const { currentData: data, isFetching } = useOtherPaymentGetDataByIdQuery(
     { id: String(id) },
     {
       skip: !id,
     }
   );
-  console.log(data);
-
-  // const [InstallmentPaymentGetDataByStudentEnrollmentId, { currentData: installmentData, isFetching: isFetchingInstallment }] =
-  //   useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery();
-
-  // useEffect(() => {
-  //   if (data) {
-  //     if (!data) {
-  //       router.back();
-  //     }
-  //     InstallmentPaymentGetDataByStudentEnrollmentId({ studentEnrollmentId: data?.studentEnrollmentId as string });
-  //   }
-  // }, [data]);
 
   const [selectedOtherPayment, setSelectedOtherPayment] = useState<IOtherPayment | null>(null);
   const [installmentModalOpen, setOtherPaymentModalOpen] = useState(false);
   const [changeOtherPaymentModalOpen, setChangeOtherPaymentModalOpen] = useState(false);
-  // console.log(selectedOtherPayment);
 
   // Handler for update button
   const handleUpdateOtherPayment = (installment: IOtherPayment) => {
@@ -51,8 +41,20 @@ const PageComponent = () => {
     setSelectedOtherPayment(installment);
     setChangeOtherPaymentModalOpen(true);
   };
-  // console.log(installmentData?.installment?.studentEnrollmentId);
-  // console.log(installmentData?.installment);
+  const [OtherPaymentRemove, { isLoading: isLoadingOtherPaymentRemove }] = useOtherPaymentRemoveMutation();
+  const handleRemove = async () => {
+    try {
+      await OtherPaymentRemove({ id: String(id) }).unwrap();
+      toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
+      router.back();
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
 
   return (
     <div className="mx-auto my-0 mb-20 px-2 ">
@@ -70,73 +72,38 @@ const PageComponent = () => {
                   <rect x="6" y="6" width="16" height="16" rx="4" fill="#6366f1" />
                 </svg>
               </span>
-              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">{t("OtherPaymentPage.detailOtherPayments")}</h2>
+              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-3 w-full justify-between">
+                <span>{t("OtherPaymentPage.detailOtherPayments")}</span>
+                <div className="flex gap-4">
+                  {/* <button
+                    onClick={() => router.push(`/otherPayment/createOrUpdate?id=${data?.id}`)}
+                    className="flex items-center gap-2 rounded-lg border border-blue-500 px-4 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300">
+                    <UpdateIcons className="w-4 h-4" />
+                    {t("common.update")}
+                  </button> */}
+                  {data?.paymentStatus === "unpaid" && (
+                    <button
+                      onClick={() => setOpenDelete(true)}
+                      className="flex items-center gap-2 rounded-lg border border-red-500 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300">
+                      <DeleteIcons className="w-4 h-4" />
+                      {t("common.delete")}
+                    </button>
+                  )}
+                </div>
+              </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
               <ItemList title={t("OtherPaymentPage.fullName")} value={String(data?.StudentEnrollment?.Student?.fullName)} />
               <ItemList title={t("OtherPaymentPage.title")} value={String(data?.title)} />
               <ItemList title={t("OtherPaymentPage.amount")} value={String(data?.amount)} />
-              <ItemList title={t("OtherPaymentPage.paymentMethod")} value={t((data?.paymentMethod ?? "") as any)} />
-              <ItemList title={t("OtherPaymentPage.paymentStatus")} value={t((data?.paymentStatus ?? "") as any)} />
+              <ItemList
+                title={t("OtherPaymentPage.paymentMethod")}
+                value={<div className="rounded-md p-1 text-center bg-success/20 text-success">{t(data?.paymentMethod as any)}</div>}
+              />
+              <ItemList title={t("OtherPaymentPage.paymentStatus")} value={<ChangeStatusOtherPaymentsComponent data={data} />} />
               <ItemList title={t("OtherPaymentPage.notes")} value={String(data?.notes)} />
               <ItemList title={t("common.updatedAt")} value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
               <ItemList title={t("common.createdAt")} value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
-
-              {/* <ItemList
-                title={t("common.status")}
-                value={
-                  installmentData?.installment?.isActive ? (
-                    <div className="text-green-500 font-semibold">{t("common.isActive")}</div>
-                  ) : (
-                    <div className="text-red-500 font-semibold">{t("common.isNotActive")}</div>
-                  )
-                }
-              />
-              <ItemList title={t("InstallmentPage.notes")} value={String(installmentData?.installment?.notes)} />
-              <ItemList title={t("InstallmentPage.numberOfInstallments")} value={String(installmentData?.installment?.numberOfInstallments)} />
-              <ItemList title={t("InstallmentPage.daysBetweenInstallments")} value={String(installmentData?.installment?.daysBetweenInstallments)} />
-              <ItemList
-                title={t("InstallmentPage.installmentAmount")}
-                value={
-                  <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">{installmentData?.installment?.installmentAmount?.toLocaleString()}</span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
-                  </div>
-                }
-              />
-              <ItemList
-                title={t("InstallmentPage.totalAmount")}
-                value={
-                  <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">{installmentData?.installment?.totalAmount?.toLocaleString()}</span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
-                  </div>
-                }
-              />
-              <ItemList
-                title={t("InstallmentPage.discountAmount")}
-                value={
-                  <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">{installmentData?.installment?.discountAmount?.toLocaleString()}</span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
-                  </div>
-                }
-              />
-              <ItemList
-                title={t("InstallmentPage.finalTotalAmount")}
-                value={
-                  <div className="flex gap-1 items-center">
-                    <span className="font-bold text-indigo-600">{installmentData?.installment?.finalTotalAmount?.toLocaleString()}</span>
-                    <span className="font-bold text-indigo-500 bg-indigo-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
-                  </div>
-                }
-              />
-              <ItemList title={t("InstallmentPage.startDate")} value={moment(installmentData?.installment?.startDate).format("YYYY-MM-DD")} />
-              <ItemList title={t("InstallmentPage.discount")} value={String(installmentData?.installment?.Discount.percentage ?? "") + " %"} />
-              <ItemList title={t("InstallmentPage.discountTitle")} value={String(installmentData?.installment?.Discount.title ?? "") + " %"} />
-              <ItemList title={t("common.updatedAt")} value={moment(installmentData?.installment?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
-              <ItemList title={t("common.createdAt")} value={moment(installmentData?.installment?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} /> 
-              */}
             </div>
           </div>
         </>
@@ -146,6 +113,15 @@ const PageComponent = () => {
         outstandingAmount={data?.amount}
         open={changeOtherPaymentModalOpen}
         setOpen={setChangeOtherPaymentModalOpen}
+      />
+      <DeleteModel
+        description={t("BannerPage.Are-you-sure-you-want-to-delete-this-Banner")}
+        title={t("BannerPage.DeleteBanner")}
+        open={openDelete}
+        setOpen={setOpenDelete}
+        handleRemove={handleRemove}
+        isLoading={isLoadingOtherPaymentRemove}
+        name={data?.title ?? ""}
       />
     </div>
   );

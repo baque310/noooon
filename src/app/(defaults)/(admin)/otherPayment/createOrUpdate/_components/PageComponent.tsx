@@ -178,7 +178,7 @@ const PageComponent = () => {
                   }}
                 />
 
-                {!!id && (
+                {/* {!!id && (
                   <CheckBoxForm
                     formikProps={props}
                     name="isActive"
@@ -188,7 +188,7 @@ const PageComponent = () => {
                       onChange: (e) => props.setFieldValue("isActive", e.target.checked),
                     }}
                   />
-                )}
+                )} */}
               </div>
 
               {!id && (
