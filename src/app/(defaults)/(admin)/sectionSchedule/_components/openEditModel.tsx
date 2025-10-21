@@ -40,6 +40,8 @@ const EditModel = ({
   open,
   title,
   isLoading,
+  active,
+  setActive,
 }: {
   setOpen: any;
   open: boolean;
@@ -48,6 +50,8 @@ const EditModel = ({
   handleRemove?: any;
   isLoading?: boolean;
   description: string;
+  active: number;
+  setActive: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -180,7 +184,7 @@ const EditModel = ({
     }
   }, [Setting?.CurrentSchoolYear.id]);
 
-  const [active, setActive] = useState<number>(-1);
+  // const [active, setActive] = useState<number>(-1);
   const togglePara = (value: number) => {
     setActive((oldValue) => {
       return oldValue === value ? -1 : value;
