@@ -305,20 +305,28 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
                     onClick={() => setSelectedChat(chat)}
                     className={`p-4 cursor-pointer transition rounded-md ${selectedChat?.rocketChatId === chat.rocketChatId ? "bg-primary/10" : "hover:bg-gray-50"}`}>
                     <div className="flex items-start gap-3">
-                      <Avatar photo={""} username={chat?.name} />
+                      <div className="relative flex flex-col items-center">
+                        <span className={`absolute left-3 -top-0 w-2 h-2 rounded-full ${chat?.isActive ? "bg-green-400" : "bg-gray-400"}`} />
+                        <Avatar photo={""} username={chat?.name} />
+                      </div>
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <h3 className="text-sm font-medium text-gray-900 truncate flex items-center gap-2">
                             {chat?.name}
-                            <span className={`w-2 h-2 rounded-full ${chat?.isActive ? "bg-green-400" : "bg-gray-400"}`} />
+                            {/* <span className={`w-2 h-2 rounded-full ${chat?.isActive ? "bg-green-400" : "bg-gray-400"}`} /> */}
                           </h3>
                         </div>
-                        <p className="text-xs text-gray-500 mb-1">{chat?.membersCount} عضو</p>
+                        {/* <p className="text-xs text-gray-500 mb-1">{chat?.membersCount} عضو</p> */}
+                        <p className="text-xs text-gray-500 mb-1">{chat?.ChatRoomMember?.length} عضو</p>
                         {chat?.lastMessage && (
                           <div className="text-xs text-gray-600 truncate">
-                            {chat.lastMessage.content}
+                            {/* {chat.lastMessage.content} */}
                             <div className="flex justify-between text-gray-400 mt-1">
-                              <span>{chat.lastMessage.senderName}</span>
+                              <span className="text-gray-600">
+                                {chat.lastMessage.content} - {chat.lastMessage.senderName}
+                              </span>
+
                               <span>{formatTimestamp(chat.lastMessage.createdAt)}</span>
                             </div>
                           </div>

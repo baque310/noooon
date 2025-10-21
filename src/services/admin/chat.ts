@@ -15,6 +15,7 @@ export interface IChat {
   };
   participantInfo: null;
   membersCount: number;
+  ChatRoomMember: any[];
 }
 export interface IChatGetDataResponse extends BaseGetDataResponse<IChat> {
   success: boolean;

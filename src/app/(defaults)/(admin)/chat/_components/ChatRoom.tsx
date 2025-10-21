@@ -9,6 +9,7 @@ import { LoadingForm } from "@/components/Form/loadingForm";
 import Avatar from "@/components/common/Avatar";
 import { getTranslation } from "@/ni18n/i18n";
 import { DeleteIcons } from "@/components/common/icons/Actions";
+import cookie from "cookie";
 
 interface RoomStatus {
   isRoomActive: boolean;
@@ -34,6 +35,8 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
   const [error, setError] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [attachedImage, setAttachedImage] = useState<string | null>(null);
+  const cookies = cookie.parse(document.cookie || "");
+  const token_access = cookies?.token_access;
 
   const [chatMessageRemove] = useChatMessageRemoveMutation();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -93,29 +96,63 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  const [ChatWithFileMessage, { isLoading: isLoadingChatWithFileMessage }] = useChatWithFileMessageMutation();
+  // const [ChatWithFileMessage, { isLoading: isLoadingChatWithFileMessage }] = useChatWithFileMessageMutation();
 
   const sendMessage = useCallback(async () => {
     const trimmedMessage = newMessage.trim();
     if ((!trimmedMessage && !attachedImage) || !roomStatus?.canSendMessages) return;
 
-    const payload = {
-      roomId,
-      message: trimmedMessage || "",
-      messageType: attachedImage ? "image+text" : "text",
-      file: attachedImage || undefined,
-    };
+    try {
+      let uploadedFileUrl: string | undefined;
 
-    SocketService.emit("sendMessage", payload);
-    attachedImage &&
-      (await ChatWithFileMessage({
+      // 🔹 Upload file first (if any)
+      if (attachedImage) {
+        const formData = new FormData();
+        formData.append("roomId", roomId);
+        formData.append("message", trimmedMessage || "");
+        formData.append("file", attachedImage);
+
+        // const response = await fetch(`${process.env.BASE_URL}admin/chat/files/upload`, {
+        //   method: "POST",
+        //   body: formData,
+        //   headers: {
+        //     Authorization: `Bearer ${token_access}`,
+        //     "x-api-key": "728b2e74f6b7ceebe2ff91ff6a32fc6d169a51ccf063074190a206bc09634c7d",
+        //   },
+        // });
+
+        const response = await fetch(`${process.env.BASE_URL}/admin/chat/files/upload`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token_access}`,
+            "x-api-key": "728b2e74f6b7ceebe2ff91ff6a32fc6d169a51ccf063074190a206bc09634c7d",
+          },
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error("File upload failed");
+
+        const data = await response.json();
+        uploadedFileUrl = data?.fileUrl || data?.url || null; // depends on backend response
+      }
+
+      // 🔹 Prepare final payload for socket message
+      const payload = {
         roomId,
         message: trimmedMessage || "",
-        file: attachedImage || undefined,
-      }).unwrap());
+        messageType: attachedImage ? "image+text" : "text",
+        file: uploadedFileUrl || undefined,
+      };
 
-    setNewMessage("");
-    setAttachedImage(null);
+      // 🔹 Emit message via socket (same behavior as before)
+      SocketService.emit("sendMessage", payload);
+
+      // 🔹 Reset fields
+      setNewMessage("");
+      setAttachedImage(null);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   }, [newMessage, attachedImage, roomId, roomStatus?.canSendMessages]);
 
   const handleKeyDown = useCallback(
