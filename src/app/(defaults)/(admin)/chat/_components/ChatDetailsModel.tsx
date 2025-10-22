@@ -50,7 +50,7 @@ const ChatDetailsModel: React.FC<ChatDetailsModelProps> = ({ open, setOpen, chat
       console.error("Toggle group chat failed", err);
     }
   };
-  // console.log(chat);
+  console.log(chat);
 
   return (
     <Model title={t("ChatPage.chat-details") || "Chat Details"} open={open} setOpen={setOpen}>
@@ -95,19 +95,21 @@ const ChatDetailsModel: React.FC<ChatDetailsModelProps> = ({ open, setOpen, chat
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900">{t("ChatPage.members-list") || "Members"}</h3>
             <>
-              <button
-                onClick={handleToggle}
-                disabled={isLoading || isPatching}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+              {chat.type !== "DIRECT_MESSAGE" && (
+                <button
+                  onClick={handleToggle}
+                  disabled={isLoading || isPatching}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
               ${isActive ? "bg-red-500 hover:bg-red-600 focus:ring-red-400 text-white" : "bg-green-500 hover:bg-green-600 focus:ring-green-400 text-white"}
               disabled:opacity-70 disabled:cursor-not-allowed`}>
-                {(isLoading || isPatching) && <Loader2 className="h-4 w-4 animate-spin" />}
-                {isLoading || isPatching
-                  ? t("common.loading") || "Processing..."
-                  : isActive
-                  ? t("ChatPage.disable-chat") || "Disable Chat"
-                  : t("ChatPage.enable-chat") || "Enable Chat"}
-              </button>
+                  {(isLoading || isPatching) && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {isLoading || isPatching
+                    ? t("common.loading") || "Processing..."
+                    : isActive
+                    ? t("ChatPage.disable-chat") || "Disable Chat"
+                    : t("ChatPage.enable-chat") || "Enable Chat"}
+                </button>
+              )}
 
               {/* Confirmation modal */}
               {showConfirm && (
