@@ -142,13 +142,13 @@ export const Chat = api.injectEndpoints({
       invalidatesTags: (res) => (res ? ["ChatToggleGroupChat", "ChatGetData"] : []),
     }),
 
-    ClassUpdate: build.mutation<IChat, { roomId: string; body: { action: string } }>({
+    ToggleGroupChatUpdate: build.mutation<IChat, { roomId: string; body: { action: "ENABLE" | "DISABLE" } }>({
       query: ({ body, roomId }) => ({
         url: `admin/chat/toggle-group-chat/${roomId}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: ["ClassUpdate", "ClassGetDataById", "ClassGetData"],
+      invalidatesTags: ["ChatGetData", "ClassUpdate", "ClassGetDataById", "ClassGetData"],
     }),
 
     ChatMessageRemove: build.mutation<void, { messageId: string }>({
@@ -168,6 +168,7 @@ export const {
   useChatCreateSubjectTeachersGroupMutation,
   useChatCreateClassStudentsGroupMutation,
   useChatToggleGroupChatMutation,
+  useToggleGroupChatUpdateMutation,
   useChatDirectMutation,
   useChatMessageMutation,
   useChatWithFileMessageMutation,

@@ -10,6 +10,7 @@ import { LoadingForm } from "@/components/Form/loadingForm";
 import Avatar from "@/components/common/Avatar";
 import { getTranslation } from "@/ni18n/i18n";
 import CreateComponent from "./CreateComponent";
+import ChatDetailsModel from "./ChatDetailsModel";
 import { AddIcons, DeleteIcons } from "@/components/common/icons/Actions";
 import { useSearchParams } from "next/navigation";
 import { DataTableSortStatus } from "mantine-datatable";
@@ -26,6 +27,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
   const [connectionStatus, setConnectionStatus] = useState<"disconnected" | "connecting" | "connected" | "error">("disconnected");
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [openChatDetails, setOpenChatDetails] = useState(false);
   const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
   const [selectedMessagesCount, setSelectedMessagesCount] = useState<number>(0);
   const chatRoomRef = useRef<ChatRoomHandle | null>(null);
@@ -105,7 +107,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
     [sortStatus, localSearch, param]
   );
 
-  const { currentData, isLoading, error, isFetching } = useChatGetDataQuery({ ...params });
+  const { currentData, isLoading, error, isFetching, refetch } = useChatGetDataQuery({ ...params });
 
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
@@ -157,6 +159,33 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
   }, []);
 
   const { t } = getTranslation();
+
+  const handleChatToggle = useCallback(
+    async (chatId: string, updatedStatus?: string) => {
+      try {
+        if (updatedStatus) {
+          // update selected chat locally if it matches
+          setSelectedChat((prev) => {
+            if (!prev) return prev;
+            if (prev.id !== chatId) return prev;
+            return {
+              ...prev,
+              isActive: updatedStatus,
+            } as IChat;
+          });
+          return;
+        }
+
+        // fallback: refetch the list and update selectedChat
+        const res = await refetch();
+        const updated = res?.data?.data?.find((c: IChat) => c.id === chatId) ?? null;
+        setSelectedChat(updated);
+      } catch (err) {
+        console.error("Failed to refetch chats after toggle", err);
+      }
+    },
+    [refetch]
+  );
 
   return (
     <div className="space-y-2">
@@ -352,7 +381,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
             <>
               {/* Chat Header */}
               <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center gap-3 justify-between">
-                <div className="flex items-center gap-3">
+                <div onClick={() => setOpenChatDetails(true)} className="flex items-center gap-3 cursor-pointer">
                   <Avatar photo={""} username={selectedChat.name} />
                   <div>
                     <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -405,6 +434,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
       </div>
 
       <CreateComponent open={open} setOpen={setOpen} />
+      <ChatDetailsModel open={openChatDetails} setOpen={setOpenChatDetails} chat={selectedChat} onToggleStatus={handleChatToggle} />
     </div>
   );
 };
