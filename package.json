@@ -6,8 +6,8 @@
     "dev": "next dev",
     "debug": "next dev --inspect",
     "build": "next build",
-    "server": "cross-env NODE_ENV=development NEXTAUTH_URL=https://mylocal.com:3012 node server",
-    "server:debug": "cross-env NODE_ENV=development NEXTAUTH_URL=https://mylocal.com:3012 node server",
+    "server": "cross-env NODE_ENV=development NEXTAUTH_URL=https://mylocal.com:3000 node server",
+    "server:debug": "cross-env NODE_ENV=development NEXTAUTH_URL=https://mylocal.com:3000 node server",
     "start": "next start",
     "lint": "next lint"
   },

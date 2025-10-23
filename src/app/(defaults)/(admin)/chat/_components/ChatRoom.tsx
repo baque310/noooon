@@ -96,7 +96,7 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  // const [ChatWithFileMessage, { isLoading: isLoadingChatWithFileMessage }] = useChatWithFileMessageMutation();
+  const [ChatWithFileMessage, { isLoading: isLoadingChatWithFileMessage }] = useChatWithFileMessageMutation();
 
   const sendMessage = useCallback(async () => {
     const trimmedMessage = newMessage.trim();
@@ -120,8 +120,9 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
         //     "x-api-key": "728b2e74f6b7ceebe2ff91ff6a32fc6d169a51ccf063074190a206bc09634c7d",
         //   },
         // });
+        console.log(token_access);
 
-        const response = await fetch(`${process.env.BASE_URL}/admin/chat/files/upload`, {
+        const response = await fetch(`${process.env.BASE_URL}admin/chat/files/upload`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token_access}`,
@@ -129,10 +130,11 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
           },
           body: formData,
         });
-
         if (!response.ok) throw new Error("File upload failed");
-
         const data = await response.json();
+        console.log(data);
+
+        // const data = await response.json();
         uploadedFileUrl = data?.fileUrl || data?.url || null; // depends on backend response
       }
 
@@ -141,7 +143,7 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
         roomId,
         message: trimmedMessage || "",
         messageType: attachedImage ? "image+text" : "text",
-        file: uploadedFileUrl || undefined,
+        // file: uploadedFileUrl || undefined,
       };
 
       // 🔹 Emit message via socket (same behavior as before)
@@ -154,6 +156,35 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
       console.error("Error sending message:", error);
     }
   }, [newMessage, attachedImage, roomId, roomStatus?.canSendMessages]);
+  // const sendMessage = useCallback(async () => {
+  //   const trimmedMessage = newMessage.trim();
+  //   if ((!trimmedMessage && !attachedImage) || !roomStatus?.canSendMessages) return;
+
+  //   try {
+  //     const payload = {
+  //       roomId,
+  //       message: trimmedMessage || "",
+  //       messageType: attachedImage ? "image+text" : "text",
+  //       file: attachedImage || undefined,
+  //     };
+
+  //     // First send via API
+  //     const result = await ChatWithFileMessage({
+  //       roomId,
+  //       message: trimmedMessage || "",
+  //       file: attachedImage || undefined,
+  //     }).unwrap();
+
+  //     // Then emit via socket for real-time updates
+  //     SocketService.emit("sendMessage", payload);
+
+  //     setNewMessage("");
+  //     setAttachedImage(null);
+  //   } catch (error) {
+  //     console.error("Error sending message:", error);
+  //     // You might want to show an error notification here
+  //   }
+  // }, [newMessage, attachedImage, roomId, roomStatus?.canSendMessages, ChatWithFileMessage]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -228,7 +259,7 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
       </div>
     );
   }
-  // console.log(messages);
+  console.log(messages);
 
   return (
     <div className="flex flex-col h-full bg-gray-50">
@@ -246,68 +277,72 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
               <p className="text-sm">ابدأ المحادثة بإرسال أول رسالة</p>
             </div>
           ) : (
-            messages.map((msg) => (
-              <div
-                key={msg._id}
-                className={`flex items-end gap-2 ${msg.senderType !== "ADMIN" ? "justify-end" : "justify-start"} ${
-                  selectedMessages.includes(msg._id) ? "bg-blue-100" : ""
-                } p-1 rounded-lg transition`}
-                onDoubleClick={() => {
-                  if (selectedMessages.length === 0) {
-                    setSelectedMessages([msg._id]);
-                    onSelectionChange?.([msg._id]);
-                  }
-                }}
-                onClick={() => {
-                  if (selectedMessages.length > 0) handleSelectMessage(msg);
-                }}>
-                {msg.senderType !== "ADMIN" && <Avatar username={msg.senderName} photo="" />}
+            messages.map((msg) => {
+              const isAdmin = msg.senderType === "ADMIN";
+              const isSelected = selectedMessages.includes(msg._id);
 
-                <div className={`max-w-[70%] ${msg.senderType === "ADMIN" ? "order-2" : ""}`}>
-                  <div
-                    className={`px-4 py-3 rounded-2xl ${
-                      msg.senderType === "ADMIN" ? "bg-blue-500 text-white rounded-br-md shadow-md" : "bg-white text-gray-800 border border-gray-200 rounded-bl-md shadow-sm"
-                    }`}>
-                    {msg.senderType !== "ADMIN" && (
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-medium text-gray-600">{msg.senderName}</span>
-                        <span
-                          className={`text-[10px] px-1 py-0.5 rounded-full ${
-                            msg.senderType === "STUDENT"
-                              ? "bg-green-100 text-green-700"
-                              : msg.senderType === "TEACHER"
-                              ? "bg-purple-100 text-purple-700"
-                              : "bg-gray-100 text-gray-700"
-                          }`}>
-                          {t(msg.senderType as any)}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* ✅ Handle text + image */}
-                    {msg.image ? (
-                      <div className="mt-2">
-                        <img src={msg.image} alt="sent image" className="rounded-lg max-w-xs border border-gray-200 mb-2" />
-                        {msg.message && <p className="text-sm leading-relaxed">{msg.message}</p>}
-                      </div>
-                    ) : msg.messageType === "image" ? (
-                      <img src={msg.message} alt="sent image" className="rounded-lg max-w-xs border border-gray-200" />
-                    ) : (
-                      <p className="text-sm leading-relaxed">{msg.message}</p>
-                    )}
-                  </div>
-                  <div className={`text-[10px] text-gray-400 px-1 ${msg.senderType === "ADMIN" ? "text-right" : "text-left"}`}>{formatTimestamp(msg.createdAt)}</div>
-                </div>
-
-                {msg.senderType === "ADMIN" && (
-                  <div className="flex-shrink-0 order-1">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow">
-                      <span className="text-white text-xs font-medium">{msg.senderName.charAt(0)}</span>
+              return (
+                <div
+                  key={msg._id}
+                  className={`flex w-full ${isAdmin ? "justify-start" : "justify-end"} transition-all duration-200`}
+                  onDoubleClick={() => {
+                    if (selectedMessages.length === 0) {
+                      setSelectedMessages([msg._id]);
+                      onSelectionChange?.([msg._id]);
+                    }
+                  }}
+                  onClick={() => {
+                    if (selectedMessages.length > 0) handleSelectMessage(msg);
+                  }}>
+                  {/* Avatar left for ADMIN */}
+                  {isAdmin && (
+                    <div className="flex-shrink-0">
+                      <Avatar username={msg.senderName} photo="" />
                     </div>
+                  )}
+
+                  <div className={`relative max-w-[75%] mx-2 group ${isSelected ? "bg-blue-50 rounded-2xl" : ""}`}>
+                    {/* Sender info */}
+                    <div className={`flex items-center gap-2 mb-1 ${isAdmin ? "justify-start pl-2" : "justify-end pr-2"}`}>
+                      <span className={`text-xs font-semibold ${isAdmin ? "text-primary" : "text-gray-700"}`}>{msg.senderName}</span>
+                      {/* <span
+                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
+                          msg.senderType === "STUDENT" ? "bg-green-100 text-green-700" : msg.senderType === "ADMIN" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+                        }`}>
+                        {t(msg.senderType as any)}
+                      </span> */}
+                    </div>
+
+                    {/* Message bubble */}
+                    <div
+                      className={`px-4 py-3 rounded-2xl shadow-sm ${
+                        isAdmin ? "bg-blue-500 text-white rounded-tr-md" : "bg-white text-gray-800 border border-gray-200 rounded-tl-md"
+                      }`}>
+                      {msg.image ? (
+                        <div className="flex flex-col gap-2">
+                          <img src={msg.image} alt="sent image" className="rounded-lg border border-gray-200 max-w-xs" />
+                          {msg.message && <p className="text-sm leading-relaxed">{msg.message}</p>}
+                        </div>
+                      ) : msg.messageType === "image" ? (
+                        <img src={msg.message} alt="sent image" className="rounded-lg border border-gray-200 max-w-xs" />
+                      ) : (
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{msg.message}</p>
+                      )}
+                    </div>
+
+                    {/* Timestamp */}
+                    <div className={`text-[10px] text-gray-400 px-1 ${msg.senderType === "ADMIN" ? "text-right" : "text-left"}`}>{formatTimestamp(msg.createdAt)}</div>
                   </div>
-                )}
-              </div>
-            ))
+
+                  {/* Avatar right for others */}
+                  {!isAdmin && (
+                    <div className="flex-shrink-0">
+                      <Avatar username={msg.senderName} photo="" />
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
           <div ref={messagesEndRef} />
         </div>
