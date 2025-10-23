@@ -16,10 +16,7 @@ export interface AddAdminDiscountPayload {
 
 export const AdminDiscount = api.injectEndpoints({
   endpoints: (build) => ({
-    AdminDiscountGetData: build.query<
-      BaseGetDataResponse<IAdminDiscount>,
-      GetDataRequestParams
-    >({
+    AdminDiscountGetData: build.query<BaseGetDataResponse<IAdminDiscount>, GetDataRequestParams>({
       query: (params) => ({
         url: `admin/discount`,
         params,
@@ -36,42 +33,22 @@ export const AdminDiscount = api.injectEndpoints({
       providesTags: ["AdminDiscountGetDataById"],
     }),
 
-    AdminDiscountCreate: build.mutation<
-      IAdminDiscount,
-      AddAdminDiscountPayload | FormData
-    >({
+    AdminDiscountCreate: build.mutation<IAdminDiscount, AddAdminDiscountPayload | FormData>({
       query: (body) => ({
         url: `admin/discount`,
         body,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "AdminDiscountCreate",
-              "AdminDiscountGetDataById",
-              "AdminDiscountGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["AdminDiscountCreate", "AdminDiscountGetDataById", "AdminDiscountGetData"] : []),
     }),
 
-    AdminDiscountUpdate: build.mutation<
-      IAdminDiscount,
-      { id: string; body: AddAdminDiscountPayload }
-    >({
+    AdminDiscountUpdate: build.mutation<IAdminDiscount, { id: string; body: AddAdminDiscountPayload }>({
       query: ({ body, id }) => ({
         url: `admin/discount/${id}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "AdminDiscountUpdate",
-              "AdminDiscountGetDataById",
-              "AdminDiscountGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["AdminDiscountUpdate", "AdminDiscountGetDataById", "AdminDiscountGetData"] : []),
     }),
 
     AdminDiscountRemove: build.mutation<void, { id: string }>({
@@ -79,14 +56,7 @@ export const AdminDiscount = api.injectEndpoints({
         url: `admin/discount/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "AdminDiscountRemove",
-              "AdminDiscountGetDataById",
-              "AdminDiscountGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["AdminDiscountRemove", "AdminDiscountGetDataById", "AdminDiscountGetData"] : []),
     }),
   }),
 });

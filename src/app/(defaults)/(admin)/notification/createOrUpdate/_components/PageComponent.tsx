@@ -8,11 +8,6 @@ import { FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-export interface FormValues extends NotificationToAll {
-  all: string;
-  schoolYearId?: string;
-  allStudentsThisASectionsORClasses: string;
-}
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import { Form, Formik, FormikProps } from "formik";
 import { InputForm } from "@/components/Form/inputForm";
@@ -24,6 +19,14 @@ import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import { LoadingForm } from "@/components/Form/loadingForm";
 import { useStageGetDataQuery } from "@/services/admin/stage";
+import { useTeacherGetDataQuery } from "@/services/admin/teacher";
+import { useParentGetDataQuery } from "@/services/admin/parent";
+export interface FormValues extends NotificationToAll {
+  // all?: string;
+  schoolYearId?: string;
+  allStudentsThisASectionsORClasses: string;
+  sendTo?: string;
+}
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -34,6 +37,12 @@ const PageComponent = () => {
   const body = searchParams.get("body") || "";
   const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
   const { currentData: SettingGetData, isFetching: isFetchingSettingGetData } = useSettingGetDataQuery();
+  const [searchTeacher, setSearchTeacher] = React.useState("");
+  const { currentData: teachers, isFetching: isFetchingTeachers } = useTeacherGetDataQuery({
+    skip: 1,
+    take: 100,
+    search: searchTeacher,
+  });
   const [searchUser, setSearchUser] = useState("");
   const [schoolYearId, setSchoolYearId] = useState<string | undefined>(SettingGetData?.CurrentSchoolYear?.id ?? "");
   const [stageId, setStageId] = useState<string | undefined>(undefined);
@@ -53,7 +62,7 @@ const PageComponent = () => {
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
-      if (values.all == "TRUE") {
+      if (values.sendTo == "allStudents") {
         await NotificationSendToAll({
           title: values.title,
           body: values.body,
@@ -94,6 +103,25 @@ const PageComponent = () => {
 
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
 
+  //
+  const [param, setParam] = useState<
+    | {
+        approval_status?: string;
+        search?: string;
+        range?: string;
+      }
+    | undefined
+  >();
+  const params = {
+    skip: 1,
+    take: 30,
+    ...param,
+  };
+
+  const { isFetching: isFetchingParents, currentData: parents } = useParentGetDataQuery({
+    ...params,
+  });
+
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
@@ -103,8 +131,9 @@ const PageComponent = () => {
         ) : (
           <Formik<FormValues>
             initialValues={{
-              all: "FALSE",
+              // all: "FALSE",
               allStudentsThisASectionsORClasses: "FALSE",
+              sendTo: "selectedStudents",
               userIds: [],
               title: title,
               body: body,
@@ -132,9 +161,28 @@ const PageComponent = () => {
                 <>
                   <div className="Card">
                     <div className="text-base font-semibold text-black dark:text-white-dark mb-2">
-                      <CheckBoxFormWithCustom formikProps={props} name="all" title={t("NotificationPage.allowedAllStudents")} />
+                      <SelectForm
+                        formikProps={props}
+                        name={`sendTo`}
+                        title={t("NotificationPage.sendTo")}
+                        placeholder={t("NotificationPage.select-sendTo")}
+                        options={[
+                          { label: t("NotificationPage.teachers"), value: "teachers" },
+                          { label: t("NotificationPage.parents"), value: "parents" },
+                          { label: t("NotificationPage.selectedStudents"), value: "selectedStudents" },
+                          { label: t("NotificationPage.allStudents"), value: "allStudents" },
+                        ]}
+                        props={{
+                          isLoading: isFetchingStage,
+                          isClearable: true,
+                          onChange: (e) => {
+                            props.setFieldValue(`sendTo`, (e as any)?.value ?? "");
+                          },
+                        }}
+                      />
                     </div>
-                    {props.values.all !== "TRUE" && (
+
+                    {props.values.sendTo === "selectedStudents" && (
                       // <InputForm
                       //   formikProps={props}
                       //   name={"searchUser"}
@@ -264,7 +312,81 @@ const PageComponent = () => {
                     )}
                   </div>
 
-                  {props.values.all !== "TRUE" && (
+                  {props.values.sendTo === "parents" && (
+                    <>
+                      {isFetchingParents ? (
+                        <div className="flex justify-center">
+                          <div className="loader !bg-primary !w-8 !h-8" />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
+                            parents?.data?.map((item, index) => (
+                              <div className="Card !p-3" key={item.userId}>
+                                {/* Use item.value for key if it's unique */}
+                                <CheckBoxForm
+                                  key={index}
+                                  formikProps={props}
+                                  name={`userIds.${index}`}
+                                  title={`${item.fullName}`}
+                                  props={{
+                                    checked: props.values.userIds.some((it: any) => it == item.userId),
+                                    value: props.values.userIds.some((it: any) => it == item.userId),
+                                    onChange: (e) => {
+                                      if (e.target.checked) {
+                                        let newValues = props.values.userIds.concat(item.userId);
+                                        props.setFieldValue(`userIds`, newValues);
+                                      } else {
+                                        let newValues = props.values.userIds.filter((it: any) => it != item.userId);
+                                        props.setFieldValue(`userIds`, newValues);
+                                      }
+                                    },
+                                  }}
+                                />
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {props.values.sendTo === "teachers" && (
+                    <>
+                      {isFetchingTeachers ? (
+                        <div className="flex justify-center">
+                          <div className="loader !bg-primary !w-8 !h-8" />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
+                            teachers?.data?.map((item, index) => (
+                              <div className="Card !p-3" key={item.userId}>
+                                {/* Use item.value for key if it's unique */}
+                                <CheckBoxForm
+                                  key={index}
+                                  formikProps={props}
+                                  name={`userIds.${index}`}
+                                  title={`${item.fullName}`}
+                                  props={{
+                                    checked: props.values.userIds.some((it: any) => it == item.userId),
+                                    value: props.values.userIds.some((it: any) => it == item.userId),
+                                    onChange: (e) => {
+                                      if (e.target.checked) {
+                                        let newValues = props.values.userIds.concat(item.userId);
+                                        props.setFieldValue(`userIds`, newValues);
+                                      } else {
+                                        let newValues = props.values.userIds.filter((it: any) => it != item.userId);
+                                        props.setFieldValue(`userIds`, newValues);
+                                      }
+                                    },
+                                  }}
+                                />
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {props.values.sendTo === "selectedStudents" && (
                     <>
                       {isFetchingUserGetDataForAdmin ? (
                         <div className="flex justify-center">

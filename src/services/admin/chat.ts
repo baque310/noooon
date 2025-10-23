@@ -15,6 +15,7 @@ export interface IChat {
   };
   participantInfo: null;
   membersCount: number;
+  ChatRoomMember: any[];
 }
 export interface IChatGetDataResponse extends BaseGetDataResponse<IChat> {
   success: boolean;
@@ -32,7 +33,9 @@ export type ChatTargetUserType = "teacher" | "student" | "parent";
 export interface AddChatMessagePayload {
   roomId: string;
   message: string;
-  messageType: "text";
+  messageType?: "text";
+  duration?: string;
+  file?: string;
 }
 
 export interface AddChatCreateSchoolStaffGroupPayload {
@@ -86,6 +89,14 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatMessage", "ChatGetData"] : []),
     }),
+    ChatWithFileMessage: build.mutation<IChat, AddChatMessagePayload>({
+      query: (body) => ({
+        url: `admin/chat/files/upload`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: (res) => (res ? ["ChatMessage", "ChatGetData"] : []),
+    }),
     ChatCreateSchoolStaffGroup: build.mutation<IChat, AddChatCreateSchoolStaffGroupPayload>({
       query: (body) => ({
         url: `admin/chat/create-school-staff-group`,
@@ -131,6 +142,15 @@ export const Chat = api.injectEndpoints({
       invalidatesTags: (res) => (res ? ["ChatToggleGroupChat", "ChatGetData"] : []),
     }),
 
+    ToggleGroupChatUpdate: build.mutation<IChat, { roomId: string; body: { action: "ENABLE" | "DISABLE" } }>({
+      query: ({ body, roomId }) => ({
+        url: `admin/chat/toggle-group-chat/${roomId}`,
+        body,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["ChatGetData", "ClassUpdate", "ClassGetDataById", "ClassGetData"],
+    }),
+
     ChatMessageRemove: build.mutation<void, { messageId: string }>({
       query: ({ messageId }) => ({
         url: `admin/chat/message/${messageId}`,
@@ -148,7 +168,9 @@ export const {
   useChatCreateSubjectTeachersGroupMutation,
   useChatCreateClassStudentsGroupMutation,
   useChatToggleGroupChatMutation,
+  useToggleGroupChatUpdateMutation,
   useChatDirectMutation,
   useChatMessageMutation,
+  useChatWithFileMessageMutation,
   useChatMessageRemoveMutation,
 } = Chat;

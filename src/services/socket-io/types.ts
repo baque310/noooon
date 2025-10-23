@@ -13,6 +13,7 @@ export interface IMessage {
   senderId: string;
   senderType: string;
   senderName: string;
+  image?: string;
   roomId: string;
   messageType: string;
 }

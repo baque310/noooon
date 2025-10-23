@@ -15,10 +15,7 @@ import * as Yup from "yup";
 import { useStudentEnrollmentGetDataQuery } from "@/services/admin/studentEnrollment";
 import { useTeacherGetDataQuery } from "@/services/admin/teacher";
 import { useParentGetDataQuery } from "@/services/admin/parent";
-import {
-  AddChatCreateClassParentsGroupPayload,
-  useChatCreateClassParentsGroupMutation,
-} from "@/services/admin/chat";
+import { AddChatCreateClassParentsGroupPayload, useChatCreateClassParentsGroupMutation } from "@/services/admin/chat";
 import { useClassGetDataQuery } from "@/services/admin/class";
 export interface FormValues extends AddChatCreateClassParentsGroupPayload {}
 const ClassParentsGroupComponent = ({
@@ -32,29 +29,20 @@ const ClassParentsGroupComponent = ({
 }) => {
   const { t } = getTranslation();
 
-  const [
-    CreateClassParentsGroup,
-    { isLoading: isLoadingCreateClassParentsGroup },
-  ] = useChatCreateClassParentsGroupMutation();
+  const [CreateClassParentsGroup, { isLoading: isLoadingCreateClassParentsGroup }] = useChatCreateClassParentsGroupMutation();
 
   const [searchTeacher, setSearchTeacher] = React.useState("");
-  const { currentData: teachers, isFetching: isFetchingTeachers } =
-    useTeacherGetDataQuery({
-      skip: 1,
-      take: 100,
-      search: searchTeacher,
-    });
+  const { currentData: teachers, isFetching: isFetchingTeachers } = useTeacherGetDataQuery({
+    skip: 1,
+    take: 100,
+    search: searchTeacher,
+  });
   const [searchClass, setSearchClass] = React.useState("");
-  const { currentData: classes, isFetching: isFetchingClasses } =
-    useClassGetDataQuery({
-      search: searchClass,
-    });
+  const { currentData: classes, isFetching: isFetchingClasses } = useClassGetDataQuery({
+    search: searchClass,
+  });
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-    setOpen: any
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await CreateClassParentsGroup({
         classId: values.classId,
@@ -89,11 +77,7 @@ const ClassParentsGroupComponent = ({
   });
 
   return (
-    <Model
-      title={t("ChatPage.create-class-parents-group")}
-      open={open}
-      setOpen={setOpen}
-    >
+    <Model title={t("ChatPage.create-class-parents-group")} open={open} setOpen={setOpen}>
       <Formik<FormValues>
         initialValues={{
           classId: "",
@@ -104,8 +88,7 @@ const ClassParentsGroupComponent = ({
         validationSchema={ChatSchema}
         onSubmit={(values, formikHelpers) => {
           handleSubmit(values, formikHelpers, setOpen);
-        }}
-      >
+        }}>
         {(props: FormikProps<any>) => (
           <Form className={"flex flex-col gap-4"}>
             <SelectForm
@@ -153,12 +136,7 @@ const ClassParentsGroupComponent = ({
               }}
             />
 
-            <InputForm
-              formikProps={props}
-              name={"groupName"}
-              title={t("ChatPage.group-name")}
-              placeholder={t("ChatPage.enter-group-name")}
-            />
+            <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
             <InputForm
               formikProps={props}
               name={"description"}
