@@ -54,10 +54,10 @@ const PageComponent = () => {
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
 
-  const { isFetching: isFetchingOtherPayment, currentData: OtherPaymentData } = useOtherPaymentGetDataQuery({
-    skip: 1,
-    take: 30,
-  });
+  // const { isFetching: isFetchingOtherPayment, currentData: OtherPaymentData } = useOtherPaymentGetDataQuery({
+  //   skip: 1,
+  //   take: 30,
+  // });
 
   const { currentData: dataUserGetData, isFetching: isFetchingUserGetDataForAdmin } = useStudentListQuery({
     schoolYearId: SchoolYearId,
@@ -309,7 +309,7 @@ const PageComponent = () => {
                   </div>
 
                   <>
-                    {isFetchingUserGetDataForAdmin && isFetchingOtherPayment ? (
+                    {isFetchingUserGetDataForAdmin ? (
                       <div className="flex justify-center">
                         <div className="loader !bg-primary !w-8 !h-8" />
                       </div>
@@ -318,7 +318,7 @@ const PageComponent = () => {
                         <div className="flex flex-col gap-2">
                           {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
                             dataUserGetData
-                              ?.filter((item) => !OtherPaymentData?.data.some((inst) => inst.StudentEnrollment.id === item.studentEnrollmentId))
+                              // ?.filter((item) => !OtherPaymentData?.data.some((inst) => inst.StudentEnrollment.id === item.studentEnrollmentId))
                               ?.map((item, index) => (
                                 <div className="Card !p-3" key={item.studentEnrollmentId}>
                                   {/* Use item.value for key if it's unique */}
