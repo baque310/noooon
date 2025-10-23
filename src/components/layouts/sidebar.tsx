@@ -40,9 +40,7 @@ const Sidebar = () => {
   const [currentMenu, setCurrentMenu] = useState<string>("");
   const [errorSubMenu, setErrorSubMenu] = useState(false);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-  const semidark = useSelector(
-    (state: IRootState) => state.themeConfig.semidark
-  );
+  const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
   const toggleMenu = (value: string) => {
     setCurrentMenu((oldValue) => {
       return oldValue === value ? "" : value;
@@ -65,21 +63,15 @@ const Sidebar = () => {
   // ||
   // session.data?.user.RoleType == "Admin";
 
-  const {
-    currentData: DataAdminGetDataById,
-    isFetching: isFetchingAdminGetDataById,
-  } = useAdminGetDataByIdQuery({ id: String(session?.data?.user.id) });
+  const { currentData: DataAdminGetDataById, isFetching: isFetchingAdminGetDataById } = useAdminGetDataByIdQuery({ id: String(session?.data?.user.id) });
 
   useEffect(() => {
-    const selector = document.querySelector(
-      '.sidebar ul a[href="' + window.location.pathname + '"]'
-    );
+    const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
     if (selector) {
       selector.classList.add("active");
       const ul: any = selector.closest("ul.sub-menu");
       if (ul) {
-        let ele: any =
-          ul.closest("li.menu").querySelectorAll(".nav-link") || [];
+        let ele: any = ul.closest("li.menu").querySelectorAll(".nav-link") || [];
         if (ele.length) {
           ele = ele[0];
           setTimeout(() => {
@@ -103,9 +95,7 @@ const Sidebar = () => {
       const element = allLinks[i];
       element?.classList.remove("active");
     }
-    const selector = document.querySelector(
-      '.sidebar ul a[href="' + window.location.pathname + '"]'
-    );
+    const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
     selector?.classList.add("active");
   };
 
@@ -114,25 +104,17 @@ const Sidebar = () => {
       <nav
         className={`sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${
           semidark ? "text-white-dark" : ""
-        }`}
-      >
-        <div
-          className={`h-full bg-white dark:bg-black ${
-            !semidark && "bg-[#28243d]"
-          } `}
-        >
+        }`}>
+        <div className={`h-full bg-white dark:bg-black ${!semidark && "bg-[#28243d]"} `}>
           <div className="flex items-center justify-between px-4 py-3">
             <div className="main-logo flex shrink-0 items-center">
               {/* <img className="ml-[5px] w-10 h-10 rounded-full flex-none" src="/favicon.png" alt="logo" /> */}
-              <span className="align-middle text-lg font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
-                {getTitleApp(window.location.origin)}
-              </span>
+              <span className="align-middle text-lg font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">{getTitleApp(window.location.origin)}</span>
             </div>
             <button
               type="button"
               className="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
-              onClick={() => dispatch(toggleSidebar())}
-            >
+              onClick={() => dispatch(toggleSidebar())}>
               <IconCaretsDown className="m-auto rotate-90" />
             </button>
           </div>
@@ -140,10 +122,7 @@ const Sidebar = () => {
             {isLoading || isFetchingAdminGetDataById ? (
               <ul className="relative space-y-1.5 mt-4 p-4 py-0 font-semibold">
                 {Array.from({ length: 15 }, (_, index) => (
-                  <li
-                    key={index}
-                    className="bg-white/50 h-9 w-full rounded-lg animate-pulse"
-                  ></li>
+                  <li key={index} className="bg-white/50 h-9 w-full rounded-lg animate-pulse"></li>
                 ))}
               </ul>
             ) : (
@@ -156,9 +135,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/"}
                       label={t("sidebar.dashboard")}
-                      icon={
-                        <IconDashboard className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconDashboard className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -166,9 +143,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/admin"}
                       label={t("sidebar.admins")}
-                      icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
 
                     <MenuItem
@@ -177,9 +152,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/school"}
                       label={t("sidebar.schools")}
-                      icon={
-                        <IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
 
                     <MenuItem
@@ -188,9 +161,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/managerBanner"}
                       label={t("sidebar.banner")}
-                      icon={
-                        <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
 
                     <MenuItem
@@ -199,9 +170,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/user"}
                       label={t("sidebar.users")}
-                      icon={
-                        <IconStudent className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconStudent className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -209,9 +178,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/complaint"}
                       label={t("sidebar.complaint")}
-                      icon={
-                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -219,9 +186,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/setting"}
                       label={t("sidebar.settings")}
-                      icon={
-                        <IconSetting className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconSetting className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                   </>
                 )}
@@ -233,9 +198,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/dashboard"}
                       label={t("sidebar.dashboard")}
-                      icon={
-                        <IconDashboard className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconDashboard className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -243,9 +206,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/supperAdmin"}
                       label={t("sidebar.admin")}
-                      icon={
-                        <IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconManagerAdmin className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -253,9 +214,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/adminSchool"}
                       label={t("sidebar.school")}
-                      icon={
-                        <IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconSchool className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
 
                     <MenuItem
@@ -264,9 +223,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/adminComplaint"}
                       label={t("sidebar.complaint")}
-                      icon={
-                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                   </>
                 )}
@@ -277,9 +234,7 @@ const Sidebar = () => {
                   name={"stages"}
                   currentMenu={currentMenu}
                   label={t("sidebar.stages")}
-                  icon={
-                    <IconStage className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconStage className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                   menuList={[
                     {
                       number: 0,
@@ -318,9 +273,7 @@ const Sidebar = () => {
                   name={"students"}
                   currentMenu={currentMenu}
                   label={t("sidebar.students")}
-                  icon={
-                    <IconStudent className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconStudent className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                   menuList={[
                     {
                       number: 0,
@@ -351,6 +304,15 @@ const Sidebar = () => {
                     },
                     {
                       number: 0,
+                      label: t("sidebar.studentOtherPayment"),
+                      resource: "installment",
+                      permission: ["read-any", "read-own"],
+                      to: "otherPayment",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+                    {
+                      number: 0,
                       label: t("sidebar.discount"),
                       resource: "discount",
                       permission: ["read-any", "read-own"],
@@ -369,9 +331,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/teacher"}
                   label={t("sidebar.teacher")}
-                  icon={
-                    <IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 <MenuSubItem
                   permission={["read-any", "read-own"]}
@@ -379,9 +339,7 @@ const Sidebar = () => {
                   name={"subjects"}
                   currentMenu={currentMenu}
                   label={t("sidebar.subjects")}
-                  icon={
-                    <IconSubject className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconSubject className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                   menuList={[
                     {
                       number: 0,
@@ -420,9 +378,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/parent"}
                   label={t("sidebar.parent")}
-                  icon={
-                    <IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconTeacher className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
 
                 <MenuItem
@@ -431,9 +387,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/bus"}
                   label={t("sidebar.bus")}
-                  icon={
-                    <IconBus className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconBus className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 {!isManager && (
                   <MenuItem
@@ -442,9 +396,7 @@ const Sidebar = () => {
                     toggleMenu={toggleMenu}
                     to={"/banner"}
                     label={t("sidebar.banner")}
-                    icon={
-                      <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                    }
+                    icon={<IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                   />
                 )}
 
@@ -454,9 +406,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/video"}
                   label={t("sidebar.video")}
-                  icon={
-                    <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
 
                 <MenuItem
@@ -465,9 +415,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/guidance"}
                   label={t("sidebar.guidance")}
-                  icon={
-                    <IconGuidance className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconGuidance className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -475,9 +423,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/gallery"}
                   label={t("sidebar.gallery")}
-                  icon={
-                    <IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconGallery className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -485,9 +431,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/teacherHomeworks"}
                   label={t("sidebar.homeworks")}
-                  icon={
-                    <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -495,9 +439,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/superTeacherAttendances"}
                   label={t("sidebar.superTeacherAttendances")}
-                  icon={
-                    <IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -505,9 +447,7 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/teacherLessons"}
                   label={t("sidebar.lessons")}
-                  icon={
-                    <IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
 
                 <MenuSubItem
@@ -516,9 +456,7 @@ const Sidebar = () => {
                   name={"schedules"}
                   currentMenu={currentMenu}
                   label={t("sidebar.schedules")}
-                  icon={
-                    <IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                   menuList={[
                     {
                       number: 0,
@@ -548,9 +486,7 @@ const Sidebar = () => {
                   name={"exam"}
                   currentMenu={currentMenu}
                   label={t("sidebar.exams")}
-                  icon={
-                    <IconExam className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconExam className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                   menuList={[
                     {
                       number: 0,
@@ -591,9 +527,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/chat"}
                       label={t("sidebar.chats")}
-                      icon={
-                        <IconChat className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconChat className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -601,9 +535,7 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/notification"}
                       label={t("sidebar.notifications")}
-                      icon={
-                        <IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                   </>
                 )}
