@@ -8,7 +8,6 @@ import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { useLazySectionScheduleGetDataQuery, useSectionScheduleGetDataQuery, useSectionScheduleRemoveMutation } from "@/services/admin/SectionSchedule";
 import { IRootState } from "@/store";
-import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -103,19 +102,19 @@ const TableComponent = () => {
     }
   };
 
-  const activeParam = searchParams.get("active");
-  const [active, setActive] = useState<number>(activeParam ? Number(activeParam) : -1);
+  // const activeParam = searchParams.get("active");
+  // const [active, setActive] = useState<number>(activeParam ? Number(activeParam) : -1);
+  const [active, setActive] = useState<number>(-1);
 
-  useEffect(() => {
-    const v = searchParams.get("active");
-    setActive(v ? Number(v) : -1);
-  }, [searchParams]);
+  // useEffect(() => {
+  //   const v = searchParams.get("active");
+  //   setActive(v ? Number(v) : -1);
+  // }, [searchParams]);
 
   const togglePara = (value: number) => {
-    const newValue = active === value ? -1 : value;
-    setActive(newValue);
-    // update URL without causing a navigation / full page refresh
-    pushWithCurrentParams("/sectionSchedule", { active: newValue === -1 ? undefined : newValue });
+    setActive((oldValue) => {
+      return oldValue === value ? -1 : value;
+    });
   };
 
   const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
@@ -195,7 +194,7 @@ const TableComponent = () => {
     try {
       await ScheduleRemove({ id: String(id) }).unwrap();
       toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
-      router.back();
+      // router.back();
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error && error.message) {
@@ -422,7 +421,8 @@ const TableComponent = () => {
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 setSelectedItem(record.id);
-                                                pushWithCurrentParams("/sectionSchedule/createOrUpdate", { id: record.id });
+                                                // pushWithCurrentParams("/sectionSchedule/createOrUpdate", { id: record.id });
+                                                router.push(`/sectionSchedule/createOrUpdate?id=${record.id}`);
                                               }}
                                               title={t("common.update")}>
                                               <UpdateIcons className="h-5 w-5" />
@@ -466,6 +466,8 @@ const TableComponent = () => {
         title={t("SchedulePage.UpdateSchedule")}
         open={openEdit}
         setOpen={setOpenEdit}
+        active={active}
+        setActive={setActive}
       />
       <DeleteModel
         description={t("SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule")}

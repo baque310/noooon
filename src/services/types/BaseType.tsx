@@ -11,7 +11,6 @@ export interface GetDataRequestParams {
   sortBy?: string;
   sortDirection?: "asc" | "desc";
   schoolYearId?: string;
-
 }
 
 export type PAGE_CODE =
@@ -22,6 +21,7 @@ export type PAGE_CODE =
   | "section"
   | "student"
   | "student_enrollment"
+  | "otherPayment"
   | "teacher"
   | "bus"
   | "banner"
@@ -51,15 +51,7 @@ export type PAGE_CODE =
   | "installment"
   | "student_installment";
 
-export type PERMISSION =
-  | "read-any"
-  | "read-own"
-  | "create-any"
-  | "create-own"
-  | "delete-any"
-  | "delete-own"
-  | "update-any"
-  | "update-own";
+export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
 
 export enum Days {
   SUNDAY = "SUNDAY",
