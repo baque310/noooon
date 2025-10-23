@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazyOtherPaymentGetDataByIdQuery, useOtherPaymentCreateMutation, useOtherPaymentUpdateMutation } from "@/services/admin/other-payment";
+import { useLazyOtherPaymentGetDataByIdQuery, useOtherPaymentCreateMutation, useOtherPaymentGetDataQuery, useOtherPaymentUpdateMutation } from "@/services/admin/other-payment";
 import { AddOtherPaymentPayload, IOtherPayment } from "@/services/admin/other-payment";
 import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
@@ -54,7 +54,7 @@ const PageComponent = () => {
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
 
-  const { isFetching: isFetchingInstallment, currentData: installmentData } = useInstallmentGetDataQuery({
+  const { isFetching: isFetchingOtherPayment, currentData: OtherPaymentData } = useOtherPaymentGetDataQuery({
     skip: 1,
     take: 30,
   });
@@ -309,40 +309,42 @@ const PageComponent = () => {
                   </div>
 
                   <>
-                    {isFetchingUserGetDataForAdmin && isFetchingInstallment ? (
+                    {isFetchingUserGetDataForAdmin && isFetchingOtherPayment ? (
                       <div className="flex justify-center">
                         <div className="loader !bg-primary !w-8 !h-8" />
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-2">
-                        {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
-                          dataUserGetData
-                            ?.filter((item) => !installmentData?.data.some((inst) => inst.StudentEnrollment.id === item.studentEnrollmentId))
-                            ?.map((item, index) => (
-                              <div className="Card !p-3" key={item.studentEnrollmentId}>
-                                {/* Use item.value for key if it's unique */}
-                                <CheckBoxForm
-                                  key={index}
-                                  formikProps={props}
-                                  name={`studentEnrollmentIds.${index}`}
-                                  title={`${item.fullName}`}
-                                  props={{
-                                    checked: props.values.studentEnrollmentIds.some((it: any) => it == item.studentEnrollmentId),
-                                    value: props.values.studentEnrollmentIds.some((it: any) => it == item.studentEnrollmentId),
-                                    onChange: (e) => {
-                                      if (e.target.checked) {
-                                        let newValues = props.values.studentEnrollmentIds.concat(item.studentEnrollmentId);
-                                        props.setFieldValue(`studentEnrollmentIds`, newValues);
-                                      } else {
-                                        let newValues = props.values.studentEnrollmentIds.filter((it: any) => it != item.studentEnrollmentId);
-                                        props.setFieldValue(`studentEnrollmentIds`, newValues);
-                                      }
-                                    },
-                                  }}
-                                />
-                              </div>
-                            ))}
-                      </div>
+                      <>
+                        <div className="flex flex-col gap-2">
+                          {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
+                            dataUserGetData
+                              ?.filter((item) => !OtherPaymentData?.data.some((inst) => inst.StudentEnrollment.id === item.studentEnrollmentId))
+                              ?.map((item, index) => (
+                                <div className="Card !p-3" key={item.studentEnrollmentId}>
+                                  {/* Use item.value for key if it's unique */}
+                                  <CheckBoxForm
+                                    key={index}
+                                    formikProps={props}
+                                    name={`studentEnrollmentIds.${index}`}
+                                    title={`${item.fullName}`}
+                                    props={{
+                                      checked: props.values.studentEnrollmentIds.some((it: any) => it == item.studentEnrollmentId),
+                                      value: props.values.studentEnrollmentIds.some((it: any) => it == item.studentEnrollmentId),
+                                      onChange: (e) => {
+                                        if (e.target.checked) {
+                                          let newValues = props.values.studentEnrollmentIds.concat(item.studentEnrollmentId);
+                                          props.setFieldValue(`studentEnrollmentIds`, newValues);
+                                        } else {
+                                          let newValues = props.values.studentEnrollmentIds.filter((it: any) => it != item.studentEnrollmentId);
+                                          props.setFieldValue(`studentEnrollmentIds`, newValues);
+                                        }
+                                      },
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                        </div>
+                      </>
                     )}
                   </>
                 </>
