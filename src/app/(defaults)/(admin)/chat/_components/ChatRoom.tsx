@@ -259,6 +259,7 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
       </div>
     );
   }
+  console.log(messages);
 
   return (
     <div className="flex flex-col h-full bg-gray-50">
@@ -304,12 +305,12 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
                     {/* Sender info */}
                     <div className={`flex items-center gap-2 mb-1 ${isAdmin ? "justify-start pl-2" : "justify-end pr-2"}`}>
                       <span className={`text-xs font-semibold ${isAdmin ? "text-primary" : "text-gray-700"}`}>{msg.senderName}</span>
-                      {/* <span
+                      <span
                         className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
                           msg.senderType === "STUDENT" ? "bg-green-100 text-green-700" : msg.senderType === "ADMIN" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
                         }`}>
                         {t(msg.senderType as any)}
-                      </span> */}
+                      </span>
                     </div>
 
                     {/* Message bubble */}

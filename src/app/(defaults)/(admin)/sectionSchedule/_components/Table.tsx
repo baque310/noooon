@@ -1,17 +1,15 @@
 "use client";
 import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
-
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazySectionScheduleGetDataQuery, useSectionScheduleGetDataQuery, useSectionScheduleRemoveMutation } from "@/services/admin/SectionSchedule";
+import { useLazySectionScheduleGetDataQuery, useSectionScheduleRemoveMutation } from "@/services/admin/SectionSchedule";
 import { IRootState } from "@/store";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-
 import { AddIcons, DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
 import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
 import AnimateHeight from "react-animate-height";
@@ -22,7 +20,6 @@ import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
-import EditModel from "./openEditModel";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { toast } from "react-toastify";
 
@@ -45,13 +42,12 @@ const TableComponent = () => {
   >();
 
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
-
   const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
-    // sectionId  :param.sectionId,
     schoolYearId: param?.schoolYearId,
   });
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
+
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
@@ -89,7 +85,6 @@ const TableComponent = () => {
       handleSearch(value);
     }
   };
-  const allParams = new URLSearchParams(searchParams);
 
   const handleSearch = (value?: string) => {
     const v = value ?? Search;
@@ -102,15 +97,14 @@ const TableComponent = () => {
     }
   };
 
-  // const activeParam = searchParams.get("active");
-  // const [active, setActive] = useState<number>(activeParam ? Number(activeParam) : -1);
   const [active, setActive] = useState<number>(-1);
 
-  // useEffect(() => {
-  //   const v = searchParams.get("active");
-  //   setActive(v ? Number(v) : -1);
-  // }, [searchParams]);
-
+  useEffect(() => {
+    const savedActive = sessionStorage.getItem("sectionScheduleActive");
+    if (savedActive) {
+      setActive(Number(JSON.parse(savedActive)));
+    }
+  }, []);
   const togglePara = (value: number) => {
     setActive((oldValue) => {
       return oldValue === value ? -1 : value;
@@ -118,7 +112,6 @@ const TableComponent = () => {
   };
 
   const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
-    // build new query string keeping existing params
     const allParams = new URLSearchParams();
     searchParams.forEach((value, key) => {
       allParams.set(key, value);
@@ -135,11 +128,9 @@ const TableComponent = () => {
     const query = allParams.toString();
     const newUrl = `${path}${query ? `?${query}` : ""}`;
 
-    // update the browser URL without triggering a Next.js navigation/reload
     if (typeof window !== "undefined" && window.history && window.history.replaceState) {
       window.history.replaceState(null, "", newUrl);
     } else {
-      // fallback to router push if history API not available
       router.push(newUrl);
     }
   };
@@ -186,7 +177,6 @@ const TableComponent = () => {
     pushWithCurrentParams("/sectionSchedule", { schoolYearId });
   };
 
-  // ensure the "add" button preserves params (including active) when navigating
   const selectedClassName = searchParams.get("selectedClassName");
   const id = searchParams.get("id");
   const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useSectionScheduleRemoveMutation();
@@ -194,7 +184,6 @@ const TableComponent = () => {
     try {
       await ScheduleRemove({ id: String(id) }).unwrap();
       toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
-      // router.back();
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error && error.message) {
@@ -206,7 +195,6 @@ const TableComponent = () => {
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  // const [selectedItem, setSelectedItem] = useState<{ event: React.MouseEvent<Element, globalThis.MouseEvent>; record: any; index: number } | null>(null);
   const [selectedItem, setSelectedItem] = useState<string>("");
 
   return (
@@ -365,8 +353,7 @@ const TableComponent = () => {
                             {isMounted && (
                               <DataTable
                                 onRowClick={async (item) => {
-                                  console.log(item);
-
+                                  sessionStorage.setItem("sectionScheduleActive", JSON.stringify(active)); // Save the current active index
                                   setSelectedItem(item.record.id);
                                   router.push(`/sectionSchedule/${item.record.id}`);
                                 }}
@@ -460,15 +447,7 @@ const TableComponent = () => {
           </>
         )}
       </div>
-      <EditModel
-        // selectedItemId={selectedItem}
-        description={t("SchedulePage.Are-you-sure-you-want-to-delete-this-Schedule")}
-        title={t("SchedulePage.UpdateSchedule")}
-        open={openEdit}
-        setOpen={setOpenEdit}
-        active={active}
-        setActive={setActive}
-      />
+
       <DeleteModel
         description={t("SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule")}
         title={t("SchedulePage.DeleteSchedule")}
