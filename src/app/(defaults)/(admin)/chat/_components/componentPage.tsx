@@ -108,6 +108,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_refresh, token_acce
   );
 
   const { currentData, isLoading, error, isFetching, refetch } = useChatGetDataQuery({ ...params });
+  console.log(currentData);
 
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 

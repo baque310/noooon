@@ -53,16 +53,13 @@ export interface AddSuperTeacherAttendancesPayload {
     date: string;
     Status: "Present" | "Absent" | "Vacation";
     studentEnrollmentId: string;
-    sectionScheduleId: string;
+    sectionScheduleId: string[];
   }[];
 }
 
 export const SuperTeacherAttendances = api.injectEndpoints({
   endpoints: (build) => ({
-    SuperTeacherAttendancesGetData: build.query<
-      BaseGetDataResponse<ISuperTeacherAttendances>,
-      GetDataRequestParams
-    >({
+    SuperTeacherAttendancesGetData: build.query<BaseGetDataResponse<ISuperTeacherAttendances>, GetDataRequestParams>({
       query: (params) => ({
         url: `super/teacher/attendances`,
         params,
@@ -71,10 +68,7 @@ export const SuperTeacherAttendances = api.injectEndpoints({
       providesTags: ["SuperTeacherAttendancesGetData"],
     }),
 
-    SuperTeacherAttendancesGetDataById: build.query<
-      ISuperTeacherAttendances,
-      { id: string }
-    >({
+    SuperTeacherAttendancesGetDataById: build.query<ISuperTeacherAttendances, { id: string }>({
       query: ({ id }) => ({
         url: `super/teacher/attendances/${id}`,
         method: "GET",
@@ -82,36 +76,22 @@ export const SuperTeacherAttendances = api.injectEndpoints({
       providesTags: ["SuperTeacherAttendancesGetDataById"],
     }),
 
-    SuperTeacherAttendancesCreate: build.mutation<
-      ISuperTeacherAttendances,
-      AddSuperTeacherAttendancesPayload
-    >({
+    SuperTeacherAttendancesCreate: build.mutation<ISuperTeacherAttendances, AddSuperTeacherAttendancesPayload>({
       query: (body) => ({
         url: `super/teacher/attendances`,
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "SuperTeacherAttendancesCreate",
-        "SuperTeacherAttendancesGetDataById",
-        "SuperTeacherAttendancesGetData",
-      ],
+      invalidatesTags: ["SuperTeacherAttendancesCreate", "SuperTeacherAttendancesGetDataById", "SuperTeacherAttendancesGetData"],
     }),
 
-    SuperTeacherAttendancesUpdate: build.mutation<
-      ISuperTeacherAttendances,
-      { id: string; body: AddSuperTeacherAttendancesPayload | FormData }
-    >({
+    SuperTeacherAttendancesUpdate: build.mutation<ISuperTeacherAttendances, { id: string; body: AddSuperTeacherAttendancesPayload | FormData }>({
       query: ({ body, id }) => ({
         url: `super/teacher/attendances/${id}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: [
-        "SuperTeacherAttendancesUpdate",
-        "SuperTeacherAttendancesGetDataById",
-        "SuperTeacherAttendancesGetData",
-      ],
+      invalidatesTags: ["SuperTeacherAttendancesUpdate", "SuperTeacherAttendancesGetDataById", "SuperTeacherAttendancesGetData"],
     }),
 
     SuperTeacherAttendancesRemove: build.mutation<void, { id: string }>({
@@ -119,11 +99,7 @@ export const SuperTeacherAttendances = api.injectEndpoints({
         url: `super/teacher/attendances/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [
-        "SuperTeacherAttendancesRemove",
-        "SuperTeacherAttendancesGetDataById",
-        "SuperTeacherAttendancesGetData",
-      ],
+      invalidatesTags: ["SuperTeacherAttendancesRemove", "SuperTeacherAttendancesGetDataById", "SuperTeacherAttendancesGetData"],
     }),
   }),
 });
