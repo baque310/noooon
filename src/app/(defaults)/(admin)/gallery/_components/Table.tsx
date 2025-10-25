@@ -15,7 +15,6 @@ import { useSelector } from "react-redux";
 
 import { AddIcons } from "@/components/common/icons/Actions";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -33,10 +32,10 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
-      search?: string;
-      range?: string;
-    }
+        approval_status?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
   const params = {
@@ -93,8 +92,9 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/gallery/createOrUpdate");
                     }}>

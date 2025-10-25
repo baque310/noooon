@@ -8,6 +8,9 @@ export interface IGallery {
   createdAt: string;
   updatedAt: string;
   schoolId: string;
+  description: string;
+  classId: string;
+  sectionId: string;
   School: {
     id: string;
     name: string;
@@ -20,14 +23,14 @@ export interface IGallery {
 
 export interface AddGalleryPayload {
   title: string;
+  description: string;
+  classId: string;
+  sectionId: string;
 }
 
 export const Gallery = api.injectEndpoints({
   endpoints: (build) => ({
-    GalleryGetData: build.query<
-      BaseGetDataResponse<IGallery>,
-      GetDataRequestParams
-    >({
+    GalleryGetData: build.query<BaseGetDataResponse<IGallery>, GetDataRequestParams>({
       query: (params) => ({
         url: `admin/gallery`,
         params,
@@ -44,12 +47,10 @@ export const Gallery = api.injectEndpoints({
       providesTags: ["GalleryGetDataById"],
       transformResponse: (response: IGallery) => {
         if (response.GalleryAttachment) {
-          response.GalleryAttachment = response.GalleryAttachment.map(
-            (attachment) => {
-              attachment.url = BASE_URL + "uploads/" + attachment.url;
-              return attachment;
-            }
-          );
+          response.GalleryAttachment = response.GalleryAttachment.map((attachment) => {
+            attachment.url = BASE_URL + "uploads/" + attachment.url;
+            return attachment;
+          });
         }
         return response;
       },
@@ -61,27 +62,16 @@ export const Gallery = api.injectEndpoints({
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "GalleryCreate",
-        "GalleryGetDataById",
-        "GalleryGetData",
-      ],
+      invalidatesTags: ["GalleryCreate", "GalleryGetDataById", "GalleryGetData"],
     }),
 
-    GalleryUpdate: build.mutation<
-      IGallery,
-      { id: string; body: AddGalleryPayload | FormData }
-    >({
+    GalleryUpdate: build.mutation<IGallery, { id: string; body: AddGalleryPayload | FormData }>({
       query: ({ body, id }) => ({
         url: `admin/gallery/${id}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: [
-        "GalleryUpdate",
-        "GalleryGetDataById",
-        "GalleryGetData",
-      ],
+      invalidatesTags: ["GalleryUpdate", "GalleryGetDataById", "GalleryGetData"],
     }),
 
     GalleryRemove: build.mutation<void, { id: string }>({
@@ -89,26 +79,15 @@ export const Gallery = api.injectEndpoints({
         url: `admin/gallery/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [
-        "GalleryRemove",
-        "GalleryGetDataById",
-        "GalleryGetData",
-      ],
+      invalidatesTags: ["GalleryRemove", "GalleryGetDataById", "GalleryGetData"],
     }),
-    GalleryRemoveImage: build.mutation<
-      void,
-      { id: string; body: { attachmentIds: string[] } }
-    >({
+    GalleryRemoveImage: build.mutation<void, { id: string; body: { attachmentIds: string[] } }>({
       query: ({ id, body }) => ({
         url: `admin/gallery/attachments`,
         method: "DELETE",
         body,
       }),
-      invalidatesTags: [
-        "GalleryRemoveImage",
-        "GalleryGetDataById",
-        "GalleryGetData",
-      ],
+      invalidatesTags: ["GalleryRemoveImage", "GalleryGetDataById", "GalleryGetData"],
     }),
     GalleryCreateImage: build.mutation<
       void,
@@ -126,11 +105,7 @@ export const Gallery = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [
-        "GalleryCreateImage",
-        "GalleryGetDataById",
-        "GalleryGetData",
-      ],
+      invalidatesTags: ["GalleryCreateImage", "GalleryGetDataById", "GalleryGetData"],
     }),
   }),
 });
