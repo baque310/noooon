@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+
 export interface FormValues {
   teacherSubjectId: string;
   classId: string;
@@ -63,11 +64,15 @@ const PageComponent = () => {
     }
   }, [id]);
 
+  const [sectionId, setSectionId] = useState("");
+  console.log(sectionId);
+
   useEffect(() => {
     if (id) {
       getTeacherSubject({
-        classId: data?.section.Class.id,
-        stageId: data?.section.Class.Stage.id,
+        sectionId: sectionId,
+        // classId: data?.section.Class.id,
+        // stageId: data?.section.Class.Stage.id,
         schoolYearId: data?.schoolYearId,
       });
     }
@@ -305,6 +310,7 @@ const PageComponent = () => {
                         isClearable: true,
                         onChange: (e) => {
                           props.setFieldValue(`sectionId`, (e as any)?.value ?? "");
+                          setSectionId((e as any)?.value ?? "");
                           props.setFieldValue(`SectionSchedules`, undefined);
                         },
                       }}
