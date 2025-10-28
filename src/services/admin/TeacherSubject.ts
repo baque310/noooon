@@ -57,6 +57,7 @@ export interface AddTeacherSubjectPayload {
 // }
 
 export interface GetTeacherSubjectDataRequestParams extends GetDataRequestParams {
+  sectionId?: string;
   classId?: string;
   stageId?: string;
   teacherId?: string;
