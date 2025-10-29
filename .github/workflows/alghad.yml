@@ -30,7 +30,8 @@ jobs:
       - name: Install Dependencies
         # run: |
         #   export NODE_OPTIONS="--max_old_space_size=512"
-        run: npm install --legacy-peer-deps --maxsockets=1
+        run: npm install --legacy-peer-deps
+        # run: npm install --legacy-peer-deps --maxsockets=1
         # run: npm install
 
       - run: npm run build --if-present
