@@ -34,7 +34,7 @@ class AdminSocketService {
 
     this.connectionStatus = "connecting";
 
-    this.socket = io(`wss://api.noon-iraq.com/chat`, {
+    this.socket = io(`wss://wl-v1-dev-api.noon-iraq.com/chat`, {
       transports: ["websocket"],
       upgrade: false,
       auth: { token },
