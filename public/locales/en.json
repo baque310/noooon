@@ -999,6 +999,9 @@
   "SuperTeacherAttendancesPage": {
     "Present": "Present",
     "Absent": "Absent",
+    "Select_Date": "Select Date",
+    "Select_Day": "Select day",
+    "Select_Section_Schedule": "Select section schedule",
     "subjectName": "Subject Name",
     "teacherName": "Teacher Name",
     "Vacation": "Vacation",

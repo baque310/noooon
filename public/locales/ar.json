@@ -1028,6 +1028,9 @@
   "SuperTeacherAttendancesPage": {
     "Present": "حاضر",
     "Absent": "غائب",
+    "Select_Date": "اختر تاريخ",
+    "Select_Day": "اختر يوم",
+    "Select_Section_Schedule": "اختر درس",
     "subjectName": "اسم المادة",
     "teacherName": "اسم المدرس",
     "Vacation": "إجازة",
