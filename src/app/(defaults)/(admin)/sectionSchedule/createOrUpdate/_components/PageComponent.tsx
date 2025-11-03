@@ -39,7 +39,10 @@ import AnimateHeight from "react-animate-height";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 
-import { useLazyTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
+import {
+  useLazyTeacherSubjectGetDataQuery,
+  useTeacherSubjectGetDataQuery,
+} from "@/services/admin/TeacherSubject";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import { daysArray } from "@/services/admin/Schedule";
@@ -60,11 +63,19 @@ const PageComponent = () => {
     useStageGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } =
     useSettingGetDataQuery();
+  const [sectionId, setSectionId] = useState<string | undefined>();
 
-  const [
-    getTeacherSubject,
-    { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject },
-  ] = useLazyTeacherSubjectGetDataQuery();
+  const { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject } =
+    useTeacherSubjectGetDataQuery(
+      {
+        sectionId: sectionId,
+        schoolYearId: data?.schoolYearId,
+      },
+      {
+        skip: !sectionId && !data?.schoolYearId,
+      }
+    );
+
   useEffect(() => {
     if (id) {
       SectionScheduleGetDataById({ id: String(id) }).then((data) => {
@@ -76,19 +87,6 @@ const PageComponent = () => {
       });
     }
   }, [id]);
-
-  const [sectionId, setSectionId] = useState("");
-
-  useEffect(() => {
-    if (id && sectionId) {
-      getTeacherSubject({
-        sectionId: sectionId,
-        // classId: data?.section.Class.id,
-        // stageId: data?.section.Class.Stage.id,
-        schoolYearId: data?.schoolYearId,
-      });
-    }
-  }, [id, sectionId, data]);
 
   const [SectionScheduleCreate, { isLoading: isLoadingSectionScheduleCreate }] =
     useSectionScheduleCreateMutation();
@@ -244,7 +242,7 @@ const PageComponent = () => {
                 data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
               stageId: data?.section?.Class?.Stage?.id || "",
               classId: data?.section?.Class?.id || "",
-              sectionId: sectionId || "",
+              sectionId: "",
               days: daysArray as any,
             }}
             validationSchema={sectionScheduleSchema}
@@ -332,11 +330,6 @@ const PageComponent = () => {
                           props.setFieldValue(`classId`, value);
                           props.setFieldValue(`sectionId`, undefined);
                           props.setFieldValue(`SectionSchedules`, undefined);
-                          // getTeacherSubject({
-                          //   classId: value,
-                          //   stageId: props.values?.stageId,
-                          //   schoolYearId: props.values?.schoolYearId,
-                          // });
                         },
                       }}
                     />

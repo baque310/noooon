@@ -1,7 +1,6 @@
 "use client";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { useDispatch, useSelector } from "react-redux";
-import Link from "next/link";
 import { toggleSidebar } from "@/store/themeConfigSlice";
 import { IRootState } from "@/store";
 import { useState, useEffect } from "react";
@@ -511,7 +510,7 @@ const Sidebar = () => {
                   to={"/superTeacherAttendances"}
                   label={t("sidebar.superTeacherAttendances")}
                   number={
-                    (adminCountData?.attendanceToday.Absent ?? 10) +
+                    (adminCountData?.attendanceToday.Absent ?? 0) +
                     (adminCountData?.attendanceToday.Present ?? 0) +
                     (adminCountData?.attendanceToday.Vacation ?? 0)
                   }
