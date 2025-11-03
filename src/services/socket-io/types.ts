@@ -12,6 +12,7 @@ export interface IMessage {
   createdAt: string;
   senderId: string;
   senderType: string;
+  fileUrl:string
   senderName: string;
   image?: string;
   roomId: string;
