@@ -136,7 +136,7 @@ const PageComponent = () => {
           </div>
 
           {/* Installment Info Card */}
-          <div className="bg-gradient-to-br from-indigo-50 to-white dark:from-[#222] dark:to-[#333] rounded-2xl shadow-lg p-8 mb-8 border border-gray-100 dark:border-gray-700 transition-all duration-300">
+          {/* <div className="bg-gradient-to-br from-indigo-50 to-white dark:from-[#222] dark:to-[#333] rounded-2xl shadow-lg p-8 mb-8 border border-gray-100 dark:border-gray-700 transition-all duration-300">
             <div className="flex items-center gap-3 mb-6">
               <span className="inline-block bg-indigo-500/30 text-indigo-700 rounded-full p-3 shadow">
                 <svg width="28" height="28" fill="none">
@@ -275,10 +275,10 @@ const PageComponent = () => {
                 )}
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Installment Payments Table */}
-          <div className="bg-gradient-to-br from-amber-50 to-white dark:from-[#222] dark:to-[#333] rounded-2xl shadow-lg p-8 mb-8 border border-gray-100 dark:border-gray-700 transition-all duration-300">
+          {/* <div className="bg-gradient-to-br from-amber-50 to-white dark:from-[#222] dark:to-[#333] rounded-2xl shadow-lg p-8 mb-8 border border-gray-100 dark:border-gray-700 transition-all duration-300">
             <div className="flex items-center gap-3 mb-6">
               <span className="inline-block bg-amber-500/30 text-amber-700 rounded-full p-3 shadow">
                 <svg width="28" height="28" fill="none">
@@ -334,13 +334,6 @@ const PageComponent = () => {
                         className="hover:bg-teal-50 dark:hover:bg-teal-900/20 transition"
                       >
                         <td className="px-3 py-2 text-center flex items-center justify-center gap-2">
-                          {/* <button
-                            className="bg-indigo-500 hover:bg-indigo-600 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1"
-                            onClick={() => handleUpdateInstallment(item)}
-                            title={t("common.update")}
-                          >
-                            <UpdateIcons className="size-4" />
-                          </button> */}
                           <button
                             className="bg-indigo-500 hover:bg-indigo-600 text-white rounded px-3 py-1 text-xs font-semibold shadow transition flex items-center gap-1"
                             onClick={() => handleChangeInstallment(item)}
@@ -376,7 +369,7 @@ const PageComponent = () => {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div> */}
         </>
       )}
       <ChangeStatusInstallmentComponent
