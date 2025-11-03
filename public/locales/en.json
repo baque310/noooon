@@ -1071,6 +1071,7 @@
     "create-school-staff-group": "Create school staff group",
     "create-class-parents-group": "Create class parents group",
     "create-subject-teachers-group": "Create subject teachers group",
+    "create-custom-teachers-group": "Create custom teachers group",
     "group-name": "Group name",
     "enter-group-name": "Enter group name",
     "description": "Description",

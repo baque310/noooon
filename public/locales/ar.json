@@ -1105,6 +1105,7 @@
     "create-school-staff-group": "إنشاء مجموعة موظفي المدرسة",
     "create-class-parents-group": "إنشاء مجموعة أولياء أمور الصف",
     "create-subject-teachers-group": "إنشاء مجموعة معلمي المادة",
+    "create-custom-teachers-group": "إنشاء مجموعة معلمين مخصصة",
     "group-name": "اسم المجموعة",
     "enter-group-name": "ادخل اسم المجموعة",
     "description": "الوصف",
