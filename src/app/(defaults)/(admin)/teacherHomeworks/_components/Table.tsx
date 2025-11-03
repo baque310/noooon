@@ -19,6 +19,7 @@ import { useSectionGetDataQuery } from "@/services/admin/section";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { useTeacherHomeworksGetDataQuery } from "@/services/admin/teacherHomeworks";
 import { AddIcons } from "@/components/common/icons/Actions";
+import { useStageGetDataQuery } from "@/services/admin/stage";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -40,6 +41,8 @@ const TableComponent = () => {
         sectionId?: string;
         schoolYearId?: string;
         teacherSubjectId?: string;
+        classId?: string;
+        stageId?: string;
       }
     | undefined
   >();
@@ -65,12 +68,20 @@ const TableComponent = () => {
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
     ...(search && { search: search as string }),
-    ...param,
+    // ...param,
+
+    range: param?.range,
+    sectionId: param?.sectionId,
+    schoolYearId: param?.schoolYearId,
+    teacherSubjectId: param?.teacherSubjectId,
   };
 
-  const { isFetching: isFetching, currentData: data } = useTeacherHomeworksGetDataQuery({
-    ...params,
-  });
+  const { isFetching: isFetching, currentData: data } =
+    useTeacherHomeworksGetDataQuery({
+      ...params,
+    });
+  const { isFetching: isFetchingStageData, currentData: StageData } =
+    useStageGetDataQuery();
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -115,6 +126,23 @@ const TableComponent = () => {
       setParam({ ...param, schoolYearId: undefined });
     }
   };
+  const handleSelectClass = (value: any) => {
+    const classId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
+    // pushWithCurrentParams("/sectionSchedule", { classId, sectionId: undefined });
+  };
+
+  const handleSelectStage = (value: any) => {
+    const stageId = value ?? undefined;
+    // changing stage should clear class/section
+    setParam((old) => ({
+      ...(old ?? {}),
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    }));
+    // pushWithCurrentParams("/sectionSchedule", { stageId, classId: undefined, sectionId: undefined });
+  };
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -148,20 +176,58 @@ const TableComponent = () => {
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>
+        <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
           <SelectFilter
-            title={t("StudentEnrollmentPage.SectionName")}
+            value={param?.stageId}
             placement="bottom-end"
-            handleChange={handleSelectSection}
+            title={t("StudentEnrollmentPage.StageName")}
+            handleChange={handleSelectStage}
             options={
-              SectionData?.map((item) => {
+              StageData?.map((item) => {
                 return {
-                  label: item.name + " - " + (item?.Class?.name ?? "") + " - " + (item?.Class?.Stage?.name ?? ""),
                   value: item.id,
+                  label: t(item.name as any),
                 };
               }) ?? []
             }
           />
+          {param?.stageId && (
+            <SelectFilter
+              value={param?.classId}
+              title={t("SectionPage.ClassName")}
+              placement="bottom-end"
+              handleChange={handleSelectClass}
+              options={
+                StageData?.find((it) => it.id == param?.stageId)?.Class?.map(
+                  (item) => {
+                    return {
+                      value: item.id,
+                      label: t(item.name as any),
+                    };
+                  }
+                ) ?? []
+              }
+            />
+          )}
+          {param?.classId && (
+            <SelectFilter
+              value={param?.sectionId}
+              title={t("StudentEnrollmentPage.SectionName")}
+              placement="bottom-end"
+              handleChange={handleSelectSection}
+              options={
+                StageData?.find((it) => it.id == param?.stageId)
+                  ?.Class.find((it) => it.id == param?.classId)
+                  ?.Section?.map((item) => {
+                    return {
+                      value: item.id,
+                      label: t(item.name as any),
+                    };
+                  }) ?? []
+              }
+            />
+          )}
+
           <div className="max-w-36">
             <SelectWithSearch
               placeholder={t("HomeworksPage.teacherFullName")}
@@ -239,16 +305,17 @@ const TableComponent = () => {
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
               {
+                title: t("HomeworksPage.SectionName"),
+                accessor: "Section.name",
+                // sortable: true,
+                render: ({ Section }: any) =>
+                  Section?.name && t(Section?.name ?? ("" as any)),
+              },
+              {
                 title: t("HomeworksPage.SubjectName"),
                 accessor: "teacherSubject.StageSubject.Subject.name",
                 // sortable: true,
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
-              },
-              {
-                title: t("HomeworksPage.SectionName"),
-                accessor: "Section.name",
-                // sortable: true,
-                render: ({ Section }: any) => Section?.name && t(Section?.name ?? ("" as any)),
               },
               {
                 title: t("HomeworksPage.SchoolYear"),

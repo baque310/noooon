@@ -349,7 +349,7 @@ export const api = createApi({
     "ChatCreateClassStudentsGroup",
     "ChatToggleGroupChat",
     "ChatMessageRemoved",
-
+    "ChatCreateCustomTeachersGroup",
     //Admin Discount
     "AdminDiscountGetData",
     "AdminDiscountGetDataById",

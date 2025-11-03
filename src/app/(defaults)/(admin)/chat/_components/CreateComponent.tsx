@@ -11,6 +11,7 @@ import SchoolStaffGroupComponent from "./SchoolStaffGroupComponent";
 import ClassParentsGroupComponent from "./ClassParentsGroupComponent";
 import SubjectTeachersGroupComponent from "./SubjectTeachersGroupComponent";
 import SchoolStudentsGroupComponent from "./SchoolStudentsGroupComponent";
+import CustomTeachersGroupComponent from "./CustomTeachersGroupComponent";
 
 // Custom SVG icons (larger size)
 const DirectIcon = () => (
@@ -74,6 +75,7 @@ const CreateComponent = ({ open, setOpen }: { open: boolean; setOpen: React.Disp
   const [openStaffGroup, setOpenStaffGroup] = React.useState(false);
   const [openParentsGroup, setOpenParentsGroup] = React.useState(false);
   const [openSubjectTeachersGroup, setOpenSubjectTeachersGroup] = React.useState(false);
+  const [openCustomTeachersGroup, setOpenCustomTeachersGroup] = React.useState(false);
 
   return (
     <Model title={t("ChatPage.add-chat")} open={open} setOpen={setOpen}>
@@ -174,6 +176,23 @@ const CreateComponent = ({ open, setOpen }: { open: boolean; setOpen: React.Disp
           }
           value={<ArrowIcons className="rtl:rotate-180 text-[#0ea5e9]/50 group-hover:text-sky-700 transition" />}
         />
+        <ItemList
+          props={{
+            onClick: () => {
+              setOpenCustomTeachersGroup(true);
+            },
+            className: "flex items-center gap-4 p-4 rounded-lg hover:bg-sky-100 transition-all duration-200 cursor-pointer border border-gray-100 group",
+          }}
+          title={
+            <span className="flex items-center gap-3">
+              <SubjectTeachersGroupIcon />
+              <span className="font-semibold text-gray-800 group-hover:text-sky-700 transition">
+                {t("ChatPage.create-custom-teachers-group")}
+              </span>
+            </span>
+          }
+          value={<ArrowIcons className="rtl:rotate-180 text-[#0ea5e9]/50 group-hover:text-sky-700 transition" />}
+        />
       </div>
       <DirectComponent open={openDirect} setOpen={setOpenDirect} setOpenChat={setOpen} />
       <GroupComponent open={openGroup} setOpen={setOpenGroup} setOpenChat={setOpen} />
@@ -181,6 +200,7 @@ const CreateComponent = ({ open, setOpen }: { open: boolean; setOpen: React.Disp
       <SchoolStaffGroupComponent open={openStaffGroup} setOpen={setOpenStaffGroup} setOpenChat={setOpen} />
       <ClassParentsGroupComponent open={openParentsGroup} setOpen={setOpenParentsGroup} setOpenChat={setOpen} />
       <SubjectTeachersGroupComponent open={openSubjectTeachersGroup} setOpen={setOpenSubjectTeachersGroup} setOpenChat={setOpen} />
+      <CustomTeachersGroupComponent open={openCustomTeachersGroup} setOpen={setOpenCustomTeachersGroup} setOpenChat={setOpen} />
     </Model>
   );
 };

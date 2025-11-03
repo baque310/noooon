@@ -5,12 +5,19 @@ import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazySectionScheduleGetDataQuery, useSectionScheduleRemoveMutation } from "@/services/admin/SectionSchedule";
+import {
+  useLazySectionScheduleGetDataQuery,
+  useSectionScheduleRemoveMutation,
+} from "@/services/admin/SectionSchedule";
 import { IRootState } from "@/store";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { AddIcons, DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
+import {
+  AddIcons,
+  DeleteIcons,
+  UpdateIcons,
+} from "@/components/common/icons/Actions";
 import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
 import AnimateHeight from "react-animate-height";
 import { daysArray } from "@/services/admin/Schedule";
@@ -41,14 +48,21 @@ const TableComponent = () => {
     | undefined
   >();
 
-  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
-  const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+  const { isFetching: isFetchingStageData, currentData: StageData } =
+    useStageGetDataQuery();
+  const {
+    isFetching: isFetchingTeacherSubjectData,
+    currentData: TeacherSubjectData,
+  } = useTeacherSubjectGetDataQuery({
     schoolYearId: param?.schoolYearId,
   });
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
-  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } =
+    useSchoolYearGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } =
+    useSettingGetDataQuery();
 
-  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark =
+    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
   useEffect(() => {
@@ -111,7 +125,10 @@ const TableComponent = () => {
     });
   };
 
-  const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
+  const pushWithCurrentParams = (
+    path = "/sectionSchedule",
+    extra: Record<string, any> = {}
+  ) => {
     const allParams = new URLSearchParams();
     searchParams.forEach((value, key) => {
       allParams.set(key, value);
@@ -128,7 +145,11 @@ const TableComponent = () => {
     const query = allParams.toString();
     const newUrl = `${path}${query ? `?${query}` : ""}`;
 
-    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+    if (
+      typeof window !== "undefined" &&
+      window.history &&
+      window.history.replaceState
+    ) {
       window.history.replaceState(null, "", newUrl);
     } else {
       router.push(newUrl);
@@ -153,7 +174,10 @@ const TableComponent = () => {
   const handleSelectClass = (value: any) => {
     const classId = value ?? undefined;
     setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
-    pushWithCurrentParams("/sectionSchedule", { classId, sectionId: undefined });
+    pushWithCurrentParams("/sectionSchedule", {
+      classId,
+      sectionId: undefined,
+    });
   };
   const handleSelectSection = (value: any) => {
     const sectionId = value ?? undefined;
@@ -163,8 +187,17 @@ const TableComponent = () => {
   const handleSelectStage = (value: any) => {
     const stageId = value ?? undefined;
     // changing stage should clear class/section
-    setParam((old) => ({ ...(old ?? {}), stageId, classId: undefined, sectionId: undefined }));
-    pushWithCurrentParams("/sectionSchedule", { stageId, classId: undefined, sectionId: undefined });
+    setParam((old) => ({
+      ...(old ?? {}),
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    }));
+    pushWithCurrentParams("/sectionSchedule", {
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    });
   };
   const handleSelectTeacherSubject = (value: any) => {
     const teacherSubjectId = value ? value.value : undefined;
@@ -179,7 +212,8 @@ const TableComponent = () => {
 
   const selectedClassName = searchParams.get("selectedClassName");
   const id = searchParams.get("id");
-  const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useSectionScheduleRemoveMutation();
+  const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] =
+    useSectionScheduleRemoveMutation();
   const handleRemove = async () => {
     try {
       await ScheduleRemove({ id: String(id) }).unwrap();
@@ -297,6 +331,7 @@ const TableComponent = () => {
             }
           />
         )}
+
         <div className="max-w-36">
           <SelectWithSearch
             placeholder={t("HomeworksPage.teacherFullName")}
@@ -317,7 +352,7 @@ const TableComponent = () => {
       </div>
 
       <div className={"flex flex-col gap-4 mt-4"}>
-        {!daysArray && isFetching ? (
+        {isFetching ? (
           <div className="flex w-full justify-center items-center min-h-64 Card ">
             <div className="loader !bg-primary"></div>
           </div>
@@ -353,9 +388,14 @@ const TableComponent = () => {
                             {isMounted && (
                               <DataTable
                                 onRowClick={async (item) => {
-                                  sessionStorage.setItem("sectionScheduleActive", JSON.stringify(active)); // Save the current active index
+                                  sessionStorage.setItem(
+                                    "sectionScheduleActive",
+                                    JSON.stringify(active)
+                                  ); // Save the current active index
                                   setSelectedItem(item.record.id);
-                                  router.push(`/sectionSchedule/${item.record.id}`);
+                                  router.push(
+                                    `/sectionSchedule/${item.record.id}`
+                                  );
                                 }}
                                 fetching={isFetching}
                                 className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
@@ -402,28 +442,46 @@ const TableComponent = () => {
                                     render: (record: any) => (
                                       <>
                                         <div className="items-right flex gap-6">
-                                          <p dir="ltr">{record.SchoolYear.from ? <div>{moment.utc(record.SchoolYear.from).format("hh:mm:ss A")}</div> : null}</p>
+                                          <p dir="ltr">
+                                            {record.SchoolYear.from ? (
+                                              <div>
+                                                {moment
+                                                  .utc(record.SchoolYear.from)
+                                                  .format("hh:mm:ss A")}
+                                              </div>
+                                            ) : null}
+                                          </p>
                                           <div className="row-actions items-right m-0 flex gap-4 opacity-0 transition-opacity group-hover:opacity-100">
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 setSelectedItem(record.id);
                                                 // pushWithCurrentParams("/sectionSchedule/createOrUpdate", { id: record.id });
-                                                router.push(`/sectionSchedule/createOrUpdate?id=${record.id}`);
+                                                router.push(
+                                                  `/sectionSchedule/createOrUpdate?id=${record.id}`
+                                                );
                                               }}
-                                              title={t("common.update")}>
+                                              title={t("common.update")}
+                                            >
                                               <UpdateIcons className="h-5 w-5" />
                                             </button>
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
-                                                pushWithCurrentParams("/sectionSchedule", {
-                                                  id: record.id,
-                                                  selectedClassName: record.teacherSubject.StageSubject.Stage.name,
-                                                });
+                                                pushWithCurrentParams(
+                                                  "/sectionSchedule",
+                                                  {
+                                                    id: record.id,
+                                                    selectedClassName:
+                                                      record.teacherSubject
+                                                        .StageSubject.Stage
+                                                        .name,
+                                                  }
+                                                );
                                                 setOpenDelete(true);
                                               }}
-                                              title={t("common.delete")}>
+                                              title={t("common.delete")}
+                                            >
                                               <DeleteIcons className="h-6 w-6 text-danger" />
                                             </button>
                                           </div>
@@ -449,7 +507,9 @@ const TableComponent = () => {
       </div>
 
       <DeleteModel
-        description={t("SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule")}
+        description={t(
+          "SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule"
+        )}
         title={t("SchedulePage.DeleteSchedule")}
         open={openDelete}
         setOpen={setOpenDelete}

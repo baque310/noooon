@@ -1,7 +1,6 @@
 "use client";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { useDispatch, useSelector } from "react-redux";
-import Link from "next/link";
 import { toggleSidebar } from "@/store/themeConfigSlice";
 import { IRootState } from "@/store";
 import { useState, useEffect } from "react";
@@ -32,6 +31,7 @@ import IconStage from "../common/icons/sidebar/IconStage";
 import IconCaretsDown from "../common/icons/sidebar/icon-carets-down";
 import { getTitleApp } from "@/utils/getTitleApp";
 import IconChat from "../common/icons/sidebar/IconChat";
+import { useGetAdminCountQuery } from "@/services/admin/Dashboard";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -98,6 +98,8 @@ const Sidebar = () => {
     const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
     selector?.classList.add("active");
   };
+
+  const { data: adminCountData } = useGetAdminCountQuery();
 
   return (
     <div className={!semidark ? "dark" : ""}>
@@ -178,7 +180,10 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/complaint"}
                       label={t("sidebar.complaint")}
-                      icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                      number={adminCountData?.complaintsCount ?? 0}
+                      icon={
+                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                      }
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -223,7 +228,10 @@ const Sidebar = () => {
                       toggleMenu={toggleMenu}
                       to={"/adminComplaint"}
                       label={t("sidebar.complaint")}
-                      icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                      number={adminCountData?.complaintsCount ?? 0}
+                      icon={
+                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                      }
                     />
                   </>
                 )}
@@ -431,7 +439,10 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/teacherHomeworks"}
                   label={t("sidebar.homeworks")}
-                  icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  number={adminCountData?.homeworkCountToday ?? 0}
+                  icon={
+                    <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -439,7 +450,14 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/superTeacherAttendances"}
                   label={t("sidebar.superTeacherAttendances")}
-                  icon={<IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  number={
+                    (adminCountData?.attendanceToday.Absent ?? 0) +
+                    (adminCountData?.attendanceToday.Present ?? 0) +
+                    (adminCountData?.attendanceToday.Vacation ?? 0)
+                  }
+                  icon={
+                    <IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -447,7 +465,10 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/teacherLessons"}
                   label={t("sidebar.lessons")}
-                  icon={<IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                  number={adminCountData?.lessonsCountToday ?? 0}
+                  icon={
+                    <IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />
+                  }
                 />
 
                 <MenuSubItem

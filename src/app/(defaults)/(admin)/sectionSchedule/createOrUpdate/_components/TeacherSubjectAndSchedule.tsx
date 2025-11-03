@@ -14,96 +14,125 @@ export interface TeacherSubjectAndScheduleProps {
   isFetchingTeacherSubject: boolean;
 }
 
-const TeacherSubjectAndSchedule: FC<TeacherSubjectAndScheduleProps> = ({ props, index, TeacherSubject, isFetchingTeacherSubject }) => {
+const TeacherSubjectAndSchedule: FC<TeacherSubjectAndScheduleProps> = ({
+  props,
+  index,
+  TeacherSubject,
+  isFetchingTeacherSubject,
+}) => {
   const { t } = getTranslation();
-  const [getSchedule, { currentData: Schedule, isFetching: isFetchingSchedule }] = useLazyScheduleGetDataQuery();
-  const [searchSchedule, setSearchSchedule] = useState<string | undefined>();
+  const [
+    getSchedule,
+    { currentData: Schedule, isFetching: isFetchingSchedule },
+  ] = useLazyScheduleGetDataQuery();
   return (
     <>
       <FieldArray name={`days.${index}.SectionSchedules`}>
-        {({ insert, remove, push, replace }) => (
+        {({ remove, push }) => (
           <div className={"flex flex-col gap-4 "}>
-            {props.values.days[index].SectionSchedules?.map((_: any, idx: number) => {
-              return (
-                <div className={" Card"} key={idx}>
-                  <div className="flex justify-end w-full relative mb-2">
-                    <button
-                      className="absolute top-0 hover:bg-danger/10 border-danger/70 text-danger/70  hover:scale-[1.01] transition-transform py-[2px] px-2  rounded  font-bold"
-                      type="button"
-                      onClick={() => {
-                        remove(idx);
-                      }}>
-                      x
-                    </button>
-                  </div>
+            {props.values.days[index].SectionSchedules?.map(
+              (_: any, idx: number) => {
+                return (
+                  <div className={" Card"} key={idx}>
+                    <div className="flex justify-end w-full relative mb-2">
+                      <button
+                        className="absolute top-0 hover:bg-danger/10 border-danger/70 text-danger/70  hover:scale-[1.01] transition-transform py-[2px] px-2  rounded  font-bold"
+                        type="button"
+                        onClick={() => {
+                          remove(idx);
+                        }}
+                      >
+                        x
+                      </button>
+                    </div>
 
-                  <SelectForm
-                    formikProps={props}
-                    name={`days.${index}.SectionSchedules.${idx}.teacherSubjectId`}
-                    title={t("SectionSchedulePage.teacherSubject")}
-                    placeholder={t("SectionSchedulePage.select-teacherSubject")}
-                    options={
-                      TeacherSubject?.map((item, index) => {
-                        return {
-                          label: (
-                            <div className="flex gap-1">
-                              <div>{item.StageSubject.Subject.name}</div>
-                              <div>{"( "}</div>
-                              <div>{item.Teacher.fullName}</div>
-                              <div>{" )"}</div>
-                            </div>
-                          ),
-                          value: item.id,
-                        };
-                      }) || []
-                    }
-                    props={{
-                      isClearable: true,
-                      isLoading: isFetchingTeacherSubject,
-                      onChange: (e) => {
-                        props.setFieldValue(`days.${index}.SectionSchedules.${idx}.teacherSubjectId`, (e as any)?.value ?? "");
-                        getSchedule({
-                          day: props.values.days[index].value,
-                          search: searchSchedule,
-                        });
-                      },
-                      onInputChange: (value) => {
-                        setSearchSchedule(value);
-                      },
-                    }}
-                  />
-                  <SelectForm
-                    formikProps={props}
-                    name={`days.${index}.SectionSchedules.${idx}.scheduleId`}
-                    title={t("SectionSchedulePage.schedule")}
-                    placeholder={t("SectionSchedulePage.select-schedule")}
-                    options={
-                      (Schedule &&
-                        Schedule[props?.values?.days[index].value as Days]?.map((item) => {
+                    <SelectForm
+                      formikProps={props}
+                      name={`days.${index}.SectionSchedules.${idx}.teacherSubjectId`}
+                      title={t("SectionSchedulePage.teacherSubject")}
+                      placeholder={t(
+                        "SectionSchedulePage.select-teacherSubject"
+                      )}
+                      options={
+                        TeacherSubject?.map((item, index) => {
                           return {
+                            label:
+                              item.StageSubject?.Subject?.name +
+                              " - " +
+                              item?.Teacher?.fullName,
+
+                            // (
+                            //   <div className="flex gap-1">
+                            //     <div>{item.StageSubject.Subject.name}</div>
+                            //     <div>{item?.Section?.name}</div>
+                            //     <div>{"( "}</div>
+                            //     <div>{item.Teacher.fullName}</div>
+                            //     <div>{" )"}</div>
+                            //   </div>
+                            // ),
                             value: item.id,
-                            label: (
-                              <div className="flex gap-1">
-                                <div>{moment.utc(item.timeFrom).format("HH:mm A")}</div>
-                                <div>{" - "}</div>
-                                <div>{moment.utc(item.timeTo).format("HH:mm A")}</div>
-                              </div>
-                            ),
                           };
-                        })) ||
-                      []
-                    }
-                    props={{
-                      isClearable: true,
-                      isLoading: isFetchingSchedule,
-                      onChange: (e) => {
-                        props.setFieldValue(`days.${index}.SectionSchedules.${idx}.scheduleId`, (e as any)?.value ?? "");
-                      },
-                    }}
-                  />
-                </div>
-              );
-            })}
+                        }) || []
+                      }
+                      props={{
+                        isSearchable: true,
+                        isClearable: true,
+                        isLoading: isFetchingTeacherSubject,
+                        onChange: (e) => {
+                          props.setFieldValue(
+                            `days.${index}.SectionSchedules.${idx}.teacherSubjectId`,
+                            (e as any)?.value ?? ""
+                          );
+                          getSchedule({
+                            day: props.values.days[index].value,
+                          });
+                        },
+                      }}
+                    />
+                    <SelectForm
+                      formikProps={props}
+                      name={`days.${index}.SectionSchedules.${idx}.scheduleId`}
+                      title={t("SectionSchedulePage.schedule")}
+                      placeholder={t("SectionSchedulePage.select-schedule")}
+                      options={
+                        (Schedule &&
+                          Schedule[
+                            props?.values?.days[index].value as Days
+                          ]?.map((item) => {
+                            return {
+                              value: item.id,
+                              label: (
+                                <div className="flex gap-1">
+                                  <div>
+                                    {moment
+                                      .utc(item.timeFrom)
+                                      .format("HH:mm A")}
+                                  </div>
+                                  <div>{" - "}</div>
+                                  <div>
+                                    {moment.utc(item.timeTo).format("HH:mm A")}
+                                  </div>
+                                </div>
+                              ),
+                            };
+                          })) ||
+                        []
+                      }
+                      props={{
+                        isClearable: true,
+                        isLoading: isFetchingSchedule,
+                        onChange: (e) => {
+                          props.setFieldValue(
+                            `days.${index}.SectionSchedules.${idx}.scheduleId`,
+                            (e as any)?.value ?? ""
+                          );
+                        },
+                      }}
+                    />
+                  </div>
+                );
+              }
+            )}
 
             <button
               type="button"
@@ -113,7 +142,8 @@ const TeacherSubjectAndSchedule: FC<TeacherSubjectAndScheduleProps> = ({ props, 
                   scheduleId: "",
                   teacherSubjectId: "",
                 });
-              }}>
+              }}
+            >
               {t("common.add")}
             </button>
           </div>

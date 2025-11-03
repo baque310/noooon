@@ -59,7 +59,7 @@ export const ExamResults = api.injectEndpoints({
       GetExamResultsDataRequestParams
     >({
       query: (params) => ({
-        url: `admin/examResults`,
+        url: `super/teacher/examResults`,
         params,
         method: "GET",
       }),

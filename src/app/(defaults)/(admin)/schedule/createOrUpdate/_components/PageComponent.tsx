@@ -128,7 +128,6 @@ const PageComponent = () => {
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
         <BackButton title={t(id ? "SchedulePage.update-info" : "common.add")} />
-
         {isFetching || isFetchingSettingGetData || isFetchingSchoolYear ? (
           <LoadingForm />
         ) : (
@@ -140,7 +139,9 @@ const PageComponent = () => {
               timeTo: data?.timeTo ? moment.utc(data?.timeTo).format("hh:mm a") : "",
             }}
             validationSchema={scheduleSchema}
-            onSubmit={handleSubmit}>
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
                 <div className="Card flex flex-col gap-1">
@@ -307,33 +308,64 @@ const PageComponent = () => {
                 {props.errors && Object.keys(props?.errors)?.length > 0 && (
                   <div className="Card !dark:bg-danger-dark-light !bg-danger-light">
                     <div className="flex flex-col  rounded bg-danger-light p-3.5 text-danger dark:bg-danger-dark-light">
-                      {Object.keys(props?.errors ?? {})?.map((item: any, index) => {
-                        return (
-                          <span key={index} className="ltr:pr-2 rtl:pl-2">
-                            <strong className="ltr:mr-1 rtl:ml-1">{t(item)}</strong>:
-                            {typeof props?.errors[item] === "string"
-                              ? (JSON.stringify(props?.errors[item]) as any)
-                              : props?.errors &&
-                                props?.errors[item] &&
-                                Object.keys(props?.errors[item] as any)?.map((item2: any, index) => {
-                                  return (
-                                    <span key={index} className="flex flex-col ltr:pr-2 rtl:pl-2">
-                                      <strong className="ltr:mr-1 rtl:ml-1">{Number(item2.split(".")[0]) + 1 + t(item2.split(".")[1])}</strong>
-                                      {props?.errors &&
-                                        (props?.errors as any)[item][item2] &&
-                                        Object.keys((props?.errors as any)[item][item2]).map((item3: any, index) => {
-                                          return (
-                                            <span key={index} className="ltr:pr-2 rtl:pl-2">
-                                              <strong className="ltr:mr-1 rtl:ml-1">{t(item3)}</strong>:{JSON.stringify((props?.errors as any)[item][item2][item3])}
-                                            </span>
-                                          );
-                                        })}
-                                    </span>
-                                  );
-                                })}
-                          </span>
-                        );
-                      })}
+                      {Object.keys(props?.errors ?? {})?.map(
+                        (item: any, index) => {
+                          return (
+                            <span key={index} className="ltr:pr-2 rtl:pl-2">
+                              <strong className="ltr:mr-1 rtl:ml-1">
+                                {t(item)}
+                              </strong>
+                              :
+                              {typeof props?.errors[item] === "string"
+                                ? (JSON.stringify(props?.errors[item]) as any)
+                                : props?.errors &&
+                                  props?.errors[item] &&
+                                  Object.keys(props?.errors[item] as any)?.map(
+                                    (item2: any, index) => {
+                                      return (
+                                        <span
+                                          key={index}
+                                          className="flex flex-col ltr:pr-2 rtl:pl-2"
+                                        >
+                                          <strong className="ltr:mr-1 rtl:ml-1">
+                                            {Number(item2.split(".")[0]) +
+                                              1 +
+                                              t(item2.split(".")[1])}
+                                          </strong>
+                                          {props?.errors &&
+                                            (props?.errors as any)[item][
+                                              item2
+                                            ] &&
+                                            Object.keys(
+                                              (props?.errors as any)[item][
+                                                item2
+                                              ]
+                                            ).map((item3: any, index) => {
+                                              return (
+                                                <span
+                                                  key={index}
+                                                  className="ltr:pr-2 rtl:pl-2"
+                                                >
+                                                  <strong className="ltr:mr-1 rtl:ml-1">
+                                                    {t(item3)}
+                                                  </strong>
+                                                  :
+                                                  {JSON.stringify(
+                                                    (props?.errors as any)[
+                                                      item
+                                                    ][item2][item3]
+                                                  )}
+                                                </span>
+                                              );
+                                            })}
+                                        </span>
+                                      );
+                                    }
+                                  )}
+                            </span>
+                          );
+                        }
+                      )}
                     </div>
                   </div>
                 )}

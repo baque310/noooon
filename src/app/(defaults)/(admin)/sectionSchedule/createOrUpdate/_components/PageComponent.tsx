@@ -35,7 +35,10 @@ import AnimateHeight from "react-animate-height";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 
-import { useLazyTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
+import {
+  useLazyTeacherSubjectGetDataQuery,
+  useTeacherSubjectGetDataQuery,
+} from "@/services/admin/TeacherSubject";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import { daysArray } from "@/services/admin/Schedule";
@@ -48,38 +51,43 @@ const PageComponent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const [SectionScheduleGetDataById, { currentData: data, isFetching }] = useLazySectionScheduleGetDataByIdQuery();
-  const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
-  const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
-  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
+  const [SectionScheduleGetDataById, { currentData: data, isFetching }] =
+    useLazySectionScheduleGetDataByIdQuery();
+  const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } =
+    useSchoolYearGetDataQuery();
+  const { currentData: stage, isFetching: isFetchingStage } =
+    useStageGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } =
+    useSettingGetDataQuery();
+  const [sectionId, setSectionId] = useState<string | undefined>();
 
-  const [getTeacherSubject, { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject }] = useLazyTeacherSubjectGetDataQuery();
+  const { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject } =
+    useTeacherSubjectGetDataQuery(
+      {
+        sectionId: sectionId,
+        schoolYearId: data?.schoolYearId,
+      },
+      {
+        skip: !sectionId && !data?.schoolYearId,
+      }
+    );
+
   useEffect(() => {
     if (id) {
       SectionScheduleGetDataById({ id: String(id) }).then((data) => {
         if (!data.data) {
           router.back();
+        } else {
+          setSectionId(data.data.sectionId);
         }
       });
     }
   }, [id]);
 
-  const [sectionId, setSectionId] = useState("");
-  console.log(sectionId);
-
-  useEffect(() => {
-    if (id) {
-      getTeacherSubject({
-        sectionId: sectionId,
-        // classId: data?.section.Class.id,
-        // stageId: data?.section.Class.Stage.id,
-        schoolYearId: data?.schoolYearId,
-      });
-    }
-  }, [id]);
-
-  const [SectionScheduleCreate, { isLoading: isLoadingSectionScheduleCreate }] = useSectionScheduleCreateMutation();
-  const [SectionScheduleUpdate, { isLoading: isLoadingSectionScheduleUpdate }] = useSectionScheduleUpdateMutation();
+  const [SectionScheduleCreate, { isLoading: isLoadingSectionScheduleCreate }] =
+    useSectionScheduleCreateMutation();
+  const [SectionScheduleUpdate, { isLoading: isLoadingSectionScheduleUpdate }] =
+    useSectionScheduleUpdateMutation();
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
@@ -185,8 +193,9 @@ const PageComponent = () => {
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton title={t(id ? "SectionSchedulePage.update-info" : "common.add")} />
-
+        <BackButton
+          title={t(id ? "SectionSchedulePage.update-info" : "common.add")}
+        />
         {isFetching || isFetchingSetting ? (
           <LoadingForm />
         ) : (
@@ -196,11 +205,13 @@ const PageComponent = () => {
               schoolYearId: data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
               stageId: data?.section?.Class?.Stage?.id || "",
               classId: data?.section?.Class?.id || "",
-              sectionId: data?.sectionId || "",
+              sectionId: "",
               days: daysArray as any,
             }}
             validationSchema={sectionScheduleSchema}
-            onSubmit={handleSubmit}>
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
                 <div className="Card flex flex-col gap-1">
@@ -277,11 +288,6 @@ const PageComponent = () => {
                           props.setFieldValue(`classId`, value);
                           props.setFieldValue(`sectionId`, undefined);
                           props.setFieldValue(`SectionSchedules`, undefined);
-                          getTeacherSubject({
-                            classId: value,
-                            stageId: props.values?.stageId,
-                            schoolYearId: props.values?.schoolYearId,
-                          });
                         },
                       }}
                     />
@@ -309,7 +315,10 @@ const PageComponent = () => {
                         isLoading: isFetchingStage,
                         isClearable: true,
                         onChange: (e) => {
-                          props.setFieldValue(`sectionId`, (e as any)?.value ?? "");
+                          props.setFieldValue(
+                            `sectionId`,
+                            (e as any)?.value ?? ""
+                          );
                           setSectionId((e as any)?.value ?? "");
                           props.setFieldValue(`SectionSchedules`, undefined);
                         },
@@ -441,33 +450,64 @@ const PageComponent = () => {
                 {props.errors && Object.keys(props?.errors)?.length > 0 && (
                   <div className="Card !dark:bg-danger-dark-light !bg-danger-light">
                     <div className="flex flex-col  rounded bg-danger-light p-3.5 text-danger dark:bg-danger-dark-light">
-                      {Object.keys(props?.errors ?? {})?.map((item: any, index) => {
-                        return (
-                          <span key={index} className="ltr:pr-2 rtl:pl-2">
-                            <strong className="ltr:mr-1 rtl:ml-1">{t(item)}</strong>:
-                            {typeof props?.errors[item] === "string"
-                              ? (JSON.stringify(props?.errors[item]) as any)
-                              : props?.errors &&
-                                props?.errors[item] &&
-                                Object.keys(props?.errors[item] as any)?.map((item2: any, index) => {
-                                  return (
-                                    <span key={index} className="flex flex-col ltr:pr-2 rtl:pl-2">
-                                      <strong className="ltr:mr-1 rtl:ml-1">{Number(item2.split(".")[0]) + 1 + t(item2.split(".")[1])}</strong>
-                                      {props?.errors &&
-                                        (props?.errors as any)[item][item2] &&
-                                        Object.keys((props?.errors as any)[item][item2]).map((item3: any, index) => {
-                                          return (
-                                            <span key={index} className="ltr:pr-2 rtl:pl-2">
-                                              <strong className="ltr:mr-1 rtl:ml-1">{t(item3)}</strong>:{JSON.stringify((props?.errors as any)[item][item2][item3])}
-                                            </span>
-                                          );
-                                        })}
-                                    </span>
-                                  );
-                                })}
-                          </span>
-                        );
-                      })}
+                      {Object.keys(props?.errors ?? {})?.map(
+                        (item: any, index) => {
+                          return (
+                            <span key={index} className="ltr:pr-2 rtl:pl-2">
+                              <strong className="ltr:mr-1 rtl:ml-1">
+                                {t(item)}
+                              </strong>
+                              :
+                              {typeof props?.errors[item] === "string"
+                                ? (JSON.stringify(props?.errors[item]) as any)
+                                : props?.errors &&
+                                  props?.errors[item] &&
+                                  Object.keys(props?.errors[item] as any)?.map(
+                                    (item2: any, index) => {
+                                      return (
+                                        <span
+                                          key={index}
+                                          className="flex flex-col ltr:pr-2 rtl:pl-2"
+                                        >
+                                          <strong className="ltr:mr-1 rtl:ml-1">
+                                            {Number(item2.split(".")[0]) +
+                                              1 +
+                                              t(item2.split(".")[1])}
+                                          </strong>
+                                          {props?.errors &&
+                                            (props?.errors as any)[item][
+                                              item2
+                                            ] &&
+                                            Object.keys(
+                                              (props?.errors as any)[item][
+                                                item2
+                                              ]
+                                            ).map((item3: any, index) => {
+                                              return (
+                                                <span
+                                                  key={index}
+                                                  className="ltr:pr-2 rtl:pl-2"
+                                                >
+                                                  <strong className="ltr:mr-1 rtl:ml-1">
+                                                    {t(item3)}
+                                                  </strong>
+                                                  :
+                                                  {JSON.stringify(
+                                                    (props?.errors as any)[
+                                                      item
+                                                    ][item2][item3]
+                                                  )}
+                                                </span>
+                                              );
+                                            })}
+                                        </span>
+                                      );
+                                    }
+                                  )}
+                            </span>
+                          );
+                        }
+                      )}
                     </div>
                   </div>
                 )}
