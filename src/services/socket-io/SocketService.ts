@@ -1,6 +1,11 @@
 import { io, Socket } from "socket.io-client";
+import { BASE_URL } from "../api";
 
-type SocketConnectionStatus = "disconnected" | "connecting" | "connected" | "error";
+type SocketConnectionStatus =
+  | "disconnected"
+  | "connecting"
+  | "connected"
+  | "error";
 
 interface AdminData {
   userId: string;
@@ -33,16 +38,22 @@ class AdminSocketService {
     }
 
     this.connectionStatus = "connecting";
+    console.log(
+      `wss://${BASE_URL?.replace("https://", "").replace("http://", "")}chat`
+    );
 
-    this.socket = io(`wss://wl-v1-dev-api.noon-iraq.com/chat`, {
-      transports: ["websocket"],
-      upgrade: false,
-      auth: { token },
-      extraHeaders: { Authorization: `Bearer ${token}` },
-      query: { token },
-      timeout: 20000,
-      forceNew: true,
-    });
+    this.socket = io(
+      `wss://${BASE_URL?.replace("https://", "").replace("http://", "")}chat`,
+      {
+        transports: ["websocket"],
+        upgrade: false,
+        auth: { token },
+        extraHeaders: { Authorization: `Bearer ${token}` },
+        query: { token },
+        timeout: 20000,
+        forceNew: true,
+      }
+    );
 
     this.setupEventListeners();
     return this.socket;
@@ -102,7 +113,9 @@ class AdminSocketService {
   private handleReconnect(): void {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);
+      console.log(
+        `Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`
+      );
 
       setTimeout(() => {
         if (this.socket && !this.socket.connected) {
