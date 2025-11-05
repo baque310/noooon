@@ -28,6 +28,8 @@ const TableComponent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   // TODO to any one else: you should use either state or params to store selected values, not both
+  const [stageId, setStageId] = useState<string | undefined>(undefined);
+  const [classId, setClassId] = useState<string | undefined>(undefined);
   const [sectionId, setSectionId] = useState<string | undefined>(undefined);
   const [schoolYearId, setSchoolYearId] = useState<string | undefined>(undefined);
 
@@ -49,6 +51,8 @@ const TableComponent = () => {
 
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
   const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+    stageId: stageId,
+    classId: classId,
     schoolYearId: schoolYearId || Setting?.currentSchoolYearId || "",
     sectionId: sectionId,
   });
@@ -156,6 +160,7 @@ const TableComponent = () => {
   }, [searchParams]);
 
   const handleSelectClass = (value: any) => {
+    setClassId(value ? value : undefined);
     const classId = value ?? undefined;
     setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
     pushWithCurrentParams("/sectionSchedule", {
@@ -170,8 +175,8 @@ const TableComponent = () => {
     pushWithCurrentParams("/sectionSchedule", { sectionId });
   };
   const handleSelectStage = (value: any) => {
+    setStageId(value ? value : undefined);
     const stageId = value ?? undefined;
-    // changing stage should clear class/section
     setParam((old) => ({
       ...(old ?? {}),
       stageId,

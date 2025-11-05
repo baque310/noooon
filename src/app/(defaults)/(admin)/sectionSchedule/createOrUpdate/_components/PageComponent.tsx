@@ -35,7 +35,7 @@ import AnimateHeight from "react-animate-height";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 
-import { useLazyTeacherSubjectGetDataQuery, useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
+import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import { daysArray } from "@/services/admin/Schedule";
@@ -52,6 +52,8 @@ const PageComponent = () => {
   const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
+  const [classId, setClassId] = useState<string | undefined>();
+  const [stageId, setStageId] = useState<string | undefined>();
   const [sectionId, setSectionId] = useState<string | undefined>();
 
   useEffect(() => {
@@ -68,6 +70,8 @@ const PageComponent = () => {
 
   const { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject } = useTeacherSubjectGetDataQuery(
     {
+      stageId: stageId,
+      classId: classId,
       sectionId: sectionId,
       schoolYearId: data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
     },
@@ -240,6 +244,7 @@ const PageComponent = () => {
                       isClearable: true,
                       onChange: (e) => {
                         props.setFieldValue(`stageId`, (e as any)?.value ?? "");
+                        setStageId((e as any)?.value ?? "");
                         props.setFieldValue(`classId`, undefined);
                         props.setFieldValue(`sectionId`, undefined);
                         props.setFieldValue(`SectionSchedules`, undefined);
@@ -271,6 +276,7 @@ const PageComponent = () => {
                         onChange: (e) => {
                           const value = (e as any)?.value ?? "";
                           props.setFieldValue(`classId`, value);
+                          setClassId(value);
                           props.setFieldValue(`sectionId`, undefined);
                           props.setFieldValue(`SectionSchedules`, undefined);
                         },
