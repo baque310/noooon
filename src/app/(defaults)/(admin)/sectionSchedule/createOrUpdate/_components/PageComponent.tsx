@@ -5,11 +5,7 @@ import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
 
 import { getTranslation, TranslationKeys } from "@/ni18n/i18n";
-import {
-  useLazySectionScheduleGetDataByIdQuery,
-  useSectionScheduleCreateMutation,
-  useSectionScheduleUpdateMutation,
-} from "@/services/admin/SectionSchedule";
+import { useLazySectionScheduleGetDataByIdQuery, useSectionScheduleCreateMutation, useSectionScheduleUpdateMutation } from "@/services/admin/SectionSchedule";
 import { FieldArray, FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -39,10 +35,7 @@ import AnimateHeight from "react-animate-height";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
 
-import {
-  useLazyTeacherSubjectGetDataQuery,
-  useTeacherSubjectGetDataQuery,
-} from "@/services/admin/TeacherSubject";
+import { useLazyTeacherSubjectGetDataQuery, useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useSettingGetDataQuery } from "@/services/Setting";
 import { daysArray } from "@/services/admin/Schedule";
@@ -55,26 +48,11 @@ const PageComponent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const [SectionScheduleGetDataById, { currentData: data, isFetching }] =
-    useLazySectionScheduleGetDataByIdQuery();
-  const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } =
-    useSchoolYearGetDataQuery();
-  const { currentData: stage, isFetching: isFetchingStage } =
-    useStageGetDataQuery();
-  const { currentData: Setting, isFetching: isFetchingSetting } =
-    useSettingGetDataQuery();
+  const [SectionScheduleGetDataById, { currentData: data, isFetching }] = useLazySectionScheduleGetDataByIdQuery();
+  const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
+  const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [sectionId, setSectionId] = useState<string | undefined>();
-
-  const { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject } =
-    useTeacherSubjectGetDataQuery(
-      {
-        sectionId: sectionId,
-        schoolYearId: data?.schoolYearId,
-      },
-      {
-        skip: !sectionId && !data?.schoolYearId,
-      }
-    );
 
   useEffect(() => {
     if (id) {
@@ -88,18 +66,21 @@ const PageComponent = () => {
     }
   }, [id]);
 
-  const [SectionScheduleCreate, { isLoading: isLoadingSectionScheduleCreate }] =
-    useSectionScheduleCreateMutation();
-  const [SectionScheduleUpdate, { isLoading: isLoadingSectionScheduleUpdate }] =
-    useSectionScheduleUpdateMutation();
+  const { isFetching: isFetchingTeacherSubject, currentData: TeacherSubject } = useTeacherSubjectGetDataQuery(
+    {
+      sectionId: sectionId,
+      schoolYearId: data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
+    },
+    {
+      skip: !sectionId && !data?.schoolYearId,
+    }
+  );
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>
-  ) => {
+  const [SectionScheduleCreate, { isLoading: isLoadingSectionScheduleCreate }] = useSectionScheduleCreateMutation();
+  const [SectionScheduleUpdate, { isLoading: isLoadingSectionScheduleUpdate }] = useSectionScheduleUpdateMutation();
+
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
-      // console.log(values);
-
       if (id) {
         await SectionScheduleUpdate({
           body: {
@@ -123,17 +104,12 @@ const PageComponent = () => {
         });
 
         await SectionScheduleCreate({
-          SectionSchedules: SectionSchedules?.filter(
-            (day): day is any => day !== null
-          ) // Filter out null values
+          SectionSchedules: SectionSchedules?.filter((day): day is any => day !== null) // Filter out null values
             .flatMap((day) => day?.SectionSchedules)
             .filter((it) => !!it),
         }).unwrap();
       }
-      toast.success(
-        t(id ? "common.updated-successfully" : "common.added-successfully"),
-        { autoClose: 30000 }
-      );
+      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
       if (id) {
         router.back();
@@ -141,16 +117,8 @@ const PageComponent = () => {
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
-        if (
-          error.message ==
-          "A section schedule with the same details already exists."
-        ) {
-          return toast.error(
-            t(
-              "SectionSchedulePage.A-section-schedule-with-the-same-details-already-exists"
-            ),
-            { autoClose: 30000 }
-          );
+        if (error.message == "A section schedule with the same details already exists.") {
+          return toast.error(t("SectionSchedulePage.A-section-schedule-with-the-same-details-already-exists"), { autoClose: 30000 });
         }
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
@@ -161,9 +129,7 @@ const PageComponent = () => {
   const sectionScheduleSchema = Yup.object().shape({
     ...(id
       ? {
-          teacherSubjectId: Yup.string().required(
-            t("common.this-field-is-required")
-          ),
+          teacherSubjectId: Yup.string().required(t("common.this-field-is-required")),
         }
       : {
           days: Yup.array()
@@ -172,31 +138,17 @@ const PageComponent = () => {
                 .shape({
                   SectionSchedules: Yup.array().of(
                     Yup.object().shape({
-                      teacherSubjectId: Yup.string().required(
-                        t("common.this-field-is-required")
-                      ),
-                      scheduleId: Yup.string().required(
-                        t("common.this-field-is-required")
-                      ),
+                      teacherSubjectId: Yup.string().required(t("common.this-field-is-required")),
+                      scheduleId: Yup.string().required(t("common.this-field-is-required")),
                     })
                   ),
                 })
                 .nullable() // Allow null values in the array
             )
-            .test(
-              "at-least-one",
-              t("common.at-least-oneDay-required-content-subject"),
-              (value) =>
-                value?.some(
-                  (item) =>
-                    item !== null &&
-                    item.SectionSchedules &&
-                    item.SectionSchedules.length > 0
-                )
+            .test("at-least-one", t("common.at-least-oneDay-required-content-subject"), (value) =>
+              value?.some((item) => item !== null && item.SectionSchedules && item.SectionSchedules.length > 0)
             ),
-          schoolYearId: Yup.string().required(
-            t("common.this-field-is-required")
-          ),
+          schoolYearId: Yup.string().required(t("common.this-field-is-required")),
           stageId: Yup.string().required(t("common.this-field-is-required")),
           classId: Yup.string().required(t("common.this-field-is-required")),
           sectionId: Yup.string().required(t("common.this-field-is-required")),
@@ -229,17 +181,14 @@ const PageComponent = () => {
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton
-          title={t(id ? "SectionSchedulePage.update-info" : "common.add")}
-        />
+        <BackButton title={t(id ? "SectionSchedulePage.update-info" : "common.add")} />
         {isFetching || isFetchingSetting ? (
           <LoadingForm />
         ) : (
           <Formik<FormValues>
             initialValues={{
               teacherSubjectId: data?.teacherSubjectId || "",
-              schoolYearId:
-                data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
+              schoolYearId: data?.schoolYearId || Setting?.CurrentSchoolYear.id || "",
               stageId: data?.section?.Class?.Stage?.id || "",
               classId: data?.section?.Class?.id || "",
               sectionId: "",
@@ -247,14 +196,11 @@ const PageComponent = () => {
             }}
             validationSchema={sectionScheduleSchema}
             onSubmit={handleSubmit}
-            enableReinitialize
-          >
+            enableReinitialize>
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
                 <div className="Card flex flex-col gap-1">
-                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                    {t("SectionSchedulePage.SectionScheduleInformation")}
-                  </div>
+                  <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("SectionSchedulePage.SectionScheduleInformation")}</div>
                   <SelectForm
                     formikProps={props}
                     name={`schoolYearId`}
@@ -272,10 +218,7 @@ const PageComponent = () => {
                       isLoading: isFetchingSchoolYear || isFetchingSetting,
                       isClearable: true,
                       onChange: (e) => {
-                        props.setFieldValue(
-                          `schoolYearId`,
-                          (e as any)?.value ?? ""
-                        );
+                        props.setFieldValue(`schoolYearId`, (e as any)?.value ?? "");
                       },
                     }}
                   />
@@ -343,12 +286,8 @@ const PageComponent = () => {
                       options={
                         stage
                           ? stage
-                              .find(
-                                (item) => item.id === props?.values?.stageId
-                              )
-                              ?.Class?.find(
-                                (item) => item.id === props?.values?.classId
-                              )
+                              .find((item) => item.id === props?.values?.stageId)
+                              ?.Class?.find((item) => item.id === props?.values?.classId)
                               ?.Section?.map((item) => {
                                 return {
                                   label: t(item.name as any),
@@ -361,10 +300,7 @@ const PageComponent = () => {
                         isLoading: isFetchingStage,
                         isClearable: true,
                         onChange: (e) => {
-                          props.setFieldValue(
-                            `sectionId`,
-                            (e as any)?.value ?? ""
-                          );
+                          props.setFieldValue(`sectionId`, (e as any)?.value ?? "");
                           setSectionId((e as any)?.value ?? "");
                           props.setFieldValue(`SectionSchedules`, undefined);
                         },
@@ -375,11 +311,7 @@ const PageComponent = () => {
 
                 {!id ? (
                   <>
-                    {!isArray(props.errors.days) && (
-                      <div className="mt-[2px] w-full p-1 text-sm text-danger">
-                        {t((props.errors.days ?? "") as any)}
-                      </div>
-                    )}
+                    {!isArray(props.errors.days) && <div className="mt-[2px] w-full p-1 text-sm text-danger">{t((props.errors.days ?? "") as any)}</div>}
                     <FieldArray name="days">
                       {({ insert, remove, push, replace }) => (
                         <div className={"flex flex-col gap-4 "}>
@@ -388,11 +320,8 @@ const PageComponent = () => {
                               <div key={index} className="">
                                 <button
                                   type="button"
-                                  className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${
-                                    active === index ? "!text-primary" : ""
-                                  }`}
-                                  onClick={() => togglePara(index)}
-                                >
+                                  className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === index ? "!text-primary" : ""}`}
+                                  onClick={() => togglePara(index)}>
                                   <bdi className=" flex gap-1">
                                     <p>
                                       {index + 1} {")"}
@@ -400,49 +329,31 @@ const PageComponent = () => {
                                     <p>{t(_.value)}</p>
                                   </bdi>
 
-                                  <div
-                                    className={`ltr:ml-auto rtl:mr-auto ${
-                                      active === index ? "rotate-180" : ""
-                                    }`}
-                                  >
+                                  <div className={`ltr:ml-auto rtl:mr-auto ${active === index ? "rotate-180" : ""}`}>
                                     <IconCaretsDown />
                                   </div>
                                 </button>
 
-                                <AnimateHeight
-                                  duration={300}
-                                  height={active === index ? "auto" : 0}
-                                >
-                                  <div
-                                    className={"flex flex-col gap-4  mt-3 p-2 "}
-                                  >
+                                <AnimateHeight duration={300} height={active === index ? "auto" : 0}>
+                                  <div className={"flex flex-col gap-4  mt-3 p-2 "}>
                                     <div>
-                                      <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                                        {t(
-                                          "SectionSchedulePage.SectionScheduleInformation"
-                                        )}
-                                      </div>
+                                      <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("SectionSchedulePage.SectionScheduleInformation")}</div>
                                       {props?.values?.sectionId && (
                                         <TeacherSubjectAndSchedule
                                           index={index}
                                           props={props}
                                           TeacherSubject={TeacherSubject}
-                                          isFetchingTeacherSubject={
-                                            isFetchingTeacherSubject
-                                          }
+                                          isFetchingTeacherSubject={isFetchingTeacherSubject}
                                         />
                                       )}
                                     </div>
 
-                                    {props.values.SectionSchedules?.length -
-                                      1 !=
-                                      0 && (
+                                    {props.values.SectionSchedules?.length - 1 != 0 && (
                                       <div className="flex justify-end gap-2 mt-2">
                                         <button
                                           type="button"
                                           className=" hover:bg-danger/10 border-danger/70 text-danger/70  hover:scale-[1.01] transition-transform py-[2px] px-2  rounded border"
-                                          onClick={() => remove(index)}
-                                        >
+                                          onClick={() => remove(index)}>
                                           {t("common.delete")}
                                         </button>
                                       </div>
@@ -457,18 +368,11 @@ const PageComponent = () => {
                               type="button"
                               className=" w-fit mr-auto bg-secondary/10 hover:bg-secondary/20 border-secondary/70 text-secondary/70 hover:scale-[1.01] transition-transform py-1 px-2   rounded border"
                               onClick={() => {
-                                const remainingDays = daysArray.filter(
-                                  (day) =>
-                                    !props.values.days.some(
-                                      (matrixDay: any) =>
-                                        matrixDay.value === day.value
-                                    )
-                                );
+                                const remainingDays = daysArray.filter((day) => !props.values.days.some((matrixDay: any) => matrixDay.value === day.value));
                                 if (remainingDays.length > 0) {
                                   push(remainingDays[0]);
                                 }
-                              }}
-                            >
+                              }}>
                               {t("common.add")}
                             </button>
                           )}
@@ -478,16 +382,12 @@ const PageComponent = () => {
                   </>
                 ) : (
                   <div className="Card flex flex-col gap-1">
-                    <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                      {t("SectionSchedulePage.SectionScheduleInformation")}
-                    </div>
+                    <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("SectionSchedulePage.SectionScheduleInformation")}</div>
                     <SelectForm
                       formikProps={props}
                       name={`teacherSubjectId`}
                       title={t("SectionSchedulePage.teacherSubject")}
-                      placeholder={t(
-                        "SectionSchedulePage.select-teacherSubject"
-                      )}
+                      placeholder={t("SectionSchedulePage.select-teacherSubject")}
                       options={
                         TeacherSubject?.map((item, index) => {
                           return {
@@ -506,10 +406,7 @@ const PageComponent = () => {
                       props={{
                         isClearable: true,
                         onChange: (e) => {
-                          props.setFieldValue(
-                            `teacherSubjectId`,
-                            (e as any)?.value ?? ""
-                          );
+                          props.setFieldValue(`teacherSubjectId`, (e as any)?.value ?? "");
                         },
                       }}
                     />
@@ -535,64 +432,33 @@ const PageComponent = () => {
                 {props.errors && Object.keys(props?.errors)?.length > 0 && (
                   <div className="Card !dark:bg-danger-dark-light !bg-danger-light">
                     <div className="flex flex-col  rounded bg-danger-light p-3.5 text-danger dark:bg-danger-dark-light">
-                      {Object.keys(props?.errors ?? {})?.map(
-                        (item: any, index) => {
-                          return (
-                            <span key={index} className="ltr:pr-2 rtl:pl-2">
-                              <strong className="ltr:mr-1 rtl:ml-1">
-                                {t(item)}
-                              </strong>
-                              :
-                              {typeof props?.errors[item] === "string"
-                                ? (JSON.stringify(props?.errors[item]) as any)
-                                : props?.errors &&
-                                  props?.errors[item] &&
-                                  Object.keys(props?.errors[item] as any)?.map(
-                                    (item2: any, index) => {
-                                      return (
-                                        <span
-                                          key={index}
-                                          className="flex flex-col ltr:pr-2 rtl:pl-2"
-                                        >
-                                          <strong className="ltr:mr-1 rtl:ml-1">
-                                            {Number(item2.split(".")[0]) +
-                                              1 +
-                                              t(item2.split(".")[1])}
-                                          </strong>
-                                          {props?.errors &&
-                                            (props?.errors as any)[item][
-                                              item2
-                                            ] &&
-                                            Object.keys(
-                                              (props?.errors as any)[item][
-                                                item2
-                                              ]
-                                            ).map((item3: any, index) => {
-                                              return (
-                                                <span
-                                                  key={index}
-                                                  className="ltr:pr-2 rtl:pl-2"
-                                                >
-                                                  <strong className="ltr:mr-1 rtl:ml-1">
-                                                    {t(item3)}
-                                                  </strong>
-                                                  :
-                                                  {JSON.stringify(
-                                                    (props?.errors as any)[
-                                                      item
-                                                    ][item2][item3]
-                                                  )}
-                                                </span>
-                                              );
-                                            })}
-                                        </span>
-                                      );
-                                    }
-                                  )}
-                            </span>
-                          );
-                        }
-                      )}
+                      {Object.keys(props?.errors ?? {})?.map((item: any, index) => {
+                        return (
+                          <span key={index} className="ltr:pr-2 rtl:pl-2">
+                            <strong className="ltr:mr-1 rtl:ml-1">{t(item)}</strong>:
+                            {typeof props?.errors[item] === "string"
+                              ? (JSON.stringify(props?.errors[item]) as any)
+                              : props?.errors &&
+                                props?.errors[item] &&
+                                Object.keys(props?.errors[item] as any)?.map((item2: any, index) => {
+                                  return (
+                                    <span key={index} className="flex flex-col ltr:pr-2 rtl:pl-2">
+                                      <strong className="ltr:mr-1 rtl:ml-1">{Number(item2.split(".")[0]) + 1 + t(item2.split(".")[1])}</strong>
+                                      {props?.errors &&
+                                        (props?.errors as any)[item][item2] &&
+                                        Object.keys((props?.errors as any)[item][item2]).map((item3: any, index) => {
+                                          return (
+                                            <span key={index} className="ltr:pr-2 rtl:pl-2">
+                                              <strong className="ltr:mr-1 rtl:ml-1">{t(item3)}</strong>:{JSON.stringify((props?.errors as any)[item][item2][item3])}
+                                            </span>
+                                          );
+                                        })}
+                                    </span>
+                                  );
+                                })}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -603,10 +469,7 @@ const PageComponent = () => {
                       type: "submit",
                     }}
                     title={t("common.save")}
-                    isLoading={
-                      isLoadingSectionScheduleUpdate ||
-                      isLoadingSectionScheduleCreate
-                    }
+                    isLoading={isLoadingSectionScheduleUpdate || isLoadingSectionScheduleCreate}
                   />
                 </div>
               </Form>
@@ -627,10 +490,7 @@ interface MessageComponentProps {
     title: TranslationKeys;
   }[];
 }
-export const MessageErrorComponent: FC<MessageComponentProps> = ({
-  errors,
-  data,
-}) => {
+export const MessageErrorComponent: FC<MessageComponentProps> = ({ errors, data }) => {
   const { t } = getTranslation();
   return (
     <>
@@ -638,10 +498,7 @@ export const MessageErrorComponent: FC<MessageComponentProps> = ({
         <div className="Card flex flex-col gap-1 bg-danger-light border-danger">
           {data.map((item, index) => {
             return (
-              <div
-                key={index}
-                className="mt-[2px] w-full p-1 text-sm text-danger"
-              >
+              <div key={index} className="mt-[2px] w-full p-1 text-sm text-danger">
                 <span className="font-bold">{t(item.title as any)} :</span>
                 {errors[item.name]}
               </div>

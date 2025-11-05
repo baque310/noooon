@@ -2,25 +2,15 @@
 import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
 import moment from "moment";
-import {
-  RolePageAndActionBasedComponent,
-  withRole,
-} from "@/components/Provider/RolePageAndActionBasedComponent";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import {
-  useLazySectionScheduleGetDataQuery,
-  useSectionScheduleRemoveMutation,
-} from "@/services/admin/SectionSchedule";
+import { useLazySectionScheduleGetDataQuery, useSectionScheduleRemoveMutation } from "@/services/admin/SectionSchedule";
 import { IRootState } from "@/store";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  AddIcons,
-  DeleteIcons,
-  UpdateIcons,
-} from "@/components/common/icons/Actions";
+import { AddIcons, DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
 import IconCaretsDown from "@/components/common/icons/sidebar/icon-carets-down";
 import AnimateHeight from "react-animate-height";
 import { daysArray } from "@/services/admin/Schedule";
@@ -37,6 +27,10 @@ const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
+  // TODO to any one else: you should use either state or params to store selected values, not both
+  const [sectionId, setSectionId] = useState<string | undefined>(undefined);
+  const [schoolYearId, setSchoolYearId] = useState<string | undefined>(undefined);
+
   const search = searchParams.get("search") || "";
   const [param, setParam] = useState<
     | {
@@ -50,22 +44,16 @@ const TableComponent = () => {
       }
     | undefined
   >();
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
 
-  const { isFetching: isFetchingStageData, currentData: StageData } =
-    useStageGetDataQuery();
-  const {
-    isFetching: isFetchingTeacherSubjectData,
-    currentData: TeacherSubjectData,
-  } = useTeacherSubjectGetDataQuery({
-    schoolYearId: param?.schoolYearId,
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+  const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+    schoolYearId: schoolYearId || Setting?.currentSchoolYearId || "",
+    sectionId: sectionId,
   });
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } =
-    useSchoolYearGetDataQuery();
-  const { currentData: Setting, isFetching: isFetchingSetting } =
-    useSettingGetDataQuery();
 
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
 
   useEffect(() => {
@@ -77,8 +65,7 @@ const TableComponent = () => {
     }
   }, [SchoolYearData, Setting]);
 
-  const [getData, { isFetching, currentData: data }] =
-    useLazySectionScheduleGetDataQuery();
+  const [getData, { isFetching, currentData: data }] = useLazySectionScheduleGetDataQuery();
 
   useEffect(() => {
     getData({
@@ -129,10 +116,7 @@ const TableComponent = () => {
     });
   };
 
-  const pushWithCurrentParams = (
-    path = "/sectionSchedule",
-    extra: Record<string, any> = {}
-  ) => {
+  const pushWithCurrentParams = (path = "/sectionSchedule", extra: Record<string, any> = {}) => {
     const allParams = new URLSearchParams();
     searchParams.forEach((value, key) => {
       allParams.set(key, value);
@@ -149,11 +133,7 @@ const TableComponent = () => {
     const query = allParams.toString();
     const newUrl = `${path}${query ? `?${query}` : ""}`;
 
-    if (
-      typeof window !== "undefined" &&
-      window.history &&
-      window.history.replaceState
-    ) {
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
       window.history.replaceState(null, "", newUrl);
     } else {
       router.push(newUrl);
@@ -184,6 +164,7 @@ const TableComponent = () => {
     });
   };
   const handleSelectSection = (value: any) => {
+    setSectionId(value ? value : undefined);
     const sectionId = value ?? undefined;
     setParam((old) => ({ ...(old ?? {}), sectionId }));
     pushWithCurrentParams("/sectionSchedule", { sectionId });
@@ -209,6 +190,7 @@ const TableComponent = () => {
     pushWithCurrentParams("/sectionSchedule", { teacherSubjectId });
   };
   const handleSelectSchoolYear = (value: any) => {
+    setSchoolYearId(value ? value.value : undefined);
     const schoolYearId = value ? value.value : undefined;
     setParam((old) => ({ ...(old ?? {}), schoolYearId }));
     pushWithCurrentParams("/sectionSchedule", { schoolYearId });
@@ -216,8 +198,7 @@ const TableComponent = () => {
 
   const selectedClassName = searchParams.get("selectedClassName");
   const id = searchParams.get("id");
-  const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] =
-    useSectionScheduleRemoveMutation();
+  const [ScheduleRemove, { isLoading: isLoadingScheduleRemove }] = useSectionScheduleRemoveMutation();
   const handleRemove = async () => {
     try {
       await ScheduleRemove({ id: String(id) }).unwrap();
@@ -236,13 +217,9 @@ const TableComponent = () => {
   const [selectedItem, setSelectedItem] = useState<string>("");
 
   return (
-    <div
-      className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">
-          {t("SectionSchedulePage.SectionSchedule")}
-        </div>
+        <div className="text-xl uppercase ">{t("SectionSchedulePage.SectionSchedule")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
@@ -277,8 +254,7 @@ const TableComponent = () => {
                     } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/sectionSchedule/createOrUpdate");
-                    }}
-                  >
+                    }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
                   </button>
@@ -313,14 +289,12 @@ const TableComponent = () => {
             placement="bottom-end"
             handleChange={handleSelectClass}
             options={
-              StageData?.find((it) => it.id == param?.stageId)?.Class?.map(
-                (item) => {
-                  return {
-                    value: item.id,
-                    label: t(item.name as any),
-                  };
-                }
-              ) ?? []
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
             }
           />
         )}
@@ -352,9 +326,11 @@ const TableComponent = () => {
             options={
               TeacherSubjectData?.map((item) => {
                 return {
-                  label: item.Teacher.fullName,
-                  //  + item.StageSubject.Subject.name,
-                  value: item.id,
+                  label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
+
+                  // label: item.Teacher.fullName,
+                  // //  + item.StageSubject.Subject.name,
+                  // value: item.id,
                 };
               }) ?? []
             }
@@ -369,35 +345,18 @@ const TableComponent = () => {
           </div>
         ) : (
           <>
-            {daysArray.filter(
-              (item) =>
-                data &&
-                data.data &&
-                (data.data[item.value as keyof typeof data.data] as any[])
-                  ?.length > 0
-            ).length == 0 ? (
-              <div className="flex justify-center items-center min-h-64 Card">
-                {t("common.no-data")}
-              </div>
+            {daysArray.filter((item) => data && data.data && (data.data[item.value as keyof typeof data.data] as any[])?.length > 0).length == 0 ? (
+              <div className="flex justify-center items-center min-h-64 Card">{t("common.no-data")}</div>
             ) : (
               daysArray
-                .filter(
-                  (item) =>
-                    data &&
-                    data.data &&
-                    (data.data[item.value as keyof typeof data.data] as any[])
-                      ?.length > 0
-                )
+                .filter((item) => data && data.data && (data.data[item.value as keyof typeof data.data] as any[])?.length > 0)
                 .map((item, index: number) => {
                   return (
                     <div key={index} className="">
                       <button
                         type="button"
-                        className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${
-                          active === index ? "!text-primary" : ""
-                        }`}
-                        onClick={() => togglePara(index)}
-                      >
+                        className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === index ? "!text-primary" : ""}`}
+                        onClick={() => togglePara(index)}>
                         <bdi className=" flex gap-1 font-bold text-lg">
                           <p>
                             {index + 1} {")"}
@@ -405,49 +364,29 @@ const TableComponent = () => {
 
                           <p>{t(item.label)}</p>
                         </bdi>
-                        <div
-                          className={`ltr:ml-auto rtl:mr-auto ${
-                            active === index ? "rotate-180" : ""
-                          }`}
-                        >
+                        <div className={`ltr:ml-auto rtl:mr-auto ${active === index ? "rotate-180" : ""}`}>
                           <IconCaretsDown />
                         </div>
                       </button>
 
-                      <AnimateHeight
-                        duration={300}
-                        height={active === index ? "auto" : 0}
-                      >
+                      <AnimateHeight duration={300} height={active === index ? "auto" : 0}>
                         <div className={"flex flex-col gap-4  mt-3 p-2 "}>
                           <div className="datatables pagination-padding mt-2">
                             {isMounted && (
                               <DataTable
                                 onRowClick={async (item) => {
-                                  sessionStorage.setItem(
-                                    "sectionScheduleActive",
-                                    JSON.stringify(active)
-                                  ); // Save the current active index
+                                  sessionStorage.setItem("sectionScheduleActive", JSON.stringify(active)); // Save the current active index
                                   setSelectedItem(item.record.id);
-                                  router.push(
-                                    `/sectionSchedule/${item.record.id}`
-                                  );
+                                  router.push(`/sectionSchedule/${item.record.id}`);
                                 }}
                                 fetching={isFetching}
                                 className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-                                records={
-                                  data && data.data
-                                    ? data.data[
-                                        item.value as keyof typeof data.data
-                                      ]
-                                    : ([] as any)
-                                }
+                                records={data && data.data ? data.data[item.value as keyof typeof data.data] : ([] as any)}
                                 columns={[
                                   {
                                     title: t("SectionSchedulePage.StageName"),
-                                    accessor:
-                                      "teacherSubject.StageSubject.Stage.name",
-                                    render: ({ teacherSubject }) =>
-                                      t(teacherSubject.StageSubject.Stage.name),
+                                    accessor: "teacherSubject.StageSubject.Stage.name",
+                                    render: ({ teacherSubject }) => t(teacherSubject.StageSubject.Stage.name),
                                   },
                                   {
                                     title: t("SectionSchedulePage.ClassName"),
@@ -466,33 +405,18 @@ const TableComponent = () => {
                                   },
                                   {
                                     title: t("SectionSchedulePage.SubjectName"),
-                                    accessor:
-                                      "teacherSubject.StageSubject.Subject.name",
+                                    accessor: "teacherSubject.StageSubject.Subject.name",
                                   },
                                   {
                                     title: t("SectionSchedulePage.timeFrom"),
                                     accessor: "Schedule.timeFrom",
-                                    render: ({ Schedule }: any) =>
-                                      Schedule.timeFrom ? (
-                                        <div>
-                                          {moment
-                                            .utc(Schedule.timeFrom)
-                                            .format("hh:mm:ss A")}
-                                        </div>
-                                      ) : null,
+                                    render: ({ Schedule }: any) => (Schedule.timeFrom ? <div>{moment.utc(Schedule.timeFrom).format("hh:mm:ss A")}</div> : null),
                                   },
 
                                   {
                                     title: t("SectionSchedulePage.timeTo"),
                                     accessor: "Schedule.timeTo",
-                                    render: ({ Schedule }: any) =>
-                                      Schedule.timeTo ? (
-                                        <div>
-                                          {moment
-                                            .utc(Schedule.timeTo)
-                                            .format("hh:mm:ss A")}
-                                        </div>
-                                      ) : null,
+                                    render: ({ Schedule }: any) => (Schedule.timeTo ? <div>{moment.utc(Schedule.timeTo).format("hh:mm:ss A")}</div> : null),
                                   },
                                   {
                                     title: t("SectionSchedulePage.SchoolYear"),
@@ -500,46 +424,28 @@ const TableComponent = () => {
                                     render: (record: any) => (
                                       <>
                                         <div className="items-right flex gap-6">
-                                          <p dir="ltr">
-                                            {record.SchoolYear.from ? (
-                                              <div>
-                                                {moment
-                                                  .utc(record.SchoolYear.from)
-                                                  .format("hh:mm:ss A")}
-                                              </div>
-                                            ) : null}
-                                          </p>
+                                          <p dir="ltr">{record.SchoolYear.from ? <div>{moment.utc(record.SchoolYear.from).format("hh:mm:ss A")}</div> : null}</p>
                                           <div className="row-actions items-right m-0 flex gap-4 opacity-0 transition-opacity group-hover:opacity-100">
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 setSelectedItem(record.id);
                                                 // pushWithCurrentParams("/sectionSchedule/createOrUpdate", { id: record.id });
-                                                router.push(
-                                                  `/sectionSchedule/createOrUpdate?id=${record.id}`
-                                                );
+                                                router.push(`/sectionSchedule/createOrUpdate?id=${record.id}`);
                                               }}
-                                              title={t("common.update")}
-                                            >
+                                              title={t("common.update")}>
                                               <UpdateIcons className="h-5 w-5" />
                                             </button>
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
-                                                pushWithCurrentParams(
-                                                  "/sectionSchedule",
-                                                  {
-                                                    id: record.id,
-                                                    selectedClassName:
-                                                      record.teacherSubject
-                                                        .StageSubject.Stage
-                                                        .name,
-                                                  }
-                                                );
+                                                pushWithCurrentParams("/sectionSchedule", {
+                                                  id: record.id,
+                                                  selectedClassName: record.teacherSubject.StageSubject.Stage.name,
+                                                });
                                                 setOpenDelete(true);
                                               }}
-                                              title={t("common.delete")}
-                                            >
+                                              title={t("common.delete")}>
                                               <DeleteIcons className="h-6 w-6 text-danger" />
                                             </button>
                                           </div>
@@ -548,9 +454,7 @@ const TableComponent = () => {
                                     ),
                                   },
                                 ]}
-                                customLoader={
-                                  <div className="loader !bg-primary"></div>
-                                }
+                                customLoader={<div className="loader !bg-primary"></div>}
                                 noRecordsText={t("common.no-data")}
                                 noRecordsIcon={<></>}
                               />
@@ -567,9 +471,7 @@ const TableComponent = () => {
       </div>
 
       <DeleteModel
-        description={t(
-          "SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule"
-        )}
+        description={t("SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule")}
         title={t("SchedulePage.DeleteSchedule")}
         open={openDelete}
         setOpen={setOpenDelete}
