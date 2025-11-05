@@ -124,32 +124,31 @@ export const Chat = api.injectEndpoints({
         body,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatCreateSchoolStaffGroup", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatCreateSchoolStaffGroup", "ChatGetData"] : []),
     }),
-    ChatCreateSubjectTeachersGroup: build.mutation<
-      IChat,
-      AddChatCreateSubjectTeachersGroupPayload
-    >({
+    ChatCreateSubjectTeachersGroup: build.mutation<IChat, AddChatCreateSubjectTeachersGroupPayload>({
       query: (body) => ({
         url: `admin/chat/create-subject-teachers-group`,
         body,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatCreateSubjectTeachersGroup", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatCreateSubjectTeachersGroup", "ChatGetData"] : []),
     }),
-    ChatCreateClassParentsGroup: build.mutation<
-      IChat,
-      AddChatCreateClassParentsGroupPayload
-    >({
+    ChatCreateClassParentsGroup: build.mutation<IChat, AddChatCreateClassParentsGroupPayload>({
       query: (body) => ({
         url: `admin/chat/create-class-parents-group`,
         body,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatCreateClassParentsGroup", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatCreateClassParentsGroup", "ChatGetData"] : []),
+    }),
+    ChatCreateClassStudentsGroup: build.mutation<IChat, AddChatCreateClassStudentsGroupPayload>({
+      query: (body) => ({
+        url: `admin/chat/create-class-group`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: (res) => (res ? ["ChatCreateClassStudentsGroup", "ChatGetData"] : []),
     }),
     ChatCreateClassStudentsGroup: build.mutation<
       IChat,
@@ -173,8 +172,24 @@ export const Chat = api.injectEndpoints({
         url: `a/admin/chat/toggle-group-chat/${roomId}`,
         method: "POST",
       }),
-      invalidatesTags: (res) =>
-        res ? ["ChatToggleGroupChat", "ChatGetData"] : [],
+      invalidatesTags: (res) => (res ? ["ChatToggleGroupChat", "ChatGetData"] : []),
+    }),
+
+    ToggleGroupChatUpdate: build.mutation<IChat, { roomId: string; body: { action: "ENABLE" | "DISABLE" } }>({
+      query: ({ body, roomId }) => ({
+        url: `admin/chat/toggle-group-chat/${roomId}`,
+        body,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["ChatGetData", "ClassUpdate", "ClassGetDataById", "ClassGetData"],
+    }),
+
+    ChatMessageRemove: build.mutation<void, { messageId: string }>({
+      query: ({ messageId }) => ({
+        url: `admin/chat/message/${messageId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ChatMessageRemoved", "ChatGetData"],
     }),
 
     ToggleGroupChatUpdate: build.mutation<

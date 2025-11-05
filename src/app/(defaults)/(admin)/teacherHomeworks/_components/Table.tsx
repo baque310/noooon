@@ -3,10 +3,7 @@ import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
 
 import moment from "moment";
-import {
-  RolePageAndActionBasedComponent,
-  withRole,
-} from "@/components/Provider/RolePageAndActionBasedComponent";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
@@ -33,11 +30,9 @@ const TableComponent = () => {
     columnAccessor: "createdAt",
     direction: "desc",
   });
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
-  const { currentData: Setting, isFetching: isFetchingSetting } =
-    useSettingGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
   const [param, setParam] = useState<
     | {
@@ -51,17 +46,12 @@ const TableComponent = () => {
       }
     | undefined
   >();
-  const { isFetching: isFetchingSectionData, currentData: SectionData } =
-    useSectionGetDataQuery({});
-  const {
-    isFetching: isFetchingTeacherSubjectData,
-    currentData: TeacherSubjectData,
-  } = useTeacherSubjectGetDataQuery({
+  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
+  const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
     // sectionId  :param.sectionId,
     schoolYearId: param?.schoolYearId,
   });
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } =
-    useSchoolYearGetDataQuery();
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
   useEffect(() => {
     if (SchoolYearData && Setting) {
@@ -155,9 +145,7 @@ const TableComponent = () => {
   };
 
   return (
-    <div
-      className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("HomeworksPage.Homeworks")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
@@ -268,8 +256,7 @@ const TableComponent = () => {
                   } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                   onClick={() => {
                     router.push("/teacherHomeworks/createOrUpdate");
-                  }}
-                >
+                  }}>
                   <AddIcons className="h-4 w-4" />
                   {t("common.add")}
                 </button>
@@ -304,10 +291,7 @@ const TableComponent = () => {
                 title: t("HomeworksPage.dueDate"),
                 accessor: "dueDate",
                 sortable: true,
-                render: ({ dueDate }: any) =>
-                  dueDate ? (
-                    <div>{moment(dueDate).format("YYYY-MM-DD ")}</div>
-                  ) : null,
+                render: ({ dueDate }: any) => (dueDate ? <div>{moment(dueDate).format("YYYY-MM-DD ")}</div> : null),
               },
               {
                 title: t("HomeworksPage.teacherFullName"),
@@ -318,9 +302,7 @@ const TableComponent = () => {
                 title: t("HomeworksPage.StageName"),
                 accessor: "teacherSubject.StageSubject.Stage.name",
                 // sortable: true,
-                render: ({ teacherSubject }: any) =>
-                  teacherSubject.StageSubject.Stage.name &&
-                  t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
+                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
               {
                 title: t("HomeworksPage.SectionName"),
@@ -333,42 +315,26 @@ const TableComponent = () => {
                 title: t("HomeworksPage.SubjectName"),
                 accessor: "teacherSubject.StageSubject.Subject.name",
                 // sortable: true,
-                render: ({ teacherSubject }: any) =>
-                  teacherSubject.StageSubject.Subject.name &&
-                  t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
+                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
               },
-
               {
                 title: t("HomeworksPage.SchoolYear"),
                 accessor: "SchoolYear.from",
                 // sortable: true,
-                render: ({ SchoolYear }: any) =>
-                  SchoolYear.from || SchoolYear.to
-                    ? SchoolYear.from + " - " + SchoolYear.to
-                    : null,
+                render: ({ SchoolYear }: any) => (SchoolYear.from || SchoolYear.to ? SchoolYear.from + " - " + SchoolYear.to : null),
               },
 
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
                 sortable: true,
-                render: ({ updatedAt }: any) =>
-                  updatedAt ? (
-                    <div>
-                      {moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
                 sortable: true,
-                render: ({ createdAt }: any) =>
-                  createdAt ? (
-                    <div>
-                      {moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}

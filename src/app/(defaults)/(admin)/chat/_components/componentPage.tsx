@@ -178,6 +178,33 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     [refetch]
   );
 
+  const handleChatToggle = useCallback(
+    async (chatId: string, updatedStatus?: string) => {
+      try {
+        if (updatedStatus) {
+          // update selected chat locally if it matches
+          setSelectedChat((prev) => {
+            if (!prev) return prev;
+            if (prev.id !== chatId) return prev;
+            return {
+              ...prev,
+              isActive: updatedStatus,
+            } as IChat;
+          });
+          return;
+        }
+
+        // fallback: refetch the list and update selectedChat
+        const res = await refetch();
+        const updated = res?.data?.data?.find((c: IChat) => c.id === chatId) ?? null;
+        setSelectedChat(updated);
+      } catch (err) {
+        console.error("Failed to refetch chats after toggle", err);
+      }
+    },
+    [refetch]
+  );
+
   return (
     <div className="space-y-2">
       {/* Header */}
