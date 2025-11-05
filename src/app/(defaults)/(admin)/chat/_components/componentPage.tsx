@@ -111,17 +111,11 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
 
   // always use functional set to avoid stale spreads
   const handleSelectStage = useCallback((value?: string) => {
-    setParam((prev) =>
-      value
-        ? { ...prev, stageId: value }
-        : { ...prev, stageId: undefined, classId: undefined, sectionId: undefined }
-    );
+    setParam((prev) => (value ? { ...prev, stageId: value } : { ...prev, stageId: undefined, classId: undefined, sectionId: undefined }));
   }, []);
 
   const handleSelectClass = useCallback((value?: string) => {
-    setParam((prev) =>
-      value ? { ...prev, classId: value } : { ...prev, classId: undefined, sectionId: undefined }
-    );
+    setParam((prev) => (value ? { ...prev, classId: value } : { ...prev, classId: undefined, sectionId: undefined }));
   }, []);
 
   const handleSelectSection = useCallback((value?: string) => {
@@ -161,22 +155,22 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     setSelectedMessagesCount(0);
   }, []);
 
-  const handleChatToggle = useCallback(
-    async (chatId: string, updatedStatus?: string) => {
-      try {
-        if (updatedStatus) {
-          setSelectedChat((prev) => (prev?.id === chatId ? ({ ...prev, isActive: updatedStatus } as IChat) : prev));
-          return;
-        }
-        const res = await refetch();
-        const updated = res?.data?.data?.find((c: IChat) => c.id === chatId) ?? null;
-        setSelectedChat(updated);
-      } catch (e) {
-        console.error("Refetch after toggle failed", e);
-      }
-    },
-    [refetch]
-  );
+  // const handleChatToggle = useCallback(
+  //   async (chatId: string, updatedStatus?: string) => {
+  //     try {
+  //       if (updatedStatus) {
+  //         setSelectedChat((prev) => (prev?.id === chatId ? ({ ...prev, isActive: updatedStatus } as IChat) : prev));
+  //         return;
+  //       }
+  //       const res = await refetch();
+  //       const updated = res?.data?.data?.find((c: IChat) => c.id === chatId) ?? null;
+  //       setSelectedChat(updated);
+  //     } catch (e) {
+  //       console.error("Refetch after toggle failed", e);
+  //     }
+  //   },
+  //   [refetch]
+  // );
 
   const handleChatToggle = useCallback(
     async (chatId: string, updatedStatus?: string) => {
@@ -214,8 +208,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
             <h1 className="text-2xl font-bold text-gray-900">المحادثات</h1>
             <button
               className="flex items-center gap-2 bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:bg-primary/90 transition"
-              onClick={() => setOpen(true)}
-            >
+              onClick={() => setOpen(true)}>
               <AddIcons className="size-5" />
               إضافة محادثة
             </button>
@@ -227,9 +220,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                   placement="bottom-end"
                   title={t("StudentEnrollmentPage.StageName")}
                   handleChange={handleSelectStage}
-                  options={
-                    StageData?.map((item) => ({ value: item.id, label: t(item.name as any) })) ?? []
-                  }
+                  options={StageData?.map((item) => ({ value: item.id, label: t(item.name as any) })) ?? []}
                 />
               </div>
 
@@ -256,8 +247,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                     placement="bottom-end"
                     handleChange={handleSelectSection}
                     options={
-                      StageData
-                        ?.find((it) => it.id === param.stageId)
+                      StageData?.find((it) => it.id === param.stageId)
                         ?.Class.find((it) => it.id === param.classId)
                         ?.Section?.map((s) => ({ value: s.id, label: t(s.name as any) })) ?? []
                     }
@@ -277,8 +267,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                 : connectionStatus === "error"
                 ? "bg-red-100 text-red-800"
                 : "bg-gray-100 text-gray-800"
-            }`}
-          >
+            }`}>
             <span
               className={`w-2 h-2 rounded-full mr-2 ${
                 connectionStatus === "connected"
@@ -301,12 +290,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
         <div className="col-span-4 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
           <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">قائمة المحادثات</h2>
-            <button
-              onClick={() => setLocalSearch((s) => (s ? "" : s))}
-              className="p-2 rounded-lg hover:bg-gray-200 transition"
-              aria-label="Clear search"
-              title="تفريغ البحث"
-            >
+            <button onClick={() => setLocalSearch((s) => (s ? "" : s))} className="p-2 rounded-lg hover:bg-gray-200 transition" aria-label="Clear search" title="تفريغ البحث">
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 5a6 6 0 100 12 6 6 0 000-12z" />
               </svg>
@@ -342,10 +326,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                   <div
                     key={chat.id}
                     onClick={() => setSelectedChat(chat)}
-                    className={`p-4 cursor-pointer transition rounded-md ${
-                      selectedChat?.rocketChatId === chat.rocketChatId ? "bg-primary/10" : "hover:bg-gray-50"
-                    }`}
-                  >
+                    className={`p-4 cursor-pointer transition rounded-md ${selectedChat?.rocketChatId === chat.rocketChatId ? "bg-primary/10" : "hover:bg-gray-50"}`}>
                     <div className="flex items-start gap-3">
                       <div className="relative flex flex-col items-center">
                         <span className={`absolute left-3 -top-0 w-2 h-2 rounded-full ${chat?.isActive ? "bg-green-400" : "bg-gray-400"}`} />
@@ -404,8 +385,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                     <button
                       onClick={handleDeleteSelectedFromHeader}
                       className="w-10 h-10 rounded-lg flex items-center justify-center bg-red-500 hover:bg-red-600 text-white shadow transition"
-                      title="حذف الرسائل المحددة"
-                    >
+                      title="حذف الرسائل المحددة">
                       <DeleteIcons />
                     </button>
                   </div>
@@ -414,11 +394,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
 
               <div className="flex-1 overflow-hidden">
                 {selectedChat.rocketChatId ? (
-                  <ChatRoom
-                    ref={chatRoomRef}
-                    roomId={selectedChat.rocketChatId}
-                    onSelectionChange={handleSelectionChange}
-                  />
+                  <ChatRoom ref={chatRoomRef} roomId={selectedChat.rocketChatId} onSelectionChange={handleSelectionChange} />
                 ) : (
                   <div className="flex items-center justify-center h-full text-center">
                     <div>
