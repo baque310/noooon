@@ -324,15 +324,13 @@ const TableComponent = () => {
               onChange: handleSelectTeacherSubject,
             }}
             options={
-              TeacherSubjectData?.map((item) => {
-                return {
-                  label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
-
-                  // label: item.Teacher.fullName,
-                  // //  + item.StageSubject.Subject.name,
-                  // value: item.id,
-                };
-              }) ?? []
+              sectionId === undefined && schoolYearId === undefined
+                ? []
+                : TeacherSubjectData?.map((item) => {
+                    return {
+                      label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
+                    };
+                  }) ?? []
             }
           />
         </div>
