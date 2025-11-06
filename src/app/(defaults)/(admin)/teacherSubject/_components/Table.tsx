@@ -46,6 +46,7 @@ const TableComponent = () => {
         classId?: string;
         sectionId?: string;
         stageId?: string;
+        sectionScheduleId?: string;
         search?: string;
         range?: string;
         schoolYearId?: string;
@@ -115,6 +116,13 @@ const TableComponent = () => {
       setParam({ ...param, stageId: value });
     } else {
       setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
+    }
+  };
+  const handleSelectSection = (value: any) => {
+    if (value) {
+      setParam({ ...param, sectionScheduleId: value });
+    } else {
+      setParam({ ...param, sectionScheduleId: undefined });
     }
   };
   const handleSelectSchoolYear = (value: any) => {
@@ -209,6 +217,24 @@ const TableComponent = () => {
                   label: t(item.name as any),
                 };
               }) ?? []
+            }
+          />
+        )}
+        {param?.classId && (
+          <SelectFilter
+            value={param?.sectionId}
+            title={t("StudentEnrollmentPage.SectionName")}
+            placement="bottom-end"
+            handleChange={handleSelectSection}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)
+                ?.Class.find((it) => it.id == param?.classId)
+                ?.Section?.map((item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }) ?? []
             }
           />
         )}
