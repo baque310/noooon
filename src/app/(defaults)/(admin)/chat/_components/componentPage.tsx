@@ -417,7 +417,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
               <div className="bg-white">
                 <div className="p-4 flex items-center gap-3 justify-between">
                   <div onClick={() => setOpenChatDetails(true)} className="flex items-center gap-3 cursor-pointer">
-                    <Avatar photo={""} username={selectedChat.name} className="bg-[#2C6E91]" />
+                    <Avatar photo={""} username={selectedChat.name} className="!bg-[#2C6E91]" />
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                         {selectedChat.name}
