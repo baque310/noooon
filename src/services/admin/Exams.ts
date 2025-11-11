@@ -36,6 +36,7 @@ export interface AddExamsPayload {
 }
 export interface UpdateExamsPayload {
   content: string;
+  score: number;
 }
 
 export interface AddExamsCreateSection {
@@ -46,10 +47,7 @@ export interface AddExamsCreateSection {
 
 export const Exams = api.injectEndpoints({
   endpoints: (build) => ({
-    ExamsGetData: build.query<
-      BaseGetDataResponse<IExams[]>,
-      GetDataRequestParams
-    >({
+    ExamsGetData: build.query<BaseGetDataResponse<IExams[]>, GetDataRequestParams>({
       query: (params) => ({
         url: `admin/exams`,
         params,
@@ -74,26 +72,16 @@ export const Exams = api.injectEndpoints({
       }),
       invalidatesTags: ["ExamsCreate", "ExamsGetDataById", "ExamsGetData"],
     }),
-    ExamsCreateSections: build.mutation<
-      IExams,
-      { id: string; body: AddExamsCreateSection }
-    >({
+    ExamsCreateSections: build.mutation<IExams, { id: string; body: AddExamsCreateSection }>({
       query: ({ body, id }) => ({
         url: `admin/exams/${id}/sections`,
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "ExamsCreateSections",
-        "ExamsGetDataById",
-        "ExamsGetData",
-      ],
+      invalidatesTags: ["ExamsCreateSections", "ExamsGetDataById", "ExamsGetData"],
     }),
 
-    ExamsUpdate: build.mutation<
-      IExams,
-      { id: string; body: UpdateExamsPayload }
-    >({
+    ExamsUpdate: build.mutation<IExams, { id: string; body: UpdateExamsPayload }>({
       query: ({ body, id }) => ({
         url: `admin/exams/${id}`,
         body,
@@ -115,11 +103,7 @@ export const Exams = api.injectEndpoints({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: [
-        "ExamSectionsRemove",
-        "ExamsGetDataById",
-        "ExamsGetData",
-      ],
+      invalidatesTags: ["ExamSectionsRemove", "ExamsGetDataById", "ExamsGetData"],
     }),
   }),
 });

@@ -3,10 +3,7 @@ import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
 
 import moment from "moment";
-import {
-  RolePageAndActionBasedComponent,
-  withRole,
-} from "@/components/Provider/RolePageAndActionBasedComponent";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { useExamsGetDataQuery } from "@/services/admin/Exams";
@@ -36,23 +33,15 @@ const TableComponent = () => {
     direction: "desc",
   });
   const [selectedRecords, setSelectedRecords] = useState([]);
-  const isDark =
-    useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
-  const { currentData: Setting, isFetching: isFetchingSetting } =
-    useSettingGetDataQuery();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
-  const { isFetching: isFetchingSectionData, currentData: SectionData } =
-    useSectionGetDataQuery({});
-  const {
-    isFetching: isFetchingStageSubjectData,
-    currentData: StageSubjectData,
-  } = useStageSubjectGetDataQuery({});
-  const { isFetching: isFetchingStageData, currentData: StageData } =
-    useStageGetDataQuery();
+  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
+  const { isFetching: isFetchingStageSubjectData, currentData: StageSubjectData } = useStageSubjectGetDataQuery({});
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } =
-    useSchoolYearGetDataQuery();
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
   const [param, setParam] = useState<
     | {
@@ -82,7 +71,7 @@ const TableComponent = () => {
     sortDirection: sortStatus.direction,
     ...(search && { search: search as string }),
     ...(param?.sectionId && { sectionId: param?.sectionId }),
-    ... (param?.stageSubjectId && { stageSubjectId: param?.stageSubjectId }),
+    ...(param?.stageSubjectId && { stageSubjectId: param?.stageSubjectId }),
   };
 
   const { isFetching: isFetching, currentData: data } = useExamsGetDataQuery({
@@ -159,9 +148,7 @@ const TableComponent = () => {
   };
 
   return (
-    <div
-      className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("ExamsPage.exam")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
@@ -199,8 +186,7 @@ const TableComponent = () => {
                     } flex justify-center gap-1  items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border `}
                     onClick={() => {
                       router.push("/exams/createOrUpdate");
-                    }}
-                  >
+                    }}>
                     {t("common.add")}
                   </button>
                 );
@@ -233,14 +219,12 @@ const TableComponent = () => {
             placement="bottom-end"
             handleChange={handleSelectClass}
             options={
-              StageData?.find((it) => it.id == param?.stageId)?.Class?.map(
-                (item) => {
-                  return {
-                    value: item.id,
-                    label: t(item.name as any),
-                  };
-                }
-              ) ?? []
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
             }
           />
         )}
@@ -308,9 +292,7 @@ const TableComponent = () => {
                 title: t("StagePage.name"),
                 accessor: "StageSubject.Stage.name",
                 // sortable: true,
-                render: ({ StageSubject }: any) =>
-                  StageSubject?.Stage?.name &&
-                  t(StageSubject?.Stage?.name ?? ""),
+                render: ({ StageSubject }: any) => StageSubject?.Stage?.name && t(StageSubject?.Stage?.name ?? ""),
               },
               {
                 title: t("ClassPage.name"),
@@ -321,31 +303,20 @@ const TableComponent = () => {
                 title: t("TeacherSubjectPage.SchoolYear"),
                 accessor: "SchoolYear",
                 // sortable: true,
-                render: ({ SchoolYear }: any) =>
-                  SchoolYear.from + " - " + SchoolYear.to,
+                render: ({ SchoolYear }: any) => SchoolYear.from + " - " + SchoolYear.to,
               },
 
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
                 sortable: true,
-                render: ({ updatedAt }: any) =>
-                  updatedAt ? (
-                    <div>
-                      {moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
                 sortable: true,
-                render: ({ createdAt }: any) =>
-                  createdAt ? (
-                    <div>
-                      {moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-                    </div>
-                  ) : null,
+                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
@@ -372,10 +343,7 @@ const TableComponent = () => {
                 console.log(record.record, "content");
                 return (
                   <>
-                    <RowSectionTable
-                      data={record.record.ExamSection as any}
-                      id={record.record.id as any}
-                    />
+                    <RowSectionTable data={record.record.ExamSection as any} id={record.record.id as any} />
                   </>
                 );
               },

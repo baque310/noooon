@@ -5,13 +5,7 @@ import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
 
 import { getTranslation } from "@/ni18n/i18n";
-import {
-  useLazyExamsGetDataByIdQuery,
-  useExamsCreateMutation,
-  useExamsUpdateMutation,
-  AddExamsPayload,
-  UpdateExamsPayload,
-} from "@/services/admin/Exams";
+import { useLazyExamsGetDataByIdQuery, useExamsCreateMutation, useExamsUpdateMutation, AddExamsPayload, UpdateExamsPayload } from "@/services/admin/Exams";
 import { FieldArray, FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,16 +30,10 @@ const PageComponent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  const [ExamsGetDataById, { currentData: data, isFetching }] =
-    useLazyExamsGetDataByIdQuery();
-  const [
-    getStageSubject,
-    { currentData: StageSubject, isFetching: isFetchingStageSubject },
-  ] = useLazyStageSubjectGetDataQuery();
-  const { currentData: stage, isFetching: isFetchingStage } =
-    useStageGetDataQuery();
-  const { currentData: ExamType, isFetching: isFetchingExamType } =
-    useExamTypeGetDataQuery({});
+  const [ExamsGetDataById, { currentData: data, isFetching }] = useLazyExamsGetDataByIdQuery();
+  const [getStageSubject, { currentData: StageSubject, isFetching: isFetchingStageSubject }] = useLazyStageSubjectGetDataQuery();
+  const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
+  const { currentData: ExamType, isFetching: isFetchingExamType } = useExamTypeGetDataQuery({});
 
   useEffect(() => {
     if (id) {
@@ -57,20 +45,16 @@ const PageComponent = () => {
     }
   }, [id]);
 
-  const [ExamsCreate, { isLoading: isLoadingExamsCreate }] =
-    useExamsCreateMutation();
-  const [ExamsUpdate, { isLoading: isLoadingExamsUpdate }] =
-    useExamsUpdateMutation();
+  const [ExamsCreate, { isLoading: isLoadingExamsCreate }] = useExamsCreateMutation();
+  const [ExamsUpdate, { isLoading: isLoadingExamsUpdate }] = useExamsUpdateMutation();
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
       if (id) {
         await ExamsUpdate({
           body: {
             content: values.content,
+            score: values.score,
           },
           id: String(id),
         }).unwrap();
@@ -88,10 +72,7 @@ const PageComponent = () => {
           score: Number(values.score),
         }).unwrap();
       }
-      toast.success(
-        t(id ? "common.updated-successfully" : "common.added-successfully"),
-        { autoClose: 30000 }
-      );
+      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
       if (id) {
         router.back();
@@ -115,34 +96,18 @@ const PageComponent = () => {
             .of(
               Yup.object()
                 .shape({
-                  examDate: Yup.string().required(
-                    t("common.this-field-is-required")
-                  ),
-                  sectionId: Yup.string().required(
-                    t("common.this-field-is-required")
-                  ),
+                  examDate: Yup.string().required(t("common.this-field-is-required")),
+                  sectionId: Yup.string().required(t("common.this-field-is-required")),
                 })
                 .nullable() // Allow null values in the array
             )
-            .test(
-              "at-least-one",
-              t("common.at-least-oneDay-required-content-subject"),
-              (value) =>
-                value?.some(
-                  (item) => item !== null && item.sectionId && item.examDate
-                )
-            ),
+            .test("at-least-one", t("common.at-least-oneDay-required-content-subject"), (value) => value?.some((item) => item !== null && item.sectionId && item.examDate)),
           stageId: Yup.string().required(t("common.this-field-is-required")),
           classId: Yup.string().required(t("common.this-field-is-required")),
           content: Yup.string().required(t("common.this-field-is-required")),
-          stageSubjectId: Yup.string().required(
-            t("common.this-field-is-required")
-          ),
+          stageSubjectId: Yup.string().required(t("common.this-field-is-required")),
           examTypeId: Yup.string().required(t("common.this-field-is-required")),
-          score: Yup.number()
-            .max(100, t("ExamsPage.score-must-be-less-than-100"))
-            .min(0, t("ExamsPage.score-must-be-more-than-0"))
-            .required(t("common.this-field-is-required")),
+          score: Yup.number().max(100, t("ExamsPage.score-must-be-less-than-100")).min(0, t("ExamsPage.score-must-be-more-than-0")).required(t("common.this-field-is-required")),
         }),
   });
 
@@ -156,9 +121,7 @@ const PageComponent = () => {
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton
-          title={t(id ? "SchedulePage.update-Content" : "common.add")}
-        />
+        <BackButton title={t(id ? "SchedulePage.update-Content" : "common.add")} />
 
         {isFetching ? (
           <LoadingForm />
@@ -173,16 +136,13 @@ const PageComponent = () => {
               score: data?.score ?? 0,
             }}
             validationSchema={sectionScheduleSchema}
-            onSubmit={handleSubmit}
-          >
+            onSubmit={handleSubmit}>
             {(props: FormikProps<any>) => (
               <Form className={"px-4 flex flex-col gap-4"}>
                 {!id ? (
                   <>
                     <div className="Card flex flex-col gap-1">
-                      <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                        {t("ExamsPage.ExamsInformation")}
-                      </div>
+                      <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("ExamsPage.ExamsInformation")}</div>
 
                       <InputForm
                         formikProps={props}
@@ -222,10 +182,7 @@ const PageComponent = () => {
                           isLoading: isFetchingExamType,
                           isClearable: true,
                           onChange: (e) => {
-                            props.setFieldValue(
-                              `examTypeId`,
-                              (e as any)?.value ?? ""
-                            );
+                            props.setFieldValue(`examTypeId`, (e as any)?.value ?? "");
                           },
                         }}
                       />
@@ -247,10 +204,7 @@ const PageComponent = () => {
                           isLoading: isFetchingStage,
                           isClearable: true,
                           onChange: (e) => {
-                            props.setFieldValue(
-                              `stageId`,
-                              (e as any)?.value ?? ""
-                            );
+                            props.setFieldValue(`stageId`, (e as any)?.value ?? "");
                             props.setFieldValue(`classId`, undefined);
                             props.setFieldValue(`stageSubjectId`, undefined);
                           },
@@ -261,15 +215,11 @@ const PageComponent = () => {
                           formikProps={props}
                           name={`classId`}
                           title={t("SectionSchedulePage.ClassName")}
-                          placeholder={t(
-                            "SectionSchedulePage.select-ClassName"
-                          )}
+                          placeholder={t("SectionSchedulePage.select-ClassName")}
                           options={
                             stage
                               ? stage
-                                  .find(
-                                    (item) => item.id === props.values?.stageId
-                                  )
+                                  .find((item) => item.id === props.values?.stageId)
                                   ?.Class?.map((item) => {
                                     return {
                                       label: t(item.name as any),
@@ -294,7 +244,7 @@ const PageComponent = () => {
                           }}
                         />
                       )}
-                      
+
                       <SelectForm
                         formikProps={props}
                         name={`stageSubjectId`}
@@ -308,9 +258,7 @@ const PageComponent = () => {
                                   <div>{item.Subject.name}</div>
                                   <div>{"( "}</div>
                                   <div>
-                                    {item.Class.name} {" - "}{" "}
-                                    {item.Stage.name &&
-                                      t(item.Stage.name as any)}
+                                    {item.Class.name} {" - "} {item.Stage.name && t(item.Stage.name as any)}
                                   </div>
                                   <div>{" )"}</div>
                                 </div>
@@ -323,147 +271,97 @@ const PageComponent = () => {
                           isLoading: isFetchingStageSubject,
                           isClearable: true,
                           onChange: (e) => {
-                            props.setFieldValue(
-                              `stageSubjectId`,
-                              (e as any)?.value ?? ""
-                            );
+                            props.setFieldValue(`stageSubjectId`, (e as any)?.value ?? "");
                           },
                         }}
                       />
                     </div>
-                    {!isArray(props?.errors?.ExamSection) && (
-                      <div className="mt-[2px] w-full p-1 text-sm text-danger">
-                        {t((props?.errors?.ExamSection ?? "") as any)}
-                      </div>
-                    )}
-                    <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                      {t("ExamsPage.ExamsInformationAndDate")}
-                    </div>
+                    {!isArray(props?.errors?.ExamSection) && <div className="mt-[2px] w-full p-1 text-sm text-danger">{t((props?.errors?.ExamSection ?? "") as any)}</div>}
+                    <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("ExamsPage.ExamsInformationAndDate")}</div>
                     <FieldArray name="ExamSection">
                       {({ insert, remove, push, replace }) => (
                         <div className={"flex flex-col gap-4 "}>
-                          {props.values.ExamSection?.map(
-                            (_: any, index: number) => {
-                              return (
-                                <div key={index} className="">
-                                  <button
-                                    type="button"
-                                    className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${
-                                      active === index ? "!text-primary" : ""
-                                    }`}
-                                    onClick={() => togglePara(index)}
-                                  >
-                                    {_.examDate || _.sectionValue ? (
-                                      <bdi className=" flex gap-1">
-                                        <bdi>{t(_.examDate)}</bdi>
-                                        {_.sectionValue && (
-                                          <>
-                                            <bdi>{"( "}</bdi>
+                          {props.values.ExamSection?.map((_: any, index: number) => {
+                            return (
+                              <div key={index} className="">
+                                <button
+                                  type="button"
+                                  className={` Card w-full  flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === index ? "!text-primary" : ""}`}
+                                  onClick={() => togglePara(index)}>
+                                  {_.examDate || _.sectionValue ? (
+                                    <bdi className=" flex gap-1">
+                                      <bdi>{t(_.examDate)}</bdi>
+                                      {_.sectionValue && (
+                                        <>
+                                          <bdi>{"( "}</bdi>
 
-                                            <bdi>{t(_.sectionValue)}</bdi>
-                                            <bdi>{" )"}</bdi>
-                                          </>
-                                        )}
-                                      </bdi>
-                                    ) : (
-                                      <bdi>
-                                        {t("ExamsPage.selectSectionAndDate")}
-                                      </bdi>
-                                    )}
+                                          <bdi>{t(_.sectionValue)}</bdi>
+                                          <bdi>{" )"}</bdi>
+                                        </>
+                                      )}
+                                    </bdi>
+                                  ) : (
+                                    <bdi>{t("ExamsPage.selectSectionAndDate")}</bdi>
+                                  )}
 
-                                    <div
-                                      className={`ltr:ml-auto rtl:mr-auto ${
-                                        active === index ? "rotate-180" : ""
-                                      }`}
-                                    >
-                                      <IconCaretsDown />
-                                    </div>
-                                  </button>
+                                  <div className={`ltr:ml-auto rtl:mr-auto ${active === index ? "rotate-180" : ""}`}>
+                                    <IconCaretsDown />
+                                  </div>
+                                </button>
 
-                                  <AnimateHeight
-                                    duration={300}
-                                    height={active === index ? "auto" : 0}
-                                  >
-                                    <div
-                                      className={
-                                        "flex flex-col gap-4  mt-3 p-2 "
-                                      }
-                                    >
-                                      <div className="Card">
-                                        <div className="flex justify-end w-full relative mb-2">
-                                          <button
-                                            className="absolute top-0 hover:bg-danger/10 border-danger/70 text-danger/70  hover:scale-[1.01] transition-transform py-[2px] px-2  rounded  font-bold"
-                                            type="button"
-                                            onClick={() => {
-                                              remove(index);
-                                            }}
-                                          >
-                                            x
-                                          </button>
-                                        </div>
-
-                                        <DateTimeForm
-                                          formikProps={props}
-                                          name={`ExamSection.${index}.examDate`}
-                                          title={t("ExamsPage.examDate")}
-                                          placeholder={t(
-                                            "ExamsPage.enter-examDate"
-                                          )}
-                                        />
-                                        <SelectForm
-                                          formikProps={props}
-                                          name={`ExamSection.${index}.sectionId`}
-                                          title={t(
-                                            "SectionSchedulePage.SectionName"
-                                          )}
-                                          placeholder={t(
-                                            "SectionSchedulePage.select-SectionName"
-                                          )}
-                                          options={
-                                            stage
-                                              ? stage
-                                                  .find(
-                                                    (item) =>
-                                                      item.id ===
-                                                      props?.values?.stageId
-                                                  )
-                                                  ?.Class?.find(
-                                                    (item) =>
-                                                      item.id ===
-                                                      props?.values?.classId
-                                                  )
-                                                  ?.Section?.map((item) => {
-                                                    return {
-                                                      label: t(
-                                                        item.name as any
-                                                      ),
-                                                      value: item.id,
-                                                    };
-                                                  }) || []
-                                              : []
-                                          }
-                                          props={{
-                                            isLoading: isFetchingStage,
-                                            isClearable: true,
-                                            onChange: (e) => {
-                                              props.setFieldValue(
-                                                `ExamSection.${index}.sectionId`,
-                                                (e as any)?.value ?? ""
-                                              );
-                                              props.setFieldValue(
-                                                `ExamSection.${index}.sectionValue`,
-                                                (e as any)?.label ?? ""
-                                              );
-                                            },
-                                          }}
-                                        />
+                                <AnimateHeight duration={300} height={active === index ? "auto" : 0}>
+                                  <div className={"flex flex-col gap-4  mt-3 p-2 "}>
+                                    <div className="Card">
+                                      <div className="flex justify-end w-full relative mb-2">
+                                        <button
+                                          className="absolute top-0 hover:bg-danger/10 border-danger/70 text-danger/70  hover:scale-[1.01] transition-transform py-[2px] px-2  rounded  font-bold"
+                                          type="button"
+                                          onClick={() => {
+                                            remove(index);
+                                          }}>
+                                          x
+                                        </button>
                                       </div>
+
+                                      <DateTimeForm
+                                        formikProps={props}
+                                        name={`ExamSection.${index}.examDate`}
+                                        title={t("ExamsPage.examDate")}
+                                        placeholder={t("ExamsPage.enter-examDate")}
+                                      />
+                                      <SelectForm
+                                        formikProps={props}
+                                        name={`ExamSection.${index}.sectionId`}
+                                        title={t("SectionSchedulePage.SectionName")}
+                                        placeholder={t("SectionSchedulePage.select-SectionName")}
+                                        options={
+                                          stage
+                                            ? stage
+                                                .find((item) => item.id === props?.values?.stageId)
+                                                ?.Class?.find((item) => item.id === props?.values?.classId)
+                                                ?.Section?.map((item) => {
+                                                  return {
+                                                    label: t(item.name as any),
+                                                    value: item.id,
+                                                  };
+                                                }) || []
+                                            : []
+                                        }
+                                        props={{
+                                          isLoading: isFetchingStage,
+                                          isClearable: true,
+                                          onChange: (e) => {
+                                            props.setFieldValue(`ExamSection.${index}.sectionId`, (e as any)?.value ?? "");
+                                            props.setFieldValue(`ExamSection.${index}.sectionValue`, (e as any)?.label ?? "");
+                                          },
+                                        }}
+                                      />
                                     </div>
-                                  </AnimateHeight>
-                                </div>
-                              );
-                            }
-                          )}
+                                  </div>
+                                </AnimateHeight>
+                              </div>
+                            );
+                          })}
                           {props.values.ExamSection.length < 7 && (
                             <button
                               type="button"
@@ -472,8 +370,7 @@ const PageComponent = () => {
                                 push({
                                   sectionId: "",
                                 });
-                              }}
-                            >
+                              }}>
                               {t("common.add")}
                             </button>
                           )}
@@ -484,9 +381,7 @@ const PageComponent = () => {
                 ) : (
                   <>
                     <div className="Card flex flex-col gap-1">
-                      <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">
-                        {t("ExamsPage.ExamsInformation")}
-                      </div>
+                      <div className=" text-base font-semibold text-black dark:text-white-dark  mb-2 ">{t("ExamsPage.ExamsInformation")}</div>
 
                       <InputForm
                         formikProps={props}
@@ -495,6 +390,17 @@ const PageComponent = () => {
                         placeholder={t("ExamsPage.enter-content")}
                         props={{
                           ...({ as: "textarea" } as any),
+                        }}
+                      />
+                      <InputForm
+                        formikProps={props}
+                        name={`score`}
+                        title={t("ExamsPage.score")}
+                        placeholder={t("ExamsPage.enter-score")}
+                        props={{
+                          max: 100,
+                          min: 0,
+                          type: "number",
                         }}
                       />
                     </div>
