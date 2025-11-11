@@ -13,6 +13,7 @@ import { FormikHelpers } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { AddChatMessagePayload, useChatGetDataQuery, useChatMessageMutation } from "@/services/admin/chat";
+import SendMessageIcon from "@/components/common/icons/SendMessageIcon";
 export interface FormValues extends AddChatMessagePayload {
   studentId?: string;
 }
@@ -106,10 +107,11 @@ const GroupComponent = ({
               <ButtonForm
                 props={{
                   type: "submit",
-                  className: `w-full`,
+                  className: `w-full bg-[#2C6E91] border-[#2C6E91] rounded-md py-2`,
                 }}
-                title={t("common.save")}
+                title={t("common.sendMessage")}
                 isLoading={isLoadingChatMessage}
+                btnIcon={<SendMessageIcon className="mx-2 w-5 h-5" />}
               />
             </div>
           </Form>

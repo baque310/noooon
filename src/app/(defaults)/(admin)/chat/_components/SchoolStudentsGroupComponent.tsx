@@ -14,6 +14,7 @@ import { AddChatCreateClassStudentsGroupPayload, useChatCreateClassStudentsGroup
 import { useSession } from "next-auth/react";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { SelectForm } from "@/components/Form/SelectForm";
+import SendMessageIcon from "@/components/common/icons/SendMessageIcon";
 export interface FormValues extends AddChatCreateClassStudentsGroupPayload {}
 const SchoolStudentsGroupComponent = ({
   open,
@@ -158,10 +159,11 @@ const SchoolStudentsGroupComponent = ({
               <ButtonForm
                 props={{
                   type: "submit",
-                  className: `w-full`,
+                  className: `w-full bg-[#2C6E91] border-[#2C6E91] rounded-md py-2`,
                 }}
-                title={t("common.save")}
+                title={t("common.sendMessage")}
                 isLoading={isLoadingChatCreateSchoolStudentsGroup}
+                btnIcon={<SendMessageIcon className="mx-2 w-5 h-5" />}
               />
             </div>
           </Form>

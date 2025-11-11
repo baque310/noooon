@@ -13,12 +13,10 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 
 import { useSession } from "next-auth/react";
-import {
-  AddChatCreateCustomTeachersGroupPayload,
-  useChatCreateCustomTeachersGroupMutation,
-} from "@/services/admin/chat";
+import { AddChatCreateCustomTeachersGroupPayload, useChatCreateCustomTeachersGroupMutation } from "@/services/admin/chat";
 import { CheckBoxForm } from "@/components/Form/CheckBoxForm";
 import { useTeacherGetDataQuery } from "@/services/admin/teacher";
+import SendMessageIcon from "@/components/common/icons/SendMessageIcon";
 export interface FormValues extends AddChatCreateCustomTeachersGroupPayload {}
 const CustomTeachersGroupComponent = ({
   open,
@@ -32,24 +30,16 @@ const CustomTeachersGroupComponent = ({
   const { t } = getTranslation();
   const session = useSession();
 
-  const [
-    CreateCustomTeachersGroup,
-    { isLoading: isLoadingCreateCustomTeachersGroup },
-  ] = useChatCreateCustomTeachersGroupMutation();
+  const [CreateCustomTeachersGroup, { isLoading: isLoadingCreateCustomTeachersGroup }] = useChatCreateCustomTeachersGroupMutation();
 
   const [searchTeacher, setSearchTeacher] = React.useState("");
-  const { currentData: teachers, isFetching: isFetchingTeachers } =
-    useTeacherGetDataQuery({
-      skip: 1,
-      take: 100,
-      search: searchTeacher,
-    });
+  const { currentData: teachers, isFetching: isFetchingTeachers } = useTeacherGetDataQuery({
+    skip: 1,
+    take: 100,
+    search: searchTeacher,
+  });
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-    setOpen: any
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await CreateCustomTeachersGroup({
         description: values.description,
@@ -83,11 +73,7 @@ const CustomTeachersGroupComponent = ({
   });
 
   return (
-    <Model
-      title={t("ChatPage.create-custom-teachers-group")}
-      open={open}
-      setOpen={setOpen}
-    >
+    <Model title={t("ChatPage.create-custom-teachers-group")} open={open} setOpen={setOpen}>
       <Formik<FormValues>
         initialValues={{
           description: "",
@@ -98,8 +84,7 @@ const CustomTeachersGroupComponent = ({
         validationSchema={ChatSchema}
         onSubmit={(values, formikHelpers) => {
           handleSubmit(values, formikHelpers, setOpen);
-        }}
-      >
+        }}>
         {(props: FormikProps<any>) => (
           <Form className={"flex flex-col gap-4"}>
             <>
@@ -131,22 +116,14 @@ const CustomTeachersGroupComponent = ({
                           name={`teacherIds.${index}`}
                           title={`${item.fullName}`}
                           props={{
-                            checked: props.values.teacherIds.some(
-                              (it: any) => it == item.id
-                            ),
-                            value: props.values.teacherIds.some(
-                              (it: any) => it == item.id
-                            ),
+                            checked: props.values.teacherIds.some((it: any) => it == item.id),
+                            value: props.values.teacherIds.some((it: any) => it == item.id),
                             onChange: (e) => {
                               if (e.target.checked) {
-                                let newValues = props.values.teacherIds.concat(
-                                  item.id
-                                );
+                                let newValues = props.values.teacherIds.concat(item.id);
                                 props.setFieldValue(`teacherIds`, newValues);
                               } else {
-                                let newValues = props.values.teacherIds.filter(
-                                  (it: any) => it != item.id
-                                );
+                                let newValues = props.values.teacherIds.filter((it: any) => it != item.id);
                                 props.setFieldValue(`teacherIds`, newValues);
                               }
                             },
@@ -157,12 +134,7 @@ const CustomTeachersGroupComponent = ({
                 </div>
               )}
             </>
-            <InputForm
-              formikProps={props}
-              name={"groupName"}
-              title={t("ChatPage.group-name")}
-              placeholder={t("ChatPage.enter-group-name")}
-            />
+            <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
             <InputForm
               formikProps={props}
               name={"description"}
@@ -175,10 +147,11 @@ const CustomTeachersGroupComponent = ({
               <ButtonForm
                 props={{
                   type: "submit",
-                  className: `w-full`,
+                  className: `w-full bg-[#2C6E91] border-[#2C6E91] rounded-md py-2`,
                 }}
-                title={t("common.save")}
+                title={t("common.sendMessage")}
                 isLoading={isLoadingCreateCustomTeachersGroup}
+                btnIcon={<SendMessageIcon className="mx-2 w-5 h-5" />}
               />
             </div>
           </Form>

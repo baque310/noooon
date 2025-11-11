@@ -8,6 +8,7 @@ export interface IChat {
   rocketChatId: string;
   isActive: string;
   createdAt: string;
+  unreadCount: number;
   lastMessage: {
     content: string;
     senderName: string;

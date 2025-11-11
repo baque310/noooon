@@ -250,6 +250,10 @@ export const api = createApi({
     "SettingGetData",
     "SettingUpdate",
 
+    // ExamResults tags
+    "ExamResultsGetData",
+    "ExamResultsUpdate",
+
     // SchoolGetDataAdmin
     "SchoolGetDataAdmin",
     "SchoolUpdateAdmin",

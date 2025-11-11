@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { AddChatCreateSubjectTeachersGroupPayload, useChatCreateSubjectTeachersGroupMutation } from "@/services/admin/chat";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { SelectForm } from "@/components/Form/SelectForm";
+import SendMessageIcon from "@/components/common/icons/SendMessageIcon";
 export interface FormValues extends AddChatCreateSubjectTeachersGroupPayload {}
 const SubjectTeachersGroupComponent = ({
   open,
@@ -183,10 +184,11 @@ const SubjectTeachersGroupComponent = ({
               <ButtonForm
                 props={{
                   type: "submit",
-                  className: `w-full`,
+                  className: `w-full bg-[#2C6E91] border-[#2C6E91] rounded-md py-2`,
                 }}
-                title={t("common.save")}
+                title={t("common.sendMessage")}
                 isLoading={isLoadingCreateSubjectTeachersGroup}
+                btnIcon={<SendMessageIcon className="mx-2 w-5 h-5" />}
               />
             </div>
           </Form>

@@ -186,9 +186,7 @@ const CreateComponent = ({ open, setOpen }: { open: boolean; setOpen: React.Disp
           title={
             <span className="flex items-center gap-3">
               <SubjectTeachersGroupIcon />
-              <span className="font-semibold text-gray-800 group-hover:text-sky-700 transition">
-                {t("ChatPage.create-custom-teachers-group")}
-              </span>
+              <span className="font-semibold text-gray-800 group-hover:text-sky-700 transition">{t("ChatPage.create-custom-teachers-group")}</span>
             </span>
           }
           value={<ArrowIcons className="rtl:rotate-180 text-[#0ea5e9]/50 group-hover:text-sky-700 transition" />}

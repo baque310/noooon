@@ -17,6 +17,7 @@ import { useTeacherGetDataQuery } from "@/services/admin/teacher";
 import { useParentGetDataQuery } from "@/services/admin/parent";
 import { AddChatCreateClassParentsGroupPayload, useChatCreateClassParentsGroupMutation } from "@/services/admin/chat";
 import { useClassGetDataQuery } from "@/services/admin/class";
+import SendMessageIcon from "@/components/common/icons/SendMessageIcon";
 export interface FormValues extends AddChatCreateClassParentsGroupPayload {}
 const ClassParentsGroupComponent = ({
   open,
@@ -149,10 +150,11 @@ const ClassParentsGroupComponent = ({
               <ButtonForm
                 props={{
                   type: "submit",
-                  className: `w-full`,
+                  className: `w-full bg-[#2C6E91] border-[#2C6E91] rounded-md py-2`,
                 }}
-                title={t("common.save")}
+                title={t("common.sendMessage")}
                 isLoading={isLoadingCreateClassParentsGroup}
+                btnIcon={<SendMessageIcon className="mx-2 w-5 h-5" />}
               />
             </div>
           </Form>

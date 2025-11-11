@@ -11,11 +11,9 @@ import { FormikHelpers } from "formik";
 
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import {
-  AddChatCreateSchoolStaffGroupPayload,
-  useChatCreateSchoolStaffGroupMutation,
-} from "@/services/admin/chat";
+import { AddChatCreateSchoolStaffGroupPayload, useChatCreateSchoolStaffGroupMutation } from "@/services/admin/chat";
 import { useSession } from "next-auth/react";
+import SendMessageIcon from "@/components/common/icons/SendMessageIcon";
 export interface FormValues extends AddChatCreateSchoolStaffGroupPayload {}
 const SchoolStaffGroupComponent = ({
   open,
@@ -29,16 +27,9 @@ const SchoolStaffGroupComponent = ({
   const { t } = getTranslation();
   const session = useSession();
 
-  const [
-    ChatCreateSchoolStaffGroup,
-    { isLoading: isLoadingChatCreateSchoolStaffGroup },
-  ] = useChatCreateSchoolStaffGroupMutation();
+  const [ChatCreateSchoolStaffGroup, { isLoading: isLoadingChatCreateSchoolStaffGroup }] = useChatCreateSchoolStaffGroupMutation();
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-    setOpen: any
-  ) => {
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
       await ChatCreateSchoolStaffGroup({
         description: values.description,
@@ -70,11 +61,7 @@ const SchoolStaffGroupComponent = ({
   });
 
   return (
-    <Model
-      title={t("ChatPage.create-school-staff-group")}
-      open={open}
-      setOpen={setOpen}
-    >
+    <Model title={t("ChatPage.create-school-staff-group")} open={open} setOpen={setOpen}>
       <Formik<FormValues>
         initialValues={{
           description: "",
@@ -84,16 +71,10 @@ const SchoolStaffGroupComponent = ({
         validationSchema={ChatSchema}
         onSubmit={(values, formikHelpers) => {
           handleSubmit(values, formikHelpers, setOpen);
-        }}
-      >
+        }}>
         {(props: FormikProps<any>) => (
           <Form className={"flex flex-col gap-4"}>
-            <InputForm
-              formikProps={props}
-              name={"groupName"}
-              title={t("ChatPage.group-name")}
-              placeholder={t("ChatPage.enter-group-name")}
-            />
+            <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
             <InputForm
               formikProps={props}
               name={"description"}
@@ -106,10 +87,11 @@ const SchoolStaffGroupComponent = ({
               <ButtonForm
                 props={{
                   type: "submit",
-                  className: `w-full`,
+                  className: `w-full bg-[#2C6E91] border-[#2C6E91] rounded-md py-2`,
                 }}
-                title={t("common.save")}
+                title={t("common.sendMessage")}
                 isLoading={isLoadingChatCreateSchoolStaffGroup}
+                btnIcon={<SendMessageIcon className="mx-2 w-5 h-5" />}
               />
             </div>
           </Form>
