@@ -86,6 +86,7 @@ const CreateComponent = ({ open, setOpen }: { open: boolean; setOpen: React.Disp
             id: id as string,
             body: {
               sectionId: selectedSection.sectionId,
+              teacherId: values.teacherId,
             },
           }).unwrap();
         } else {
@@ -281,6 +282,31 @@ const CreateComponent = ({ open, setOpen }: { open: boolean; setOpen: React.Disp
                   );
                 })}
               </div>
+
+              <SelectForm
+                formikProps={props}
+                name={"teacherId"}
+                title={t("TeacherSubjectPage.TeacherName")}
+                placeholder={t("TeacherSubjectPage.enter-TeacherName")}
+                options={
+                  teacher?.data.map((item) => {
+                    return {
+                      label: item.fullName,
+                      value: item.id,
+                    };
+                  }) ?? []
+                }
+                props={{
+                  isLoading: isFetchingTeacher,
+                  isClearable: true,
+                  onChange: (e) => {
+                    props.setFieldValue("teacherId", (e as any)?.value ?? "");
+                  },
+                  onInputChange: (value) => {
+                    setSearchTeacher(value);
+                  },
+                }}
+              />
 
               <div className="flex flex-row-reverse gap-2">
                 <ButtonForm

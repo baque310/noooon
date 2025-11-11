@@ -92,7 +92,7 @@ export const TeacherSubject = api.injectEndpoints({
       invalidatesTags: ["TeacherSubjectCreate", "TeacherSubjectGetDataById", "TeacherSubjectGetData"],
     }),
 
-    TeacherSubjectUpdate: build.mutation<ITeacherSubject, { id: string; body: { sectionId: string } }>({
+    TeacherSubjectUpdate: build.mutation<ITeacherSubject, { id: string; body: { sectionId: string; teacherId: string } }>({
       query: ({ body, id }) => ({
         url: `admin/teacher-subject/${id}/section`,
         body,
