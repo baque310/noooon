@@ -88,6 +88,7 @@
     "delete": "Delete",
     "remove": "Remove",
     "save": "Save",
+    "sendMessage": "Send Message",
     "updated-successfully": "Updated successfully",
     "added-successfully": "Added successfully",
     "deleted-successfully": "Deleted successfully",
@@ -272,7 +273,10 @@
     "SubjectName": "Subject Name",
     "SchoolYear": "School Year",
     "examResult": "Exam Results",
-    "ExamResultsInformation": "Exam Results Information"
+    "ExamResultsInformation": "Exam Results Information",
+    "enter-score": "Enter score",
+    "enter-notes": "Enter notes",
+    "update-exam-result": "Update exam result"
   },
   "LessonsPage": {
     "title": "Title",

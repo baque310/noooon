@@ -1,19 +1,17 @@
-import { Metadata } from 'next';
-import React from 'react';
-import Table from './_components/Table';
-
-
+import { Metadata } from "next";
+import React from "react";
+import Table from "./_components/Table";
 
 export const metadata: Metadata = {
-    title: 'Exam Results',
+  title: "Exam Results",
 };
-const Page = () => {
 
-    return <div className=''>
-        <Table />
-    </div>;
+const Page = () => {
+  return (
+    <div className="">
+      <Table />
+    </div>
+  );
 };
 
 export default Page;
-
-

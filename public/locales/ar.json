@@ -96,6 +96,7 @@
     "update": "تعديل",
     "delete": "حذف",
     "remove": "إزالة",
+    "sendMessage": "إرسال رسالة",
     "save": "حفظ",
     "updated-successfully": "تم التعديل بنجاح",
     "added-successfully": "تمت الاضافة بنجاح",
@@ -284,7 +285,10 @@
     "SubjectName": "اسم المادة",
     "SchoolYear": "السنة الدراسية",
     "examResult": "نتآئج الامتحانات",
-    "ExamResultsInformation": "معلومات نتائج الامتحان"
+    "ExamResultsInformation": "معلومات نتائج الامتحان",
+    "enter-score": "ادخل الدرجة",
+    "enter-notes": "ادخل الملاحظة",
+    "update-exam-result": "تعديل نتيجة الامتحان"
   },
   "LessonsPage": {
     "title": "العنوان",
