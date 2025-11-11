@@ -368,7 +368,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                     <div className="flex items-start gap-3">
                       <div className="relative flex flex-col items-center">
                         <span className={`absolute left-2 border-2 border-white bottom-1 w-3 h-3 rounded-lg ${chat?.isActive ? "bg-green-400" : "bg-gray-400"}`} />
-                        <Avatar photo={""} username={chat?.name} className="bg-[#2C6E91]" />
+                        <Avatar photo={""} username={chat?.name} className="!bg-[#2C6E91]" />
                       </div>
 
                       <div className="flex-1 min-w-0">

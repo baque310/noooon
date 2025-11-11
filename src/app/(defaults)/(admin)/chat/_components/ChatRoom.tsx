@@ -288,7 +288,7 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
                   <div className="flex-shrink-0 w-9">
                     {isAdmin && (
                       <div className={isGrouped ? "invisible" : ""}>
-                        <Avatar username={msg.senderName} photo="" className="bg-[#E3E3E3] text-[#767676]" />
+                        <Avatar username={msg.senderName} photo="" className="!bg-[#2C6E91]" />
                       </div>
                     )}
                   </div>
@@ -329,7 +329,7 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
                   <div className="flex-shrink-0 w-9">
                     {!isAdmin && (
                       <div className={isGrouped ? "invisible" : ""}>
-                        <Avatar username={msg.senderName} photo="" className="bg-[#2C6E91]" />
+                        <Avatar username={msg.senderName} photo="" className="!bg-[#E3E3E3] !text-[#767676]" />
                       </div>
                     )}
                   </div>
