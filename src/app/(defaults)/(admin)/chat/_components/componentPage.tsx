@@ -107,6 +107,8 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     classId?: string;
     sectionId?: string;
     stageId?: string;
+    chatType?: string;
+    directUserType?: string;
   };
 
   const [param, setParam] = useState<QueryParam>({});
@@ -123,6 +125,14 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     setParam((prev) => (value ? { ...prev, sectionId: value } : { ...prev, sectionId: undefined }));
   }, []);
 
+  const handleSelectChatType = useCallback((value?: string) => {
+    setParam((prev) => (value ? { ...prev, chatType: value } : { ...prev, chatType: undefined }));
+  }, []);
+
+  const handleSelectDirectUser = useCallback((value?: string) => {
+    setParam((prev) => (value ? { ...prev, directUserType: value } : { ...prev, directUserType: undefined }));
+  }, []);
+
   const params = useMemo(
     () => ({
       skip: 1,
@@ -137,21 +147,22 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
 
   const { currentData, isLoading, error, isFetching, refetch } = useChatGetDataQuery(params);
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+  // console.log(currentData);
 
   const tabs = [
-    { key: "all", label: "الكل" },
-    { key: "student", label: "الطلاب" },
-    { key: "teacher", label: "المعلمين" },
-    { key: "parent", label: "أولياء الأمور" },
+    { key: "", chatType: "", label: "الكل" },
+    { key: "STUDENT", chatType: "GROUP_CLASS_STUDENTS", label: "الطلاب" },
+    { key: "TEACHER", chatType: "GROUP_SUBJECT_TEACHERS", label: "المعلمين" },
+    { key: "PARENT", chatType: "GROUP_CLASS_PARENTS", label: "أولياء الأمور" },
   ];
-  const [activeTab, setActiveTab] = useState("all");
+  // const [activeTab, setActiveTab] = useState("");
 
-  const filteredChats = useMemo(() => {
-    if (!currentData?.data) return [];
-    if (activeTab === "all") return currentData.data;
-    return currentData.data.filter((chat: IChat) => chat.type === activeTab);
-  }, [currentData, activeTab]);
-  console.log(filteredChats);
+  // const filteredChats = useMemo(() => {
+  //   if (!currentData?.data) return [];
+  //   if (activeTab === "all") return currentData.data;
+  //   return currentData.data.filter((chat: IChat) => chat.type === activeTab);
+  // }, [currentData, activeTab]);
+  // console.log(filteredChats);
 
   const formatTimestamp = useCallback((ts: string | number | Date) => {
     return new Date(ts).toLocaleString("ar", {
@@ -318,12 +329,18 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
             {tabs.map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 rounded-full text-sm font-medium ${activeTab === tab.key ? "bg-[#2C6E91] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>
+                onClick={() => {
+                  // handleSelectDirectUser(tab.key || undefined);
+                  // handleSelectChatType(tab.chatType || undefined);
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  param.directUserType === tab.key || (!param.directUserType && tab.key === "") ? "bg-[#2C6E91] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}>
                 {tab.label}
               </button>
             ))}
           </div>
+
           {/* Chats List (replace your original list render) */}
           {/* <div className="flex-1 overflow-y-auto">
             {isLoading || isFetching ? (

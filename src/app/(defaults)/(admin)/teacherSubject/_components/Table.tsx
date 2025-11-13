@@ -13,7 +13,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { AddIcons } from "@/components/common/icons/Actions";
+import { AddIcons, DeleteIcons } from "@/components/common/icons/Actions";
+import DeleteModel from "@/components/Model/DeleteModel";
+import { toast } from "react-toastify";
+import { useTeacherSubjectRemoveMutation } from "@/services/admin/TeacherSubject";
 import CreateComponent from "./CreateComponent";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import SelectFilter from "@/components/Filter/SelectFilter";
@@ -39,6 +42,8 @@ const TableComponent = () => {
 
   const [pageNumber, setPageNumber] = useState(Number(1));
   const [searchTeacher, setSearchTeacher] = useState("");
+  const [selectedRecords, setSelectedRecords] = useState([]);
+  const [openDelete, setOpenDelete] = useState(false);
 
   const [param, setParam] = useState<
     | {
@@ -70,6 +75,8 @@ const TableComponent = () => {
     ...params,
   });
 
+  const [TeacherSubjectRemove, { isLoading: isLoadingTeacherSubjectRemove }] = useTeacherSubjectRemoveMutation();
+
   useEffect(() => {
     if (SchoolYearData && Setting) {
       setParam({
@@ -80,6 +87,7 @@ const TableComponent = () => {
   }, [SchoolYearData, Setting]);
 
   const [Search, setSearch] = useState(search);
+
   const handleChange = (e: any) => {
     const value = e.target.value;
     setSearch(value);
@@ -87,14 +95,12 @@ const TableComponent = () => {
       handleSearch(value);
     }
   };
-  const allParams = new URLSearchParams(searchParams);
-  const handleSearch = (value?: string) => {
-    if (search != Search) {
-      allParams.set("search", value ?? Search);
+  // const allParams = new URLSearchParams(searchParams);
 
-      router.push(`/teacherSubject?${allParams.toString()}`);
-      setPageNumber(1);
-    }
+  const handleSearch = (value?: string) => {
+    const v = value ?? Search;
+    setSearch(v);
+    pushWithCurrentParams("/teacherSubject", { search: v || undefined });
   };
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
@@ -103,41 +109,68 @@ const TableComponent = () => {
   };
   const [open, setOpen] = useState(false);
 
-  const handleSelectClass = (value: any) => {
-    if (value) {
-      setParam({ ...param, classId: value });
+  const pushWithCurrentParams = (path = "/teacherSubject", extra: Record<string, any> = {}) => {
+    const allParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      allParams.set(key, value);
+    });
+
+    Object.entries(extra).forEach(([k, v]) => {
+      if (v === undefined || v === null) {
+        allParams.delete(k);
+      } else {
+        allParams.set(k, String(v));
+      }
+    });
+
+    const query = allParams.toString();
+    const newUrl = `${path}${query ? `?${query}` : ""}`;
+
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", newUrl);
     } else {
-      setParam({ ...param, classId: undefined, sectionId: undefined });
+      router.push(newUrl);
     }
   };
 
-  const handleSelectStage = (value: any) => {
-    if (value) {
-      setParam({ ...param, stageId: value });
-    } else {
-      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
-    }
+  const handleSelectClass = (value: any) => {
+    const classId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
+    pushWithCurrentParams("/teacherSubject", {
+      classId,
+      sectionId: undefined,
+    });
   };
   const handleSelectSection = (value: any) => {
-    if (value) {
-      setParam({ ...param, sectionScheduleId: value });
-    } else {
-      setParam({ ...param, sectionScheduleId: undefined });
-    }
+    const sectionId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), sectionId }));
+    pushWithCurrentParams("/teacherSubject", { sectionId });
   };
+  const handleSelectStage = (value: any) => {
+    const stageId = value ?? undefined;
+    setParam((old) => ({
+      ...(old ?? {}),
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    }));
+    pushWithCurrentParams("/teacherSubject", {
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    });
+  };
+
   const handleSelectSchoolYear = (value: any) => {
-    if (value) {
-      setParam({ ...param, schoolYearId: value.value });
-    } else {
-      setParam({ ...param, schoolYearId: undefined });
-    }
+    const schoolYearId = value ? value.value : undefined;
+    setParam((old) => ({ ...(old ?? {}), schoolYearId }));
+    pushWithCurrentParams("/teacherSubject", { schoolYearId });
   };
+
   const handleSelectTeacher = (value: any) => {
-    if (value) {
-      setParam({ ...param, teacherId: value.value });
-    } else {
-      setParam({ ...param, teacherId: undefined });
-    }
+    const teacherId = value ? value.value : undefined;
+    setParam((old) => ({ ...(old ?? {}), teacherId }));
+    pushWithCurrentParams("/teacherSubject", { teacherId });
   };
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -172,16 +205,43 @@ const TableComponent = () => {
             <RolePageAndActionBasedComponent
               component={(props) => {
                 return (
-                  <button
-                    className={` ${
-                      props.disabled && "hidden"
-                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      setOpen(true);
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
+                  <div className="inline-flex items-center gap-2">
+                    <button
+                      className={` ${
+                        props.disabled && "hidden"
+                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                      onClick={() => {
+                        setOpen(true);
+                      }}>
+                      <AddIcons className="h-4 w-4" />
+                      {t("common.add")}
+                    </button>
+
+                    <div className="relative w-0 h-0">
+                      <span
+                        className={`${
+                          selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
+                        } badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
+                        {selectedRecords.length > 0 ? selectedRecords.length : ""}
+                      </span>
+                    </div>
+
+                    <RolePageAndActionBasedComponent
+                      component={(p) => {
+                        return (
+                          <button
+                            disabled={selectedRecords.length == 0}
+                            className={`${p.disabled && "hidden"} flex items-center gap-2 py-1 px-2 rounded border text-danger hover:bg-danger/10 disabled:opacity-40`}
+                            onClick={() => setOpenDelete(true)}>
+                            <DeleteIcons className="h-4 w-4" />
+                            {t("common.delete")}
+                          </button>
+                        );
+                      }}
+                      resource={"admin"}
+                      permission={["delete-any", "delete-own"]}
+                    />
+                  </div>
                 );
               }}
               resource={"admin"}
@@ -316,10 +376,44 @@ const TableComponent = () => {
             onSortStatusChange={(sort) => {
               setSortStatus(sort);
             }}
+            {...({
+              selectedRecords: selectedRecords,
+              onSelectedRecordsChange: (records: any) => {
+                setSelectedRecords(records);
+              },
+            } as any)}
           />
         )}
       </div>
       <CreateComponent open={open} setOpen={setOpen} />
+
+      <DeleteModel
+        description={t("TeacherSubjectPage.Are-you-sure-you-want-to-delete-this-TeacherSubject")}
+        title={t("TeacherSubjectPage.DeleteTeacherSubject")}
+        open={openDelete}
+        setOpen={setOpenDelete}
+        handleRemove={async () => {
+          try {
+            if (!selectedRecords || selectedRecords.length === 0) return;
+            await Promise.all(
+              selectedRecords.map((record: any) => {
+                return TeacherSubjectRemove({ id: record.id }).unwrap();
+              })
+            );
+            toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
+            setOpenDelete(false);
+            setSelectedRecords([]);
+          } catch (error: any) {
+            console.error("Failed to operation :", error);
+            if (error && error.message) {
+              return toast.error(t(error.message), { autoClose: 15000 });
+            }
+            toast.error(error, { autoClose: 15000 });
+          }
+        }}
+        isLoading={isLoadingTeacherSubjectRemove}
+        name={`${selectedRecords.length}`}
+      />
     </div>
   );
 };

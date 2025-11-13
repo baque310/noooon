@@ -72,7 +72,7 @@ export interface AddChatCreateCustomTeachersGroupPayload {
 
 export const Chat = api.injectEndpoints({
   endpoints: (build) => ({
-    ChatGetData: build.query<IChatGetDataResponse, GetDataRequestParams>({
+    ChatGetData: build.query<IChatGetDataResponse, GetDataRequestParams & { chatType?: string; directUserType?: string }>({
       query: (params) => ({
         url: `admin/chat/my-chats`,
         params,

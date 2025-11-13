@@ -15,7 +15,7 @@ export interface FormValues extends AddInstallmentPayload {
 }
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import { Form, Formik, FormikProps } from "formik";
-import { InputCurrencyMaskForm, InputForm } from "@/components/Form/inputForm";
+import { InputCurrencyMaskForm, InputForm, InputFormWithText } from "@/components/Form/inputForm";
 import {
   AddInstallmentPayload,
   useInstallmentCreateMutation,
@@ -205,21 +205,23 @@ const PageComponent = () => {
                     />
                   )}
                   <InputForm formikProps={props} name={"title"} title={t("InstallmentPage.title")} placeholder={t("InstallmentPage.enter-title")} />
-                  <InputForm
+                  <InputFormWithText
                     formikProps={props}
                     name={"numberOfInstallments"}
                     title={t("InstallmentPage.numberOfInstallments")}
                     placeholder={t("InstallmentPage.enter-numberOfInstallments")}
+                    showArabicNumber={true}
                     props={{
                       type: "number",
                       min: 0,
                     }}
                   />
-                  <InputForm
+                  <InputFormWithText
                     formikProps={props}
                     name={"daysBetweenInstallments"}
                     title={t("InstallmentPage.daysBetweenInstallments")}
                     placeholder={t("InstallmentPage.enter-daysBetweenInstallments")}
+                    showArabicNumber={true}
                     props={{
                       type: "number",
                       min: 0,

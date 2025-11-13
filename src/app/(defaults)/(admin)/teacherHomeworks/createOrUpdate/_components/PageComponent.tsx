@@ -61,6 +61,7 @@ const PageComponent = () => {
     schoolYearId,
     stageId,
     classId,
+    sectionId,
   });
   const { currentData: students, isFetching: isFetchingStudents } = useStudentListQuery({ schoolYearId, stageId, classId, sectionId });
 

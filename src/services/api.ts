@@ -23,7 +23,16 @@ const axiosBaseQuery =
     unknown
   > =>
   async (args) => {
-    const { url, method, params, headers, body } = args;
+    const { url, method = "GET", params, headers, body } = args;
+
+    // Log request details
+    console.groupCollapsed(`%c[API REQUEST] ${method} ${baseUrl + url}`, "color:#1976d2;font-weight:bold;");
+    console.log("📤 Request URL:", baseUrl + url);
+    console.log("🔹 Method:", method);
+    if (params) console.log("🔸 Params:", params);
+    if (body) console.log("🧾 Body:", body);
+    if (headers) console.log("📋 Headers:", headers);
+    console.groupEnd();
 
     const result = await customBaseFetch({
       url: baseUrl + url,
@@ -33,22 +42,23 @@ const axiosBaseQuery =
       headers,
     });
 
+    // Log response details
+    console.groupCollapsed(`%c[API RESPONSE] ${method} ${baseUrl + url}`, "color:#2e7d32;font-weight:bold;");
+    console.log("📦 Response:", result);
+    console.groupEnd();
+
     if (result && result.error && result.error.status == 401) {
+      console.warn("⚠️ Unauthorized (401) — triggering signOut()");
       signOut();
     }
 
     if (result.data && result.data.token && (result.data.token as Authentication[]).length > 0) {
       const cookies = new UniversalCookie();
-      // cookies.
       result.data.token.forEach((token: any) => {
-        cookies.set(token.name, token.value, {
-          path: "/",
-          // httpOnly: rest.includes(' HttpOnly')
-          // secure: true,
-          // httpOnly: true,
-          // expires: new Date(jwtDecode(value.trim()).exp! * 1000),
-        });
+        cookies.set(token.name, token.value, { path: "/" });
       });
+
+      // Optional re-fetch after setting tokens
       const results = await customBaseFetch({
         url: baseUrl + url,
         method,
@@ -56,7 +66,13 @@ const axiosBaseQuery =
         params,
         headers,
       });
+
+      console.groupCollapsed(`%c[API RE-FETCH RESPONSE] ${method} ${baseUrl + url}`, "color:#6a1b9a;font-weight:bold;");
+      console.log("📦 Re-fetch response:", results);
+      console.groupEnd();
+
       if (results && results.error && results.error.status == 401) {
+        console.warn("⚠️ Unauthorized after re-fetch — triggering signOut()");
         signOut();
       }
 

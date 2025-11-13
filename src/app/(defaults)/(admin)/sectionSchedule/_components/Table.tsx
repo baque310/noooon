@@ -220,6 +220,7 @@ const TableComponent = () => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string>("");
+  const [selectedRecords, setSelectedRecords] = useState([]);
 
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -253,16 +254,43 @@ const TableComponent = () => {
             <RolePageAndActionBasedComponent
               component={(props) => {
                 return (
-                  <button
-                    className={` ${
-                      props.disabled && "hidden"
-                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      router.push("/sectionSchedule/createOrUpdate");
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
+                  <div className="inline-flex items-center gap-2">
+                    <button
+                      className={` ${
+                        props.disabled && "hidden"
+                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                      onClick={() => {
+                        router.push("/sectionSchedule/createOrUpdate");
+                      }}>
+                      <AddIcons className="h-4 w-4" />
+                      {t("common.add")}
+                    </button>
+
+                    <div className="relative w-0 h-0">
+                      <span
+                        className={`${
+                          selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
+                        } badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
+                        {selectedRecords.length > 0 ? selectedRecords.length : ""}
+                      </span>
+                    </div>
+
+                    <RolePageAndActionBasedComponent
+                      component={(p) => {
+                        return (
+                          <button
+                            disabled={selectedRecords.length == 0}
+                            className={`${p.disabled && "hidden"} flex items-center gap-2 py-1 px-2 rounded border text-danger hover:bg-danger/10 disabled:opacity-40`}
+                            onClick={() => setOpenDelete(true)}>
+                            <DeleteIcons className="h-4 w-4" />
+                            {t("common.delete")}
+                          </button>
+                        );
+                      }}
+                      resource={"admin"}
+                      permission={["delete-any", "delete-own"]}
+                    />
+                  </div>
                 );
               }}
               resource={"admin"}
@@ -460,6 +488,12 @@ const TableComponent = () => {
                                 customLoader={<div className="loader !bg-primary"></div>}
                                 noRecordsText={t("common.no-data")}
                                 noRecordsIcon={<></>}
+                                {...({
+                                  selectedRecords: selectedRecords,
+                                  onSelectedRecordsChange: (records: any) => {
+                                    setSelectedRecords(records);
+                                  },
+                                } as any)}
                               />
                             )}
                           </div>
@@ -476,11 +510,37 @@ const TableComponent = () => {
       <DeleteModel
         description={t("SectionSchedulePage.Are-you-sure-you-want-to-delete-this-SectionSchedule")}
         title={t("SchedulePage.DeleteSchedule")}
-        open={openDelete}
-        setOpen={setOpenDelete}
-        handleRemove={handleRemove}
+        open={selectedRecords.length === 0 ? openDelete && !openDelete : openDelete}
+        setOpen={(open: any) => {
+          setOpenDelete(open);
+          if (!open) {
+            setSelectedRecords([]);
+          }
+        }}
+        handleRemove={async () => {
+          try {
+            if (selectedRecords.length > 0) {
+              await Promise.all(
+                selectedRecords.map((record: any) => {
+                  return ScheduleRemove({ id: record.id }).unwrap();
+                })
+              );
+              toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
+              setOpenDelete(false);
+              setSelectedRecords([]);
+            } else if (id) {
+              await handleRemove();
+            }
+          } catch (error: any) {
+            console.error("Failed to operation :", error);
+            if (error && error.message) {
+              return toast.error(t(error.message), { autoClose: 15000 });
+            }
+            toast.error(error, { autoClose: 15000 });
+          }
+        }}
         isLoading={isLoadingScheduleRemove}
-        name={selectedClassName ? t(selectedClassName as any) : ""}
+        name={selectedRecords.length > 0 ? `${selectedRecords.length}` : selectedClassName ? t(selectedClassName as any) : ""}
       />
     </div>
   );

@@ -11,11 +11,7 @@ import { getTranslation } from "../../../../../ni18n/i18n";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { RolePageAndActionBasedComponent } from "@/components/Provider/RolePageAndActionBasedComponent";
-import {
-  ComplaintChangeStatusPayload,
-  useComplaintChangeStatusMutation,
-  useLazyComplaintGetDataByIdQuery,
-} from "@/services/admin/complaint";
+import { ComplaintChangeStatusPayload, useComplaintChangeStatusMutation, useLazyComplaintGetDataByIdQuery } from "@/services/admin/complaint";
 
 export interface FormValues extends ComplaintChangeStatusPayload {}
 
@@ -25,10 +21,7 @@ const ChangeStatusComplaintModel = () => {
   const params = useParams();
   const searchParams = useSearchParams();
   const id = searchParams.get("id") || "";
-  const [
-    ComplaintGetDataById,
-    { currentData: DataComplaintGetDataById, isFetching },
-  ] = useLazyComplaintGetDataByIdQuery();
+  const [ComplaintGetDataById, { currentData: DataComplaintGetDataById, isFetching }] = useLazyComplaintGetDataByIdQuery();
   useEffect(() => {
     if (id) {
       ComplaintGetDataById({ id: String(id) }).then((data) => {
@@ -42,16 +35,12 @@ const ChangeStatusComplaintModel = () => {
   const [status, setStatus] = useState<String>();
   const validationSchema = Yup.object().shape({
     status: Yup.string().required(t("common.this-field-is-required")),
-    ...(status == "rejected" && {
-      reason: Yup.string().required(t("common.this-field-is-required")),
-    }),
+    // ...(status == "rejected" && {
+    //   reason: Yup.string().required(t("common.this-field-is-required")),
+    // }),
   });
-  const [ComplaintChangeStatus, { isLoading: isLoadingComplaintChangeStatus }] =
-    useComplaintChangeStatusMutation();
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>
-  ) => {
+  const [ComplaintChangeStatus, { isLoading: isLoadingComplaintChangeStatus }] = useComplaintChangeStatusMutation();
+  const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
       await ComplaintChangeStatus({
         id: values.id,
@@ -86,8 +75,7 @@ const ChangeStatusComplaintModel = () => {
             reason: DataComplaintGetDataById?.reason ?? "",
           }}
           validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
+          onSubmit={handleSubmit}>
           {(props: FormikProps<any>) => (
             <Form className={"flex flex-col gap-4 p-4"}>
               <div className="Card">
@@ -104,10 +92,7 @@ const ChangeStatusComplaintModel = () => {
                   props={{
                     isClearable: true,
                     onChange(val) {
-                      props.setFieldValue(
-                        `status`,
-                        (val as OptionType)?.value ?? ""
-                      );
+                      props.setFieldValue(`status`, (val as OptionType)?.value ?? "");
                       setStatus((val as OptionType)?.value ?? "");
                     },
                   }}
@@ -134,12 +119,9 @@ const ChangeStatusComplaintModel = () => {
                           disabled={props?.disabled}
                           className={`${
                             props?.disabled && "hidden"
-                          } mt-1 flex w-fit items-center justify-center gap-1 rounded border  border-primary/70   bg-primary px-2 py-1 text-white   transition-transform hover:scale-[1.01]`}
-                        >
+                          } mt-1 flex w-fit items-center justify-center gap-1 rounded border  border-primary/70   bg-primary px-2 py-1 text-white   transition-transform hover:scale-[1.01]`}>
                           {t("common.changeStatus")}
-                          {isLoadingComplaintChangeStatus && (
-                            <div className="loaderDotsWhite"></div>
-                          )}
+                          {isLoadingComplaintChangeStatus && <div className="loaderDotsWhite"></div>}
                         </button>
                       );
                     }}

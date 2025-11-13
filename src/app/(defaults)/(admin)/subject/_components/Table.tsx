@@ -16,7 +16,6 @@ import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import CreateComponent from "./CreateComponent";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -34,13 +33,13 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
-      search?: string;
-      range?: string;
-    }
+        approval_status?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
-  const params = { 
+  const params = {
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
     ...(search && { search: search as string }),
@@ -49,8 +48,7 @@ const TableComponent = () => {
 
   const { isFetching, currentData: data } = useSubjectGetDataQuery({
     ...params,
-  }); 
-  
+  });
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -74,7 +72,7 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -94,10 +92,11 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
-                      setOpen(true)
+                      setOpen(true);
                     }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
@@ -124,7 +123,7 @@ const TableComponent = () => {
                 title: t("SubjectPage.name"),
                 accessor: "name",
                 sortable: true,
-              },   
+              },
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
@@ -145,7 +144,7 @@ const TableComponent = () => {
             sortStatus={sortStatus}
             onSortStatusChange={(sort) => {
               setSortStatus(sort);
-            }} 
+            }}
           />
         )}
       </div>

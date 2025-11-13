@@ -6,10 +6,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { ItemList } from "@/components/common/ItemList";
 
 import { getTranslation } from "@/ni18n/i18n";
-import {
-  useLazyTeacherGetDataByIdQuery,
-  useTeacherRemoveMutation,
-} from "@/services/admin/teacher";
+import { useLazyTeacherGetDataByIdQuery, useTeacherRemoveMutation } from "@/services/admin/teacher";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
@@ -24,10 +21,9 @@ const PageComponent = () => {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
-  const [TeacherGetDataById, { currentData: data, isFetching }] =
-    useLazyTeacherGetDataByIdQuery();
-  const [TeacherRemove, { isLoading: isLoadingTeacherRemove }] =
-    useTeacherRemoveMutation();
+  const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery();
+  const [TeacherRemove, { isLoading: isLoadingTeacherRemove }] = useTeacherRemoveMutation();
+  console.log(data);
 
   useEffect(() => {
     if (id) {
@@ -53,8 +49,8 @@ const PageComponent = () => {
   };
 
   const [openDelete, setOpenDelete] = useState(false);
-    const [openChangePassword, setOpenChangePassword] = useState(false);
-  
+  const [openChangePassword, setOpenChangePassword] = useState(false);
+
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
       <BackButton title={t("TeacherPage.TeacherInformation")} />
@@ -65,63 +61,20 @@ const PageComponent = () => {
         <>
           <AttachmentsImage className="my-2 h-44" src={String(data?.photo)} />
           <div className="CardDetails internalMenu ">
-            <ItemList
-              title={t("TeacherPage.fullName")}
-              value={String(data?.fullName)}
-            />
-            <ItemList
-              title={t("TeacherPage.Username")}
-              value={String(data?.User?.username)}
-              isCopyToClipboard
-            />
-            <ItemList
-              title={t("TeacherPage.address")}
-              value={String(data?.address ?? "")}
-            />
-            <ItemList
-              title={t("TeacherPage.Gender")}
-              value={
-                data?.Gender
-                  ? t(("TeacherPage." + (data?.Gender ?? "")) as any)
-                  : ""
-              }
-            />
-            <ItemList
-              title={t("TeacherPage.phone1")}
-              value={String(data?.phone1 ?? "")}
-            />
-            <ItemList
-              title={t("TeacherPage.phone2")}
-              value={String(data?.phone2 ?? "")}
-            />
-            <ItemList
-              title={t("TeacherPage.email")}
-              value={String(data?.email ?? "")}
-            />
-            <ItemList
-              title={t("TeacherPage.birth")}
-              value={data?.birth && moment(data?.birth).format("YYYY-MM-DD")}
-            />
-            <ItemList
-              title={t("TeacherPage.hiringDate")}
-              value={
-                data?.hiringDate &&
-                moment(data?.hiringDate).format("YYYY-MM-DD")
-              }
-            />
-            <ItemList
-              title={t("common.updatedAt")}
-              value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-            />
-            <ItemList
-              title={t("common.createdAt")}
-              value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-            />
+            <ItemList title={t("TeacherPage.fullName")} value={String(data?.fullName)} />
+            <ItemList title={t("TeacherPage.Username")} value={String(data?.User?.username)} isCopyToClipboard />
+            <ItemList title={t("TeacherPage.address")} value={String(data?.address ?? "")} />
+            <ItemList title={t("TeacherPage.Gender")} value={data?.Gender ? t(("TeacherPage." + (data?.Gender ?? "")) as any) : ""} />
+            <ItemList title={t("TeacherPage.phone1")} value={String(data?.phone1 ?? "")} />
+            <ItemList title={t("TeacherPage.phone2")} value={String(data?.phone2 ?? "")} />
+            <ItemList title={t("TeacherPage.email")} value={String(data?.email ?? "")} />
+            <ItemList title={t("TeacherPage.birth")} value={data?.birth && moment(data?.birth).format("YYYY-MM-DD")} />
+            <ItemList title={t("TeacherPage.hiringDate")} value={data?.hiringDate && moment(data?.hiringDate).format("YYYY-MM-DD")} />
+            <ItemList title={t("common.updatedAt")} value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
+            <ItemList title={t("common.createdAt")} value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
           </div>
 
-          <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">
-            {t("common.settings")}
-          </div>
+          <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">{t("common.settings")}</div>
           <div className="CardDetails internalMenu ">
             <ItemList
               props={{
@@ -132,21 +85,17 @@ const PageComponent = () => {
               title={t("TeacherPage.update-info")}
               value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
             />
-              {data?.User && (
-                          <ItemList
-                            props={{
-                              onClick: () => {
-                                setOpenChangePassword(true);
-                              },
-                            }}
-                            title={
-                              <div className="text-[#000]">
-                                {t("common.changePassword")}
-                              </div>
-                            }
-                            value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
-                          />
-                        )}
+            {data?.User && (
+              <ItemList
+                props={{
+                  onClick: () => {
+                    setOpenChangePassword(true);
+                  },
+                }}
+                title={<div className="text-[#000]">{t("common.changePassword")}</div>}
+                value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
+              />
+            )}
             <ItemList
               props={{
                 onClick: () => {
@@ -161,9 +110,7 @@ const PageComponent = () => {
       )}
 
       <DeleteModel
-        description={t(
-          "TeacherPage.Are-you-sure-you-want-to-delete-this-Teacher"
-        )}
+        description={t("TeacherPage.Are-you-sure-you-want-to-delete-this-Teacher")}
         title={t("TeacherPage.DeleteTeacher")}
         open={openDelete}
         setOpen={setOpenDelete}
@@ -172,16 +119,16 @@ const PageComponent = () => {
         name={data?.fullName ?? ""}
       />
       {data?.User && (
-              <ChangePasswordByAdminModel
-                data={{
-                  username: data?.User?.username,
-                  userId: data?.User?.id,
-                }}
-                isAdmin
-                open={openChangePassword}
-                setOpen={setOpenChangePassword}
-              />
-            )}
+        <ChangePasswordByAdminModel
+          data={{
+            username: data?.User?.username,
+            userId: data?.User?.id,
+          }}
+          isAdmin
+          open={openChangePassword}
+          setOpen={setOpenChangePassword}
+        />
+      )}
     </div>
   );
 };

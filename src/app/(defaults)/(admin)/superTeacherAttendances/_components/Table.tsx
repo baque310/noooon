@@ -42,6 +42,9 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
+        classId?: string;
+        stageId?: string;
+        sectionId?: string;
         sectionScheduleId?: string;
         search?: string;
         schoolYearId?: string;
@@ -63,6 +66,7 @@ const TableComponent = () => {
   const { isFetching, currentData: data } = useSuperTeacherAttendancesGetDataQuery({
     ...params,
   });
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -103,6 +107,20 @@ const TableComponent = () => {
     schoolYearId: param?.schoolYearId,
   });
 
+  const handleSelectClass = (value: any) => {
+    if (value) {
+      setParam({ ...param, classId: value });
+    } else {
+      setParam({ ...param, classId: undefined, sectionId: undefined });
+    }
+  };
+  const handleSelectStage = (value: any) => {
+    if (value) {
+      setParam({ ...param, stageId: value });
+    } else {
+      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
+    }
+  };
   const handleSelectSection = (value: any) => {
     if (value) {
       setParam({ ...param, sectionScheduleId: value });
@@ -148,6 +166,7 @@ const TableComponent = () => {
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("SuperTeacherAttendancesPage.superTeacherAttendances")}</div>
+
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
           <input
             value={Search ?? ""}
@@ -249,6 +268,56 @@ const TableComponent = () => {
             />
           }
         </div>
+      </div>
+      <div className="flex py-3 gap-3 max-md:flex-col max-md:items-end">
+        <SelectFilter
+          value={param?.stageId}
+          placement="bottom-end"
+          title={t("StudentEnrollmentPage.StageName")}
+          handleChange={handleSelectStage}
+          options={
+            StageData?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
+          }
+        />
+        {param?.stageId && (
+          <SelectFilter
+            value={param?.classId}
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
+            }
+          />
+        )}
+        {param?.classId && (
+          <SelectFilter
+            value={param?.sectionId}
+            title={t("StudentEnrollmentPage.SectionName")}
+            placement="bottom-end"
+            handleChange={handleSelectSection}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)
+                ?.Class.find((it) => it.id == param?.classId)
+                ?.Section?.map((item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }) ?? []
+            }
+          />
+        )}
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (

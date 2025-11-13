@@ -17,7 +17,6 @@ import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
 import SelectFilter from "@/components/Filter/SelectFilter";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -35,10 +34,10 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      Gender?: string;
-      search?: string;
-      range?: string;
-    }
+        Gender?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
   const params = {
@@ -80,11 +79,10 @@ const TableComponent = () => {
   const handleSelectGander = (value: any) => {
     if (value) {
       setParam({ ...param, Gender: value });
-    }
-    else {
+    } else {
       setParam({ ...param, Gender: undefined });
     }
-  }
+  };
 
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -106,15 +104,13 @@ const TableComponent = () => {
             options={[
               {
                 label: t("TeacherPage.Male"),
-                value: "Male"
+                value: "Male",
               },
               {
                 label: t("TeacherPage.Female"),
-                value: "Female"
-              }
-              ,
-            ]
-            }
+                value: "Female",
+              },
+            ]}
           />
 
           {
@@ -122,8 +118,9 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/teacher/createOrUpdate");
                     }}>
@@ -152,12 +149,11 @@ const TableComponent = () => {
                 title: t("TeacherPage.photo"),
                 accessor: "photo",
                 sortable: true,
-                render: ({ photo, fullName }: any) => <>
-                  <Avatar
-                    photo={photo}
-                    username={fullName}
-                  />
-                </>
+                render: ({ photo, fullName }: any) => (
+                  <>
+                    <Avatar photo={photo} username={fullName} />
+                  </>
+                ),
               },
               {
                 title: t("TeacherPage.fullName"),
@@ -173,7 +169,7 @@ const TableComponent = () => {
                 title: t("TeacherPage.Gender"),
                 accessor: "Gender",
                 sortable: true,
-                render: ({ Gender }) => Gender ? t(("TeacherPage." + Gender) as any) : ""
+                render: ({ Gender }) => (Gender ? t(("TeacherPage." + Gender) as any) : ""),
               },
               {
                 title: t("TeacherPage.birth"),
