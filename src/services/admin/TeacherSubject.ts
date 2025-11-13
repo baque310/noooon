@@ -62,6 +62,7 @@ export interface GetTeacherSubjectDataRequestParams extends GetDataRequestParams
   stageId?: string;
   teacherId?: string;
   schoolYearId?: string;
+  teacherSubjectId?: string;
 }
 
 export const TeacherSubject = api.injectEndpoints({
