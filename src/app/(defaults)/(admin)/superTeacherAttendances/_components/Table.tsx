@@ -13,7 +13,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { AddIcons } from "@/components/common/icons/Actions";
-import { useSuperTeacherAttendancesGetDataQuery } from "@/services/admin/Super-Teacher-attendances";
+import { useSuperTeacherAttendancesGetDataQuery, useSuperTeacherAttendancesUpdateMutation } from "@/services/admin/Super-Teacher-attendances";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useSectionScheduleGetDataQuery } from "@/services/admin/SectionSchedule";
@@ -24,6 +24,9 @@ import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { Days } from "@/services/types/BaseType";
 import { DatePicker } from "@/components/Filter/DatePicker"; // Adjust path as needed
 import { exportJsonToExcel } from "@/utils/excelParser";
+import UpdateModel from "./UpdateModel";
+import { toast } from "react-toastify";
+import { useExamResultsUpdateMutation } from "@/services/admin/ExamResults";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -39,6 +42,8 @@ const TableComponent = () => {
   const { isMounted } = useMounted();
 
   const [pageNumber, setPageNumber] = useState(Number(1));
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<any>(null);
 
   const [param, setParam] = useState<
     | {
@@ -107,26 +112,59 @@ const TableComponent = () => {
     schoolYearId: param?.schoolYearId,
   });
 
-  const handleSelectClass = (value: any) => {
-    if (value) {
-      setParam({ ...param, classId: value });
+  const pushWithCurrentParams = (path = "/superTeacherAttendances", extra: Record<string, any> = {}) => {
+    const allParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      allParams.set(key, value);
+    });
+
+    Object.entries(extra).forEach(([k, v]) => {
+      if (v === undefined || v === null) {
+        allParams.delete(k);
+      } else {
+        allParams.set(k, String(v));
+      }
+    });
+
+    const query = allParams.toString();
+    const newUrl = `${path}${query ? `?${query}` : ""}`;
+
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", newUrl);
     } else {
-      setParam({ ...param, classId: undefined, sectionId: undefined });
+      router.push(newUrl);
     }
+  };
+
+  const handleSelectSection = (value: any) => {
+    // setSectionId(value ? value : undefined);
+    const sectionId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), sectionId }));
+    pushWithCurrentParams("/superTeacherAttendances", { sectionId });
+  };
+  const handleSelectClass = (value: any) => {
+    // setClassId(value ? value : undefined);
+    const classId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
+    pushWithCurrentParams("/superTeacherAttendances", {
+      classId,
+      sectionId: undefined,
+    });
   };
   const handleSelectStage = (value: any) => {
-    if (value) {
-      setParam({ ...param, stageId: value });
-    } else {
-      setParam({ ...param, stageId: undefined, classId: undefined, sectionId: undefined });
-    }
-  };
-  const handleSelectSection = (value: any) => {
-    if (value) {
-      setParam({ ...param, sectionScheduleId: value });
-    } else {
-      setParam({ ...param, sectionScheduleId: undefined });
-    }
+    const stageId = value ?? undefined;
+    // setStageId(value ? value : undefined);
+    setParam((old) => ({
+      ...(old ?? {}),
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    }));
+    pushWithCurrentParams("/superTeacherAttendances", {
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    });
   };
 
   // --- State ---
@@ -160,6 +198,31 @@ const TableComponent = () => {
       ...prev,
       date: dateValue || undefined,
     }));
+  };
+
+  const [StatusUpdate, { isLoading: isLoadingUpdate }] = useSuperTeacherAttendancesUpdateMutation();
+
+  const handleUpdateSubmit = async (values: { Status: "Absent" | "Present" | "Vacation" }, formikHelpers: any) => {
+    try {
+      if (!selectedStatus?.id) return;
+      await StatusUpdate({
+        id: selectedStatus.id,
+        body: { Status: values.Status },
+      }).unwrap();
+      toast.success(String(t("common.updated-successfully" as any)), { autoClose: 3000 });
+      formikHelpers.resetForm();
+      setOpenUpdateModal(false);
+      setSelectedStatus(null);
+    } catch (error: any) {
+      console.error("Failed to update exam result:", error);
+      toast.error(error?.data?.message ?? error?.message ?? JSON.stringify(error), { autoClose: 30000 });
+      formikHelpers.setSubmitting(false);
+    }
+  };
+
+  const handleUpdateClick = (record: any) => {
+    setSelectedStatus(record);
+    setOpenUpdateModal(true);
   };
 
   return (
@@ -248,24 +311,24 @@ const TableComponent = () => {
             <span className="relative z-10">{t("common.ExportExcel")}</span>
           </button>
           {
-            <RolePageAndActionBasedComponent
-              component={(props) => {
-                return (
-                  <button
-                    className={` ${
-                      props.disabled && "hidden"
-                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      router.push("/superTeacherAttendances/createOrUpdate");
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
-                );
-              }}
-              resource={"admin"}
-              permission={["create-any", "create-own"]}
-            />
+            // <RolePageAndActionBasedComponent
+            //   component={(props) => {
+            //     return (
+            <button
+              className={` 
+                      
+                    flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+              onClick={() => {
+                router.push("/superTeacherAttendances/createOrUpdate");
+              }}>
+              <AddIcons className="h-4 w-4" />
+              {t("common.add")}
+            </button>
+            //     );
+            //   }}
+            //   resource={"admin"}
+            //   permission={["create-any", "create-own"]}
+            // />
           }
         </div>
       </div>
@@ -338,15 +401,24 @@ const TableComponent = () => {
                 title: t("SuperTeacherAttendancesPage.Status"),
                 accessor: "Status",
                 sortable: true,
-                render: ({ Status }: any) => {
+                render: (record: any) => {
                   const statusColors: Record<string, string> = {
                     Present: "bg-green-50 border-green-200",
                     Absent: "bg-red-50 border-red-200",
                     Vacation: "bg-blue-50 border-blue-200",
                   };
+                  console.log(record);
+
                   return (
-                    <div className={`border ${statusColors[Status as keyof typeof statusColors] || "bg-yellow-50 border-yellow-200"} px-2 py-1 rounded-full text-xs font-semibold`}>
-                      {t(`SuperTeacherAttendancesPage.${Status}` as any)}
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUpdateClick(record);
+                      }}
+                      className={`border cursor-pointer ${
+                        statusColors[record.Status as keyof typeof statusColors] || "bg-yellow-50 border-yellow-200"
+                      } px-2 py-1 rounded-full text-xs font-semibold`}>
+                      {t(`SuperTeacherAttendancesPage.${record.Status}` as any)}
                     </div>
                   );
                 },
@@ -404,6 +476,16 @@ const TableComponent = () => {
           />
         )}
       </div>
+      <UpdateModel
+        open={openUpdateModal}
+        setOpen={setOpenUpdateModal}
+        name={selectedStatus?.Student?.fullName || ""}
+        title={String(t("common.update" as any))}
+        description={String(t("SuperTeacherAttendancesPage.update-attendance" as any) || t("common.update" as any))}
+        onSubmit={handleUpdateSubmit}
+        isLoading={isLoadingUpdate}
+        initialValues={{ Status: selectedStatus?.Status ?? "" }}
+      />
     </div>
   );
 };

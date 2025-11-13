@@ -73,6 +73,7 @@ const TableComponent = () => {
       handleSearch();
     }
   };
+
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>

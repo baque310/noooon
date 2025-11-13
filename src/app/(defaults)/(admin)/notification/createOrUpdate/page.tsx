@@ -1,17 +1,16 @@
-import { Metadata } from 'next';
-import React from 'react';
-import PageComponent from './_components/PageComponent';
-
-
+import { Metadata } from "next";
+import React from "react";
+import PageComponent from "./_components/PageComponent";
 
 export const metadata: Metadata = {
-  title: 'banner ',
+  title: "banner ",
 };
 const Page = () => {
-
-  return <div className=''>
-    <PageComponent />
-  </div>;
+  return (
+    <div className="">
+      <PageComponent />
+    </div>
+  );
 };
 
 export default Page;

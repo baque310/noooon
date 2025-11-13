@@ -13,7 +13,6 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 
-
 const TableComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
@@ -31,10 +30,10 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
-      search?: string;
-      range?: string;
-    }
+        approval_status?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
   const params = {
@@ -87,23 +86,24 @@ const TableComponent = () => {
             name="search"
           />
           {
-            <RolePageAndActionBasedComponent
-              component={(props) => {
-                return (
-                  <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      router.push("/guidance/createOrUpdate");
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
-                );
-              }}
-              resource={"admin"}
-              permission={["create-any", "create-own"]}
-            />
+            // <RolePageAndActionBasedComponent
+            //   component={(props) => {
+            //     return (
+            <button
+              className={` 
+                      
+                       flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+              onClick={() => {
+                router.push("/guidance/createOrUpdate");
+              }}>
+              <AddIcons className="h-4 w-4" />
+              {t("common.add")}
+            </button>
+            //     );
+            //   }}
+            //   resource={"admin"}
+            //   permission={["create-any", "create-own"]}
+            // />
           }
         </div>
       </div>
@@ -126,9 +126,11 @@ const TableComponent = () => {
                 title: t("GuidancePage.description"),
                 accessor: "description",
                 sortable: true,
-                render: ({ description }: any) => <div
-                  className="truncate" style={{ maxWidth: "200px" }}
-                >{description}</div>,
+                render: ({ description }: any) => (
+                  <div className="truncate" style={{ maxWidth: "200px" }}>
+                    {description}
+                  </div>
+                ),
               },
               {
                 title: t("common.status"),

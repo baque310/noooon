@@ -349,24 +349,25 @@ const TableComponent = () => {
             }
           />
         )}
-
-        <div className="max-w-36">
-          <SelectWithSearch
-            placeholder={t("HomeworksPage.teacherFullName")}
-            props={{
-              onChange: handleSelectTeacherSubject,
-            }}
-            options={
-              sectionId === undefined && schoolYearId === undefined
-                ? []
-                : TeacherSubjectData?.map((item) => {
-                    return {
-                      label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
-                    };
-                  }) ?? []
-            }
-          />
-        </div>
+        {param?.sectionId && (
+          <div className="max-w-36">
+            <SelectWithSearch
+              placeholder={t("HomeworksPage.teacherFullName")}
+              props={{
+                onChange: handleSelectTeacherSubject,
+              }}
+              options={
+                sectionId === undefined && schoolYearId === undefined
+                  ? []
+                  : TeacherSubjectData?.map((item) => {
+                      return {
+                        label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
+                      };
+                    }) ?? []
+              }
+            />
+          </div>
+        )}
       </div>
 
       <div className={"flex flex-col gap-4 mt-4"}>
@@ -456,7 +457,7 @@ const TableComponent = () => {
                                       <>
                                         <div className="items-right flex gap-6">
                                           <p dir="ltr">{record.SchoolYear.from ? <div>{moment.utc(record.SchoolYear.from).format("hh:mm:ss A")}</div> : null}</p>
-                                          <div className="row-actions items-right m-0 flex gap-4 opacity-0 transition-opacity group-hover:opacity-100">
+                                          {/* <div className="row-actions items-right m-0 flex gap-4 opacity-0 transition-opacity group-hover:opacity-100">
                                             <button
                                               onClick={(e) => {
                                                 e.stopPropagation();
@@ -479,7 +480,7 @@ const TableComponent = () => {
                                               title={t("common.delete")}>
                                               <DeleteIcons className="h-6 w-6 text-danger" />
                                             </button>
-                                          </div>
+                                          </div> */}
                                         </div>
                                       </>
                                     ),

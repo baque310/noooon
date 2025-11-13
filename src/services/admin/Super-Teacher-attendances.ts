@@ -56,6 +56,9 @@ export interface AddSuperTeacherAttendancesPayload {
     sectionScheduleId: string[];
   }[];
 }
+export interface AddSuperTeacherAttendancesUpdatePayload {
+  Status: "Present" | "Absent" | "Vacation";
+}
 
 export const SuperTeacherAttendances = api.injectEndpoints({
   endpoints: (build) => ({
@@ -85,7 +88,7 @@ export const SuperTeacherAttendances = api.injectEndpoints({
       invalidatesTags: ["SuperTeacherAttendancesCreate", "SuperTeacherAttendancesGetDataById", "SuperTeacherAttendancesGetData"],
     }),
 
-    SuperTeacherAttendancesUpdate: build.mutation<ISuperTeacherAttendances, { id: string; body: AddSuperTeacherAttendancesPayload | FormData }>({
+    SuperTeacherAttendancesUpdate: build.mutation<ISuperTeacherAttendances, { id: string; body: AddSuperTeacherAttendancesUpdatePayload | FormData }>({
       query: ({ body, id }) => ({
         url: `super/teacher/attendances/${id}`,
         body,

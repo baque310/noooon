@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import Loading from "../layouts/loading";
 import React, { FC } from "react";
 import { useAdminGetDataByIdQuery } from "@/services/Manager/Admin";
- 
+
 type RolePageAndActionBasedComponentProps = {
   resource: PAGE_CODE | PAGE_CODE[];
   permission: PERMISSION | PERMISSION[];
@@ -36,10 +36,9 @@ export const RolePageAndActionBasedComponent: React.FC<RolePageAndActionBasedCom
   const { data: session } = useSession();
   const { currentData: DataAdminGetDataById, isFetching: isFetchingAdminGetDataById } = useAdminGetDataByIdQuery({ id: String(session?.user.id) });
   const resources = DataAdminGetDataById?.roles?.map((item) => item.resource) as PAGE_CODE[];
-  const permissions =
-    Array.isArray(resource) ?
-      DataAdminGetDataById?.roles?.find(item => resource.includes(item.resource as PAGE_CODE))?.rolesString as PERMISSION[] :
-      DataAdminGetDataById?.roles?.find(item => item.resource == resource)?.rolesString as PERMISSION[]
+  const permissions = Array.isArray(resource)
+    ? (DataAdminGetDataById?.roles?.find((item) => resource.includes(item.resource as PAGE_CODE))?.rolesString as PERMISSION[])
+    : (DataAdminGetDataById?.roles?.find((item) => item.resource == resource)?.rolesString as PERMISSION[]);
 
   const { hasPrivileges, hasPermissions } = checkPrivilegesAndPermissions(resource, permission, resources, permissions);
 
