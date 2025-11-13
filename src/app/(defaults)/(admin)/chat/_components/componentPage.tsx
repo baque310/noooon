@@ -330,7 +330,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
               <button
                 key={tab.key}
                 onClick={() => {
-                  // handleSelectDirectUser(tab.key || undefined);
+                  handleSelectDirectUser(tab.key || undefined);
                   // handleSelectChatType(tab.chatType || undefined);
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium ${
