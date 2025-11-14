@@ -41,7 +41,7 @@ const TableComponent = () => {
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
-  const [pageNumber, setPageNumber] = useState(Number(1));
+  const [pageNumber, setPageNumber] = useState(1);
   const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
   const { isFetching: isFetchingStageSubjectData, currentData: StageSubjectData } = useStageSubjectGetDataQuery({});
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
@@ -60,12 +60,13 @@ const TableComponent = () => {
       }
     | undefined
   >();
+
   useEffect(() => {
     if (SchoolYearData && Setting) {
-      setParam({
-        ...params,
+      setParam((prev) => ({
+        ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
-      });
+      }));
     }
   }, [SchoolYearData, Setting]);
 
@@ -74,13 +75,13 @@ const TableComponent = () => {
     take: 30,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
-    ...(search && { search: search as string }),
-    ...param,
+    ...(search && { search }),
+    ...(param?.schoolYearId && { schoolYearId: param.schoolYearId }),
+    ...(param?.sectionId && { sectionId: param.sectionId }),
+    ...(param?.stageSubjectId && { stageSubjectId: param.stageSubjectId }),
   };
 
-  const { isFetching: isFetching, currentData: data } = useExamResultsGetDataQuery({
-    ...params,
-  });
+  const { isFetching, currentData: data } = useExamResultsGetDataQuery(params);
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -106,27 +107,27 @@ const TableComponent = () => {
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl" ? true : false;
 
   const handleSelectSection = (value: any) => {
-    if (value) {
-      setParam({ ...param, sectionId: value });
-    } else {
-      setParam({ ...param, sectionId: undefined });
-    }
+    setParam((prev) => ({
+      ...prev,
+      sectionId: value || undefined,
+    }));
+    setPageNumber(1); // Reset to first page when filter changes
   };
 
   const handleSelectSchoolYear = (value: any) => {
-    if (value) {
-      setParam({ ...param, schoolYearId: value.value });
-    } else {
-      setParam({ ...param, schoolYearId: undefined });
-    }
+    setParam((prev) => ({
+      ...prev,
+      schoolYearId: value?.value || undefined,
+    }));
+    setPageNumber(1); // Reset to first page when filter changes
   };
 
   const handleSelectStageSubjectId = (value: any) => {
-    if (value) {
-      setParam({ ...param, stageSubjectId: value.value });
-    } else {
-      setParam({ ...param, stageSubjectId: undefined });
-    }
+    setParam((prev) => ({
+      ...prev,
+      stageSubjectId: value?.value || undefined,
+    }));
+    setPageNumber(1); // Reset to first page when filter changes
   };
 
   useEffect(() => {
@@ -191,6 +192,7 @@ const TableComponent = () => {
       </div>
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
         <SelectFilter
+          value={param?.sectionId}
           title={t("StudentEnrollmentPage.SectionName")}
           placement="bottom-end"
           handleChange={handleSelectSection}
@@ -208,6 +210,7 @@ const TableComponent = () => {
             placeholder={t("ExamsPage.stageSubject")}
             props={{
               onChange: handleSelectStageSubjectId,
+              value: param?.stageSubjectId,
             }}
             options={
               StageSubjectData?.map((item) => {
@@ -223,11 +226,6 @@ const TableComponent = () => {
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
-            // onRowClick={async (item) => {
-            //   // sessionStorage.setItem("sectionScheduleActive", JSON.stringify(active)); // Save the current active index
-            //   // setSelectedItem(item?.record?.id);
-            //   router.push(`/examResult/${item?.record?.id}`);
-            // }}
             onRowClick={async (item) => {
               router.push(`/examResult/${item.record.id}`);
             }}
@@ -258,15 +256,6 @@ const TableComponent = () => {
                           title={t("common.update")}>
                           <UpdateIcons className="h-5 w-5" />
                         </button>
-                        {/* <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`?id=${record.id}&selectedDay=${record.day}`);
-                            setOpenDelete(true);
-                          }}
-                          title={t("common.delete")}>
-                          <DeleteIcons className="h-6 w-6 text-danger" />
-                        </button> */}
                       </div>
                     </div>
                   </>

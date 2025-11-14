@@ -6,10 +6,7 @@ const page = () => {
   const token_access = cookies().get("token_access");
   return (
     <>
-      <ComponentPage
-        token_refresh={token_refresh?.value as string}
-        token_access={token_access?.value as string}
-      />
+      <ComponentPage token_refresh={token_refresh?.value as string} token_access={token_access?.value as string} />
     </>
   );
 };
