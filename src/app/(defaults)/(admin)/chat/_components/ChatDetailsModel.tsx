@@ -43,7 +43,7 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
       console.error("Toggle group chat failed", err);
     }
   };
-
+  console.log(createdAt);
   return (
     <div className="h-full overflow-y-auto">
       <div className="space-y-6 p-5">
@@ -53,7 +53,12 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
             <Avatar photo={chat.photo || ""} username={chat.name} className="!bg-[#2C6E91]" />
             <div className="flex flex-col">
               <h2 className="text-lg font-semibold text-gray-900">{chat.name}</h2>
-              <span className={`mt-1 w-fit rounded-full px-2 py-0.5 text-xs font-medium ${isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>{status}</span>
+              <div className="text-xs text-gray-500">
+                {members.length} أعضاء | {status}
+                {/* <span className={`mt-1 w-fit rounded-full px-2 py-0.5 text-xs font-medium ${isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"}`}>
+                  {status}
+                </span> */}
+              </div>
             </div>
           </div>
         </div>
@@ -67,7 +72,7 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
 
           <div>
             <div className="text-xs text-gray-500">{t("common.createdAt")}</div>
-            <div className="font-medium text-gray-800">{moment(createdAt).format("YYYY/MM/DD")}</div>
+            <div className="font-medium text-gray-800 text-xs">{createdAt}</div>
           </div>
         </div>
 
@@ -97,7 +102,10 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
               <ul className="divide-y divide-gray-100">
                 {members.map((member: any) => (
                   <li key={member.id} className="flex justify-between items-center py-2 text-sm">
-                    <span className="font-medium text-gray-700">{member.memberName}</span>
+                    <span className="font-medium flex items-center text-gray-700">
+                      <Avatar photo={chat.photo || ""} username={chat.name} className="!bg-[#2C6E91]" />
+                      {member.memberName}
+                    </span>
                     <span className={`rounded-full px-2 py-0.5 text-xs ${member.userType === "ADMIN" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
                       {t(member.userType)}
                     </span>

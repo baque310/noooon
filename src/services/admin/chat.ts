@@ -24,7 +24,7 @@ export interface IChatGetDataResponse extends BaseGetDataResponse<IChat> {
 }
 
 export interface AddChatPayload {
-  targetUserId: string;
+  targetUserId?: string;
   targetUserType: ChatTargetUserType;
   initialMessage: string;
 }

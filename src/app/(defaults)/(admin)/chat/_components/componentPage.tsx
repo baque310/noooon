@@ -21,6 +21,8 @@ import NoMessagesIcon from "@/components/common/icons/NoMessagesIcon";
 import moment from "moment";
 import "moment/locale/ar";
 import ChatDetailsPanel from "./ChatDetailsModel";
+import CreateNewComponent from "./CreateNewComponent";
+import CreateNewGroupComponent from "./CreateNewGroupComponent";
 
 type Conn = "disconnected" | "connecting" | "connected" | "error";
 
@@ -33,7 +35,9 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
   const { data: session } = useSession();
   const { t } = getTranslation();
 
+  const [openOld, setOpenOld] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState(false);
   const [openChatDetails, setOpenChatDetails] = useState(false);
   const [selectedChat, setSelectedChat] = useState<IChat | null>(null);
   const [selectedMessagesCount, setSelectedMessagesCount] = useState(0);
@@ -216,11 +220,23 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div className="flex flex-wrap gap-3 items-center">
             <h1 className="text-2xl font-bold text-gray-900">المحادثات</h1>
+            {/* <button
+              className="flex items-center gap-2 bg-[#2C6E91] text-white rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:bg-[#2C6E91]/90 transition"
+              onClick={() => setOpenOld(true)}>
+              <AddIcons className="size-5" />
+              إنشاء محادثة القديم
+            </button> */}
             <button
               className="flex items-center gap-2 bg-[#2C6E91] text-white rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:bg-[#2C6E91]/90 transition"
               onClick={() => setOpen(true)}>
               <AddIcons className="size-5" />
-              إضافة محادثة
+              إنشاء محادثة خاصة
+            </button>
+            <button
+              className="flex items-center gap-2 bg-[#2C6E91] text-white rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:bg-[#2C6E91]/90 transition"
+              onClick={() => setOpenGroup(true)}>
+              <AddIcons className="size-5" />
+              إنشاء مجموعة
             </button>
 
             {/* Filters */}
@@ -507,7 +523,9 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
         </div>
       </div>
 
-      <CreateComponent open={open} setOpen={setOpen} />
+      <CreateComponent open={openOld} setOpen={setOpenOld} />
+      <CreateNewComponent open={open} setOpen={setOpen} />
+      <CreateNewGroupComponent open={openGroup} setOpen={setOpenGroup} />
       {/* <ChatDetailsModel open={openChatDetails} setOpen={setOpenChatDetails} chat={selectedChat} onToggleStatus={handleChatToggle} /> */}
     </div>
   );
