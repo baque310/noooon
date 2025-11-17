@@ -34,6 +34,12 @@ const TableComponent = () => {
   const { isMounted } = useMounted();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
+
+  const [stageId, setStageId] = useState<string | undefined>(undefined);
+  const [classId, setClassId] = useState<string | undefined>(undefined);
+  const [sectionId, setSectionId] = useState<string | undefined>(undefined);
+  const [schoolYearId, setSchoolYearId] = useState<string | undefined>(undefined);
+
   const [param, setParam] = useState<
     | {
         search?: string;
@@ -48,8 +54,13 @@ const TableComponent = () => {
   >();
   const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
   const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
-    // sectionId  :param.sectionId,
-    schoolYearId: param?.schoolYearId,
+    // sectionId: param.sectionId,
+    // schoolYearId: param?.schoolYearId,
+
+    stageId: stageId,
+    classId: classId,
+    schoolYearId: schoolYearId || Setting?.currentSchoolYearId || "",
+    sectionId: sectionId,
   });
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
@@ -76,12 +87,10 @@ const TableComponent = () => {
     teacherSubjectId: param?.teacherSubjectId,
   };
 
-  const { isFetching: isFetching, currentData: data } =
-    useTeacherHomeworksGetDataQuery({
-      ...params,
-    });
-  const { isFetching: isFetchingStageData, currentData: StageData } =
-    useStageGetDataQuery();
+  const { isFetching: isFetching, currentData: data } = useTeacherHomeworksGetDataQuery({
+    ...params,
+  });
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -106,6 +115,7 @@ const TableComponent = () => {
   };
 
   const handleSelectSection = (value: any) => {
+    setSectionId(value ? value : undefined);
     if (value) {
       setParam({ ...param, sectionId: value });
     } else {
@@ -120,6 +130,7 @@ const TableComponent = () => {
     }
   };
   const handleSelectSchoolYear = (value: any) => {
+    setSchoolYearId(value ? value.value : undefined);
     if (value) {
       setParam({ ...param, schoolYearId: value });
     } else {
@@ -127,12 +138,14 @@ const TableComponent = () => {
     }
   };
   const handleSelectClass = (value: any) => {
+    setClassId(value ? value : undefined);
     const classId = value ?? undefined;
     setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
     // pushWithCurrentParams("/sectionSchedule", { classId, sectionId: undefined });
   };
 
   const handleSelectStage = (value: any) => {
+    setStageId(value ? value : undefined);
     const stageId = value ?? undefined;
     // changing stage should clear class/section
     setParam((old) => ({
@@ -198,14 +211,12 @@ const TableComponent = () => {
               placement="bottom-end"
               handleChange={handleSelectClass}
               options={
-                StageData?.find((it) => it.id == param?.stageId)?.Class?.map(
-                  (item) => {
-                    return {
-                      value: item.id,
-                      label: t(item.name as any),
-                    };
-                  }
-                ) ?? []
+                StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }) ?? []
               }
             />
           )}
@@ -227,24 +238,27 @@ const TableComponent = () => {
               }
             />
           )}
+          {param?.sectionId && (
+            <div className="max-w-36">
+              <SelectWithSearch
+                placeholder={t("HomeworksPage.teacherFullName")}
+                props={{
+                  onChange: handleSelectTeacherSubject,
+                }}
+                options={
+                  TeacherSubjectData?.map((item) => {
+                    return {
+                      label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
 
-          <div className="max-w-36">
-            <SelectWithSearch
-              placeholder={t("HomeworksPage.teacherFullName")}
-              props={{
-                onChange: handleSelectTeacherSubject,
-              }}
-              options={
-                TeacherSubjectData?.map((item) => {
-                  return {
-                    label: item.Teacher.fullName,
-                    //  + item.StageSubject.Subject.name,
-                    value: item.id,
-                  };
-                }) ?? []
-              }
-            />
-          </div>
+                      // label: item.Teacher.fullName,
+                      //  + item.StageSubject.Subject.name,
+                      value: item.id,
+                    };
+                  }) ?? []
+                }
+              />
+            </div>
+          )}
         </div>
         {
           <RolePageAndActionBasedComponent
@@ -286,6 +300,11 @@ const TableComponent = () => {
                 title: t("HomeworksPage.content"),
                 accessor: "content",
                 sortable: true,
+                render: ({ content }: any) => (
+                  <div className="max-w-xs truncate" title={content}>
+                    {content}
+                  </div>
+                ),
               },
               {
                 title: t("HomeworksPage.dueDate"),
@@ -308,8 +327,7 @@ const TableComponent = () => {
                 title: t("HomeworksPage.SectionName"),
                 accessor: "Section.name",
                 // sortable: true,
-                render: ({ Section }: any) =>
-                  Section?.name && t(Section?.name ?? ("" as any)),
+                render: ({ Section }: any) => Section?.name && t(Section?.name ?? ("" as any)),
               },
               {
                 title: t("HomeworksPage.SubjectName"),

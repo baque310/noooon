@@ -32,7 +32,6 @@ const TableComponent = () => {
   const [classId, setClassId] = useState<string | undefined>(undefined);
   const [sectionId, setSectionId] = useState<string | undefined>(undefined);
   const [schoolYearId, setSchoolYearId] = useState<string | undefined>(undefined);
-  const [teacherId, setTeacherId] = useState<string | undefined>(undefined);
 
   const search = searchParams.get("search") || "";
   const [param, setParam] = useState<
@@ -41,7 +40,7 @@ const TableComponent = () => {
         stageId?: string;
         search?: string;
         range?: string;
-        teacherId?: string;
+        teacherSubjectId?: string;
         sectionId?: string;
         schoolYearId?: string;
       }
@@ -49,7 +48,6 @@ const TableComponent = () => {
   >();
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
-  // console.log(teacherId);
 
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
   const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
@@ -57,7 +55,6 @@ const TableComponent = () => {
     classId: classId,
     schoolYearId: schoolYearId || Setting?.currentSchoolYearId || "",
     sectionId: sectionId,
-    teacherId: teacherId,
   });
 
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
@@ -75,7 +72,7 @@ const TableComponent = () => {
   const [getData, { isFetching, currentData: data }] = useLazySectionScheduleGetDataQuery();
 
   useEffect(() => {
-    // console.log(param.teacherId);
+    console.log(param);
 
     getData({
       ...(search && { search: search as string }),
@@ -85,8 +82,8 @@ const TableComponent = () => {
       ...(param?.schoolYearId && {
         schoolYearId: param.schoolYearId,
       }),
-      ...(param?.teacherId && {
-        teacherId: param.teacherId,
+      ...(param?.teacherSubjectId && {
+        teacherSubjectId: param.teacherSubjectId,
       }),
     });
   }, [param]);
@@ -194,12 +191,23 @@ const TableComponent = () => {
       sectionId: undefined,
     });
   };
+  // const handleSelectTeacher = (value: any) => {
+  //   setTeacherId(value ? value : undefined);
+  //   const teacherSubjectId = value ? value : undefined;
+  //   setParam((old) => ({ ...(old ?? {}), teacherSubjectId }));
+  //   pushWithCurrentParams("/sectionSchedule", { teacherSubjectId });
+  // };
+
   const handleSelectTeacher = (value: any) => {
-    setTeacherId(value ? value.value : undefined);
-    const teacherId = value ? value.value : undefined;
-    setParam((old) => ({ ...(old ?? {}), teacherId }));
-    pushWithCurrentParams("/sectionSchedule", { teacherId });
+    // setTeacherId(value ? value : undefined);
+
+    if (value) {
+      setParam({ ...param, teacherSubjectId: value.value });
+    } else {
+      setParam({ ...param, teacherSubjectId: undefined });
+    }
   };
+
   const handleSelectSchoolYear = (value: any) => {
     setSchoolYearId(value ? value.value : undefined);
     const schoolYearId = value ? value.value : undefined;
@@ -366,15 +374,34 @@ const TableComponent = () => {
                 sectionId === undefined && schoolYearId === undefined
                   ? []
                   : TeacherSubjectData?.map((item) => {
-                      // console.log(item);
+                      console.log(item);
 
                       return {
                         label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
-                        value: item.Teacher.id,
+                        value: item.id,
                       };
                     }) ?? []
               }
             />
+
+            {/* <SelectFilter
+              value={param?.sectionId}
+              title={t("HomeworksPage.teacherFullName")}
+              placement="bottom-end"
+              handleChange={handleSelectTeacher}
+              options={
+                sectionId === undefined && schoolYearId === undefined
+                  ? []
+                  : TeacherSubjectData?.map((item) => {
+                      // console.log(item);
+
+                      return {
+                        label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
+                        value: item.StageSubject.Subject.id,
+                      };
+                    }) ?? []
+              }
+            /> */}
           </div>
         )}
       </div>

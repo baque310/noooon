@@ -38,7 +38,8 @@ const TableComponent = () => {
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
   const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
-  const { isFetching: isFetchingStageSubjectData, currentData: StageSubjectData } = useStageSubjectGetDataQuery({});
+  const [stateId, setStageId] = useState("");
+  const [classId, setClassId] = useState("");
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
@@ -73,6 +74,10 @@ const TableComponent = () => {
     ...(param?.sectionId && { sectionId: param?.sectionId }),
     ...(param?.stageSubjectId && { stageSubjectId: param?.stageSubjectId }),
   };
+
+  const { isFetching: isFetchingStageSubjectData, currentData: StageSubjectData } = useStageSubjectGetDataQuery({
+    classId: classId,
+  });
 
   const { isFetching: isFetching, currentData: data } = useExamsGetDataQuery({
     ...params,
@@ -116,6 +121,7 @@ const TableComponent = () => {
   };
 
   const handleSelectClass = (value: any) => {
+    setClassId(value);
     if (value) {
       setParam({ ...param, classId: value, sectionId: undefined });
     } else {
@@ -131,6 +137,7 @@ const TableComponent = () => {
   };
   const handleSelectStage = (value: any) => {
     if (value) {
+      setStageId(value);
       setParam({
         ...param,
         stageId: value,
@@ -246,22 +253,24 @@ const TableComponent = () => {
             }
           />
         )}
-        <div className="max-w-36">
-          <SelectWithSearch
-            placeholder={t("ExamsPage.stageSubject")}
-            props={{
-              onChange: handleSelectStageSubjectId,
-            }}
-            options={
-              StageSubjectData?.map((item) => {
-                return {
-                  label: item.Subject.name,
-                  value: item.id,
-                };
-              }) ?? []
-            }
-          />
-        </div>
+        {param?.classId && (
+          <div className="max-w-36">
+            <SelectWithSearch
+              placeholder={t("ExamsPage.stageSubject")}
+              props={{
+                onChange: handleSelectStageSubjectId,
+              }}
+              options={
+                StageSubjectData?.map((item) => {
+                  return {
+                    label: item.Subject.name,
+                    value: item.id,
+                  };
+                }) ?? []
+              }
+            />
+          </div>
+        )}
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (

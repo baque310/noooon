@@ -279,7 +279,7 @@ const PageComponent = () => {
               stageId: "",
               classId: "",
               sectionId: "",
-              date: "",
+              date: new Date().toISOString().split("T")[0],
               sectionScheduleIds: [],
             }}
             validationSchema={bannerSchema}
