@@ -106,6 +106,7 @@ const CreateNewGroupComponent = ({
         await ChatCreateSchoolStudentsGroup({
           stageId: String(values.stageId),
           classId: String(values.classId),
+          groupName: String(values.groupName),
           sectionId: String(values.sectionId),
         }).unwrap();
       } else if (values.GroupType === "staffGroup") {
@@ -264,6 +265,7 @@ const CreateNewGroupComponent = ({
             {/* Render specific form for the selected GroupType */}
             {props.values.GroupType === "studentGroup" && (
               <>
+                <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
                 <SelectForm
                   formikProps={props}
                   name={"stageId"}
