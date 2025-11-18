@@ -58,7 +58,7 @@ export interface AddChatCreateClassParentsGroupPayload {
   description: string;
 }
 export interface AddChatCreateClassStudentsGroupPayload {
-  groupName: string;
+  groupName?: string;
   stageId: string;
   classId: string;
   sectionId: string;
