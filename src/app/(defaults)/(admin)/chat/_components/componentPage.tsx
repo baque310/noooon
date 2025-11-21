@@ -12,7 +12,7 @@ import { getTranslation } from "@/ni18n/i18n";
 import CreateComponent from "./CreateComponent";
 import ChatDetailsModel from "./ChatDetailsModel";
 import { AddIcons, DeleteIcons } from "@/components/common/icons/Actions";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { DataTableSortStatus } from "mantine-datatable";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useStageGetDataQuery } from "@/services/admin/stage";
@@ -20,9 +20,9 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import NoMessagesIcon from "@/components/common/icons/NoMessagesIcon";
 import moment from "moment";
 import "moment/locale/ar";
-import ChatDetailsPanel from "./ChatDetailsModel";
 import CreateNewComponent from "./CreateNewComponent";
 import CreateNewGroupComponent from "./CreateNewGroupComponent";
+import ChatDetailsPanel from "./ChatDetailsModel";
 
 type Conn = "disconnected" | "connecting" | "connected" | "error";
 
@@ -34,6 +34,7 @@ interface ComponentPageProps {
 const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
   const { data: session } = useSession();
   const { t } = getTranslation();
+  const router = useRouter();
 
   const [openOld, setOpenOld] = useState(false);
   const [open, setOpen] = useState(false);
@@ -153,7 +154,6 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
 
   const { currentData, isLoading, error, isFetching, refetch } = useChatGetDataQuery(params);
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
-  // console.log(currentData);
 
   const tabs = [
     { key: "", chatType: "", label: "الكل" },
@@ -161,14 +161,6 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     { key: "TEACHER", chatType: "GROUP_SUBJECT_TEACHERS", label: "المعلمين" },
     { key: "PARENT", chatType: "GROUP_CLASS_PARENTS", label: "أولياء الأمور" },
   ];
-  // const [activeTab, setActiveTab] = useState("");
-
-  // const filteredChats = useMemo(() => {
-  //   if (!currentData?.data) return [];
-  //   if (activeTab === "all") return currentData.data;
-  //   return currentData.data.filter((chat: IChat) => chat.type === activeTab);
-  // }, [currentData, activeTab]);
-  // console.log(filteredChats);
 
   const formatTimestamp = useCallback((ts: string | number | Date) => {
     return new Date(ts).toLocaleString("ar", {
@@ -213,6 +205,10 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     [refetch]
   );
 
+  const handleChatRemoved = useCallback(() => {
+    setSelectedChat(null);
+  }, []);
+
   return (
     <div className="space-y-2">
       {/* Header */}
@@ -220,12 +216,6 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
         <div className="flex flex-wrap justify-between items-center gap-4">
           <div className="flex flex-wrap gap-3 items-center">
             <h1 className="text-2xl font-bold text-gray-900">المحادثات</h1>
-            {/* <button
-              className="flex items-center gap-2 bg-[#2C6E91] text-white rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:bg-[#2C6E91]/90 transition"
-              onClick={() => setOpenOld(true)}>
-              <AddIcons className="size-5" />
-              إنشاء محادثة القديم
-            </button> */}
             <button
               className="flex items-center gap-2 bg-[#2C6E91] text-white rounded-lg px-4 py-2 text-sm font-medium shadow-sm hover:bg-[#2C6E91]/90 transition"
               onClick={() => setOpen(true)}>
@@ -343,6 +333,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                 </div>
               </div>
             </div>
+
             {/* Filter Tabs */}
             <div className="flex gap-2 px-3 pb-2 border-b border-gray-100">
               {tabs.map((tab) => (
@@ -350,7 +341,6 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                   key={tab.key}
                   onClick={() => {
                     handleSelectDirectUser(tab.key || undefined);
-                    // handleSelectChatType(tab.chatType || undefined);
                   }}
                   className={`px-4 py-2 rounded-full text-sm font-medium ${
                     param.directUserType === tab.key || (!param.directUserType && tab.key === "") ? "bg-[#2C6E91] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -360,31 +350,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
               ))}
             </div>
 
-            {/* Chats List (replace your original list render) */}
-            {/* <div className="flex-1 overflow-y-auto">
-            {isLoading || isFetching ? (
-              <div className="p-6">
-                <LoadingForm />
-              </div>
-            ) : filteredChats.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <NoMessagesIcon className="w-16 h-16 mb-4" />
-                <p>لا توجد محادثات</p>
-              </div>
-            ) : (
-              filteredChats.map((chat: IChat) => (
-                <div key={chat.id} className="p-3 border-b hover:bg-gray-50 cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <Avatar src={chat.image} name={chat.name} />
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">{chat.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{chat.lastMessage?.content}</p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div> */}
+            {/* Chats List */}
             <div className="flex-1 overflow-y-auto">
               {isLoading || isFetching ? (
                 <div className="p-6">
@@ -447,7 +413,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
           </div>
         ) : (
           <div className="col-span-4 bg-white rounded-2xl shadow-sm flex flex-col overflow-hidden">
-            <ChatDetailsPanel chat={selectedChat} onToggleStatus={handleChatToggle} isLoading={isLoading} />
+            <ChatDetailsPanel chat={selectedChat} onToggleStatus={handleChatToggle} onChatRemoved={handleChatRemoved} isLoading={isLoading} />
           </div>
         )}
 
@@ -457,10 +423,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
             <>
               <div className="bg-white">
                 <div className="p-4 flex items-center gap-3 justify-between">
-                  <div
-                    onClick={() => setShowProfile(!showProfile)}
-                    // setOpenChatDetails(true)}
-                    className="flex items-center gap-3 cursor-pointer">
+                  <div onClick={() => setShowProfile(!showProfile)} className="flex items-center gap-3 cursor-pointer">
                     <Avatar photo={""} username={selectedChat.name} className="!bg-[#2C6E91]" />
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -484,7 +447,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
                   )}
                 </div>
 
-                {/* Decorative divider matching Figma design */}
+                {/* Decorative divider */}
                 <div className="relative flex items-center justify-center h-1">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200"></div>
@@ -526,7 +489,6 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
       <CreateComponent open={openOld} setOpen={setOpenOld} />
       <CreateNewComponent open={open} setOpen={setOpen} />
       <CreateNewGroupComponent open={openGroup} setOpen={setOpenGroup} />
-      {/* <ChatDetailsModel open={openChatDetails} setOpen={setOpenChatDetails} chat={selectedChat} onToggleStatus={handleChatToggle} /> */}
     </div>
   );
 };

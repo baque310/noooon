@@ -212,6 +212,14 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatCreateCustomTeachersGroup", "ChatGetData"] : []),
     }),
+
+    ChatRemove: build.mutation<void, { roomId: string }>({
+      query: ({ roomId }) => ({
+        url: `admin/chat/room/${roomId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ChatRemove", "ChatGetData"],
+    }),
   }),
 });
 export const {
@@ -228,4 +236,5 @@ export const {
   useChatWithFileMessageMutation,
   useChatMessageRemoveMutation,
   useChatCreateCustomTeachersGroupMutation,
+  useChatRemoveMutation,
 } = Chat;
