@@ -138,9 +138,9 @@ const TableComponent = () => {
 
   const handleSelectSection = (value: any) => {
     // setSectionId(value ? value : undefined);
-    const sectionId = value ?? undefined;
-    setParam((old) => ({ ...(old ?? {}), sectionId }));
-    pushWithCurrentParams("/superTeacherAttendances", { sectionId });
+    const sectionScheduleId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), sectionScheduleId }));
+    pushWithCurrentParams("/superTeacherAttendances", { sectionScheduleId });
   };
   const handleSelectClass = (value: any) => {
     // setClassId(value ? value : undefined);
@@ -332,7 +332,7 @@ const TableComponent = () => {
           }
         </div>
       </div>
-      <div className="flex py-3 gap-3 max-md:flex-col max-md:items-end">
+      {/* <div className="flex py-3 gap-3 max-md:flex-col max-md:items-end">
         <SelectFilter
           value={param?.stageId}
           placement="bottom-end"
@@ -381,7 +381,7 @@ const TableComponent = () => {
             }
           />
         )}
-      </div>
+      </div> */}
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
