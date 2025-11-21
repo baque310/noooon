@@ -219,6 +219,14 @@ export const Chat = api.injectEndpoints({
         method: "DELETE",
       }),
       invalidatesTags: ["ChatRemove", "ChatGetData"],
+      // Add this to force immediate refetch:
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          // Force refetch all ChatGetData queries
+          dispatch(api.util.invalidateTags(["ChatGetData"]));
+        } catch {}
+      },
     }),
   }),
 });

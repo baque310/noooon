@@ -56,8 +56,11 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
       await chatRemove({ roomId: chat.rocketChatId }).unwrap();
       toast.success(t("common.deleted-successfully"), { autoClose: 3000 });
       setShowDeleteConfirm(false);
-      if (onChatRemoved) onChatRemoved();
-      router.refresh();
+      if (onChatRemoved) {
+        onChatRemoved();
+      }
+
+      window.location.reload();
     } catch (error: any) {
       console.error("Failed to remove chat:", error);
       if (error?.data?.message) {
