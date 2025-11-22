@@ -257,7 +257,7 @@ const CreateNewGroupComponent = ({
                 { label: t("ChatPage.teacherGroup"), value: "teacherGroup" },
                 { label: t("ChatPage.studentGroup"), value: "studentGroup" },
                 { label: t("ChatPage.parentGroup"), value: "parentGroup" },
-                { label: t("ChatPage.staffGroup"), value: "staffGroup" },
+                // { label: t("ChatPage.staffGroup"), value: "staffGroup" },
                 { label: t("ChatPage.otherGroup"), value: "otherGroup" },
               ]}
             />
@@ -405,7 +405,7 @@ const CreateNewGroupComponent = ({
               </>
             )}
 
-            {props.values.GroupType === "staffGroup" && (
+            {/* {props.values.GroupType === "staffGroup" && (
               <>
                 <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
                 <InputForm
@@ -416,16 +416,12 @@ const CreateNewGroupComponent = ({
                   props={{ ...({ as: "textarea" } as any) }}
                 />
               </>
-            )}
+            )} */}
 
             {props.values.GroupType === "teacherGroup" && (
               <>
                 <SelectForm
                   formikProps={props}
-                  // name={"teacherIds"}
-                  // title={t("ChatPage.teacher")}
-                  // placeholder={t("ChatPage.enter-teacher")}
-
                   name={"teacherIds"}
                   title={t("ChatPage.teacher")}
                   placeholder={t("ChatPage.enter-teacher")}
@@ -438,7 +434,6 @@ const CreateNewGroupComponent = ({
              focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-900/60 dark:hover:bg-gray-900"
                           tabIndex={0}
                           aria-label="Teacher subject card">
-                          {/* Header: Subject */}
                           <div className="flex items-start gap-2">
                             <span
                               className="mt-0.5 rounded-lg p-1.5 bg-blue-50 text-blue-600 
@@ -448,13 +443,11 @@ const CreateNewGroupComponent = ({
                             <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{teacher.StageSubject.Subject.name}</h3>
                           </div>
 
-                          {/* Teacher */}
                           <div className="mt-2 flex items-center gap-2 text-gray-700 dark:text-gray-300">
                             <User className="size-4 opacity-80" aria-hidden />
                             <span className="font-medium">{teacher.Teacher.fullName}</span>
                           </div>
 
-                          {/* Meta badges */}
                           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
                             <span
                               className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
@@ -484,7 +477,6 @@ const CreateNewGroupComponent = ({
                             </span>
                           </div>
 
-                          {/* Optional: subtle divider & right-caret affordance */}
                           <div
                             className="pointer-events-none absolute inset-y-0 right-2 hidden items-center 
                   opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40">
@@ -541,6 +533,28 @@ const CreateNewGroupComponent = ({
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2 max-h-[220px] overflow-y-auto border p-2 border-primary/30 rounded-md">
+                    {/* Select All Checkbox */}
+                    <div className="p-1 border-b">
+                      <CheckBoxForm
+                        formikProps={props}
+                        name="selectAll"
+                        title={t("common.select-all") || "Select All"}
+                        props={{
+                          checked:
+                            teachersData?.data && teachersData?.data?.length > 0 && teachersData?.data?.every((item: any) => (props.values.teacherIds || []).includes(item.id)),
+                          onChange: (e: any) => {
+                            if (e.target.checked) {
+                              const allTeacherIds = teachersData?.data?.map((item: any) => item.id) || [];
+                              props.setFieldValue("teacherIds", allTeacherIds);
+                            } else {
+                              props.setFieldValue("teacherIds", []);
+                            }
+                          },
+                        }}
+                      />
+                    </div>
+
+                    {/* Individual Teacher Checkboxes */}
                     {teachersData?.data?.map((item, index) => (
                       <div className="p-1 border-b" key={item.id}>
                         <CheckBoxForm
@@ -577,8 +591,6 @@ const CreateNewGroupComponent = ({
                 />
               </>
             )}
-
-            {/* Direct chat UI removed from this page — GroupType must be selected */}
 
             <div className="flex flex-row-reverse gap-2">
               <ButtonForm
