@@ -133,11 +133,29 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
   }, []);
 
   const handleSelectChatType = useCallback((value?: string) => {
-    setParam((prev) => (value ? { ...prev, chatType: value } : { ...prev, chatType: undefined }));
+    setParam((prev) => {
+      const newParam = { ...prev };
+      if (value) {
+        newParam.chatType = value;
+        delete newParam.directUserType; // Clear directUserType when setting chatType
+      } else {
+        delete newParam.chatType;
+      }
+      return newParam;
+    });
   }, []);
 
   const handleSelectDirectUser = useCallback((value?: string) => {
-    setParam((prev) => (value ? { ...prev, directUserType: value } : { ...prev, directUserType: undefined }));
+    setParam((prev) => {
+      const newParam = { ...prev };
+      if (value) {
+        newParam.directUserType = value;
+        delete newParam.chatType;
+      } else {
+        delete newParam.directUserType;
+      }
+      return newParam;
+    });
   }, []);
 
   const params = useMemo(
@@ -157,9 +175,10 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
 
   const tabs = [
     { key: "", chatType: "", label: "الكل" },
-    { key: "STUDENT", chatType: "GROUP_CLASS_STUDENTS", label: "الطلاب" },
-    { key: "TEACHER", chatType: "GROUP_SUBJECT_TEACHERS", label: "المعلمين" },
-    { key: "PARENT", chatType: "GROUP_CLASS_PARENTS", label: "أولياء الأمور" },
+    { key: "STUDENT", chatType: "", label: "الطلاب" },
+    { key: "TEACHER", chatType: "", label: "المعلمين" },
+    { key: "PARENT", chatType: "", label: "أولياء الأمور" },
+    { key: "DIRECT_MESSAGE", chatType: "DIRECT_MESSAGE", label: "المحادثات الخاصة" },
   ];
 
   const formatTimestamp = useCallback((ts: string | number | Date) => {
@@ -335,19 +354,30 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex gap-2 px-3 pb-2 border-b border-gray-100">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => {
-                    handleSelectDirectUser(tab.key || undefined);
-                  }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${
-                    param.directUserType === tab.key || (!param.directUserType && tab.key === "") ? "bg-[#2C6E91] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}>
-                  {tab.label}
-                </button>
-              ))}
+            <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div className="flex gap-2 px-3 pb-2 border-b border-gray-100 whitespace-nowrap">
+                {tabs.map((tab) => {
+                  const isActive =
+                    tab.key === "DIRECT_MESSAGE" ? param.chatType === tab.key : param.directUserType === tab.key || (!param.directUserType && !param.chatType && tab.key === "");
+
+                  return (
+                    <button
+                      key={tab.key}
+                      onClick={() => {
+                        if (tab.key === "DIRECT_MESSAGE") {
+                          handleSelectChatType(tab.key);
+                        } else {
+                          handleSelectDirectUser(tab.key || undefined);
+                        }
+                      }}
+                      className={`px-4 py-2 rounded-full text-sm font-medium flex-shrink-0 ${
+                        isActive ? "bg-[#2C6E91] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}>
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Chats List */}
