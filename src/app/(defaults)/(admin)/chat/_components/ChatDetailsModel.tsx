@@ -7,10 +7,12 @@ import moment from "moment";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useToggleGroupChatUpdateMutation, useChatRemoveMutation } from "@/services/admin/chat";
-import { DeleteIcons } from "@/components/common/icons/Actions";
+import { DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
+import RenameChatModel from "./RenameChatModel";
 import Model from "@/components/Model";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+// form-related imports moved to RenameChatModel
 
 interface ChatDetailsPanelProps {
   chat: any | null;
@@ -24,6 +26,7 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
   const [patchToggle, { isLoading: isPatching }] = useToggleGroupChatUpdateMutation();
   const [chatRemove, { isLoading: isRemoving }] = useChatRemoveMutation();
 
@@ -71,6 +74,8 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
     }
   };
 
+  // rename logic is handled inside RenameChatModel
+
   return (
     <div className="h-full flex flex-col">
       {/* Scrollable Content */}
@@ -87,6 +92,9 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
                 </div>
               </div>
             </div>
+            <button onClick={() => setShowRenameModal(true)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="Edit chat name">
+              <UpdateIcons className="w-5 h-5 text-gray-600" />
+            </button>
           </div>
 
           {/* General Information */}
@@ -207,6 +215,9 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
           </div>
         </Model>
       )}
+
+      {/* Rename modal (moved to separate component) */}
+      <RenameChatModel open={showRenameModal} setOpen={setShowRenameModal} chat={chat} />
     </div>
   );
 };

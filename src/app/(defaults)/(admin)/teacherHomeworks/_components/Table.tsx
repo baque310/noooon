@@ -54,9 +54,6 @@ const TableComponent = () => {
   >();
   const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
   const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
-    // sectionId: param.sectionId,
-    // schoolYearId: param?.schoolYearId,
-
     stageId: stageId,
     classId: classId,
     schoolYearId: schoolYearId || Setting?.currentSchoolYearId || "",
@@ -147,7 +144,6 @@ const TableComponent = () => {
   const handleSelectStage = (value: any) => {
     setStageId(value ? value : undefined);
     const stageId = value ?? undefined;
-    // changing stage should clear class/section
     setParam((old) => ({
       ...(old ?? {}),
       stageId,
@@ -325,20 +321,18 @@ const TableComponent = () => {
                 // sortable: true,
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
-              {
-                title: t("HomeworksPage.StageName"),
-                accessor: "teacherSubject.StageSubject.Subject.name",
-                // sortable: true,
-                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
-              },
+              // {
+              //   title: t("HomeworksPage.StageName"),
+              //   accessor: "teacherSubject.StageSubject.Class.name",
+              //   // sortable: true,
+              //   render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Class.name && t(teacherSubject.StageSubject.Class.name ?? ("" as any)),
+              // },
               {
                 title: t("HomeworksPage.SectionName"),
                 accessor: "StudentHomework",
                 render: ({ StudentHomework }) => {
                   const list = Array.isArray(StudentHomework) ? StudentHomework : [];
-
                   const sections = Array.from(new Set(list.map((item: any) => item?.Student?.StudentEnrollment?.[0]?.Section?.name).filter(Boolean)));
-
                   return sections.length > 0 ? sections.join(", ") : "-";
                 },
               },

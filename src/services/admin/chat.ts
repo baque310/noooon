@@ -90,13 +90,13 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatDirect", "ChatGetData"] : []),
     }),
-    renameChat: build.mutation<IChat, { roomId: string } & AddChatPayload>({
-      query: ({ roomId, ...body }) => ({
+    renameChat: build.mutation<IChat, { roomId: string; body: { name: string } }>({
+      query: ({ body, roomId }) => ({
         url: `admin/chat/room/${roomId}/name`,
-        method: "POST",
         body,
+        method: "PATCH",
       }),
-      invalidatesTags: (res) => (res ? ["ChatDirect", "ChatGetData"] : []),
+      invalidatesTags: ["ChatGetData", "ClassUpdate", "ClassGetDataById", "ClassGetData"],
     }),
 
     ChatMessage: build.mutation<IChat, AddChatMessagePayload>({

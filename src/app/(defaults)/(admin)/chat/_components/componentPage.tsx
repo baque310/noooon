@@ -193,11 +193,11 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
 
   const tabs = [
     { key: "", type: "default", label: "الكل" },
+    { key: "GROUPS", type: "chatScope", label: "المجموعات" },
     { key: "STUDENT", type: "directUser", label: "الطلاب" },
     { key: "TEACHER", type: "directUser", label: "المعلمين" },
-    { key: "PARENT", type: "directUser", label: "أولياء الأمور" },
     { key: "DIRECT_MESSAGE", type: "chatType", label: "المحادثات الخاصة" },
-    { key: "GROUPS", type: "chatScope", label: "المجموعات" },
+    { key: "PARENT", type: "directUser", label: "أولياء الأمور" },
   ];
 
   const formatTimestamp = useCallback((ts: string | number | Date) => {

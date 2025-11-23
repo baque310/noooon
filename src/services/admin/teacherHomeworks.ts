@@ -24,6 +24,9 @@ export interface ITeacherHomeworks {
       Subject: {
         name: string;
       };
+      Class: {
+        name: string;
+      };
     };
   };
   StudentHomework: {
@@ -78,10 +81,7 @@ export interface AddTeacherHomeworksPayload {
 
 export const TeacherHomeworks = api.injectEndpoints({
   endpoints: (build) => ({
-    TeacherHomeworksGetData: build.query<
-      BaseGetDataResponse<ITeacherHomeworks>,
-      GetDataRequestParams
-    >({
+    TeacherHomeworksGetData: build.query<BaseGetDataResponse<ITeacherHomeworks>, GetDataRequestParams>({
       query: (params) => ({
         url: `supper/teacher/homeworks`,
         params,
@@ -90,62 +90,41 @@ export const TeacherHomeworks = api.injectEndpoints({
       providesTags: ["TeacherHomeworksGetData"],
     }),
 
-    TeacherHomeworksGetDataById: build.query<ITeacherHomeworks, { id: string }>(
-      {
-        query: ({ id }) => ({
-          url: `supper/teacher/homeworks/${id}`,
-          method: "GET",
-        }),
-        providesTags: ["TeacherHomeworksGetDataById"],
-        transformResponse: (response: ITeacherHomeworks) => {
-          if (response.HomeworkAttachment.length > 0) {
-            response.HomeworkAttachment = response.HomeworkAttachment.map(
-              (item) => {
-                return {
-                  ...item,
-                  url: BASE_URL + "uploads/" + item.url,
-                };
-              }
-            );
-          }
-          return response;
-        },
-      }
-    ),
+    TeacherHomeworksGetDataById: build.query<ITeacherHomeworks, { id: string }>({
+      query: ({ id }) => ({
+        url: `supper/teacher/homeworks/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["TeacherHomeworksGetDataById"],
+      transformResponse: (response: ITeacherHomeworks) => {
+        if (response.HomeworkAttachment.length > 0) {
+          response.HomeworkAttachment = response.HomeworkAttachment.map((item) => {
+            return {
+              ...item,
+              url: BASE_URL + "uploads/" + item.url,
+            };
+          });
+        }
+        return response;
+      },
+    }),
 
-    TeacherHomeworksCreate: build.mutation<
-      ITeacherHomeworks,
-      { teacherId: string; body: AddTeacherHomeworksPayload | FormData }
-    >({
+    TeacherHomeworksCreate: build.mutation<ITeacherHomeworks, { teacherId: string; body: AddTeacherHomeworksPayload | FormData }>({
       query: ({ teacherId, body }) => ({
         url: `supper/teacher/homeworks/${teacherId}`,
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "TeacherHomeworksCreate",
-        "TeacherHomeworksGetDataById",
-        "TeacherHomeworksGetData",
-      ],
+      invalidatesTags: ["TeacherHomeworksCreate", "TeacherHomeworksGetDataById", "TeacherHomeworksGetData"],
     }),
 
-    TeacherHomeworksUpdate: build.mutation<
-      ITeacherHomeworks,
-      { id: string; teacherId: string; body: AddTeacherHomeworksPayload }
-    >({
+    TeacherHomeworksUpdate: build.mutation<ITeacherHomeworks, { id: string; teacherId: string; body: AddTeacherHomeworksPayload }>({
       query: ({ body, id, teacherId }) => ({
         url: `supper/teacher/homeworks/${id}/${teacherId}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherHomeworksUpdate",
-              "TeacherHomeworksGetDataById",
-              "TeacherHomeworksGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherHomeworksUpdate", "TeacherHomeworksGetDataById", "TeacherHomeworksGetData"] : []),
     }),
 
     TeacherHomeworksRemove: build.mutation<void, { id: string }>({
@@ -153,14 +132,7 @@ export const TeacherHomeworks = api.injectEndpoints({
         url: `supper/teacher/homeworks/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherHomeworksRemove",
-              "TeacherHomeworksGetDataById",
-              "TeacherHomeworksGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherHomeworksRemove", "TeacherHomeworksGetDataById", "TeacherHomeworksGetData"] : []),
     }),
     TeacherHomeworksAttachmentsCreate: build.mutation<
       void,
@@ -175,14 +147,7 @@ export const TeacherHomeworks = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherHomeworksAttachmentsCreate",
-              "TeacherHomeworksGetDataById",
-              "TeacherHomeworksGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherHomeworksAttachmentsCreate", "TeacherHomeworksGetDataById", "TeacherHomeworksGetData"] : []),
     }),
     TeacherHomeworksAttachmentsRemove: build.mutation<
       void,
@@ -196,14 +161,7 @@ export const TeacherHomeworks = api.injectEndpoints({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherHomeworksAttachmentsRemove",
-              "TeacherHomeworksGetDataById",
-              "TeacherHomeworksGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherHomeworksAttachmentsRemove", "TeacherHomeworksGetDataById", "TeacherHomeworksGetData"] : []),
     }),
   }),
 });
