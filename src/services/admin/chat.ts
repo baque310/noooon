@@ -90,6 +90,15 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatDirect", "ChatGetData"] : []),
     }),
+    renameChat: build.mutation<IChat, { roomId: string } & AddChatPayload>({
+      query: ({ roomId, ...body }) => ({
+        url: `admin/chat/room/${roomId}/name`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: (res) => (res ? ["ChatDirect", "ChatGetData"] : []),
+    }),
+
     ChatMessage: build.mutation<IChat, AddChatMessagePayload>({
       query: (body) => ({
         url: `admin/chat/message`,
@@ -233,6 +242,7 @@ export const Chat = api.injectEndpoints({
 export const {
   useChatGetDataQuery,
   useLazyChatGetDataQuery,
+  useRenameChatMutation,
   useChatCreateClassParentsGroupMutation,
   useChatCreateSchoolStaffGroupMutation,
   useChatCreateSubjectTeachersGroupMutation,

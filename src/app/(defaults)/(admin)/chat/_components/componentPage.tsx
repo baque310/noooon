@@ -115,6 +115,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     sectionId?: string;
     stageId?: string;
     chatType?: string;
+    chatScope?: string;
     directUserType?: string;
   };
 
@@ -132,12 +133,28 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
     setParam((prev) => (value ? { ...prev, sectionId: value } : { ...prev, sectionId: undefined }));
   }, []);
 
+  const handleSelectChatScope = useCallback((value?: string) => {
+    setParam((prev) => {
+      const newParam = { ...prev };
+      if (value) {
+        newParam.chatScope = value;
+        delete newParam.chatType;
+        delete newParam.directUserType;
+      } else {
+        delete newParam.chatScope;
+      }
+      return newParam;
+    });
+  }, []);
+
+  // Update the existing handlers to clear chatScope when they're used
   const handleSelectChatType = useCallback((value?: string) => {
     setParam((prev) => {
       const newParam = { ...prev };
       if (value) {
         newParam.chatType = value;
-        delete newParam.directUserType; // Clear directUserType when setting chatType
+        delete newParam.directUserType;
+        delete newParam.chatScope;
       } else {
         delete newParam.chatType;
       }
@@ -151,6 +168,7 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
       if (value) {
         newParam.directUserType = value;
         delete newParam.chatType;
+        delete newParam.chatScope;
       } else {
         delete newParam.directUserType;
       }
@@ -174,11 +192,12 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
   const tabs = [
-    { key: "", chatType: "", label: "الكل" },
-    { key: "STUDENT", chatType: "", label: "الطلاب" },
-    { key: "TEACHER", chatType: "", label: "المعلمين" },
-    { key: "PARENT", chatType: "", label: "أولياء الأمور" },
-    { key: "DIRECT_MESSAGE", chatType: "DIRECT_MESSAGE", label: "المحادثات الخاصة" },
+    { key: "", type: "default", label: "الكل" },
+    { key: "STUDENT", type: "directUser", label: "الطلاب" },
+    { key: "TEACHER", type: "directUser", label: "المعلمين" },
+    { key: "PARENT", type: "directUser", label: "أولياء الأمور" },
+    { key: "DIRECT_MESSAGE", type: "chatType", label: "المحادثات الخاصة" },
+    { key: "GROUPS", type: "chatScope", label: "المجموعات" },
   ];
 
   const formatTimestamp = useCallback((ts: string | number | Date) => {
@@ -354,20 +373,34 @@ const ComponentPage: React.FC<ComponentPageProps> = ({ token_access }) => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div className="overflow-x-auto mx-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <div className="flex gap-2 px-3 pb-2 border-b border-gray-100 whitespace-nowrap">
                 {tabs.map((tab) => {
-                  const isActive =
-                    tab.key === "DIRECT_MESSAGE" ? param.chatType === tab.key : param.directUserType === tab.key || (!param.directUserType && !param.chatType && tab.key === "");
+                  let isActive = false;
+
+                  if (tab.type === "default") {
+                    isActive = !param.directUserType && !param.chatType && !param.chatScope && tab.key === "";
+                  } else if (tab.type === "directUser") {
+                    isActive = param.directUserType === tab.key;
+                  } else if (tab.type === "chatType") {
+                    isActive = param.chatType === tab.key;
+                  } else if (tab.type === "chatScope") {
+                    isActive = param.chatScope === tab.key;
+                  }
 
                   return (
                     <button
                       key={tab.key}
                       onClick={() => {
-                        if (tab.key === "DIRECT_MESSAGE") {
+                        if (tab.type === "chatType") {
                           handleSelectChatType(tab.key);
-                        } else {
+                        } else if (tab.type === "chatScope") {
+                          handleSelectChatScope(tab.key);
+                        } else if (tab.type === "directUser") {
                           handleSelectDirectUser(tab.key || undefined);
+                        } else {
+                          // Clear all filters for "الكل"
+                          handleSelectDirectUser(undefined);
                         }
                       }}
                       className={`px-4 py-2 rounded-full text-sm font-medium flex-shrink-0 ${

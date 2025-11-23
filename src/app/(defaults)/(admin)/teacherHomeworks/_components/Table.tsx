@@ -157,6 +157,8 @@ const TableComponent = () => {
     // pushWithCurrentParams("/sectionSchedule", { stageId, classId: undefined, sectionId: undefined });
   };
 
+  console.log(data?.data);
+
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -324,10 +326,21 @@ const TableComponent = () => {
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
               {
-                title: t("HomeworksPage.SectionName"),
-                accessor: "Section.name",
+                title: t("HomeworksPage.StageName"),
+                accessor: "teacherSubject.StageSubject.Subject.name",
                 // sortable: true,
-                render: ({ Section }: any) => Section?.name && t(Section?.name ?? ("" as any)),
+                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
+              },
+              {
+                title: t("HomeworksPage.SectionName"),
+                accessor: "StudentHomework",
+                render: ({ StudentHomework }) => {
+                  const list = Array.isArray(StudentHomework) ? StudentHomework : [];
+
+                  const sections = Array.from(new Set(list.map((item: any) => item?.Student?.StudentEnrollment?.[0]?.Section?.name).filter(Boolean)));
+
+                  return sections.length > 0 ? sections.join(", ") : "-";
+                },
               },
               {
                 title: t("HomeworksPage.SubjectName"),
