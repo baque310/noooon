@@ -80,10 +80,7 @@ import { BackButton } from "@/components/common/BackButton";
 import { ItemList } from "@/components/common/ItemList";
 
 import { getTranslation } from "@/ni18n/i18n";
-import {
-  useLazyStudentGetDataByIdQuery,
-  useStudentRemoveMutation,
-} from "@/services/admin/student";
+import { useLazyStudentGetDataByIdQuery, useStudentRemoveMutation } from "@/services/admin/student";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
@@ -93,16 +90,17 @@ import moment from "moment";
 import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { ChangePasswordByAdminModel } from "@/components/Model/ChangePasswordByAdminModel";
- 
+
+import { useUserRemoveMutation } from "@/services/Manager/User";
+
 const PageComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const params = useParams();
   const { id } = params;
-  const [StudentGetDataById, { currentData: data, isFetching }] =
-    useLazyStudentGetDataByIdQuery();
-  const [StudentRemove, { isLoading: isLoadingStudentRemove }] =
-    useStudentRemoveMutation();
+  const [StudentGetDataById, { currentData: data, isFetching }] = useLazyStudentGetDataByIdQuery();
+  const [StudentRemove, { isLoading: isLoadingStudentRemove }] = useStudentRemoveMutation();
+  const [UserRemove, { isLoading: isLoadingUserRemove }] = useUserRemoveMutation();
 
   useEffect(() => {
     if (id) {
@@ -127,8 +125,26 @@ const PageComponent = () => {
     }
   };
 
+  // Suspend user logic
   const [openDelete, setOpenDelete] = useState(false);
+  const [openSuspend, setOpenSuspend] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
+  const handleSuspend = async () => {
+    try {
+      await UserRemove({ username: String(data?.User?.username) }).unwrap();
+      toast.success(t("StudentPage.suspend-successfully"), { autoClose: 15000 });
+      setOpenSuspend(false);
+      router.back();
+    } catch (error: any) {
+      console.error("Failed to suspend user:", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
+
+  console.log(data);
 
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
@@ -139,64 +155,21 @@ const PageComponent = () => {
         <>
           <AttachmentsImage className="my-2 h-44" src={String(data?.photo)} />
           <div className="CardDetails internalMenu ">
-            <ItemList
-              title={t("StudentPage.fullName")}
-              value={String(data?.fullName)}
-            />
-            <ItemList
-              title={t("StudentPage.Username")}
-              value={String(data?.User?.username)}
-              isCopyToClipboard
-            />
-            <ItemList
-              title={t("StudentPage.fullNameParent")}
-              value={data?.Parent?.fullName}
-              isCopyToClipboard
-            />
-            <ItemList
-              title={t("StudentPage.gender")}
-              value={t(data?.gender?.toLowerCase() as any)}
-            />
-            <ItemList
-              title={t("StudentPage.address")}
-              value={String(data?.address)}
-            />
-            <ItemList
-              title={t("StudentPage.phone1")}
-              value={String(data?.phone1)}
-            />
-            <ItemList
-              title={t("StudentPage.phone2")}
-              value={String(data?.phone2)}
-            />
-            <ItemList
-              title={t("StudentPage.email")}
-              value={String(data?.email)}
-            />
-            <ItemList
-              title={t("StudentPage.birth")}
-              value={data?.birth && moment(data?.birth).format("YYYY-MM-DD")}
-            />
-            <ItemList
-              title={t("StudentPage.enrollmentDate")}
-              value={
-                data?.enrollmentDate &&
-                moment(data?.enrollmentDate).format("YYYY-MM-DD")
-              }
-            />
-            <ItemList
-              title={t("common.updatedAt")}
-              value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-            />
-            <ItemList
-              title={t("common.createdAt")}
-              value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-            />
+            <ItemList title={t("StudentPage.fullName")} value={String(data?.fullName)} />
+            <ItemList title={t("StudentPage.Username")} value={String(data?.User?.username)} isCopyToClipboard />
+            <ItemList title={t("StudentPage.fullNameParent")} value={data?.Parent?.fullName} isCopyToClipboard />
+            <ItemList title={t("StudentPage.gender")} value={t(data?.gender?.toLowerCase() as any)} />
+            <ItemList title={t("StudentPage.address")} value={String(data?.address)} />
+            <ItemList title={t("StudentPage.phone1")} value={String(data?.phone1)} />
+            <ItemList title={t("StudentPage.phone2")} value={String(data?.phone2)} />
+            <ItemList title={t("StudentPage.email")} value={String(data?.email)} />
+            <ItemList title={t("StudentPage.birth")} value={data?.birth && moment(data?.birth).format("YYYY-MM-DD")} />
+            <ItemList title={t("StudentPage.enrollmentDate")} value={data?.enrollmentDate && moment(data?.enrollmentDate).format("YYYY-MM-DD")} />
+            <ItemList title={t("common.updatedAt")} value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
+            <ItemList title={t("common.createdAt")} value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
           </div>
 
-          <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">
-            {t("common.settings")}
-          </div>
+          <div className="text-sm font-semibold text-black dark:text-white-dark  mt-2 mb-1 ">{t("common.settings")}</div>
           <div className="CardDetails internalMenu ">
             <ItemList
               props={{
@@ -214,11 +187,7 @@ const PageComponent = () => {
                     setOpenChangePassword(true);
                   },
                 }}
-                title={
-                  <div className="text-[#000]">
-                    {t("common.changePassword")}
-                  </div>
-                }
+                title={<div className="text-[#000]">{t("common.changePassword")}</div>}
                 value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
               />
             )}
@@ -231,14 +200,21 @@ const PageComponent = () => {
               title={<div className="text-danger">{t("common.delete")}</div>}
               value={<ArrowIcons className="rtl:rotate-180 text-danger/50" />}
             />
+            <ItemList
+              props={{
+                onClick: () => {
+                  setOpenSuspend(true);
+                },
+              }}
+              title={<div className="text-danger">{t("StudentPage.suspendUserAccount")}</div>}
+              value={<ArrowIcons className="rtl:rotate-180 text-danger/50" />}
+            />
           </div>
         </>
       )}
 
       <DeleteModel
-        description={t(
-          "StudentPage.Are-you-sure-you-want-to-delete-this-Student"
-        )}
+        description={t("StudentPage.Are-you-sure-you-want-to-delete-this-Student")}
         title={t("StudentPage.DeleteStudent")}
         open={openDelete}
         setOpen={setOpenDelete}
@@ -246,6 +222,18 @@ const PageComponent = () => {
         isLoading={isLoadingStudentRemove}
         name={data?.fullName ?? ""}
       />
+      {/* Suspend User Modal */}
+      {data?.User && (
+        <DeleteModel
+          description={t("StudentPage.Are-you-sure-you-want-to-suspend-this-User")}
+          title={t("StudentPage.suspendUserAccount")}
+          open={openSuspend}
+          setOpen={setOpenSuspend}
+          handleRemove={handleSuspend}
+          isLoading={isLoadingUserRemove}
+          name={data?.User?.username ?? ""}
+        />
+      )}
       {data?.User && (
         <ChangePasswordByAdminModel
           data={{

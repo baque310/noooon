@@ -64,11 +64,13 @@ export const User = api.injectEndpoints({
       }),
       // providesTags: (res) => (res ? ["UserManagerUpdatePassword"] : []),
     }),
+    UserRemove: build.mutation<void, { username: string }>({
+      query: ({ username }) => ({
+        url: `user/DeleteData/${username}`,
+        method: "DELETE",
+      }),
+      // invalidatesTags: ["UserRemove", "UserGetDataById", "UserGetData"],
+    }),
   }),
 });
-export const {
-  useUserGetDataQuery,
-  useLazyUserGetDataQuery,
-  useUserAdminUpdatePasswordMutation,
-  useUserManagerUpdatePasswordMutation,
-} = User;
+export const { useUserGetDataQuery, useUserRemoveMutation, useLazyUserGetDataQuery, useUserAdminUpdatePasswordMutation, useUserManagerUpdatePasswordMutation } = User;

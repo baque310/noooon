@@ -350,6 +350,8 @@
     "successCount": "Success count",
     "errorCount": "Error count",
     "errors": "Errors",
+    "suspend-successfully": "user account has been Suspended successfully",
+    "suspendUserAccount": "Suspend user account",
     "disconnectParent": "Disconnect Student from Guardian",
     "IsDo-disconnectParentMessage": "Do you want to disconnect the student from the guardian?",
     "enter-parent-full-name": "Enter guardian full name",
