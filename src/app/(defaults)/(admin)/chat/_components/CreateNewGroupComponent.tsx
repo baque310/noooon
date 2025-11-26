@@ -7,8 +7,6 @@ import Model from "@/components/Model";
 import { SelectForm } from "@/components/Form/SelectForm";
 import { InputForm } from "@/components/Form/inputForm";
 import { getTranslation } from "@/ni18n/i18n";
-
-import { CheckBoxForm } from "@/components/Form/CheckBoxForm";
 import { FormikHelpers } from "formik";
 
 import { toast } from "react-toastify";
@@ -35,7 +33,8 @@ import { useClassGetDataQuery } from "@/services/admin/class";
 import SendMessageIcon from "@/components/common/icons/SendMessageIcon";
 import { useSession } from "next-auth/react";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
-// export interface FormValues extends AddChatPayload {
+import { MultiSelectDropdown } from "@/components/MultiSelectDropdown";
+
 export interface FormValues
   extends Partial<AddChatPayload>,
     Partial<AddChatCreateCustomTeachersGroupPayload>,
@@ -43,19 +42,17 @@ export interface FormValues
     Partial<AddChatCreateSchoolStaffGroupPayload>,
     Partial<AddChatCreateClassStudentsGroupPayload> {
   GroupType?: string;
-  // prefer typed targetUserType when available
   targetUserType?: ChatTargetUserType | undefined;
-  // helper ids for select components
   studentId?: string;
   teacherId?: string;
   parentId?: string;
 }
+
 const CreateNewGroupComponent = ({
   open,
   setOpen,
   setOpenChat,
-}: // setOpenChat,
-{
+}: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenChat?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -63,7 +60,6 @@ const CreateNewGroupComponent = ({
   const { t } = getTranslation();
 
   const [, { isLoading: isLoadingChatDirect }] = useChatDirectMutation();
-
   const [ChatCreateSchoolStudentsGroup, { isLoading: isLoadingChatCreateSchoolStudentsGroup }] = useChatCreateClassStudentsGroupMutation();
   const [ChatCreateSchoolStaffGroup, { isLoading: isLoadingChatCreateSchoolStaffGroup }] = useChatCreateSchoolStaffGroupMutation();
   const [CreateCustomTeachersGroup, { isLoading: isLoadingCreateCustomTeachersGroup }] = useChatCreateCustomTeachersGroupMutation();
@@ -75,22 +71,27 @@ const CreateNewGroupComponent = ({
     take: 100,
     search: searchStudent,
   });
+
   const [searchTeacher, setSearchTeacher] = React.useState("");
   const { currentData: teachersData, isFetching: isFetchingTeachersData } = useTeacherGetDataQuery({
     skip: 1,
     take: 100,
     search: searchTeacher,
   });
+
   const { currentData: teachers, isFetching: isFetchingTeachers } = useTeacherSubjectGetDataQuery({
     search: searchTeacher,
   });
+
   const [searchParent, setSearchParent] = React.useState("");
   const { currentData: parents, isFetching: isFetchingParents } = useParentGetDataQuery({
     skip: 1,
     take: 100,
     search: searchParent,
   });
+
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
+
   const [searchClass, setSearchClass] = React.useState("");
   const { currentData: classes, isFetching: isFetchingClasses } = useClassGetDataQuery({
     search: searchClass,
@@ -100,9 +101,7 @@ const CreateNewGroupComponent = ({
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>, setOpen: any) => {
     try {
-      // Branch by GroupType and call the appropriate mutation
       if (values.GroupType === "studentGroup") {
-        // require stage/class/section
         await ChatCreateSchoolStudentsGroup({
           stageId: String(values.stageId),
           classId: String(values.classId),
@@ -116,7 +115,6 @@ const CreateNewGroupComponent = ({
           schoolId: session.data?.user.schoolId || "",
         }).unwrap();
       } else if (values.GroupType === "teacherGroup") {
-        // create custom teachers group (multi-select teacherIds expected)
         if (!values.teacherIds || values.teacherIds.length === 0) {
           toast.error(t("common.this-field-is-required"));
           return;
@@ -128,7 +126,6 @@ const CreateNewGroupComponent = ({
           teacherIds: values.teacherIds,
         }).unwrap();
       } else if (values.GroupType === "otherGroup") {
-        // create custom teachers group via checkbox list
         if (!values.teacherIds || values.teacherIds.length === 0) {
           toast.error(t("common.this-field-is-required"));
           return;
@@ -139,16 +136,8 @@ const CreateNewGroupComponent = ({
           schoolId: session.data?.user.schoolId || "",
           teacherIds: values.teacherIds,
         }).unwrap();
-      } else {
-        // default: direct chat
-        // await ChatDirect({
-        //   initialMessage: values.initialMessage || " ",
-        //   targetUserId: String(values.targetUserId),
-        //   targetUserType: values.targetUserType,
-        // }).unwrap();
       }
 
-      // parent group (class parents)
       if (values.GroupType === "parentGroup") {
         await CreateClassParentsGroup({
           classId: String(values.classId),
@@ -170,7 +159,6 @@ const CreateNewGroupComponent = ({
             autoClose: 30000,
           });
         }
-
         return toast.error(JSON.stringify(error), { autoClose: 30000 });
       }
       toast.error(error, { autoClose: 30000 });
@@ -178,20 +166,15 @@ const CreateNewGroupComponent = ({
   };
 
   const ChatSchema = Yup.object().shape({
-    // GroupType is required now: user must choose a type before submitting
     GroupType: Yup.string().required(t("common.this-field-is-required")),
-
-    // student group: require stage/class/section
     stageId: Yup.string().when("GroupType", (g, schema) => {
       const GroupType = g as unknown as string;
       return GroupType === "studentGroup" ? schema.required(t("common.this-field-is-required")) : schema.notRequired();
     }),
-
     sectionId: Yup.string().when("GroupType", (g, schema) => {
       const GroupType = g as unknown as string;
       return GroupType === "studentGroup" ? schema.required(t("common.this-field-is-required")) : schema.notRequired();
     }),
-
     teacherIds: Yup.array()
       .of(Yup.string())
       .when("GroupType", (g, schema) => {
@@ -202,19 +185,16 @@ const CreateNewGroupComponent = ({
       const GroupType = g as unknown as string;
       return GroupType === "parentGroup" ? schema.required(t("common.this-field-is-required")) : schema.notRequired();
     }),
-
     teacherId: Yup.string().when("GroupType", (g, schema) => {
       const GroupType = g as unknown as string;
       return GroupType === "parentGroup" ? schema.required(t("common.this-field-is-required")) : schema.notRequired();
     }),
-
     groupName: Yup.string().when("GroupType", (g, schema) => {
       const GroupType = g as unknown as string;
       return GroupType === "teacherGroup" || GroupType === "staffGroup" || GroupType === "otherGroup" || GroupType === "parentGroup"
         ? schema.required(t("common.this-field-is-required"))
         : schema.notRequired();
     }),
-
     description: Yup.string().when("GroupType", (g, schema) => {
       const GroupType = g as unknown as string;
       return GroupType === "teacherGroup" || GroupType === "staffGroup" || GroupType === "otherGroup" || GroupType === "parentGroup"
@@ -231,13 +211,10 @@ const CreateNewGroupComponent = ({
           initialMessage: "",
           targetUserId: "",
           targetUserType: "student",
-          // student group
           stageId: "",
           classId: "",
           sectionId: "",
-          // parent group helper
           teacherId: "",
-          // teacher group
           teacherIds: [],
           groupName: "",
           description: "",
@@ -257,12 +234,11 @@ const CreateNewGroupComponent = ({
                 { label: t("ChatPage.teacherGroup"), value: "teacherGroup" },
                 { label: t("ChatPage.studentGroup"), value: "studentGroup" },
                 { label: t("ChatPage.parentGroup"), value: "parentGroup" },
-                // { label: t("ChatPage.staffGroup"), value: "staffGroup" },
                 { label: t("ChatPage.otherGroup"), value: "otherGroup" },
               ]}
             />
 
-            {/* Render specific form for the selected GroupType */}
+            {/* Student Group */}
             {props.values.GroupType === "studentGroup" && (
               <>
                 <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
@@ -272,12 +248,10 @@ const CreateNewGroupComponent = ({
                   title={t("StudentEnrollmentPage.StageName")}
                   placeholder={t("StudentEnrollmentPage.enter-StageName")}
                   options={
-                    stage?.map((item) => {
-                      return {
-                        label: t(item.name as any),
-                        value: item.id,
-                      };
-                    }) ?? []
+                    stage?.map((item) => ({
+                      label: t(item.name as any),
+                      value: item.id,
+                    })) ?? []
                   }
                   props={{
                     isLoading: isFetchingStage,
@@ -299,12 +273,10 @@ const CreateNewGroupComponent = ({
                     stage
                       ? stage
                           .find((item) => item.id === props.values.stageId)
-                          ?.Class?.map((item) => {
-                            return {
-                              label: t(item.name as any),
-                              value: item.id,
-                            };
-                          }) || []
+                          ?.Class?.map((item) => ({
+                            label: t(item.name as any),
+                            value: item.id,
+                          })) || []
                       : []
                   }
                   props={{
@@ -327,12 +299,10 @@ const CreateNewGroupComponent = ({
                       ? stage
                           .find((item) => item.id === props.values.stageId)
                           ?.Class?.find((item) => item.id === props.values.classId)
-                          ?.Section?.map((item) => {
-                            return {
-                              label: t(item.name as any),
-                              value: item.id,
-                            };
-                          }) || []
+                          ?.Section?.map((item) => ({
+                            label: t(item.name as any),
+                            value: item.id,
+                          })) || []
                       : []
                   }
                   props={{
@@ -346,6 +316,7 @@ const CreateNewGroupComponent = ({
               </>
             )}
 
+            {/* Parent Group */}
             {props.values.GroupType === "parentGroup" && (
               <>
                 <SelectForm
@@ -405,19 +376,7 @@ const CreateNewGroupComponent = ({
               </>
             )}
 
-            {/* {props.values.GroupType === "staffGroup" && (
-              <>
-                <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
-                <InputForm
-                  formikProps={props}
-                  name={"description"}
-                  title={t("ChatPage.description")}
-                  placeholder={t("ChatPage.enter-description")}
-                  props={{ ...({ as: "textarea" } as any) }}
-                />
-              </>
-            )} */}
-
+            {/* Teacher Group */}
             {props.values.GroupType === "teacherGroup" && (
               <>
                 <SelectForm
@@ -435,9 +394,7 @@ const CreateNewGroupComponent = ({
                           tabIndex={0}
                           aria-label="Teacher subject card">
                           <div className="flex items-start gap-2">
-                            <span
-                              className="mt-0.5 rounded-lg p-1.5 bg-blue-50 text-blue-600 
-                     dark:bg-blue-400/10 dark:text-blue-300">
+                            <span className="mt-0.5 rounded-lg p-1.5 bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-300">
                               <BookOpen className="size-4" aria-hidden />
                             </span>
                             <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{teacher.StageSubject.Subject.name}</h3>
@@ -451,8 +408,7 @@ const CreateNewGroupComponent = ({
                           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
                             <span
                               className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
-                 text-gray-700 ring-1 ring-gray-200
-                 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                 text-gray-700 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
                               title="Section">
                               <Rows3 className="size-4 opacity-70" aria-hidden />
                               {teacher?.Section?.name}
@@ -460,8 +416,7 @@ const CreateNewGroupComponent = ({
 
                             <span
                               className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
-                 text-gray-700 ring-1 ring-gray-200
-                 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                 text-gray-700 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
                               title="Class">
                               <SquareStack className="size-4 opacity-70" aria-hidden />
                               {teacher.StageSubject.Class.name}
@@ -469,24 +424,20 @@ const CreateNewGroupComponent = ({
 
                             <span
                               className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
-                 text-gray-700 ring-1 ring-gray-200
-                 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                 text-gray-700 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
                               title="Stage">
                               <GraduationCap className="size-4 opacity-70" aria-hidden />
                               {t(teacher.StageSubject.Stage.name as any)}
                             </span>
                           </div>
 
-                          <div
-                            className="pointer-events-none absolute inset-y-0 right-2 hidden items-center 
-                  opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40">
+                          <div className="pointer-events-none absolute inset-y-0 right-2 hidden items-center opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40">
                             <svg viewBox="0 0 24 24" className="size-4 fill-current">
                               <path d="M9 18l6-6-6-6" />
                             </svg>
                           </div>
                         </div>
                       ),
-
                       value: teacher.id,
                     })) || []
                   }
@@ -512,74 +463,25 @@ const CreateNewGroupComponent = ({
               </>
             )}
 
+            {/* Other Group - Using MultiSelectDropdown */}
             {props.values.GroupType === "otherGroup" && (
               <>
-                <InputForm
+                <MultiSelectDropdown
                   formikProps={props}
-                  name={"searchUser"}
-                  title={t("")}
-                  placeholder={t("common.search")}
-                  props={{
-                    onChange: (e: any) => {
-                      setSearchTeacher(e.target.value);
-                      props.setFieldValue("searchUser", e.target.value);
-                    },
+                  name="teacherIds"
+                  title={t("ChatPage.select-teachers") || "Select Teachers"}
+                  placeholder={t("ChatPage.select-teachers") || "Select teachers"}
+                  options={
+                    teachersData?.data?.map((item) => ({
+                      label: item.fullName,
+                      value: item.id,
+                    })) || []
+                  }
+                  isLoading={isFetchingTeachersData}
+                  onSelectionChange={(selectedIds: any) => {
+                    console.log("Selected teacher IDs:", selectedIds);
                   }}
                 />
-
-                {isFetchingTeachersData ? (
-                  <div className="flex justify-center">
-                    <div className="loader !bg-primary !w-8 !h-8" />
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-2 max-h-[220px] overflow-y-auto border p-2 border-primary/30 rounded-md">
-                    {/* Select All Checkbox */}
-                    <div className="p-1 border-b">
-                      <CheckBoxForm
-                        formikProps={props}
-                        name="selectAll"
-                        title={t("common.select-all") || "Select All"}
-                        props={{
-                          checked:
-                            teachersData?.data && teachersData?.data?.length > 0 && teachersData?.data?.every((item: any) => (props.values.teacherIds || []).includes(item.id)),
-                          onChange: (e: any) => {
-                            if (e.target.checked) {
-                              const allTeacherIds = teachersData?.data?.map((item: any) => item.id) || [];
-                              props.setFieldValue("teacherIds", allTeacherIds);
-                            } else {
-                              props.setFieldValue("teacherIds", []);
-                            }
-                          },
-                        }}
-                      />
-                    </div>
-
-                    {/* Individual Teacher Checkboxes */}
-                    {teachersData?.data?.map((item, index) => (
-                      <div className="p-1 border-b" key={item.id}>
-                        <CheckBoxForm
-                          key={index}
-                          formikProps={props}
-                          name={`teacherIds.${index}`}
-                          title={`${item.fullName}`}
-                          props={{
-                            checked: (props.values.teacherIds || []).some((it: any) => it == item.id),
-                            value: (props.values.teacherIds || []).some((it: any) => it == item.id),
-                            onChange: (e: any) => {
-                              if (e.target.checked) {
-                                let newValues = (props.values.teacherIds || []).concat(item.id);
-                                props.setFieldValue(`teacherIds`, newValues);
-                              } else {
-                                let newValues = (props.values.teacherIds || []).filter((it: any) => it != item.id);
-                                props.setFieldValue(`teacherIds`, newValues);
-                              }
-                            },
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
 
                 <InputForm formikProps={props} name={"groupName"} title={t("ChatPage.group-name")} placeholder={t("ChatPage.enter-group-name")} />
                 <InputForm

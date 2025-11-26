@@ -38,6 +38,7 @@ import moment from "moment";
 import { Days } from "@/services/types/BaseType";
 import { AddSuperTeacherAttendancesPayload, useSuperTeacherAttendancesCreateMutation } from "@/services/admin/Super-Teacher-attendances";
 import { MultiValue, SingleValue } from "react-select";
+import { MultiSelectDropdown } from "@/components/MultiSelectDropdown";
 
 const AttendanceButton = ({ status, isSelected, onClick, icon }: { status: string; isSelected: boolean; onClick: () => void; icon: React.ReactNode }) => {
   const { t } = getTranslation();
@@ -379,10 +380,9 @@ const PageComponent = () => {
                         }}
                       />
                     )}
-
                     <DateTimeForm formikProps={props} name="date" title={t("SuperTeacherAttendancesPage.date")} placeholder={t("SuperTeacherAttendancesPage.select-date")} />
 
-                    {props.values.date && (
+                    {/* {props.values.date && (
                       <div className="md:col-span-2">
                         <SelectForm
                           formikProps={props}
@@ -408,6 +408,32 @@ const PageComponent = () => {
                               props.setFieldValue("sectionScheduleIds", (newValue as any) ?? []);
                               props.setFieldValue("attendanceRecords", []);
                             },
+                          }}
+                        />
+                      </div>
+                    )} */}
+                    {props.values.date && (
+                      <div className="md:col-span-2">
+                        <MultiSelectDropdown
+                          formikProps={props}
+                          name="sectionScheduleIds"
+                          title={t("SuperTeacherAttendancesPage.sectionSchedule")}
+                          placeholder={t("SuperTeacherAttendancesPage.select-sectionSchedule")}
+                          options={(() => {
+                            const weekday = moment(props.values.date).format("dddd").toUpperCase() as keyof typeof Days;
+                            return (
+                              SectionSchedule?.data[weekday]?.map((item) => ({
+                                label: `${t(item.Schedule.day as any)} - ${item.teacherSubject.StageSubject.Subject.name} - ${moment
+                                  .utc(item.Schedule.timeFrom)
+                                  .format("hh:mm:ss A")} - ${moment.utc(item.Schedule.timeTo).format("hh:mm:ss A")} (${item.teacherSubject.Teacher.fullName})`,
+                                value: item.id,
+                              })) || []
+                            );
+                          })()}
+                          isLoading={isFetchingSectionSchedule}
+                          onSelectionChange={(selectedIds) => {
+                            // Clear attendance records when schedule changes
+                            props.setFieldValue("attendanceRecords", []);
                           }}
                         />
                       </div>
