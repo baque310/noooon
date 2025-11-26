@@ -17,8 +17,14 @@ interface MultiSelectDropdownProps {
   placeholder?: string;
   options: MultiSelectOption[];
   isLoading?: boolean;
-  onSelectionChange?: (selectedValues: string[]) => void;
+  onSelectionChange?: (selectedValues: string[] | MultiSelectOption[]) => void;
   disabled?: boolean;
+  /**
+   * Output format for selected values
+   * - "ids": returns array of strings (e.g., ["id1", "id2"])
+   * - "objects": returns array of objects (e.g., [{label: "...", value: "id1"}, ...])
+   */
+  outputFormat?: "ids" | "objects";
 }
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
@@ -30,6 +36,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   isLoading = false,
   onSelectionChange,
   disabled = false,
+  outputFormat = "ids", // Default to IDs for backward compatibility
 }) => {
   const { t } = getTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -37,7 +44,20 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const selectedValues = (formikProps.values[name] || []) as string[];
+  // Get selected values based on format
+  const getSelectedValues = (): string[] => {
+    const fieldValue = formikProps.values[name] || [];
+
+    if (outputFormat === "objects") {
+      // If field value is array of objects, extract values
+      return Array.isArray(fieldValue) && fieldValue.length > 0 && typeof fieldValue[0] === "object" ? fieldValue.map((item: MultiSelectOption) => item.value) : [];
+    } else {
+      // If field value is array of strings, use directly
+      return Array.isArray(fieldValue) && typeof fieldValue[0] === "string" ? fieldValue : [];
+    }
+  };
+
+  const selectedValues = getSelectedValues();
   const error = formikProps.touched[name] && formikProps.errors[name];
 
   // Filter options based on search query
@@ -72,6 +92,50 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   }, [isDropdownOpen]);
 
   const isAllSelected = filteredOptions.length > 0 && filteredOptions.every((option) => selectedValues.includes(option.value));
+
+  // Helper function to format output based on outputFormat
+  const formatOutput = (values: string[]): string[] | MultiSelectOption[] => {
+    if (outputFormat === "objects") {
+      return values.map((value) => {
+        const option = options.find((opt) => opt.value === value);
+        return option || { label: value, value };
+      });
+    }
+    return values;
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allValues = filteredOptions.map((option) => option.value);
+      const combined = [...selectedValues, ...allValues];
+      const uniqueValues = Array.from(new Set(combined));
+      const formattedValues = formatOutput(uniqueValues);
+
+      formikProps.setFieldValue(name, formattedValues);
+      onSelectionChange?.(formattedValues);
+    } else {
+      const filteredValues = filteredOptions.map((option) => option.value);
+      const remainingValues = selectedValues.filter((val) => !filteredValues.includes(val));
+      const formattedValues = formatOutput(remainingValues);
+
+      formikProps.setFieldValue(name, formattedValues);
+      onSelectionChange?.(formattedValues);
+    }
+  };
+
+  const handleOptionChange = (optionValue: string, checked: boolean) => {
+    let newValues: string[];
+
+    if (checked) {
+      newValues = [...selectedValues, optionValue];
+    } else {
+      newValues = selectedValues.filter((val) => val !== optionValue);
+    }
+
+    const formattedValues = formatOutput(newValues);
+    formikProps.setFieldValue(name, formattedValues);
+    onSelectionChange?.(formattedValues);
+  };
 
   return (
     <div className="w-full">
@@ -134,20 +198,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                     title={(t("common.select-all") || "Select All") as string}
                     props={{
                       checked: isAllSelected,
-                      onChange: (e: any) => {
-                        if (e.target.checked) {
-                          const allValues = filteredOptions.map((option) => option.value);
-                          const combined = [...selectedValues, ...allValues];
-                          const newValues = Array.from(new Set(combined));
-                          formikProps.setFieldValue(name, newValues);
-                          onSelectionChange?.(newValues);
-                        } else {
-                          const filteredValues = filteredOptions.map((option) => option.value);
-                          const newValues = selectedValues.filter((val) => !filteredValues.includes(val));
-                          formikProps.setFieldValue(name, newValues);
-                          onSelectionChange?.(newValues);
-                        }
-                      },
+                      onChange: (e: any) => handleSelectAll(e.target.checked),
                     }}
                   />
                 </div>
@@ -165,17 +216,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                       props={{
                         checked: selectedValues.includes(option.value),
                         value: option.value,
-                        onChange: (e: any) => {
-                          if (e.target.checked) {
-                            const newValues = [...selectedValues, option.value];
-                            formikProps.setFieldValue(name, newValues);
-                            onSelectionChange?.(newValues);
-                          } else {
-                            const newValues = selectedValues.filter((val) => val !== option.value);
-                            formikProps.setFieldValue(name, newValues);
-                            onSelectionChange?.(newValues);
-                          }
-                        },
+                        onChange: (e: any) => handleOptionChange(option.value, e.target.checked),
                       }}
                     />
                   </div>

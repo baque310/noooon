@@ -478,7 +478,8 @@ const CreateNewGroupComponent = ({
                     })) || []
                   }
                   isLoading={isFetchingTeachersData}
-                  onSelectionChange={(selectedIds: any) => {
+                  outputFormat="ids" // Returns ["id1", "id2", "id3"]
+                  onSelectionChange={(selectedIds) => {
                     console.log("Selected teacher IDs:", selectedIds);
                   }}
                 />

@@ -431,8 +431,9 @@ const PageComponent = () => {
                             );
                           })()}
                           isLoading={isFetchingSectionSchedule}
-                          onSelectionChange={(selectedIds) => {
-                            // Clear attendance records when schedule changes
+                          outputFormat="objects" // Returns [{label: "...", value: "id1"}, ...]
+                          onSelectionChange={(selectedSchedules) => {
+                            console.log("Selected schedules:", selectedSchedules);
                             props.setFieldValue("attendanceRecords", []);
                           }}
                         />

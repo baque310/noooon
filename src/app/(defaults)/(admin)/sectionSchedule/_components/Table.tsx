@@ -72,8 +72,6 @@ const TableComponent = () => {
   const [getData, { isFetching, currentData: data }] = useLazySectionScheduleGetDataQuery();
 
   useEffect(() => {
-    console.log(param);
-
     getData({
       sectionId: param?.sectionId,
       ...(search && { search: search as string }),
