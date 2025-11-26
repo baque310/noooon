@@ -75,10 +75,8 @@ const TableComponent = () => {
     console.log(param);
 
     getData({
+      sectionId: param?.sectionId,
       ...(search && { search: search as string }),
-      ...(param?.sectionId && {
-        sectionId: param.sectionId,
-      }),
       ...(param?.schoolYearId && {
         schoolYearId: param.schoolYearId,
       }),
