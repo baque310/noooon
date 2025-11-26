@@ -59,7 +59,7 @@ export interface UpdateSectionSchedulePayload {
 
 export const SectionSchedule = api.injectEndpoints({
   endpoints: (build) => ({
-    SectionScheduleGetData: build.query<ISectionSchedule, GetDataRequestParams>({
+    SectionScheduleGetData: build.query<ISectionSchedule, GetDataRequestParams & { sectionId: string | undefined }>({
       query: (params) => ({
         url: `admin/sectionSchedule`,
         params,

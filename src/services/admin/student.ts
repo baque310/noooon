@@ -59,21 +59,18 @@ export interface AddMultiStudentPayload {
 export interface IStudentMultipleForExcel {
   success: IStudent[];
   errors: {
-    index: number
+    index: number;
     student: IStudent;
     error: string;
   }[];
-  totalProcessed: number
-  successCount: number
-  errorCount: number
+  totalProcessed: number;
+  successCount: number;
+  errorCount: number;
 }
 
 export const Student = api.injectEndpoints({
   endpoints: (build) => ({
-    StudentGetData: build.query<
-      BaseGetDataResponse<IStudent>,
-      GetDataRequestParams
-    >({
+    StudentGetData: build.query<BaseGetDataResponse<IStudent>, GetDataRequestParams>({
       query: (params) => ({
         url: `admin/student`,
         params,
@@ -92,10 +89,7 @@ export const Student = api.injectEndpoints({
         return response;
       },
     }),
-    StudentGetDataHasNoEnrollment: build.query<
-      BaseGetDataResponse<IStudent>,
-      GetDataRequestParams
-    >({
+    StudentGetDataHasNoEnrollment: build.query<BaseGetDataResponse<IStudent>, GetDataRequestParams>({
       query: (params) => ({
         url: `admin/student/has-no-enrollment`,
         params,
@@ -135,11 +129,7 @@ export const Student = api.injectEndpoints({
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "StudentCreate",
-        "StudentGetDataById",
-        "StudentGetData",
-      ],
+      invalidatesTags: ["StudentCreate", "StudentGetDataById", "StudentGetData"],
     }),
     StudentCreateMulti: build.mutation<IStudent, AddMultiStudentPayload>({
       query: (body) => ({
@@ -147,11 +137,7 @@ export const Student = api.injectEndpoints({
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "StudentCreateMulti",
-        "StudentGetDataById",
-        "StudentGetData",
-      ],
+      invalidatesTags: ["StudentCreateMulti", "StudentGetDataById", "StudentGetData"],
     }),
     StudentMultiStudentsForExcel: build.mutation<
       IStudentMultipleForExcel,
@@ -164,11 +150,7 @@ export const Student = api.injectEndpoints({
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "StudentMultiStudentsForExcel",
-        "StudentGetDataById",
-        "StudentGetData",
-      ],
+      invalidatesTags: ["StudentMultiStudentsForExcel", "StudentGetDataById", "StudentGetData"],
     }),
     StudentConnectParent: build.mutation<
       IStudent,
@@ -182,11 +164,7 @@ export const Student = api.injectEndpoints({
 
         method: "PATCH",
       }),
-      invalidatesTags: [
-        "StudentConnectParent",
-        "StudentGetDataById",
-        "StudentGetData",
-      ],
+      invalidatesTags: ["StudentConnectParent", "StudentGetDataById", "StudentGetData"],
     }),
     StudentDisconnectParent: build.mutation<
       IStudent,
@@ -199,26 +177,15 @@ export const Student = api.injectEndpoints({
 
         method: "PATCH",
       }),
-      invalidatesTags: [
-        "StudentDisconnectParent",
-        "StudentGetDataById",
-        "StudentGetData",
-      ],
+      invalidatesTags: ["StudentDisconnectParent", "StudentGetDataById", "StudentGetData"],
     }),
-    StudentUpdate: build.mutation<
-      IStudent,
-      { id: string; body: AddStudentPayload | FormData }
-    >({
+    StudentUpdate: build.mutation<IStudent, { id: string; body: AddStudentPayload | FormData }>({
       query: ({ body, id }) => ({
         url: `admin/student/${id}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: [
-        "StudentUpdate",
-        "StudentGetDataById",
-        "StudentGetData",
-      ],
+      invalidatesTags: ["StudentUpdate", "StudentGetDataById", "StudentGetData"],
     }),
 
     StudentRemove: build.mutation<void, { id: string }>({
@@ -226,11 +193,7 @@ export const Student = api.injectEndpoints({
         url: `admin/student/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [
-        "StudentRemove",
-        "StudentGetDataById",
-        "StudentGetData",
-      ],
+      invalidatesTags: ["StudentRemove", "StudentGetDataById", "StudentGetData"],
     }),
   }),
 });

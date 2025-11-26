@@ -110,6 +110,7 @@ const TableComponent = () => {
 
   const { isFetching: isFetchingSectionSchedule, currentData: SectionScheduleData } = useSectionScheduleGetDataQuery({
     schoolYearId: param?.schoolYearId,
+    sectionId: param?.sectionId,
   });
 
   const pushWithCurrentParams = (path = "/superTeacherAttendances", extra: Record<string, any> = {}) => {
@@ -136,11 +137,17 @@ const TableComponent = () => {
     }
   };
 
-  const handleSelectSection = (value: any) => {
+  const handleSelectSectionSchedule = (value: any) => {
     // setSectionId(value ? value : undefined);
     const sectionScheduleId = value ?? undefined;
     setParam((old) => ({ ...(old ?? {}), sectionScheduleId }));
     pushWithCurrentParams("/superTeacherAttendances", { sectionScheduleId });
+  };
+  const handleSelectSection = (value: any) => {
+    // setSectionId(value ? value : undefined);
+    const sectionId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), sectionId }));
+    pushWithCurrentParams("/superTeacherAttendances", { sectionId });
   };
   const handleSelectClass = (value: any) => {
     // setClassId(value ? value : undefined);
@@ -240,36 +247,8 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
+
           <div className="flex gap-3 max-md:flex-col max-md:items-end">
-            {/* Day Selector */}
-            <SelectWithSearch
-              placeholder={t("SuperTeacherAttendancesPage.Select_Day")}
-              props={{
-                onChange: (option: any) => {
-                  setSelectedDay(option?.value as Days);
-                  setParam({ ...param, sectionScheduleId: undefined });
-                },
-                value: selectedDay,
-              }}
-              options={days.map((day) => ({
-                label: t(day),
-                value: day,
-              }))}
-            />
-
-            {/* Section Schedule Selector */}
-            {selectedDay && (
-              <SelectWithSearch
-                placeholder={t("SuperTeacherAttendancesPage.Select_Section_Schedule")}
-                props={{
-                  onChange: (option: any) => handleSelectSection(option?.value),
-                  value: param?.sectionScheduleId,
-                  isDisabled: !selectedDay,
-                }}
-                options={sectionOptions}
-              />
-            )}
-
             <DatePicker value={selectedDate} onChange={handleSelectDate} placeholder={t("SuperTeacherAttendancesPage.Select_Date") || "Select Date"} className="min-w-[180px]" />
           </div>
 
@@ -332,7 +311,9 @@ const TableComponent = () => {
           }
         </div>
       </div>
-      {/* <div className="flex py-3 gap-3 max-md:flex-col max-md:items-end">
+      <div className={"flex justify-between max-md:flex-col gap-2 "}></div>
+
+      <div className="flex py-3 gap-3 max-md:flex-col max-md:items-end">
         <SelectFilter
           value={param?.stageId}
           placement="bottom-end"
@@ -381,7 +362,37 @@ const TableComponent = () => {
             }
           />
         )}
-      </div> */}
+        <div className="flex gap-3 max-md:flex-col max-md:items-end">
+          {/* Day Selector */}
+          <SelectWithSearch
+            placeholder={t("SuperTeacherAttendancesPage.Select_Day")}
+            props={{
+              onChange: (option: any) => {
+                setSelectedDay(option?.value as Days);
+                setParam({ ...param, sectionScheduleId: undefined });
+              },
+              value: selectedDay,
+            }}
+            options={days.map((day) => ({
+              label: t(day),
+              value: day,
+            }))}
+          />
+
+          {/* Section Schedule Selector */}
+          {selectedDay && (
+            <SelectWithSearch
+              placeholder={t("SuperTeacherAttendancesPage.Select_Section_Schedule")}
+              props={{
+                onChange: (option: any) => handleSelectSectionSchedule(option?.value),
+                value: param?.sectionScheduleId,
+                isDisabled: !selectedDay,
+              }}
+              options={sectionOptions}
+            />
+          )}
+        </div>
+      </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
