@@ -418,7 +418,6 @@ const TableComponent = () => {
                     Absent: "bg-red-50 border-red-200",
                     Vacation: "bg-blue-50 border-blue-200",
                   };
-                  console.log(record);
 
                   return (
                     <div

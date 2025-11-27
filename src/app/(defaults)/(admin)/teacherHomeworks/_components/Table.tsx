@@ -1,7 +1,6 @@
 "use client";
 import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
-
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
@@ -20,6 +19,7 @@ import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { useTeacherHomeworksGetDataQuery } from "@/services/admin/teacherHomeworks";
 import { AddIcons } from "@/components/common/icons/Actions";
 import { useStageGetDataQuery } from "@/services/admin/stage";
+import { DatePicker } from "@/components/Filter/DatePicker";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -30,163 +30,170 @@ const TableComponent = () => {
     columnAccessor: "createdAt",
     direction: "desc",
   });
+
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
+
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
-  const [pageNumber, setPageNumber] = useState(Number(1));
 
-  const [stageId, setStageId] = useState<string | undefined>(undefined);
-  const [classId, setClassId] = useState<string | undefined>(undefined);
-  const [sectionId, setSectionId] = useState<string | undefined>(undefined);
-  const [schoolYearId, setSchoolYearId] = useState<string | undefined>(undefined);
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
-  const [param, setParam] = useState<
-    | {
-        search?: string;
-        range?: string;
-        sectionId?: string;
-        schoolYearId?: string;
-        teacherSubjectId?: string;
-        classId?: string;
-        stageId?: string;
-      }
-    | undefined
-  >();
-  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
-  const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
-    stageId: stageId,
-    classId: classId,
+  const [stageId, setStageId] = useState<string | undefined>();
+  const [classId, setClassId] = useState<string | undefined>();
+  const [sectionId, setSectionId] = useState<string | undefined>();
+  const [schoolYearId, setSchoolYearId] = useState<string | undefined>();
+  const [selectedDate, setSelectedDate] = useState<string>("");
+
+  const [param, setParam] = useState<{
+    search?: string;
+    range?: string;
+    sectionId?: string;
+    schoolYearId?: string;
+    teacherSubjectId?: string;
+    classId?: string;
+    stageId?: string;
+    date?: string;
+  }>({});
+
+  // ------------------ FIXED DATE FILTER ------------------
+  const handleSelectDate = (value: string) => {
+    setSelectedDate(value);
+    setParam((prev) => ({
+      ...prev,
+      date: value || undefined,
+    }));
+  };
+
+  const { currentData: SectionData } = useSectionGetDataQuery({});
+  const { currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+    stageId,
+    classId,
     schoolYearId: schoolYearId || Setting?.currentSchoolYearId || "",
-    sectionId: sectionId,
+    sectionId,
   });
-  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
+  const { currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
+  // ------------------ SCHOOL YEAR DEFAULT ------------------
   useEffect(() => {
     if (SchoolYearData && Setting) {
-      setParam({
-        ...param, // Change this from 'params' to 'param'
+      setParam((prev) => ({
+        ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
-      });
+      }));
     }
   }, [SchoolYearData, Setting]);
 
+  // ------------------ API PARAMS (DATE ADDED) ------------------
   const params = {
     skip: pageNumber,
     take: 10,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
-    ...(search && { search: search as string }),
-    // ...param,
+    ...(search && { search }),
 
-    range: param?.range,
-    sectionId: param?.sectionId,
-    schoolYearId: param?.schoolYearId,
-    teacherSubjectId: param?.teacherSubjectId,
+    range: param.range,
+    sectionId: param.sectionId,
+    schoolYearId: param.schoolYearId,
+    teacherSubjectId: param.teacherSubjectId,
+
+    ...(param?.date && { date: param.date }), // ✅ FIXED
   };
 
-  const { isFetching: isFetching, currentData: data } = useTeacherHomeworksGetDataQuery({
-    ...params,
-  });
-  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+  const { isFetching, currentData: data } = useTeacherHomeworksGetDataQuery(params);
 
+  const { currentData: StageData } = useStageGetDataQuery();
+
+  // ------------------ SEARCH HANDLERS ------------------
   const [Search, setSearch] = useState(search);
+  const allParams = new URLSearchParams(searchParams);
+
   const handleChange = (e: any) => {
     const value = e.target.value;
     setSearch(value);
-    if (value == "") {
-      handleSearch(value);
-    }
+    if (value === "") handleSearch(value);
   };
-  const allParams = new URLSearchParams(searchParams);
+
   const handleSearch = (value?: string) => {
-    if (search != Search) {
+    if (search !== Search) {
       allParams.set("search", value ?? Search);
       router.push(`/teacherHomeworks?${allParams.toString()}`);
       setPageNumber(1);
     }
   };
+
   const handleKeyPress = (event: any) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
+    if (event.key === "Enter") handleSearch();
   };
 
+  // ------------------ SELECT HANDLERS ------------------
   const handleSelectSection = (value: any) => {
-    setSectionId(value ? value : undefined);
-    if (value) {
-      setParam({ ...param, sectionId: value });
-    } else {
-      setParam({ ...param, sectionId: undefined });
-    }
+    setSectionId(value || undefined);
+    setParam((prev) => ({ ...prev, sectionId: value || undefined }));
   };
+
   const handleSelectTeacherSubject = (value: any) => {
-    if (value) {
-      setParam({ ...param, teacherSubjectId: value.value });
-    } else {
-      setParam({ ...param, teacherSubjectId: undefined });
-    }
+    setParam((prev) => ({
+      ...prev,
+      teacherSubjectId: value?.value || undefined,
+    }));
   };
+
   const handleSelectSchoolYear = (value: any) => {
-    setSchoolYearId(value ? value.value : undefined);
-    if (value) {
-      setParam({ ...param, schoolYearId: value });
-    } else {
-      setParam({ ...param, schoolYearId: undefined });
-    }
+    setSchoolYearId(value?.value || undefined);
+    setParam((prev) => ({
+      ...prev,
+      schoolYearId: value?.value || undefined,
+    }));
   };
+
   const handleSelectClass = (value: any) => {
-    setClassId(value ? value : undefined);
-    const classId = value ?? undefined;
-    setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
-    // pushWithCurrentParams("/sectionSchedule", { classId, sectionId: undefined });
+    const classId = value || undefined;
+    setClassId(classId);
+    setParam((prev) => ({
+      ...prev,
+      classId,
+      sectionId: undefined,
+    }));
   };
 
   const handleSelectStage = (value: any) => {
-    setStageId(value ? value : undefined);
-    const stageId = value ?? undefined;
-    setParam((old) => ({
-      ...(old ?? {}),
+    const stageId = value || undefined;
+    setStageId(stageId);
+    setParam((prev) => ({
+      ...prev,
       stageId,
       classId: undefined,
       sectionId: undefined,
     }));
-    // pushWithCurrentParams("/sectionSchedule", { stageId, classId: undefined, sectionId: undefined });
   };
 
-  console.log(data?.data);
-
   return (
-    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
-      <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">{t("HomeworksPage.Homeworks")}</div>
-        <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
-          <input
-            value={Search ?? ""}
-            placeholder={`${t("common.search")} ...`}
-            onKeyDown={handleKeyPress}
-            onChange={handleChange}
-            id="search"
-            className="form-input text-white-dark"
-            name="search"
-          />
+    <div className="m-4 rtl:transition-[left] ltr:transition-[right] duration-1000">
+      <div className="flex justify-between max-md:flex-col gap-2">
+        <div className="text-xl uppercase">{t("HomeworksPage.Homeworks")}</div>
+
+        <div className="flex gap-3 max-md:flex-col max-md:items-end">
+          <input value={Search} placeholder={`${t("common.search")} ...`} onKeyDown={handleKeyPress} onChange={handleChange} className="form-input text-white-dark" />
 
           <SelectWithSearch
             placeholder={t("HomeworksPage.SchoolYear")}
-            isLoading={isFetchingSchoolYearData || isFetchingSetting}
+            isLoading={!SchoolYearData || isFetchingSetting}
             props={{
               onChange: handleSelectSchoolYear,
-              value: param?.schoolYearId,
+              value: param.schoolYearId,
             }}
-            options={SchoolYearData?.map((item) => {
-              return {
-                value: item.id,
-                label: item.from + "-" + item.to,
-              };
-            })}
+            options={SchoolYearData?.map((item) => ({
+              value: item.id,
+              label: `${item.from}-${item.to}`,
+            }))}
           />
+
+          <DatePicker value={selectedDate} onChange={handleSelectDate} placeholder={t("SuperTeacherAttendancesPage.Select_Date")} className="min-w-[180px]" />
         </div>
       </div>
-      <div className="flex justify-between items-center">
+
+      {/* ------------------ STAGE / CLASS / SECTION ------------------ */}
+      <div className="flex justify-between items-center mt-2">
         <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
           <SelectFilter
             value={param?.stageId}
@@ -258,36 +265,28 @@ const TableComponent = () => {
             </div>
           )}
         </div>
-        {
-          <RolePageAndActionBasedComponent
-            component={(props) => {
-              return (
-                <button
-                  className={` ${
-                    props.disabled && "hidden"
-                  } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                  onClick={() => {
-                    router.push("/teacherHomeworks/createOrUpdate");
-                  }}>
-                  <AddIcons className="h-4 w-4" />
-                  {t("common.add")}
-                </button>
-              );
-            }}
-            resource={"homework"}
-            permission={["create-any", "create-own"]}
-          />
-        }
+
+        <RolePageAndActionBasedComponent
+          resource={"homework"}
+          permission={["create-any", "create-own"]}
+          component={(props) => (
+            <button
+              className={`${props.disabled && "hidden"} flex items-center gap-1 bg-primary text-white py-1 px-2 rounded border`}
+              onClick={() => router.push("/teacherHomeworks/createOrUpdate")}>
+              <AddIcons className="h-4 w-4" />
+              {t("common.add")}
+            </button>
+          )}
+        />
       </div>
+
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
-            onRowClick={async (item) => {
-              router.push(`/teacherHomeworks/${item.record.id}`);
-            }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
             records={data?.data as any}
+            onRowClick={(item) => router.push(`/teacherHomeworks/${item.record.id}`)}
             columns={[
               {
                 title: t("HomeworksPage.title"),
@@ -322,10 +321,12 @@ const TableComponent = () => {
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
               // {
-              //   title: t("HomeworksPage.StageName"),
+              //   title: t("HomeworksPage.ClassName"),
               //   accessor: "teacherSubject.StageSubject.Class.name",
-              //   // sortable: true,
-              //   render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Class.name && t(teacherSubject.StageSubject.Class.name ?? ("" as any)),
+              //   render: ({ teacherSubject }: any) => {
+              //     const name = teacherSubject?.StageSubject?.Class?.name;
+              //     return name ? t(name as any) : "-";
+              //   },
               // },
               {
                 title: t("HomeworksPage.SectionName"),
@@ -365,17 +366,12 @@ const TableComponent = () => {
             customLoader={<div className="loader !bg-primary"></div>}
             noRecordsText={t("common.no-data")}
             noRecordsIcon={<></>}
-            {...(isFetching && { minHeight: 130 })}
             sortStatus={sortStatus}
-            onSortStatusChange={(sort) => {
-              setSortStatus(sort);
-            }}
+            onSortStatusChange={setSortStatus}
             totalRecords={data?.totalCount}
             recordsPerPage={10}
             page={pageNumber}
-            onPageChange={(p) => {
-              setPageNumber(p);
-            }}
+            onPageChange={(p) => setPageNumber(p)}
           />
         )}
       </div>
