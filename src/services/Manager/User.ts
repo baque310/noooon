@@ -64,9 +64,9 @@ export const User = api.injectEndpoints({
       }),
       // providesTags: (res) => (res ? ["UserManagerUpdatePassword"] : []),
     }),
-    UserRemove: build.mutation<void, { username: string }>({
-      query: ({ username }) => ({
-        url: `user/DeleteData/${username}`,
+    UserRemove: build.mutation<void, { id: string }>({
+      query: ({ id }) => ({
+        url: `user/${id}`,
         method: "DELETE",
       }),
       // invalidatesTags: ["UserRemove", "UserGetDataById", "UserGetData"],

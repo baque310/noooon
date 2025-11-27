@@ -131,7 +131,7 @@ const PageComponent = () => {
   const [openChangePassword, setOpenChangePassword] = useState(false);
   const handleSuspend = async () => {
     try {
-      await UserRemove({ username: String(data?.User?.username) }).unwrap();
+      await UserRemove({ id: String(data?.User?.id) }).unwrap();
       toast.success(t("StudentPage.suspend-successfully"), { autoClose: 15000 });
       setOpenSuspend(false);
       router.back();
