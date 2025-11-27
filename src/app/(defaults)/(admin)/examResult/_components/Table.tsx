@@ -45,6 +45,7 @@ const TableComponent = () => {
   const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
   const { isFetching: isFetchingStageSubjectData, currentData: StageSubjectData } = useStageSubjectGetDataQuery({});
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
 
   const [ExamResultsGetDataById, { currentData: examResultData }] = useLazyExamResultsGetDataByIdQuery();
   const [ExamResultsUpdate, { isLoading: isLoadingUpdate }] = useExamResultsUpdateMutation();
@@ -57,6 +58,8 @@ const TableComponent = () => {
         stageSubjectId?: string;
         sectionId?: string;
         schoolYearId?: string;
+        stageId?: string;
+        classId?: string;
       }
     | undefined
   >();
@@ -77,6 +80,8 @@ const TableComponent = () => {
     sortDirection: sortStatus.direction,
     ...(search && { search }),
     ...(param?.schoolYearId && { schoolYearId: param.schoolYearId }),
+    // ...(param?.stageId && { stageSubjectId: param.stageId }),
+    ...(param?.classId && { classId: param.classId }),
     ...(param?.sectionId && { sectionId: param.sectionId }),
     ...(param?.stageSubjectId && { stageSubjectId: param.stageSubjectId }),
   };
@@ -111,7 +116,26 @@ const TableComponent = () => {
       ...prev,
       sectionId: value || undefined,
     }));
-    setPageNumber(1); // Reset to first page when filter changes
+    setPageNumber(1);
+  };
+
+  const handleSelectClass = (value: any) => {
+    setParam((prev) => ({
+      ...prev,
+      classId: value || undefined,
+      sectionId: undefined, // Reset section when class changes
+    }));
+    setPageNumber(1);
+  };
+
+  const handleSelectStage = (value: any) => {
+    setParam((prev) => ({
+      ...prev,
+      stageId: value || undefined,
+      classId: undefined, // Reset class when stage changes
+      sectionId: undefined, // Reset section when stage changes
+    }));
+    setPageNumber(1);
   };
 
   const handleSelectSchoolYear = (value: any) => {
@@ -119,7 +143,7 @@ const TableComponent = () => {
       ...prev,
       schoolYearId: value?.value || undefined,
     }));
-    setPageNumber(1); // Reset to first page when filter changes
+    setPageNumber(1);
   };
 
   const handleSelectStageSubjectId = (value: any) => {
@@ -127,7 +151,7 @@ const TableComponent = () => {
       ...prev,
       stageSubjectId: value?.value || undefined,
     }));
-    setPageNumber(1); // Reset to first page when filter changes
+    setPageNumber(1);
   };
 
   useEffect(() => {
@@ -190,21 +214,62 @@ const TableComponent = () => {
           />
         </div>
       </div>
-      <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
+      <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>
+        {/* Stage Filter */}
         <SelectFilter
-          value={param?.sectionId}
-          title={t("StudentEnrollmentPage.SectionName")}
+          value={param?.stageId}
           placement="bottom-end"
-          handleChange={handleSelectSection}
+          title={t("StudentEnrollmentPage.StageName")}
+          handleChange={handleSelectStage}
           options={
-            SectionData?.map((item) => {
+            StageData?.map((item) => {
               return {
-                label: item.name + " - " + (item?.Class?.name ?? "") + " - " + (item?.Class?.Stage?.name ?? ""),
                 value: item.id,
+                label: t(item.name as any),
               };
             }) ?? []
           }
         />
+
+        {/* Class Filter - Only shown when stage is selected */}
+        {param?.stageId && (
+          <SelectFilter
+            value={param?.classId}
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
+            }
+          />
+        )}
+
+        {/* Section Filter - Only shown when class is selected */}
+        {param?.classId && (
+          <SelectFilter
+            value={param?.sectionId}
+            title={t("StudentEnrollmentPage.SectionName")}
+            placement="bottom-end"
+            handleChange={handleSelectSection}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)
+                ?.Class.find((it) => it.id == param?.classId)
+                ?.Section?.map((item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }) ?? []
+            }
+          />
+        )}
+
+        {/* Stage Subject Filter */}
         <div className="max-w-36">
           <SelectWithSearch
             placeholder={t("ExamsPage.stageSubject")}
@@ -236,7 +301,6 @@ const TableComponent = () => {
               {
                 title: t("ExamResultsPage.StudentFullName"),
                 accessor: "Student.fullName",
-                // sortable: true,
               },
 
               {
@@ -270,30 +334,25 @@ const TableComponent = () => {
               {
                 title: t("ExamResultsPage.StageName"),
                 accessor: "ExamSection.Exam.StageSubject.Stage.name",
-                // sortable: true,
                 render: ({ ExamSection }: any) => ExamSection.Exam.StageSubject.Stage.name && t(ExamSection.Exam.StageSubject.Stage.name ?? ("" as any)),
               },
               {
                 title: t("ExamResultsPage.examDate"),
                 accessor: "ExamSection.examDate",
-                // sortable: true,
                 render: ({ ExamSection }: any) => (ExamSection?.examDate ? <div>{moment(ExamSection.examDate).format("YYYY-MM-DD")}</div> : null),
               },
               {
                 title: t("ExamResultsPage.SectionName"),
                 accessor: "ExamSection.Section.name",
-                // sortable: true,
                 render: ({ ExamSection }: any) => ExamSection?.Section?.name && t(ExamSection?.Section?.name ?? ("" as any)),
               },
               {
                 title: t("ExamResultsPage.ExamTypeName"),
                 accessor: "ExamSection.Exam.ExamType.name",
-                // sortable: true,
               },
               {
                 title: t("ExamResultsPage.SubjectName"),
                 accessor: "ExamSection.Exam.StageSubject.Subject.name",
-                // sortable: true,
               },
               {
                 title: t("common.updatedAt"),
