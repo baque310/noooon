@@ -286,6 +286,11 @@ const TableComponent = () => {
                 title: t("ExamsPage.content"),
                 accessor: "content",
                 sortable: true,
+                render: ({ content }: any) => (
+                  <div className="max-w-xs truncate" title={content}>
+                    {content}
+                  </div>
+                ),
               },
               {
                 title: t("ExamsPage.stageSubject"),

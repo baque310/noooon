@@ -48,18 +48,17 @@ export const User = api.injectEndpoints({
       }),
       // providesTags: (res) => (res ? ["UserAdminUpdatePassword"] : []),
     }),
-    UserManagerUpdatePassword: build.mutation<
-      BaseGetDataResponse<IUser>,
-      {
-        id: string;
-        body: {
-          newPassword: string;
-        };
-      }
-    >({
+    UserManagerUpdatePassword: build.mutation<BaseGetDataResponse<IUser>, { id: string; body: { newPassword: string } }>({
       query: ({ id, body }) => ({
         url: `user/manager/updatePassword/${id}`,
         body,
+        method: "PATCH",
+      }),
+      // providesTags: (res) => (res ? ["UserManagerUpdatePassword"] : []),
+    }),
+    UserManagerResetPassword: build.mutation<BaseGetDataResponse<IUser>, { id: string }>({
+      query: ({ id }) => ({
+        url: `user/forAdmin/reset-default/${id}`,
         method: "PATCH",
       }),
       // providesTags: (res) => (res ? ["UserManagerUpdatePassword"] : []),
@@ -73,4 +72,11 @@ export const User = api.injectEndpoints({
     }),
   }),
 });
-export const { useUserGetDataQuery, useUserRemoveMutation, useLazyUserGetDataQuery, useUserAdminUpdatePasswordMutation, useUserManagerUpdatePasswordMutation } = User;
+export const {
+  useUserGetDataQuery,
+  useUserManagerResetPasswordMutation,
+  useUserRemoveMutation,
+  useLazyUserGetDataQuery,
+  useUserAdminUpdatePasswordMutation,
+  useUserManagerUpdatePasswordMutation,
+} = User;

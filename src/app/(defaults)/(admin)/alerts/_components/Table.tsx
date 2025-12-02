@@ -43,7 +43,7 @@ const TableComponent = () => {
     take: 30,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
-    isAlert: "FALSE",
+    isAlert: "TRUE",
     ...(search && { search: search as string }),
     ...param,
   };
@@ -89,7 +89,7 @@ const TableComponent = () => {
             className="form-input text-white-dark"
             name="search"
           />
-          {/* {
+          {
             <RolePageAndActionBasedComponent
               component={(props) => {
                 return (
@@ -108,7 +108,7 @@ const TableComponent = () => {
               resource={"admin"}
               permission={["create-any", "create-own"]}
             />
-          } */}
+          }
         </div>
       </div>
       <div className="datatables pagination-padding mt-2">

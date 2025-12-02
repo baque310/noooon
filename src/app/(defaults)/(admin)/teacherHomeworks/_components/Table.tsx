@@ -320,14 +320,16 @@ const TableComponent = () => {
                 // sortable: true,
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
-              // {
-              //   title: t("HomeworksPage.ClassName"),
-              //   accessor: "teacherSubject.StageSubject.Class.name",
-              //   render: ({ teacherSubject }: any) => {
-              //     const name = teacherSubject?.StageSubject?.Class?.name;
-              //     return name ? t(name as any) : "-";
-              //   },
-              // },
+              {
+                title: t("HomeworksPage.ClassName"),
+                accessor: "teacherSubject.StageSubject.Class.name",
+                render: ({ teacherSubject }: any) => {
+                  console.log(teacherSubject);
+
+                  const name = teacherSubject?.StageSubject?.Class?.name;
+                  return name ? t(name as any) : "-";
+                },
+              },
               {
                 title: t("HomeworksPage.SectionName"),
                 accessor: "StudentHomework",

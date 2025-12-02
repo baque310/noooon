@@ -1,77 +1,3 @@
-// "use client";
-
-// import React from "react";
-// import { LoadingForm } from "@/components/Form/loadingForm";
-// import { BackButton } from "@/components/common/BackButton";
-// import { getTranslation } from "@/ni18n/i18n";
-// import DeleteModel from "@/components/Model/DeleteModel";
-// import { useParams } from "next/navigation";
-
-// // Components
-// import {
-//   FloatingBackground,
-//   StudentProfileCard,
-//   PersonalInfoSection,
-//   SystemInfoSection,
-//   useStudentPage,
-// } from "./index";
-
-// const PageComponent: React.FC = () => {
-//   const { t } = getTranslation();
-//   const params = useParams();
-//   const { id } = params;
-
-//   const {
-//     data,
-//     isFetching,
-//     isLoadingStudentRemove,
-//     openDelete,
-//     setOpenDelete,
-//     handleRemove,
-//   } = useStudentPage();
-
-//   return (
-//     <FloatingBackground>
-//       <div className="mb-8">
-//         <BackButton title={t("StudentPage.StudentInformation")} />
-//       </div>
-
-//       {isFetching ? (
-//         <div className="flex items-center justify-center min-h-[60vh]">
-//           <LoadingForm />
-//         </div>
-//       ) : (
-//         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-//           {/* Left Column - Profile Card */}
-//           <div className="xl:col-span-1">
-//             <StudentProfileCard data={data} studentId={id} />
-//           </div>
-
-//           {/* Right Column - Information Cards */}
-//           <div className="xl:col-span-2 space-y-8">
-//             <PersonalInfoSection data={data} />
-//             <SystemInfoSection data={data} />
-//           </div>
-//         </div>
-//       )}
-
-//       <DeleteModel
-//         description={t(
-//           "StudentPage.Are-you-sure-you-want-to-delete-this-Student"
-//         )}
-//         title={t("StudentPage.DeleteStudent")}
-//         open={openDelete}
-//         setOpen={setOpenDelete}
-//         handleRemove={handleRemove}
-//         isLoading={isLoadingStudentRemove}
-//         name={data?.fullName ?? ""}
-//       />
-//     </FloatingBackground>
-//   );
-// };
-
-// export default PageComponent;
-
 "use client";
 
 import React, { useState } from "react";
@@ -91,7 +17,8 @@ import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { ChangePasswordByAdminModel } from "@/components/Model/ChangePasswordByAdminModel";
 
-import { useUserRemoveMutation } from "@/services/Manager/User";
+import { useUserRemoveMutation, useUserManagerResetPasswordMutation } from "@/services/Manager/User";
+import ConfirmModel from "@/components/Model/ConfirmModel";
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -101,6 +28,7 @@ const PageComponent = () => {
   const [StudentGetDataById, { currentData: data, isFetching }] = useLazyStudentGetDataByIdQuery();
   const [StudentRemove, { isLoading: isLoadingStudentRemove }] = useStudentRemoveMutation();
   const [UserRemove, { isLoading: isLoadingUserRemove }] = useUserRemoveMutation();
+  const [UserManagerResetPassword, { isLoading: isLoadingResetPassword }] = useUserManagerResetPasswordMutation();
 
   useEffect(() => {
     if (id) {
@@ -111,6 +39,7 @@ const PageComponent = () => {
       });
     }
   }, [id]);
+
   const handleRemove = async () => {
     try {
       await StudentRemove({ id: String(id) }).unwrap();
@@ -129,6 +58,8 @@ const PageComponent = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [openSuspend, setOpenSuspend] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
+  const [openResetPassword, setOpenResetPassword] = useState(false);
+
   const handleSuspend = async () => {
     try {
       await UserRemove({ id: String(data?.User?.id) }).unwrap();
@@ -137,6 +68,20 @@ const PageComponent = () => {
       router.back();
     } catch (error: any) {
       console.error("Failed to suspend user:", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      await UserManagerResetPassword({ id: String(data?.User?.id) }).unwrap();
+      toast.success(t("StudentPage.password-reset-successfully"), { autoClose: 15000 });
+      setOpenResetPassword(false);
+    } catch (error: any) {
+      console.error("Failed to reset password:", error);
       if (error && error.message) {
         return toast.error(t(error.message), { autoClose: 15000 });
       }
@@ -191,6 +136,17 @@ const PageComponent = () => {
                 value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
               />
             )}
+            {data?.User && (
+              <ItemList
+                props={{
+                  onClick: () => {
+                    setOpenResetPassword(true);
+                  },
+                }}
+                title={<div className="text-[#000]">{t("StudentPage.resetPassword")}</div>}
+                value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
+              />
+            )}
             <ItemList
               props={{
                 onClick: () => {
@@ -222,6 +178,7 @@ const PageComponent = () => {
         isLoading={isLoadingStudentRemove}
         name={data?.fullName ?? ""}
       />
+
       {/* Suspend User Modal */}
       {data?.User && (
         <DeleteModel
@@ -234,6 +191,20 @@ const PageComponent = () => {
           name={data?.User?.username ?? ""}
         />
       )}
+
+      {/* Reset Password Modal */}
+      {data?.User && (
+        <ConfirmModel
+          description={t("StudentPage.Are-you-sure-you-want-to-reset-password-for-this-User")}
+          title={t("StudentPage.resetPassword")}
+          open={openResetPassword}
+          setOpen={setOpenResetPassword}
+          handleConfirm={handleResetPassword}
+          isLoading={isLoadingResetPassword}
+          name={data?.User?.username ?? ""}
+        />
+      )}
+
       {data?.User && (
         <ChangePasswordByAdminModel
           data={{

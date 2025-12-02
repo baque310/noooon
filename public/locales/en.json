@@ -296,6 +296,7 @@
     "title": "Title",
     "content": "Content",
     "dueDate": "Due Date",
+    "ClassName": "Class name",
     "teacherFullName": "Teacher Full Name",
     "examDate": "Exam Date",
     "SectionName": "Section Name",

@@ -326,6 +326,7 @@ export const api = createApi({
     "ComplaintGetDataById",
     "ComplaintChangeStatus",
     "ComplaintGetDataForAdmin",
+    "ComplaintRemove",
 
     // Video
     "VideoGetData",

@@ -181,9 +181,7 @@ const Sidebar = () => {
                       to={"/complaint"}
                       label={t("sidebar.complaint")}
                       number={adminCountData?.complaintsCount ?? 0}
-                      icon={
-                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                     <MenuItem
                       permission={["read-any", "read-own"]}
@@ -229,9 +227,7 @@ const Sidebar = () => {
                       to={"/adminComplaint"}
                       label={t("sidebar.complaint")}
                       number={adminCountData?.complaintsCount ?? 0}
-                      icon={
-                        <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                      }
+                      icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
                   </>
                 )}
@@ -440,9 +436,7 @@ const Sidebar = () => {
                   to={"/teacherHomeworks"}
                   label={t("sidebar.homeworks")}
                   number={adminCountData?.homeworkCountToday ?? 0}
-                  icon={
-                    <IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconHomework className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -450,14 +444,8 @@ const Sidebar = () => {
                   toggleMenu={toggleMenu}
                   to={"/superTeacherAttendances"}
                   label={t("sidebar.superTeacherAttendances")}
-                  number={
-                    (adminCountData?.attendanceToday.Absent ?? 0) +
-                    (adminCountData?.attendanceToday.Present ?? 0) +
-                    (adminCountData?.attendanceToday.Vacation ?? 0)
-                  }
-                  icon={
-                    <IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  number={(adminCountData?.attendanceToday.Absent ?? 0) + (adminCountData?.attendanceToday.Present ?? 0) + (adminCountData?.attendanceToday.Vacation ?? 0)}
+                  icon={<IconSchedule className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
                 <MenuItem
                   permission={["read-any", "read-own"]}
@@ -466,9 +454,7 @@ const Sidebar = () => {
                   to={"/teacherLessons"}
                   label={t("sidebar.lessons")}
                   number={adminCountData?.lessonsCountToday ?? 0}
-                  icon={
-                    <IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />
-                  }
+                  icon={<IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
 
                 <MenuSubItem
@@ -558,6 +544,14 @@ const Sidebar = () => {
                       label={t("sidebar.notifications")}
                       icon={<IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
+                    {/* <MenuItem
+                      permission={["read-any", "read-own"]}
+                      resource={"notification"}
+                      toggleMenu={toggleMenu}
+                      to={"/alerts"}
+                      label={t("sidebar.alerts")}
+                      icon={<IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                    /> */}
                   </>
                 )}
               </ul>

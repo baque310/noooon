@@ -4,15 +4,15 @@ import React from "react";
 import Avatar from "@/components/common/Avatar";
 import { getTranslation } from "@/ni18n/i18n";
 import moment from "moment";
-import { Loader2 } from "lucide-react";
+import { Loader2, UserPlus, Lock, Unlock } from "lucide-react";
 import { useState } from "react";
-import { useToggleGroupChatUpdateMutation, useChatRemoveMutation } from "@/services/admin/chat";
+import { useToggleGroupChatUpdateMutation, useChatRemoveMutation, useChatAddMembersMessageMutation } from "@/services/admin/chat";
 import { DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
 import RenameChatModel from "./RenameChatModel";
 import Model from "@/components/Model";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-// form-related imports moved to RenameChatModel
+import AddMembersModal from "./AddMembersModal";
 
 interface ChatDetailsPanelProps {
   chat: any | null;
@@ -27,8 +27,10 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
   const [showConfirm, setShowConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
+  const [showAddMembersModal, setShowAddMembersModal] = useState(false);
   const [patchToggle, { isLoading: isPatching }] = useToggleGroupChatUpdateMutation();
   const [chatRemove, { isLoading: isRemoving }] = useChatRemoveMutation();
+  const [addMembers, { isLoading: isAddingMembers }] = useChatAddMembersMessageMutation();
 
   if (!chat) return null;
 
@@ -45,12 +47,15 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
     try {
       const action = isActive ? "DISABLE" : "ENABLE";
       const result = await patchToggle({ roomId: chat.id, body: { action } }).unwrap();
-      await patchToggle({ roomId: chat.id, body: { action } }).unwrap();
 
       setShowConfirm(false);
+      toast.success(isActive ? t("ChatPage.chat-disabled-successfully") || "Chat disabled successfully" : t("ChatPage.chat-enabled-successfully") || "Chat enabled successfully", {
+        autoClose: 3000,
+      });
       if (onToggleStatus) onToggleStatus(chat.id, result?.isActive);
     } catch (err) {
       console.error("Toggle group chat failed", err);
+      toast.error(t("common.operation-failed"), { autoClose: 3000 });
     }
   };
 
@@ -62,7 +67,6 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
       if (onChatRemoved) {
         onChatRemoved();
       }
-
       window.location.reload();
     } catch (error: any) {
       console.error("Failed to remove chat:", error);
@@ -74,7 +78,26 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
     }
   };
 
-  // rename logic is handled inside RenameChatModel
+  const handleAddMembers = async (selectedMembers: Array<{ userId: string; userType: string }>) => {
+    try {
+      await addMembers({
+        roomId: chat.rocketChatId,
+        body: { members: selectedMembers },
+      }).unwrap();
+
+      toast.success(t("ChatPage.members-added-successfully") || "Members added successfully", {
+        autoClose: 3000,
+      });
+      setShowAddMembersModal(false);
+    } catch (error: any) {
+      console.error("Failed to add members:", error);
+      if (error?.data?.message) {
+        toast.error(t(error.data.message), { autoClose: 3000 });
+      } else {
+        toast.error(t("common.operation-failed"), { autoClose: 3000 });
+      }
+    }
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -114,19 +137,28 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
           <div>
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-semibold text-gray-900">{t("ChatPage.members-list") || "Members"}</h3>
-              <button
-                onClick={handleToggle}
-                disabled={isLoading || isPatching}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
-                    ${isActive ? "bg-red-500 hover:bg-red-600 focus:ring-red-400 text-white" : "bg-green-500 hover:bg-green-600 focus:ring-green-400 text-white"}
-                    disabled:opacity-70 disabled:cursor-not-allowed`}>
-                {(isLoading || isPatching) && <Loader2 className="h-4 w-4 animate-spin" />}
-                {isLoading || isPatching
-                  ? t("common.loading") || "Processing..."
-                  : isActive
-                  ? t("ChatPage.disable-chat") || "Disable Chat"
-                  : t("ChatPage.enable-chat") || "Enable Chat"}
-              </button>
+
+              <div className="flex items-center gap-2">
+                {/* Toggle Chat Status Button */}
+                <button
+                  onClick={handleToggle}
+                  disabled={isLoading || isPatching}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={isActive ? "تعطيل المحادثة" : "تفعيل المحادثة"}>
+                  {isLoading || isPatching ? (
+                    <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
+                  ) : isActive ? (
+                    <Unlock className="w-5 h-5 text-green-600" />
+                  ) : (
+                    <Lock className="w-5 h-5 text-red-600" />
+                  )}
+                </button>
+
+                {/* Add Members Button */}
+                {/* <button onClick={() => setShowAddMembersModal(true)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="إضافة أعضاء">
+                  <UserPlus className="w-5 h-5 text-blue-600" />
+                </button> */}
+              </div>
             </div>
 
             <div className="max-h-96 overflow-y-auto rounded-xl border border-gray-100 bg-white p-3 shadow-sm">
@@ -216,8 +248,11 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
         </Model>
       )}
 
-      {/* Rename modal (moved to separate component) */}
+      {/* Rename modal */}
       <RenameChatModel open={showRenameModal} setOpen={setShowRenameModal} chat={chat} />
+
+      {/* Add Members modal */}
+      <AddMembersModal open={showAddMembersModal} setOpen={setShowAddMembersModal} onAddMembers={handleAddMembers} isLoading={isAddingMembers} existingMembers={members} />
     </div>
   );
 };

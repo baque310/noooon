@@ -44,10 +44,7 @@ export interface ComplaintChangeStatusPayload {
 }
 export const Complaint = api.injectEndpoints({
   endpoints: (build) => ({
-    ComplaintGetDataForManager: build.query<
-      BaseGetDataResponse<IComplaint>,
-      GetDataRequestParams
-    >({
+    ComplaintGetDataForManager: build.query<BaseGetDataResponse<IComplaint>, GetDataRequestParams>({
       query: (params) => ({
         url: `complaint/forManager`,
         params,
@@ -65,10 +62,7 @@ export const Complaint = api.injectEndpoints({
         return response;
       },
     }),
-    ComplaintGetDataForAdmin: build.query<
-      BaseGetDataResponse<IComplaint>,
-      GetDataRequestParams
-    >({
+    ComplaintGetDataForAdmin: build.query<BaseGetDataResponse<IComplaint>, GetDataRequestParams>({
       query: (params) => ({
         url: `complaint/forAdmin`,
         params,
@@ -111,6 +105,13 @@ export const Complaint = api.injectEndpoints({
       }),
       invalidatesTags: ["ComplaintChangeStatus", "ComplaintGetDataForAdmin"],
     }),
+    ComplaintRemove: build.mutation<void, { id: string }>({
+      query: ({ id }) => ({
+        url: `complaint/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["ComplaintRemove", "ComplaintGetDataById"],
+    }),
   }),
 });
 export const {
@@ -121,4 +122,5 @@ export const {
   useComplaintGetDataByIdQuery,
   useLazyComplaintGetDataByIdQuery,
   useComplaintChangeStatusMutation,
+  useComplaintRemoveMutation,
 } = Complaint;

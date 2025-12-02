@@ -107,6 +107,14 @@ export const Chat = api.injectEndpoints({
       }),
       invalidatesTags: (res) => (res ? ["ChatMessage", "ChatGetData"] : []),
     }),
+    ChatAddMembersMessage: build.mutation<IChat, { roomId: string; body: { members: Array<{ userId: string; userType: string }> } }>({
+      query: ({ roomId, body }) => ({
+        url: `admin/chat/room/${roomId}/members`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: (res) => (res ? ["ChatMessage", "ChatGetData"] : []),
+    }),
     ChatWithFileMessage: build.mutation<
       {
         messageId: string;
@@ -243,6 +251,7 @@ export const {
   useChatGetDataQuery,
   useLazyChatGetDataQuery,
   useRenameChatMutation,
+  useChatAddMembersMessageMutation,
   useChatCreateClassParentsGroupMutation,
   useChatCreateSchoolStaffGroupMutation,
   useChatCreateSubjectTeachersGroupMutation,
