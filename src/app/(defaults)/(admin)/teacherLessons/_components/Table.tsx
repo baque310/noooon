@@ -116,6 +116,7 @@ const TableComponent = () => {
       setParam({ ...param, schoolYearId: undefined });
     }
   };
+  // console.log(data);
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -233,6 +234,25 @@ const TableComponent = () => {
                 // sortable: true,
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
+
+              {
+                title: t("HomeworksPage.ClassName"),
+                accessor: "teacherSubject.StageSubject.Class.name",
+                render: ({ teacherSubject }: any) => {
+                  const name = teacherSubject?.StageSubject?.Class?.name;
+                  return name ? t(name as any) : "-";
+                },
+              },
+              // {
+              //   title: t("HomeworksPage.SectionName"),
+              //   accessor: "StudentHomework",
+              //   render: ({ StudentHomework }) => {
+              //     const list = Array.isArray(StudentHomework) ? StudentHomework : [];
+              //     const sections = Array.from(new Set(list.map((item: any) => item?.Student?.StudentEnrollment?.[0]?.Section?.name).filter(Boolean)));
+              //     return sections.length > 0 ? sections.join(", ") : "-";
+              //   },
+              // },
+
               {
                 title: t("LessonsPage.SubjectName"),
                 accessor: "teacherSubject.StageSubject.Subject.name",

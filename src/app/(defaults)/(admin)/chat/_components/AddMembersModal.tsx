@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Model from "@/components/Model";
 import { getTranslation } from "@/ni18n/i18n";
 import { Loader2, Search, X } from "lucide-react";
@@ -67,7 +67,14 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
 
   // Extract existing member user IDs
   const existingMemberIds = useMemo(() => {
-    return existingMembers.map((m) => m.userId);
+    // existingMembers may come in different shapes depending on API (userId, id, Student.id, etc.)
+    return existingMembers
+      .map((m) => {
+        // try several possible fields
+        const id = m?.userId ?? m?.id ?? m?.user?.id ?? m?.Student?.id ?? m?.Teacher?.id ?? m?.parentId ?? m?.studentId ?? null;
+        return id != null ? String(id) : null;
+      })
+      .filter(Boolean) as string[];
   }, [existingMembers]);
 
   // Get available users based on selected type
@@ -76,21 +83,23 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
 
     if (userType === "TEACHER" && teachersData?.data) {
       users = teachersData.data.map((teacher) => ({
-        id: teacher.id,
+        id: String(teacher.id),
         name: teacher.fullName,
         photo: teacher.photo,
         userType: "TEACHER",
       }));
     } else if (userType === "STUDENT" && studentsData?.data) {
-      users = studentsData.data.map((student) => ({
-        id: student.Student.id,
-        name: student.Student.fullName,
-        photo: student.Student.photo,
-        userType: "STUDENT",
-      }));
+      users = studentsData.data
+        .map((student) => {
+          const id = student?.Student?.id ?? student?.id;
+          const name = student?.Student?.fullName ?? student?.Student?.fullName;
+          const photo = student?.Student?.photo ?? student?.Student?.photo;
+          return id ? { id: String(id), name, photo, userType: "STUDENT" } : null;
+        })
+        .filter(Boolean) as any[];
     } else if (userType === "PARENT" && parentsData?.data) {
       users = parentsData.data.map((parent) => ({
-        id: parent.id,
+        id: String(parent.id),
         name: parent.fullName,
         photo: parent.photo,
         userType: "PARENT",
@@ -98,24 +107,51 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
     }
 
     // Filter out existing members
-    return users.filter((user) => !existingMemberIds.includes(user.id));
+    return users.filter((user) => !existingMemberIds.includes(String(user.id)));
   }, [userType, teachersData, studentsData, parentsData, existingMemberIds]);
 
   const isLoadingUsers = (userType === "TEACHER" && isFetchingTeachers) || (userType === "STUDENT" && isFetchingStudents) || (userType === "PARENT" && isFetchingParents);
 
+  // Select all checkbox ref for indeterminate state
+  const selectAllRef = useRef<HTMLInputElement | null>(null);
+
+  const allSelected = availableUsers.length > 0 && selectedMembers.length === availableUsers.length;
+  const partialSelected = selectedMembers.length > 0 && selectedMembers.length < availableUsers.length;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = partialSelected;
+    }
+  }, [partialSelected, allSelected, selectedMembers.length, availableUsers.length]);
+
+  const handleSelectAllToggle = (checked: boolean) => {
+    if (checked) {
+      // select all available users
+      const all = availableUsers.map((u) => ({ userId: String(u.id), userType: u.userType ?? "TEACHER", name: u.name, photo: u.photo }));
+      setSelectedMembers(all);
+    } else {
+      setSelectedMembers([]);
+    }
+  };
+
   const handleToggleMember = (user: any) => {
-    const isSelected = selectedMembers.some((m) => m.userId === user.id);
+    // Accept either a user from availableUsers (has .id) or an already selected member (has .userId)
+    const id = user?.id ?? user?.userId;
+    if (!id) return;
+    const sid = String(id);
+
+    const isSelected = selectedMembers.some((m) => String(m.userId) === sid);
 
     if (isSelected) {
-      setSelectedMembers(selectedMembers.filter((m) => m.userId !== user.id));
+      setSelectedMembers((prev) => prev.filter((m) => String(m.userId) !== sid));
     } else {
-      setSelectedMembers([
-        ...selectedMembers,
+      setSelectedMembers((prev) => [
+        ...prev,
         {
-          userId: user.id,
-          userType: user.userType,
-          name: user.name,
-          photo: user.photo,
+          userId: sid,
+          userType: user?.userType ?? user?.type ?? "TEACHER",
+          name: user?.name ?? user?.fullName ?? "",
+          photo: user?.photo ?? "",
         },
       ]);
     }
@@ -162,21 +198,21 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
               className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 userType === "TEACHER" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}>
-              {t("common.teacher") || "معلم"}
+              {t("ChatPage.teacher") || "معلم"}
             </button>
             <button
               onClick={() => setUserType("STUDENT")}
               className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 userType === "STUDENT" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}>
-              {t("common.student") || "طالب"}
+              {t("ChatPage.student") || "طالب"}
             </button>
             <button
               onClick={() => setUserType("PARENT")}
               className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 userType === "PARENT" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}>
-              {t("common.parent") || "ولي أمر"}
+              {t("ChatPage.parent") || "ولي أمر"}
             </button>
           </div>
         </div>
@@ -189,7 +225,7 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("ChatPage.search-users") || "ابحث عن مستخدم..."}
+              placeholder={t("common.search") || "ابحث عن مستخدم..."}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -198,9 +234,9 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
         {/* Selected Members Display */}
         {selectedMembers.length > 0 && (
           <div className="mb-4">
-            <div className="text-sm font-medium text-gray-700 mb-2">
+            {/* <div className="text-sm font-medium text-gray-700 mb-2">
               {t("ChatPage.selected-members") || "الأعضاء المختارون"} ({selectedMembers.length})
-            </div>
+            </div> */}
             <div className="flex flex-wrap gap-2">
               {selectedMembers.map((member) => (
                 <div key={member.userId} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm">
@@ -216,6 +252,22 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
 
         {/* Available Users List */}
         <div className="max-h-80 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50">
+          {/* Select all header */}
+          <div className="flex items-center justify-between p-3 border-b border-gray-100">
+            <div className="text-xs text-gray-500">
+              {availableUsers.length} {t("common.items") || "نتيجة"}
+            </div>
+            <label className="inline-flex items-center gap-2">
+              <span className="text-sm text-gray-700">{t("common.select-all") || "تحديد الكل"}</span>
+              <input
+                ref={selectAllRef}
+                type="checkbox"
+                checked={allSelected}
+                onChange={(e) => handleSelectAllToggle(e.target.checked)}
+                className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+            </label>
+          </div>
           {isLoadingUsers ? (
             <div className="p-6">
               <LoadingForm />
@@ -235,10 +287,10 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
                       <Avatar photo={user.photo || ""} username={user.name} className="!bg-[#2C6E91] !w-10 !h-10" />
                       <div>
                         <div className="font-medium text-gray-900">{user.name}</div>
-                        <div className="text-xs text-gray-500">{t(`common.${user.userType?.toLowerCase()}`) || user.userType}</div>
+                        <div className="text-xs text-gray-500">{t(`ChatPage.${user.userType?.toLowerCase()}`) || user.userType}</div>
                       </div>
                     </div>
-                    <input type="checkbox" checked={isSelected} onChange={() => {}} className="h-5 w-5 text-blue-600 rounded focus:ring-blue-500" />
+                    <input type="checkbox" checked={isSelected} onChange={() => handleToggleMember(user)} className="h-5 w-5 text-blue-600 rounded focus:ring-blue-500" />
                   </li>
                 );
               })}

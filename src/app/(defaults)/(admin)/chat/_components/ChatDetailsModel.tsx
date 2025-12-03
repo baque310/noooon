@@ -94,6 +94,7 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
       if (error?.data?.message) {
         toast.error(t(error.data.message), { autoClose: 3000 });
       } else {
+        // console.log(error?.data);
         toast.error(t("common.operation-failed"), { autoClose: 3000 });
       }
     }
@@ -169,6 +170,7 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
                       <span className="font-medium flex items-center gap-2 text-gray-700">
                         <Avatar photo={member.photo || ""} username={member.memberName} className="!bg-[#2C6E91] !w-8 !h-8" />
                         {member.memberName}
+                        {/* <div className="text-xs text-gray-500">{t(`ChatPage.${member.userType?.toLowerCase()}`) || member.userType}</div> */}
                       </span>
                       <span className={`rounded-full px-2 py-0.5 text-xs ${member.userType === "ADMIN" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
                         {t(member.userType)}

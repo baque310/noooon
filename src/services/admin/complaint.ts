@@ -110,7 +110,7 @@ export const Complaint = api.injectEndpoints({
         url: `complaint/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["ComplaintRemove", "ComplaintGetDataById"],
+      invalidatesTags: ["ComplaintRemove", "ComplaintGetDataById", "ComplaintGetDataForAdmin", "ComplaintGetDataForManager"],
     }),
   }),
 });

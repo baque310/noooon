@@ -1100,6 +1100,8 @@
     "direct": "مباشر",
     "message": "رسالة",
     "members": "الأعضاء",
+    "user-type": "نوع المستخدم",
+    "add-members": "إضافة أعضاء",
     "select-teachers": "الاساتذة المحددين",
     "enable-chat": "تفعيل المحادثة",
     "are you sure you want to enable this chat?": "هل أنت متأكد أنك تريد تفعيل هذه المحادثة؟",
