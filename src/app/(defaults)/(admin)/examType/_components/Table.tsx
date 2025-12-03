@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 
 import { AddIcons } from "@/components/common/icons/Actions";
 import CreateComponent from "./CreateComponent";
-
+import FormattedDate from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -34,13 +34,13 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
-      search?: string;
-      range?: string;
-    }
+        approval_status?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
-  const params = { 
+  const params = {
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
     ...(search && { search: search as string }),
@@ -49,8 +49,7 @@ const TableComponent = () => {
 
   const { isFetching, currentData: data } = useExamTypeGetDataQuery({
     ...params,
-  }); 
-  
+  });
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -74,7 +73,7 @@ const TableComponent = () => {
       handleSearch();
     }
   };
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
@@ -94,10 +93,11 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
-                      setOpen(true)
+                      setOpen(true);
                     }}>
                     <AddIcons className="h-4 w-4" />
                     {t("common.add")}
@@ -124,18 +124,26 @@ const TableComponent = () => {
                 title: t("ExamTypePage.name"),
                 accessor: "name",
                 sortable: true,
-              },   
+              },
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
-                sortable: true,
-                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
+                    <FormattedDate date={row.updatedAt} />
+                  </div>
+                ),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
-                sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
+                    <FormattedDate date={row.createdAt} />
+                  </div>
+                ),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
@@ -145,7 +153,7 @@ const TableComponent = () => {
             sortStatus={sortStatus}
             onSortStatusChange={(sort) => {
               setSortStatus(sort);
-            }} 
+            }}
           />
         )}
       </div>

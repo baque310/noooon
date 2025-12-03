@@ -544,14 +544,14 @@ const Sidebar = () => {
                       label={t("sidebar.notifications")}
                       icon={<IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                     />
-                    {/* <MenuItem
+                    <MenuItem
                       permission={["read-any", "read-own"]}
                       resource={"notification"}
                       toggleMenu={toggleMenu}
                       to={"/alerts"}
                       label={t("sidebar.alerts")}
                       icon={<IconNotification className="shrink-0 group-hover:!text-white group-active:!text-white" />}
-                    /> */}
+                    />
                   </>
                 )}
               </ul>

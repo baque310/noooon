@@ -14,7 +14,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import { AddIcons } from "@/components/common/icons/Actions";
-
+import FormattedDate from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -33,10 +33,10 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
-      search?: string;
-      range?: string;
-    }
+        approval_status?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
   const params = {
@@ -93,8 +93,9 @@ const TableComponent = () => {
               component={(props) => {
                 return (
                   <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
                     onClick={() => {
                       router.push("/banner/createOrUpdate");
                     }}>
@@ -152,14 +153,22 @@ const TableComponent = () => {
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
-                sortable: true,
-                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
+                    <FormattedDate date={row.updatedAt} />
+                  </div>
+                ),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
-                sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
+                    <FormattedDate date={row.createdAt} />
+                  </div>
+                ),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}

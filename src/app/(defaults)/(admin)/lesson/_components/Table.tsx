@@ -19,7 +19,7 @@ import { useLessonsGetDataQuery } from "@/services/admin/Lessons";
 import { useSectionGetDataQuery } from "@/services/admin/section";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import SelectFilter from "@/components/Filter/SelectFilter";
-
+import FormattedDate from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -37,36 +37,29 @@ const TableComponent = () => {
   const [pageNumber, setPageNumber] = useState(Number(1));
   const [param, setParam] = useState<
     | {
-      search?: string;
-      range?: string;
-      sectionId?: string;
-      teacherSubjectId?: string;
-      schoolYearId?: string;
-
-    }
+        search?: string;
+        range?: string;
+        sectionId?: string;
+        teacherSubjectId?: string;
+        schoolYearId?: string;
+      }
     | undefined
   >();
-  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({
-  });
+  const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
   const { isFetching: isFetchingTeacherSubjectData, currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
     // sectionId  :param.sectionId,
-    schoolYearId: param?.schoolYearId
-
+    schoolYearId: param?.schoolYearId,
   });
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
-
   useEffect(() => {
     if (SchoolYearData && Setting) {
-      setParam(
-        {
-          ...params,
-          schoolYearId: Setting?.currentSchoolYearId
-
-        }
-      )
+      setParam({
+        ...params,
+        schoolYearId: Setting?.currentSchoolYearId,
+      });
     }
-  }, [SchoolYearData, Setting])
+  }, [SchoolYearData, Setting]);
 
   const params = {
     skip: pageNumber,
@@ -105,28 +98,24 @@ const TableComponent = () => {
   const handleSelectSection = (value: any) => {
     if (value) {
       setParam({ ...param, sectionId: value });
-
     } else {
       setParam({ ...param, sectionId: undefined });
     }
-  }
+  };
   const handleSelectTeacherSubject = (value: any) => {
     if (value) {
       setParam({ ...param, teacherSubjectId: value.value });
-
     } else {
       setParam({ ...param, teacherSubjectId: undefined });
     }
-  }
+  };
   const handleSelectSchoolYear = (value: any) => {
     if (value) {
       setParam({ ...param, schoolYearId: value.value });
-
     } else {
       setParam({ ...param, schoolYearId: undefined });
     }
-  }
-
+  };
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -148,32 +137,26 @@ const TableComponent = () => {
             isLoading={isFetchingSchoolYearData || isFetchingSetting}
             props={{
               onChange: handleSelectSchoolYear,
-              value: param?.schoolYearId
+              value: param?.schoolYearId,
             }}
             options={SchoolYearData?.map((item) => {
               return {
                 value: item.id,
-                label: item.from + '-' + item.to
+                label: item.from + "-" + item.to,
               };
             })}
           />
-
         </div>
       </div>
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2   "}>
-           <SelectFilter
+        <SelectFilter
           title={t("StudentEnrollmentPage.SectionName")}
           placement="bottom-end"
           handleChange={handleSelectSection}
           options={
             SectionData?.map((item) => {
               return {
-                label:
-                  item.name +
-                  " - " +
-                  (item?.Class?.name ?? "") +
-                  " - " +
-                  (item?.Class?.Stage?.name ?? ""),
+                label: item.name + " - " + (item?.Class?.name ?? "") + " - " + (item?.Class?.Stage?.name ?? ""),
                 value: item.id,
               };
             }) ?? []
@@ -188,18 +171,14 @@ const TableComponent = () => {
             options={
               TeacherSubjectData?.map((item) => {
                 return {
-                  label: item.Teacher.fullName
+                  label: item.Teacher.fullName,
                   //  + item.StageSubject.Subject.name,
-                  ,
                   value: item.id,
                 };
-              }
-              ) ?? []
+              }) ?? []
             }
           />
         </div>
-
-
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
@@ -211,7 +190,6 @@ const TableComponent = () => {
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
             records={data?.data as any}
             columns={[
-
               {
                 title: t("LessonsPage.title"),
                 accessor: "title",
@@ -231,40 +209,45 @@ const TableComponent = () => {
                 title: t("LessonsPage.StageName"),
                 accessor: "teacherSubject.StageSubject.Stage.name",
                 // sortable: true,
-                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? "" as any)
-
+                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
               {
                 title: t("LessonsPage.SubjectName"),
                 accessor: "teacherSubject.StageSubject.Subject.name",
                 // sortable: true,
-                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? "" as any)
-
+                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
               },
               {
                 title: t("LessonsPage.SectionName"),
                 accessor: "Section.name",
                 // sortable: true,
-                render: ({ Section }: any) => Section?.name && t(Section?.name ?? "" as any)
+                render: ({ Section }: any) => Section?.name && t(Section?.name ?? ("" as any)),
               },
               {
                 title: t("LessonsPage.SchoolYear"),
                 accessor: "SchoolYear.from",
                 // sortable: true,
                 render: ({ SchoolYear }: any) => (SchoolYear.from || SchoolYear.to ? SchoolYear.from + " - " + SchoolYear.to : null),
-
               },
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
-                sortable: true,
-                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
+                    <FormattedDate date={row.updatedAt} />
+                  </div>
+                ),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
-                sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
+                    <FormattedDate date={row.createdAt} />
+                  </div>
+                ),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}

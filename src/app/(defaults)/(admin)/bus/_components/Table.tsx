@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import RowStudentTable from "./RowStudentTable";
 import Avatar from "@/components/common/Avatar";
- 
+import FormattedDate from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -35,10 +35,10 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-      approval_status?: string;
-      search?: string;
-      range?: string;
-    }
+        approval_status?: string;
+        search?: string;
+        range?: string;
+      }
     | undefined
   >();
   const params = {
@@ -94,14 +94,14 @@ const TableComponent = () => {
             // <RolePageAndActionBasedComponent
             //   component={(props) => {
             //     return (
-                  <button
-                    className={` flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2 rounded border `}
-                    onClick={() => {
-                      router.push("/bus/createOrUpdate");
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
+            <button
+              className={` flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2 rounded border `}
+              onClick={() => {
+                router.push("/bus/createOrUpdate");
+              }}>
+              <AddIcons className="h-4 w-4" />
+              {t("common.add")}
+            </button>
             //     );
             //   }}
             //   resource={"bus"}
@@ -124,12 +124,11 @@ const TableComponent = () => {
                 title: t("BusPage.photo"),
                 accessor: "photo",
                 sortable: true,
-                render: ({ photo, fullName }: any) => <>
-                  <Avatar
-                    photo={photo}
-                    username={fullName}
-                  />
-                </>
+                render: ({ photo, fullName }: any) => (
+                  <>
+                    <Avatar photo={photo} username={fullName} />
+                  </>
+                ),
               },
               {
                 title: t("BusPage.fullName"),
@@ -144,23 +143,23 @@ const TableComponent = () => {
               {
                 title: t("BusPage.carType"),
                 accessor: "carType",
-                sortable: true, 
+                sortable: true,
               },
               {
                 title: t("BusPage.carColor"),
                 accessor: "carColor",
-                sortable: true, 
+                sortable: true,
               },
               {
                 title: t("BusPage.carNumber"),
                 accessor: "carNumber",
-                sortable: true, 
+                sortable: true,
               },
               {
                 title: t("BusPage.address"),
                 accessor: "address",
                 sortable: true,
-              }, 
+              },
               {
                 title: t("BusPage.phone1"),
                 accessor: "phone1",
@@ -175,14 +174,22 @@ const TableComponent = () => {
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
-                sortable: true,
-                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
+                    <FormattedDate date={row.updatedAt} />
+                  </div>
+                ),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
-                sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
+                    <FormattedDate date={row.createdAt} />
+                  </div>
+                ),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
@@ -199,24 +206,19 @@ const TableComponent = () => {
             onPageChange={(p) => {
               setPageNumber(p);
             }}
-
             rowExpansion={{
               collapseProps: {
                 transitionDuration: 500,
                 animateOpacity: false,
-                transitionTimingFunction: 'ease-out',
+                transitionTimingFunction: "ease-out",
               },
-              content: (record) => { 
+              content: (record) => {
                 return (
                   <>
-                   
-                    <RowStudentTable
-                      data={record.record.Student as any}
-                      id={record.record.id as any}
-                    />
+                    <RowStudentTable data={record.record.Student as any} id={record.record.id as any} />
                   </>
-                )
-              }
+                );
+              },
             }}
           />
         )}

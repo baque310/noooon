@@ -13,34 +13,33 @@ import DeleteModel from "@/components/Model/DeleteModel";
 import { useRouter } from "next/navigation";
 import { useBusDisconnectStudentBusMutation } from "@/services/admin/bus";
 import Avatar from "@/components/common/Avatar";
+import FormattedDate from "@/components/common/FormattedDate";
 
-
-
-const RowStudentTable = ({ data, id }: { data: any[], id: string }) => {
+const RowStudentTable = ({ data, id }: { data: any[]; id: string }) => {
   const { t } = getTranslation();
   const { isMounted } = useMounted();
   const [selectedRecords, setSelectedRecords] = useState([]);
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
-  const [BusDisconnectStudentBus, { isLoading: isLoadingBusDisconnectStudentBus }] = useBusDisconnectStudentBusMutation()
+  const [BusDisconnectStudentBus, { isLoading: isLoadingBusDisconnectStudentBus }] = useBusDisconnectStudentBusMutation();
   const router = useRouter();
   const handleRemove = async () => {
     try {
       await BusDisconnectStudentBus({
         busId: id,
-        studentIds: selectedRecords.map((record: any) => record.id)
+        studentIds: selectedRecords.map((record: any) => record.id),
       }).unwrap();
-      toast.success(t('common.deleted-successfully'), { autoClose: 15000 });
+      toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
       setOpenDelete(false);
-      setSelectedRecords([])
+      setSelectedRecords([]);
     } catch (error: any) {
-      console.error('Failed to operation :', error);
+      console.error("Failed to operation :", error);
       if (error && error.message) {
         return toast.error(t(error.message), { autoClose: 15000 });
       }
       toast.error(error, { autoClose: 15000 });
     }
   };
-  const [openDelete, setOpenDelete] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false);
   return (
     <>
       <div className="flex gap-2">
@@ -60,7 +59,9 @@ const RowStudentTable = ({ data, id }: { data: any[], id: string }) => {
         </button>
         <button
           disabled={!(selectedRecords.length > 0)}
-          className={` ${!(selectedRecords.length > 0) && "!bg-danger/50 !border-danger/50 cursor-not-allowed"} flex justify-center gap-1  items-center bg-danger border-danger/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border `}
+          className={` ${
+            !(selectedRecords.length > 0) && "!bg-danger/50 !border-danger/50 cursor-not-allowed"
+          } flex justify-center gap-1  items-center bg-danger border-danger/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border `}
           onClick={() => {
             if (selectedRecords.length > 0) {
               setOpenDelete(true);
@@ -79,12 +80,11 @@ const RowStudentTable = ({ data, id }: { data: any[], id: string }) => {
                 title: t("StudentPage.photo"),
                 accessor: "photo",
                 sortable: true,
-                render: ({ photo, fullName }: any) => <>
-                  <Avatar
-                    photo={photo}
-                    username={fullName}
-                  />
-                </>
+                render: ({ photo, fullName }: any) => (
+                  <>
+                    <Avatar photo={photo} username={fullName} />
+                  </>
+                ),
               },
               {
                 title: t("StudentPage.fullName"),
@@ -132,44 +132,48 @@ const RowStudentTable = ({ data, id }: { data: any[], id: string }) => {
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
-                sortable: true,
-                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
+                    <FormattedDate date={row.updatedAt} />
+                  </div>
+                ),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
-                sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
+                    <FormattedDate date={row.createdAt} />
+                  </div>
+                ),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
             noRecordsText={t("common.no-data")}
             noRecordsIcon={<></>}
-            {...  {
+            {...({
               selectedRecords: selectedRecords,
               onSelectedRecordsChange: (records: any) => {
                 setSelectedRecords(records);
               },
               // isRecordSelectable: (record: any) => record.isPaid == false
-
-            } as any}
+            } as any)}
           />
         )}
         <DeleteModel
-          description={t('BusPage.Are-you-sure-you-want-to-delete-this-BusStudent')}
-          title={t('BusPage.DeleteBusStudent')}
+          description={t("BusPage.Are-you-sure-you-want-to-delete-this-BusStudent")}
+          title={t("BusPage.DeleteBusStudent")}
           open={openDelete}
           setOpen={setOpenDelete}
           handleRemove={handleRemove}
           isLoading={isLoadingBusDisconnectStudentBus}
           name={`${selectedRecords.length}`}
         />
-      </div>  </>
-
+      </div>{" "}
+    </>
   );
 };
 
-export default RowStudentTable
-
-
-
+export default RowStudentTable;
