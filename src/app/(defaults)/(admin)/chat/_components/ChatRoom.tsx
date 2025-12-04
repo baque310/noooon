@@ -224,23 +224,37 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
   const sendMessage = useCallback(async () => {
     const trimmed = newMessage.trim();
     if ((!trimmed && !attachedImage && !attachedFile && !audioBlob) || !roomStatus?.canSendMessages || sending) return;
+    // console.log(newMessage);
 
     setSending(true);
     try {
-      const formData = new FormData();
-      formData.append("roomId", roomId);
-      formData.append("message", trimmed || "");
+      // If there's any file attachment (image, file, or audio), use FormData
+      if (audioBlob || attachedImage || attachedFile) {
+        const formData = new FormData();
+        formData.append("roomId", roomId);
+        formData.append("message", trimmed || "");
 
-      if (audioBlob) {
-        const audioFile = new File([audioBlob], `voice-${Date.now()}.webm`, { type: "audio/webm" });
-        formData.append("file", audioFile);
-      } else if (attachedImage) {
-        formData.append("file", attachedImage);
-      } else if (attachedFile) {
-        formData.append("file", attachedFile);
+        if (audioBlob) {
+          const audioFile = new File([audioBlob], `voice-${Date.now()}.webm`, { type: "audio/webm" });
+          formData.append("file", audioFile);
+        } else if (attachedImage) {
+          formData.append("file", attachedImage);
+        } else if (attachedFile) {
+          // console.log(attachedFile);
+          formData.append("file", attachedFile);
+        }
+
+        await ChatWithFileMessage(formData).unwrap();
+      } else {
+        // For text-only messages, use socket emit
+        const payload = {
+          roomId,
+          message: trimmed,
+          messageType: "text",
+        };
+
+        SocketService.emit("sendMessage", payload);
       }
-
-      await ChatWithFileMessage(formData).unwrap();
 
       setNewMessage("");
       setAttachedImage(null);
@@ -258,7 +272,6 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
       setSending(false);
     }
   }, [newMessage, attachedImage, attachedFile, audioBlob, roomId, roomStatus?.canSendMessages, ChatWithFileMessage, sending]);
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
