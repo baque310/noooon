@@ -7,12 +7,13 @@ export interface IJoinedRoom {
 }
 
 export interface IMessage {
+  fileSize: any;
   _id: string;
   message: string;
   createdAt: string;
   senderId: string;
   senderType: string;
-  fileUrl:string
+  fileUrl: string;
   senderName: string;
   image?: string;
   roomId: string;
