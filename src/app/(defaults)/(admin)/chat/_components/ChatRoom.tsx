@@ -57,6 +57,7 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const previewUrlRef = useRef<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [chatMessageRemove] = useChatMessageRemoveMutation();
   const [ChatWithFileMessage] = useChatWithFileMessageMutation();
@@ -509,12 +510,23 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
 
         {/* Audio preview */}
         {audioBlob && !isRecording && (
-          <div className="flex items-center gap-3 bg-blue-50 rounded-lg p-3 border border-blue-200">
-            <audio controls className="flex-1" src={URL.createObjectURL(audioBlob)}>
-              متصفحك لا يدعم عنصر الصوت.
-            </audio>
-            <button onClick={() => setAudioBlob(null)} className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition" title="إزالة التسجيل">
-              ✕
+          <div className="flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200 shadow-sm">
+            <div className="flex-shrink-0 p-2.5 bg-blue-100 rounded-lg">
+              <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-600 mb-1">تسجيل صوتي</p>
+              <audio controls className="w-full h-6" src={URL.createObjectURL(audioBlob)}>
+                متصفحك لا يدعم عنصر الصوت.
+              </audio>
+              <p className="text-xs text-gray-500 mt-1">الحجم: {(audioBlob.size / 1024).toFixed(1)} KB</p>
+            </div>
+            <button onClick={() => setAudioBlob(null)} className="flex-shrink-0 p-2 text-red-500 hover:bg-red-50 rounded-lg transition hover:text-red-600" title="إزالة التسجيل">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
             </button>
           </div>
         )}
@@ -555,66 +567,62 @@ const ChatRoom = React.forwardRef<ChatRoomHandle, ChatRoomProps>(({ roomId, onSe
         <div className="flex items-center gap-3">
           {/* Hidden file inputs */}
           <input
+            ref={fileInputRef}
             type="file"
-            accept="image/*"
-            id="chat-image-upload"
+            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
-              setAttachedImage(file);
-              setAttachedFile(null);
-              e.currentTarget.value = "";
-            }}
-          />
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
-            id="chat-file-upload"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
-              setAttachedFile(file);
-              setAttachedImage(null);
+              // Set as image if the selected file is an image, otherwise as a generic file
+              if (file.type.startsWith("image/")) {
+                setAttachedImage(file);
+                setAttachedFile(null);
+              } else {
+                setAttachedFile(file);
+                setAttachedImage(null);
+              }
               e.currentTarget.value = "";
             }}
           />
 
-          {/* Attachment buttons */}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => document.getElementById("chat-image-upload")?.click()}
-              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
-              title="إرفاق صورة">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="w-5 h-5">
-                <path
-                  fill="currentColor"
-                  d="M20 7.3c0-.875-.347-1.714-.965-2.334a3.31 3.31 0 0 0-4.673-.001h.001l-9.397 9.398h-.001a3.31 3.31 0 0 0 0 4.671l.119.113a3.31 3.31 0 0 0 4.554-.113l6.35-6.354a1.35 1.35 0 0 0 0-1.907l-.098-.09a1.35 1.35 0 0 0-1.809.09L7.425 17.43a1 1 0 0 1-1.414-1.414l6.656-6.658a3.35 3.35 0 0 1 4.614-.114l.12.114l.001.001a3.35 3.35 0 0 1 0 4.734l-6.352 6.356a5.31 5.31 0 0 1-7.498 0H3.55a5.31 5.31 0 0 1 0-7.499l9.4-9.4a5.31 5.31 0 0 1 7.306-.18l.191.18l.001.002a5.31 5.31 0 0 1 0 7.498l-.138.137a1 1 0 1 1-1.413-1.414l.136-.136c.619-.62.966-1.46.966-2.336"
-                />
-              </svg>
-            </button>
+          {/* Attachment buttons: combined attach + record */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && fileInputRef.current?.click()}
+                aria-label="إرفاق ملف أو صورة"
+                title="إرفاق ملف أو صورة"
+                className="flex items-center gap-2 px-3 py-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="w-5 h-5">
+                  <path
+                    fill="currentColor"
+                    d="M20 7.3c0-.875-.347-1.714-.965-2.334a3.31 3.31 0 0 0-4.673-.001h.001l-9.397 9.398h-.001a3.31 3.31 0 0 0 0 4.671l.119.113a3.31 3.31 0 0 0 4.554-.113l6.35-6.354a1.35 1.35 0 0 0 0-1.907l-.098-.09a1.35 1.35 0 0 0-1.809.09L7.425 17.43a1 1 0 0 1-1.414-1.414l6.656-6.658a3.35 3.35 0 0 1 4.614-.114l.12.114l.001.001a3.35 3.35 0 0 1 0 4.734l-6.352 6.356a5.31 5.31 0 0 1-7.498 0H3.55a5.31 5.31 0 0 1 0-7.499l9.4-9.4a5.31 5.31 0 0 1 7.306-.18l.191.18l.001.002a5.31 5.31 0 0 1 0 7.498l-.138.137a1 1 0 1 1-1.413-1.414l.136-.136c.619-.62.966-1.46.966-2.336"
+                  />
+                </svg>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => document.getElementById("chat-file-upload")?.click()}
-              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
-              title="إرفاق ملف">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-              </svg>
-            </button>
+              {/* show selected filename or image name (if any) */}
+              {(attachedImage || attachedFile) && <div className="max-w-[10rem] truncate text-xs text-gray-700 pl-1">{attachedImage?.name || attachedFile?.name}</div>}
+            </div>
 
-            <button
-              type="button"
-              onClick={isRecording ? stopRecording : startRecording}
-              className={`p-2 rounded-lg transition ${isRecording ? "bg-red-500 text-white hover:bg-red-600" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"}`}
-              title={isRecording ? "إيقاف التسجيل" : "تسجيل صوتي"}>
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
-              </svg>
-            </button>
+            <div>
+              <button
+                type="button"
+                onClick={isRecording ? stopRecording : startRecording}
+                aria-pressed={isRecording}
+                aria-label={isRecording ? "إيقاف التسجيل" : "تسجيل صوتي"}
+                title={isRecording ? "إيقاف التسجيل" : "تسجيل صوتي"}
+                className={`p-2 rounded-lg transition ${
+                  isRecording ? "bg-red-500 text-white hover:bg-red-600" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                } focus:outline-none focus:ring-2 focus:ring-blue-300`}>
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div className="relative flex-1 bg-[#FAFBFC]">
