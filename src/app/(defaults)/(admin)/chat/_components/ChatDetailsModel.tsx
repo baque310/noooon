@@ -85,18 +85,13 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
         body: { members: selectedMembers },
       }).unwrap();
 
-      toast.success(t("ChatPage.members-added-successfully") || "Members added successfully", {
-        autoClose: 3000,
-      });
+      toast.success(t("ChatPage.members-added-successfully") || "Members added successfully", { autoClose: 3000 });
+
       setShowAddMembersModal(false);
     } catch (error: any) {
       console.error("Failed to add members:", error);
-      if (error?.data?.message) {
-        toast.error(t(error.data.message), { autoClose: 3000 });
-      } else {
-        // console.log(error?.data);
-        toast.error(t("common.operation-failed"), { autoClose: 3000 });
-      }
+      const errorMessage = error?.data?.message || error?.message || JSON.stringify(error);
+      toast.error(errorMessage, { autoClose: 30000 });
     }
   };
 
@@ -156,9 +151,11 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
                 </button>
 
                 {/* Add Members Button */}
-                {/* <button onClick={() => setShowAddMembersModal(true)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="إضافة أعضاء">
-                  <UserPlus className="w-5 h-5 text-blue-600" />
-                </button> */}
+                {chat.chatType !== "DIRECT_MESSAGE" && (
+                  <button onClick={() => setShowAddMembersModal(true)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors" title="إضافة أعضاء">
+                    <UserPlus className="w-5 h-5 text-blue-600" />
+                  </button>
+                )}
               </div>
             </div>
 
@@ -254,7 +251,14 @@ const ChatDetailsPanel: React.FC<ChatDetailsPanelProps> = ({ chat, onToggleStatu
       <RenameChatModel open={showRenameModal} setOpen={setShowRenameModal} chat={chat} />
 
       {/* Add Members modal */}
-      <AddMembersModal open={showAddMembersModal} setOpen={setShowAddMembersModal} onAddMembers={handleAddMembers} isLoading={isAddingMembers} existingMembers={members} />
+      <AddMembersModal
+        open={showAddMembersModal}
+        setOpen={setShowAddMembersModal}
+        onAddMembers={handleAddMembers}
+        isLoading={isAddingMembers}
+        existingMembers={members}
+        chatType={chat?.type}
+      />
     </div>
   );
 };

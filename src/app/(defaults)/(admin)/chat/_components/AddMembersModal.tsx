@@ -25,13 +25,26 @@ interface AddMembersModalProps {
   isLoading?: boolean;
   existingMembers: any[];
   roomId?: string;
+  chatType?: string;
 }
 
-const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddMembers, isLoading = false, existingMembers = [], roomId }) => {
+const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddMembers, isLoading = false, existingMembers = [], roomId, chatType }) => {
   const { t } = getTranslation() as any;
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
   const [userType, setUserType] = useState<"TEACHER" | "STUDENT" | "PARENT">("TEACHER");
+
+  useEffect(() => {
+    if (!chatType) return;
+
+    if (chatType === "GROUP_CUSTOM_TEACHERS" || chatType === "GROUP_SCHOOL_STAFF") {
+      setUserType("TEACHER");
+    } else if (chatType === "GROUP_CLASS_STUDENTS") {
+      setUserType("STUDENT");
+    } else if (chatType === "GROUP_CLASS_PARENTS") {
+      setUserType("PARENT");
+    }
+  }, [chatType]);
 
   const debouncedSearch = useDebouncedValue(searchQuery, 400);
 
@@ -194,25 +207,30 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
           <label className="block text-sm font-medium text-gray-700 mb-2">{t("ChatPage.user-type") || "نوع المستخدم"}</label>
           <div className="flex gap-2">
             <button
+              disabled={chatType !== "GROUP_CUSTOM_TEACHERS" && chatType !== "GROUP_SCHOOL_STAFF"}
               onClick={() => setUserType("TEACHER")}
-              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                userType === "TEACHER" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${userType === "TEACHER" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"} ${
+                chatType !== "GROUP_CUSTOM_TEACHERS" && chatType !== "GROUP_SCHOOL_STAFF" ? "opacity-50 cursor-not-allowed" : ""
               }`}>
-              {t("ChatPage.teacher") || "معلم"}
+              {t("ChatPage.teacher")}
             </button>
+
             <button
+              disabled={chatType !== "GROUP_CLASS_STUDENTS"}
               onClick={() => setUserType("STUDENT")}
-              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                userType === "STUDENT" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${userType === "STUDENT" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"} ${
+                chatType !== "GROUP_CLASS_STUDENTS" ? "opacity-50 cursor-not-allowed" : ""
               }`}>
-              {t("ChatPage.student") || "طالب"}
+              {t("ChatPage.student")}
             </button>
+
             <button
+              disabled={chatType !== "GROUP_CLASS_PARENTS"}
               onClick={() => setUserType("PARENT")}
-              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                userType === "PARENT" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${userType === "PARENT" ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700"} ${
+                chatType !== "GROUP_CLASS_PARENTS" ? "opacity-50 cursor-not-allowed" : ""
               }`}>
-              {t("ChatPage.parent") || "ولي أمر"}
+              {t("ChatPage.parent")}
             </button>
           </div>
         </div>
@@ -255,7 +273,7 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
           {/* Select all header */}
           <div className="flex items-center justify-between p-3 border-b border-gray-100">
             <div className="text-xs text-gray-500">
-              {availableUsers.length} {t("common.items") || "نتيجة"}
+              {t("common.items") || "نتيجة"} {availableUsers.length}
             </div>
             <label className="inline-flex items-center gap-2">
               <span className="text-sm text-gray-700">{t("common.select-all") || "تحديد الكل"}</span>
