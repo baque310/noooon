@@ -12,6 +12,10 @@ export interface ITeacherLessons {
   teacherSubjectId: string;
   schoolYearId: string;
   schoolId: string;
+  User: {
+    id: string;
+    username: string;
+  };
   teacherSubject: {
     Teacher: {
       id: string;
@@ -75,10 +79,7 @@ export interface AddTeacherLessonsPayload {
 
 export const TeacherLessons = api.injectEndpoints({
   endpoints: (build) => ({
-    TeacherLessonsGetData: build.query<
-      BaseGetDataResponse<ITeacherLessons>,
-      GetDataRequestParams
-    >({
+    TeacherLessonsGetData: build.query<BaseGetDataResponse<ITeacherLessons>, GetDataRequestParams>({
       query: (params) => ({
         url: `super/teacher/lessons`,
         params,
@@ -106,39 +107,22 @@ export const TeacherLessons = api.injectEndpoints({
       },
     }),
 
-    TeacherLessonsCreate: build.mutation<
-      ITeacherLessons,
-      { teacherId: string; body: AddTeacherLessonsPayload | FormData }
-    >({
+    TeacherLessonsCreate: build.mutation<ITeacherLessons, { teacherId: string; body: AddTeacherLessonsPayload | FormData }>({
       query: ({ teacherId, body }) => ({
         url: `super/teacher/lessons/${teacherId}`,
         body,
         method: "POST",
       }),
-      invalidatesTags: [
-        "TeacherLessonsCreate",
-        "TeacherLessonsGetDataById",
-        "TeacherLessonsGetData",
-      ],
+      invalidatesTags: ["TeacherLessonsCreate", "TeacherLessonsGetDataById", "TeacherLessonsGetData"],
     }),
 
-    TeacherLessonsUpdate: build.mutation<
-      ITeacherLessons,
-      { id: string; teacherId: string; body: AddTeacherLessonsPayload }
-    >({
+    TeacherLessonsUpdate: build.mutation<ITeacherLessons, { id: string; teacherId: string; body: AddTeacherLessonsPayload }>({
       query: ({ body, id, teacherId }) => ({
         url: `super/teacher/lessons/${id}/${teacherId}`,
         body,
         method: "PATCH",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherLessonsUpdate",
-              "TeacherLessonsGetDataById",
-              "TeacherLessonsGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherLessonsUpdate", "TeacherLessonsGetDataById", "TeacherLessonsGetData"] : []),
     }),
 
     TeacherLessonsRemove: build.mutation<void, { id: string }>({
@@ -146,14 +130,7 @@ export const TeacherLessons = api.injectEndpoints({
         url: `super/teacher/lessons/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherLessonsRemove",
-              "TeacherLessonsGetDataById",
-              "TeacherLessonsGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherLessonsRemove", "TeacherLessonsGetDataById", "TeacherLessonsGetData"] : []),
     }),
     TeacherLessonsAttachmentsCreate: build.mutation<
       void,
@@ -168,14 +145,7 @@ export const TeacherLessons = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherLessonsAttachmentsCreate",
-              "TeacherLessonsGetDataById",
-              "TeacherLessonsGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherLessonsAttachmentsCreate", "TeacherLessonsGetDataById", "TeacherLessonsGetData"] : []),
     }),
     TeacherLessonsAttachmentsRemove: build.mutation<
       void,
@@ -189,14 +159,7 @@ export const TeacherLessons = api.injectEndpoints({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: (res) =>
-        res
-          ? [
-              "TeacherLessonsAttachmentsRemove",
-              "TeacherLessonsGetDataById",
-              "TeacherLessonsGetData",
-            ]
-          : [],
+      invalidatesTags: (res) => (res ? ["TeacherLessonsAttachmentsRemove", "TeacherLessonsGetDataById", "TeacherLessonsGetData"] : []),
     }),
   }),
 });

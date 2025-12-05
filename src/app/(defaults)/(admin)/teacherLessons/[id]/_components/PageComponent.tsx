@@ -15,17 +15,12 @@ import { toast } from "react-toastify";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { LessonAttachment } from "./LessonAttachment";
 import { StudentLesson } from "./StudentLesson";
-import { useUserManagerResetPasswordMutation } from "@/services/Manager/User";
-import ConfirmModel from "@/components/Model/ConfirmModel";
 
 const PageComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const params = useParams();
   const { id } = params;
-  const [openResetPassword, setOpenResetPassword] = useState(false);
-
-  const [UserManagerResetPassword, { isLoading: isLoadingResetPassword }] = useUserManagerResetPasswordMutation();
   const [TeacherLessonsGetDataById, { currentData: data, isFetching }] = useLazyTeacherLessonsGetDataByIdQuery();
 
   useEffect(() => {
@@ -48,20 +43,6 @@ const PageComponent = () => {
       router.back();
     } catch (error: any) {
       console.error("Failed to operation :", error);
-      if (error && error.message) {
-        return toast.error(t(error.message), { autoClose: 15000 });
-      }
-      toast.error(error, { autoClose: 15000 });
-    }
-  };
-
-  const handleResetPassword = async () => {
-    try {
-      // await UserManagerResetPassword({ id: String(data?.User?.id) }).unwrap();
-      toast.success(t("StudentPage.password-reset-successfully"), { autoClose: 15000 });
-      setOpenResetPassword(false);
-    } catch (error: any) {
-      console.error("Failed to reset password:", error);
       if (error && error.message) {
         return toast.error(t(error.message), { autoClose: 15000 });
       }
@@ -226,17 +207,6 @@ const PageComponent = () => {
                   </svg>
                   {t("common.delete")}
                 </button>
-                {/* {data.user && (
-                  <ItemList
-                    props={{
-                      onClick: () => {
-                        setOpenResetPassword(true);
-                      },
-                    }}
-                    title={<div className="text-[#000]">{t("StudentPage.resetPassword")}</div>}
-                    value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
-                  />
-                )} */}
               </div>
             </div>
 
@@ -249,18 +219,6 @@ const PageComponent = () => {
               isLoading={isLoadingTeacherLessonsRemove}
               name={data?.title ?? ""}
             />
-
-            {/* {data?. && (
-              <ConfirmModel
-                description={t("StudentPage.Are-you-sure-you-want-to-reset-password-for-this-User")}
-                title={t("StudentPage.resetPassword")}
-                open={openResetPassword}
-                setOpen={setOpenResetPassword}
-                handleConfirm={handleResetPassword}
-                isLoading={isLoadingResetPassword}
-                name={data?.title ?? ""}
-              />
-            )} */}
           </div>
         )}
       </div>

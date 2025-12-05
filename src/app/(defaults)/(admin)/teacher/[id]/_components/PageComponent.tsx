@@ -15,6 +15,8 @@ import moment from "moment";
 import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { ChangePasswordByAdminModel } from "@/components/Model/ChangePasswordByAdminModel";
+import { useUserManagerResetPasswordMutation } from "@/services/Manager/User";
+import ConfirmModel from "@/components/Model/ConfirmModel";
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -23,6 +25,8 @@ const PageComponent = () => {
   const { id } = params;
   const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery();
   const [TeacherRemove, { isLoading: isLoadingTeacherRemove }] = useTeacherRemoveMutation();
+  const [UserManagerResetPassword, { isLoading: isLoadingResetPassword }] = useUserManagerResetPasswordMutation();
+
   console.log(data);
 
   useEffect(() => {
@@ -34,6 +38,7 @@ const PageComponent = () => {
       });
     }
   }, [id]);
+
   const handleRemove = async () => {
     try {
       await TeacherRemove({ id: String(id) }).unwrap();
@@ -48,8 +53,23 @@ const PageComponent = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    try {
+      await UserManagerResetPassword({ id: String(data?.User?.id) }).unwrap();
+      toast.success(t("StudentPage.password-reset-successfully"), { autoClose: 15000 });
+      setOpenResetPassword(false);
+    } catch (error: any) {
+      console.error("Failed to reset password:", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
+
   const [openDelete, setOpenDelete] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
+  const [openResetPassword, setOpenResetPassword] = useState(false);
 
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
@@ -96,6 +116,17 @@ const PageComponent = () => {
                 value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
               />
             )}
+            {data?.User && (
+              <ItemList
+                props={{
+                  onClick: () => {
+                    setOpenResetPassword(true);
+                  },
+                }}
+                title={<div className="text-[#000]">{t("StudentPage.resetPassword")}</div>}
+                value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
+              />
+            )}
             <ItemList
               props={{
                 onClick: () => {
@@ -118,6 +149,7 @@ const PageComponent = () => {
         isLoading={isLoadingTeacherRemove}
         name={data?.fullName ?? ""}
       />
+
       {data?.User && (
         <ChangePasswordByAdminModel
           data={{
@@ -127,6 +159,18 @@ const PageComponent = () => {
           isAdmin
           open={openChangePassword}
           setOpen={setOpenChangePassword}
+        />
+      )}
+
+      {data?.User && (
+        <ConfirmModel
+          description={t("StudentPage.Are-you-sure-you-want-to-reset-password-for-this-User")}
+          title={t("StudentPage.resetPassword")}
+          open={openResetPassword}
+          setOpen={setOpenResetPassword}
+          handleConfirm={handleResetPassword}
+          isLoading={isLoadingResetPassword}
+          name={data?.User?.username ?? ""}
         />
       )}
     </div>
