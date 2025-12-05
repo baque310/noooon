@@ -222,6 +222,11 @@ const TableComponent = () => {
                 title: t("LessonsPage.content"),
                 accessor: "content",
                 sortable: true,
+                render: ({ content }: any) => (
+                  <div className="max-w-xs truncate" title={content}>
+                    {content}
+                  </div>
+                ),
               },
               {
                 title: t("LessonsPage.teacherFullName"),
@@ -261,9 +266,12 @@ const TableComponent = () => {
               },
               {
                 title: t("LessonsPage.SectionName"),
-                accessor: "Section.name",
+                accessor: "teacherSubject.Section.name",
                 // sortable: true,
-                render: ({ Section }: any) => Section?.name && t(Section?.name ?? ("" as any)),
+                render: ({ teacherSubject }: any) => {
+                  const name = teacherSubject?.Section?.name;
+                  return name ? t(name as any) : "-";
+                },
               },
               {
                 title: t("LessonsPage.SchoolYear"),

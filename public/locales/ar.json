@@ -1102,6 +1102,7 @@
   "ChatPage": {
     "direct": "مباشر",
     "message": "رسالة",
+    "members-added-successfully": "تمت إضافة الأعضاء بنجاح",
     "members": "الأعضاء",
     "user-type": "نوع المستخدم",
     "add-members": "إضافة أعضاء",

@@ -9,23 +9,24 @@ import { getTranslation } from "@/ni18n/i18n";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
-import {
-  useLazyTeacherLessonsGetDataByIdQuery,
-  useTeacherLessonsRemoveMutation,
-} from "@/services/admin/teacherLessons";
+import { useLazyTeacherLessonsGetDataByIdQuery, useTeacherLessonsRemoveMutation } from "@/services/admin/teacherLessons";
 import { ArrowIcons } from "@/components/common/icons/Actions";
 import { toast } from "react-toastify";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { LessonAttachment } from "./LessonAttachment";
 import { StudentLesson } from "./StudentLesson";
+import { useUserManagerResetPasswordMutation } from "@/services/Manager/User";
+import ConfirmModel from "@/components/Model/ConfirmModel";
 
 const PageComponent = () => {
   const { t } = getTranslation();
   const router = useRouter();
   const params = useParams();
   const { id } = params;
-  const [TeacherLessonsGetDataById, { currentData: data, isFetching }] =
-    useLazyTeacherLessonsGetDataByIdQuery();
+  const [openResetPassword, setOpenResetPassword] = useState(false);
+
+  const [UserManagerResetPassword, { isLoading: isLoadingResetPassword }] = useUserManagerResetPasswordMutation();
+  const [TeacherLessonsGetDataById, { currentData: data, isFetching }] = useLazyTeacherLessonsGetDataByIdQuery();
 
   useEffect(() => {
     if (id) {
@@ -38,8 +39,7 @@ const PageComponent = () => {
   }, [id]);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const [TeacherLessonsRemove, { isLoading: isLoadingTeacherLessonsRemove }] =
-    useTeacherLessonsRemoveMutation();
+  const [TeacherLessonsRemove, { isLoading: isLoadingTeacherLessonsRemove }] = useTeacherLessonsRemoveMutation();
 
   const handleRemove = async () => {
     try {
@@ -48,6 +48,20 @@ const PageComponent = () => {
       router.back();
     } catch (error: any) {
       console.error("Failed to operation :", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      // await UserManagerResetPassword({ id: String(data?.User?.id) }).unwrap();
+      toast.success(t("StudentPage.password-reset-successfully"), { autoClose: 15000 });
+      setOpenResetPassword(false);
+    } catch (error: any) {
+      console.error("Failed to reset password:", error);
       if (error && error.message) {
         return toast.error(t(error.message), { autoClose: 15000 });
       }
@@ -72,12 +86,7 @@ const PageComponent = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
-                  <svg
-                    className="w-5 h-5 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -91,112 +100,68 @@ const PageComponent = () => {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t("TeacherLessonsPage.title")}
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherLessonsPage.title")}</label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <p className="text-gray-900 dark:text-white font-medium">
-                      {data?.title}
-                    </p>
+                    <p className="text-gray-900 dark:text-white font-medium">{data?.title}</p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t("TeacherLessonsPage.content")}
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherLessonsPage.content")}</label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                      {data?.content}
-                    </p>
+                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">{data?.content}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherLessonsPage.dueDate")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherLessonsPage.dueDate")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {moment(data?.dueDate).format("YYYY-MM-DD")}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{moment(data?.dueDate).format("YYYY-MM-DD")}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherLessonsPage.teacherFullName")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherLessonsPage.teacherFullName")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.Teacher?.fullName || "N/A"}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{data?.teacherSubject?.Teacher?.fullName || "N/A"}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherLessonsPage.StageName")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherLessonsPage.StageName")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.StageSubject?.Stage?.name ||
-                          "N/A"}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{data?.teacherSubject?.StageSubject?.Stage?.name || "N/A"}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherLessonsPage.SubjectName")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherLessonsPage.SubjectName")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.StageSubject?.Subject?.name ||
-                          "N/A"}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{data?.teacherSubject?.StageSubject?.Subject?.name || "N/A"}</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t("TeacherLessonsPage.SchoolYear")}
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherLessonsPage.SchoolYear")}</label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <p className="text-gray-900 dark:text-white font-medium">
-                      {`${data?.SchoolYear?.from || ""} - ${
-                        data?.SchoolYear?.to || ""
-                      }`}
-                    </p>
+                    <p className="text-gray-900 dark:text-white font-medium">{`${data?.SchoolYear?.from || ""} - ${data?.SchoolYear?.to || ""}`}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("common.createdAt")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("common.createdAt")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-700 dark:text-gray-300 text-sm">
-                        {moment(data?.createdAt).format(
-                          "YYYY-MM-DD hh:mm:ss A"
-                        )}
-                      </p>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm">{moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("common.updatedAt")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("common.updatedAt")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-700 dark:text-gray-300 text-sm">
-                        {moment(data?.updatedAt).format(
-                          "YYYY-MM-DD hh:mm:ss A"
-                        )}
-                      </p>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm">{moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</p>
                     </div>
                   </div>
                 </div>
@@ -206,28 +171,18 @@ const PageComponent = () => {
             {/* Statistics */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                  {t("TeacherLessonsPage.statisticsOverview")}
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t("TeacherLessonsPage.statisticsOverview")}</h3>
               </div>
 
               <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {data?.StudentLesson?.length || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("TeacherLessonsPage.totalStudents")}
-                  </div>
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{data?.StudentLesson?.length || 0}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t("TeacherLessonsPage.totalStudents")}</div>
                 </div>
 
                 <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    {data?.LessonAttachment?.length || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("Attachments")}
-                  </div>
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{data?.LessonAttachment?.length || 0}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t("Attachments")}</div>
                 </div>
               </div>
             </div>
@@ -240,24 +195,14 @@ const PageComponent = () => {
             {/* Actions */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                  {t("common.settings")}
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t("common.settings")}</h3>
               </div>
 
               <div className="p-6 flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() =>
-                    router.push(`/teacherLessons/createOrUpdate?id=${id}`)
-                  }
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  onClick={() => router.push(`/teacherLessons/createOrUpdate?id=${id}`)}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -270,14 +215,8 @@ const PageComponent = () => {
 
                 <button
                   onClick={() => setOpenDelete(true)}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -287,13 +226,22 @@ const PageComponent = () => {
                   </svg>
                   {t("common.delete")}
                 </button>
+                {/* {data.user && (
+                  <ItemList
+                    props={{
+                      onClick: () => {
+                        setOpenResetPassword(true);
+                      },
+                    }}
+                    title={<div className="text-[#000]">{t("StudentPage.resetPassword")}</div>}
+                    value={<ArrowIcons className="rtl:rotate-180 text-[#000]/50" />}
+                  />
+                )} */}
               </div>
             </div>
 
             <DeleteModel
-              description={t(
-                "TeacherLessonsPage.Are-you-sure-you-want-to-delete-this-teacherLessons"
-              )}
+              description={t("TeacherLessonsPage.Are-you-sure-you-want-to-delete-this-teacherLessons")}
               title={t("TeacherLessonsPage.DeleteTeacherLessons")}
               open={openDelete}
               setOpen={setOpenDelete}
@@ -301,6 +249,18 @@ const PageComponent = () => {
               isLoading={isLoadingTeacherLessonsRemove}
               name={data?.title ?? ""}
             />
+
+            {/* {data?. && (
+              <ConfirmModel
+                description={t("StudentPage.Are-you-sure-you-want-to-reset-password-for-this-User")}
+                title={t("StudentPage.resetPassword")}
+                open={openResetPassword}
+                setOpen={setOpenResetPassword}
+                handleConfirm={handleResetPassword}
+                isLoading={isLoadingResetPassword}
+                name={data?.title ?? ""}
+              />
+            )} */}
           </div>
         )}
       </div>

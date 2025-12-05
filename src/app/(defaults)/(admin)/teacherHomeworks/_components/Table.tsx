@@ -325,8 +325,6 @@ const TableComponent = () => {
                 title: t("HomeworksPage.ClassName"),
                 accessor: "teacherSubject.StageSubject.Class.name",
                 render: ({ teacherSubject }: any) => {
-                  console.log(teacherSubject);
-
                   const name = teacherSubject?.StageSubject?.Class?.name;
                   return name ? t(name as any) : "-";
                 },
