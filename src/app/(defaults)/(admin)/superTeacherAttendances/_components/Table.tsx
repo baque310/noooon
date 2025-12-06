@@ -27,6 +27,7 @@ import { exportJsonToExcel } from "@/utils/excelParser";
 import UpdateModel from "./UpdateModel";
 import { toast } from "react-toastify";
 import { useExamResultsUpdateMutation } from "@/services/admin/ExamResults";
+import FormattedDate from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -465,8 +466,12 @@ const TableComponent = () => {
               {
                 title: t("SuperTeacherAttendancesPage.date"),
                 accessor: "date",
-                sortable: true,
-                render: ({ date }: any) => (date ? <div>{moment(date).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("SuperTeacherAttendancesPage.date")}</div>
+                    <FormattedDate date={row.date} />
+                  </div>
+                ),
               },
             ]}
             customLoader={<div className="loader !bg-primary"></div>}
