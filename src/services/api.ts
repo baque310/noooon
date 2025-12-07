@@ -151,6 +151,13 @@ export const api = createApi({
     "ClassRemove",
     "ClassUpdate",
 
+    // SubSubject Tag
+    "SubSubjectGetData",
+    "SubSubjectGetDataById",
+    "SubSubjectCreate",
+    "SubSubjectRemove",
+    "SubSubjectUpdate",
+
     // Section Tag
     "SectionGetData",
     "SectionGetDataById",

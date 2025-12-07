@@ -28,6 +28,7 @@ export type PAGE_CODE =
   | "guidance"
   | "gallery"
   | "subject"
+  | "sub_subject"
   | "stage_subject"
   | "teacher_subject"
   | "schedule"

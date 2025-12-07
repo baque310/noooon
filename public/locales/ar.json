@@ -152,6 +152,7 @@
     "discount": "الخصومات",
     "alerts": "التبليغات",
     "chats": "الدردشات",
+    "sub_subject": "المواد الفرعية",
     "studentOtherPayment": "مصاريف اخرى",
     "superTeacherAttendances": "حضور وغياب ",
     "video": "الفيديوهات",
@@ -685,6 +686,22 @@
     "DeleteSubject": "حذف المادة ",
     "name-already-exist": "الاسم موجود بالفعل",
     "this-Subject-connected-with-other-stage": "هذا المادة مرتبطة بمراحل اخرى"
+  },
+  "SubSubjectPage": {
+    "SubSubject": "معلومات المادة الفرعية",
+    "SubSubjects": "معلومات المواد الفرعية",
+    "name": "الاسم",
+    "enter-name": "ادخل الاسم",
+    "subject": "المادة",
+    "select-subject": "اختر مادة",
+    "update-info": "تعديل المادة الفرعية",
+    "add": "اضافة",
+    "update": "تعديل",
+    "SubSubjectInformation": "معلومات المادة الفرعية",
+    "Are-you-sure-you-want-to-delete-this-SubSubject": "هل أنت متأكد أنك تريد حذف هذه المادة الفرعية ؟",
+    "DeleteSubSubject": "حذف المادة الفرعية",
+    "name-already-exist": "الاسم موجود بالفعل",
+    "this-SubSubject-connected-with-other-data": "هذه المادة الفرعية مرتبطة ببيانات اخرى"
   },
   "ExamTypePage": {
     "ExamType": "نوع الامتحان",

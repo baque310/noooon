@@ -655,6 +655,22 @@
     "name-already-exist": "Name already exists",
     "this-Subject-connected-with-other-stage": "This subject is linked with other stages"
   },
+  "SubSubjectPage": {
+    "SubSubject": "Sub-Subject Information",
+    "SubSubjects": "Sub-Subjects Information",
+    "name": "Name",
+    "enter-name": "Enter name",
+    "subject": "Subject",
+    "select-subject": "Select a subject",
+    "update-info": "Update Sub-Subject",
+    "add": "Add",
+    "update": "Edit",
+    "SubSubjectInformation": "Sub-Subject Information",
+    "Are-you-sure-you-want-to-delete-this-SubSubject": "Are you sure you want to delete this sub-subject?",
+    "DeleteSubSubject": "Delete Sub-Subject",
+    "name-already-exist": "Name already exists",
+    "this-SubSubject-connected-with-other-data": "This sub-subject is linked with other data"
+  },
   "ExamTypePage": {
     "ExamType": "Exam Type",
     "ExamTypes": "Exam Types",

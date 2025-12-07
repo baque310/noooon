@@ -356,6 +356,15 @@ const Sidebar = () => {
                     },
                     {
                       number: 0,
+                      label: t("sidebar.sub_subject"),
+                      resource: "subject",
+                      permission: ["read-any", "read-own"],
+                      to: "sub-subject",
+                      isNoSub: true,
+                      // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
+                    },
+                    {
+                      number: 0,
                       label: t("sidebar.stageSubject"),
                       resource: "stage_subject",
                       permission: ["read-any", "read-own"],
