@@ -10,6 +10,10 @@ export interface ISubSubject {
   createdAt: string;
   updatedAt: string;
   schoolId: string;
+  Subject: {
+    id: string;
+    name: string;
+  };
   School: {
     id: string;
     name: string;

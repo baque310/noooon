@@ -24,6 +24,7 @@ import { InputForm } from "@/components/Form/inputForm";
 import { useExamTypeGetDataQuery } from "@/services/admin/ExamType";
 import { useLazyStageSubjectGetDataQuery } from "@/services/admin/StageSubject";
 import { DateTimeForm } from "@/components/Form/DateTimeForm";
+import { useSubSubjectGetDataQuery } from "@/services/admin/SubSubject";
 
 const PageComponent = () => {
   const { t } = getTranslation();
@@ -32,6 +33,8 @@ const PageComponent = () => {
   const id = searchParams.get("id");
   const [ExamsGetDataById, { currentData: data, isFetching }] = useLazyExamsGetDataByIdQuery();
   const [getStageSubject, { currentData: StageSubject, isFetching: isFetchingStageSubject }] = useLazyStageSubjectGetDataQuery();
+  const { isFetching: isFetchingStageSubSubject, currentData: StageSubSubject } = useSubSubjectGetDataQuery({});
+
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: ExamType, isFetching: isFetchingExamType } = useExamTypeGetDataQuery({});
 
@@ -59,7 +62,11 @@ const PageComponent = () => {
           id: String(id),
         }).unwrap();
       } else {
-        await ExamsCreate({
+        // Check if the selected ID belongs to a SubSubject
+        const selectedSubSubject = StageSubSubject?.find((item) => item.id === values.stageSubjectId);
+
+        // Prepare the payload based on whether it's a SubSubject or StageSubject
+        const payload: any = {
           content: values.content,
           ExamSection: values.ExamSection.map((x) => {
             return {
@@ -68,9 +75,29 @@ const PageComponent = () => {
             };
           }),
           examTypeId: values.examTypeId,
-          stageSubjectId: values.stageSubjectId,
           score: Number(values.score),
-        }).unwrap();
+        };
+
+        // Add the appropriate ID field(s)
+        if (selectedSubSubject) {
+          // User selected a SubSubject
+          payload.subSubjectId = values.stageSubjectId;
+
+          // Find the matching StageSubject by comparing subjectId
+          const matchingStageSubject = StageSubject?.find((stageSubject) => stageSubject.subjectId === selectedSubSubject.Subject.id);
+
+          if (matchingStageSubject) {
+            payload.stageSubjectId = matchingStageSubject.id;
+          } else {
+            toast.error("ExamsPage.no-matching-subject-found"), { autoClose: 30000 };
+            return;
+          }
+        } else {
+          // User selected a regular StageSubject
+          payload.stageSubjectId = values.stageSubjectId;
+        }
+
+        await ExamsCreate(payload).unwrap();
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
@@ -117,6 +144,9 @@ const PageComponent = () => {
       return oldValue === value ? -1 : value;
     });
   };
+  console.log("StageSubject");
+  console.log(StageSubject);
+  console.log(StageSubSubject);
 
   return (
     <>
@@ -250,25 +280,34 @@ const PageComponent = () => {
                         name={`stageSubjectId`}
                         title={t("ExamsPage.stageSubject")}
                         placeholder={t("ExamsPage.select-stageSubject")}
-                        options={
-                          StageSubject?.map((item, index) => {
-                            return {
-                              label: (
-                                <div className="flex gap-1">
-                                  <div>{item.Subject.name}</div>
-                                  <div>{"( "}</div>
-                                  <div>
-                                    {item.Class.name} {" - "} {item.Stage.name && t(item.Stage.name as any)}
-                                  </div>
-                                  <div>{" )"}</div>
+                        options={[
+                          ...(StageSubject?.map((item) => ({
+                            label: (
+                              <div className="flex gap-1">
+                                <div>{item.Subject.name}</div>
+                                <div>{"( "}</div>
+                                <div>
+                                  {item.Class.name} {" - "} {item.Stage.name && t(item.Stage.name as any)}
                                 </div>
-                              ),
-                              value: item.id,
-                            };
-                          }) || []
-                        }
+                                <div>{" )"}</div>
+                              </div>
+                            ),
+                            value: item.id,
+                          })) || []),
+                          ...(StageSubSubject?.filter((subSubject) => StageSubject?.some((stageSubject) => stageSubject.subjectId === subSubject.Subject.id)).map((item) => ({
+                            label: (
+                              <div className="flex gap-1">
+                                <div>{item?.name || item.name}</div>
+                                <div>
+                                  {"( "} {item?.Subject?.name} {" )"}
+                                </div>
+                              </div>
+                            ),
+                            value: item.id,
+                          })) || []),
+                        ]}
                         props={{
-                          isLoading: isFetchingStageSubject,
+                          isLoading: isFetchingStageSubject || isFetchingStageSubSubject,
                           isClearable: true,
                           onChange: (e) => {
                             props.setFieldValue(`stageSubjectId`, (e as any)?.value ?? "");
