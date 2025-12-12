@@ -93,10 +93,11 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
   // Get available users based on selected type
   const availableUsers = useMemo(() => {
     let users: any[] = [];
+    console.log(parentsData);
 
     if (userType === "TEACHER" && teachersData?.data) {
       users = teachersData.data.map((teacher) => ({
-        id: String(teacher.id),
+        id: String(teacher.User.id),
         name: teacher.fullName,
         photo: teacher.photo,
         userType: "TEACHER",
@@ -104,7 +105,7 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
     } else if (userType === "STUDENT" && studentsData?.data) {
       users = studentsData.data
         .map((student) => {
-          const id = student?.Student?.id ?? student?.id;
+          const id = student?.Student?.User?.id ?? student?.id;
           const name = student?.Student?.fullName ?? student?.Student?.fullName;
           const photo = student?.Student?.photo ?? student?.Student?.photo;
           return id ? { id: String(id), name, photo, userType: "STUDENT" } : null;
@@ -112,7 +113,7 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
         .filter(Boolean) as any[];
     } else if (userType === "PARENT" && parentsData?.data) {
       users = parentsData.data.map((parent) => ({
-        id: String(parent.id),
+        id: String(parent.User.id),
         name: parent.fullName,
         photo: parent.photo,
         userType: "PARENT",
