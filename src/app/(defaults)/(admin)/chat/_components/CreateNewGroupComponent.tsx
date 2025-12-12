@@ -445,7 +445,7 @@ const CreateNewGroupComponent = ({
                     isClearable: true,
                     isLoading: isFetchingTeachers,
                     onChange: (option: any) => {
-                      props.setFieldValue("teacherIds", option?.value || "");
+                      props.setFieldValue("teacherIds", option?.value ? [option.value] : []);
                     },
                     onInputChange: (inputValue: string) => {
                       setSearchTeacher(inputValue);

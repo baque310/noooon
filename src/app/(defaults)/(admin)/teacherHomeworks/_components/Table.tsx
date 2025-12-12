@@ -290,6 +290,17 @@ const TableComponent = () => {
             onRowClick={(item) => router.push(`/teacherHomeworks/${item.record.id}`)}
             columns={[
               {
+                title: t("HomeworksPage.teacherFullName"),
+                accessor: "teacherSubject.Teacher.fullName",
+                sortable: true,
+              },
+              {
+                title: t("HomeworksPage.SubjectName"),
+                accessor: "teacherSubject.StageSubject.Subject.name",
+                // sortable: true,
+                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
+              },
+              {
                 title: t("HomeworksPage.title"),
                 accessor: "title",
                 sortable: true,
@@ -309,11 +320,6 @@ const TableComponent = () => {
                 accessor: "dueDate",
                 sortable: true,
                 render: ({ dueDate }: any) => (dueDate ? <div>{moment(dueDate).format("YYYY-MM-DD ")}</div> : null),
-              },
-              {
-                title: t("HomeworksPage.teacherFullName"),
-                accessor: "teacherSubject.Teacher.fullName",
-                sortable: true,
               },
               {
                 title: t("HomeworksPage.StageName"),
@@ -337,12 +343,6 @@ const TableComponent = () => {
                   const sections = Array.from(new Set(list.map((item: any) => item?.Student?.StudentEnrollment?.[0]?.Section?.name).filter(Boolean)));
                   return sections.length > 0 ? sections.join(", ") : "-";
                 },
-              },
-              {
-                title: t("HomeworksPage.SubjectName"),
-                accessor: "teacherSubject.StageSubject.Subject.name",
-                // sortable: true,
-                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
               },
               {
                 title: t("HomeworksPage.SchoolYear"),

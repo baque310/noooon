@@ -214,6 +214,17 @@ const TableComponent = () => {
             records={data?.data as any}
             columns={[
               {
+                title: t("LessonsPage.teacherFullName"),
+                accessor: "teacherSubject.Teacher.fullName",
+                sortable: true,
+              },
+              {
+                title: t("LessonsPage.SubjectName"),
+                accessor: "teacherSubject.StageSubject.Subject.name",
+                // sortable: true,
+                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
+              },
+              {
                 title: t("LessonsPage.title"),
                 accessor: "title",
                 sortable: true,
@@ -229,17 +240,11 @@ const TableComponent = () => {
                 ),
               },
               {
-                title: t("LessonsPage.teacherFullName"),
-                accessor: "teacherSubject.Teacher.fullName",
-                sortable: true,
-              },
-              {
                 title: t("LessonsPage.StageName"),
                 accessor: "teacherSubject.StageSubject.Stage.name",
                 // sortable: true,
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
-
               {
                 title: t("HomeworksPage.ClassName"),
                 accessor: "teacherSubject.StageSubject.Class.name",
@@ -257,13 +262,6 @@ const TableComponent = () => {
               //     return sections.length > 0 ? sections.join(", ") : "-";
               //   },
               // },
-
-              {
-                title: t("LessonsPage.SubjectName"),
-                accessor: "teacherSubject.StageSubject.Subject.name",
-                // sortable: true,
-                render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
-              },
               {
                 title: t("LessonsPage.SectionName"),
                 accessor: "teacherSubject.Section.name",
@@ -279,7 +277,6 @@ const TableComponent = () => {
                 // sortable: true,
                 render: ({ SchoolYear }: any) => (SchoolYear.from || SchoolYear.to ? SchoolYear.from + " - " + SchoolYear.to : null),
               },
-
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
