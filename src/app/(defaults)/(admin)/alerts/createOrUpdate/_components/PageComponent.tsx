@@ -158,272 +158,274 @@ const PageComponent = () => {
                   />
                 </div>
 
-                <>
-                  <div className="Card">
-                    <div className="text-base font-semibold text-black dark:text-white-dark mb-2">
-                      <SelectForm
-                        formikProps={props}
-                        name={`sendTo`}
-                        title={t("NotificationPage.sendTo")}
-                        placeholder={t("NotificationPage.select-sendTo")}
-                        options={[
-                          { label: t("NotificationPage.teachers"), value: "teachers" },
-                          { label: t("NotificationPage.parents"), value: "parents" },
-                          { label: t("NotificationPage.selectedStudents"), value: "selectedStudents" },
-                          { label: t("NotificationPage.allStudents"), value: "allStudents" },
-                        ]}
-                        props={{
-                          isLoading: isFetchingStage,
-                          isClearable: true,
-                          onChange: (e) => {
-                            props.setFieldValue(`sendTo`, (e as any)?.value ?? "");
-                          },
-                        }}
-                      />
-                    </div>
-
-                    {props.values.sendTo === "selectedStudents" && (
-                      // <InputForm
-                      //   formikProps={props}
-                      //   name={"searchUser"}
-                      //   title={t("")}
-                      //   placeholder={t("common.search")}
-                      //   props={{
-                      //     onChange: (e) => {
-                      //       setSearchUser(e.target.value);
-                      //       props.setFieldValue("searchUser", e.target.value);
-                      //     },
-                      //   }}
-                      // />
-                      <>
+                {!title && (
+                  <>
+                    <div className="Card">
+                      <div className="text-base font-semibold text-black dark:text-white-dark mb-2">
                         <SelectForm
                           formikProps={props}
-                          name={`schoolYearId`}
-                          title={t("StudentEnrollmentPage.SchoolYear")}
-                          placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
-                          options={
-                            SchoolYear?.map((item) => {
-                              return {
-                                label: item.from + " - " + item.to,
-                                value: item.id,
-                              };
-                            }) ?? []
-                          }
-                          props={{
-                            isLoading: isFetchingSchoolYear,
-                            isClearable: true,
-                            onChange: (e) => {
-                              props.setFieldValue(`schoolYearId`, (e as any)?.value ?? "");
-                              setSchoolYearId((e as any)?.value ?? "");
-                            },
-                          }}
-                        />
-
-                        <SelectForm
-                          formikProps={props}
-                          name={`stageId`}
-                          title={t("StageSubjectPage.StageName")}
-                          placeholder={t("SectionSchedulePage.select-StageName")}
-                          options={
-                            stage?.map((item) => {
-                              return {
-                                label: t(item.name as any),
-                                value: item.id,
-                              };
-                            }) ?? []
-                          }
+                          name={`sendTo`}
+                          title={t("NotificationPage.sendTo")}
+                          placeholder={t("NotificationPage.select-sendTo")}
+                          options={[
+                            { label: t("NotificationPage.teachers"), value: "teachers" },
+                            { label: t("NotificationPage.parents"), value: "parents" },
+                            { label: t("NotificationPage.selectedStudents"), value: "selectedStudents" },
+                            { label: t("NotificationPage.allStudents"), value: "allStudents" },
+                          ]}
                           props={{
                             isLoading: isFetchingStage,
                             isClearable: true,
                             onChange: (e) => {
-                              props.setFieldValue(`stageId`, (e as any)?.value ?? "");
-                              props.setFieldValue(`classId`, undefined);
-                              setStageId((e as any)?.value ?? "");
-                              setClassId(undefined);
-                              setSectionId(undefined);
+                              props.setFieldValue(`sendTo`, (e as any)?.value ?? "");
                             },
                           }}
                         />
-                        {props.values?.stageId && (
+                      </div>
+
+                      {props.values.sendTo === "selectedStudents" && (
+                        // <InputForm
+                        //   formikProps={props}
+                        //   name={"searchUser"}
+                        //   title={t("")}
+                        //   placeholder={t("common.search")}
+                        //   props={{
+                        //     onChange: (e) => {
+                        //       setSearchUser(e.target.value);
+                        //       props.setFieldValue("searchUser", e.target.value);
+                        //     },
+                        //   }}
+                        // />
+                        <>
                           <SelectForm
                             formikProps={props}
-                            name={`classId`}
-                            title={t("SectionSchedulePage.ClassName")}
-                            placeholder={t("SectionSchedulePage.select-ClassName")}
+                            name={`schoolYearId`}
+                            title={t("StudentEnrollmentPage.SchoolYear")}
+                            placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
                             options={
-                              stage
-                                ? stage
-                                    .find((item) => item.id === props.values?.stageId)
-                                    ?.Class?.map((item) => {
-                                      return {
-                                        label: t(item.name as any),
-                                        value: item.id,
-                                      };
-                                    }) || []
-                                : []
+                              SchoolYear?.map((item) => {
+                                return {
+                                  label: item.from + " - " + item.to,
+                                  value: item.id,
+                                };
+                              }) ?? []
+                            }
+                            props={{
+                              isLoading: isFetchingSchoolYear,
+                              isClearable: true,
+                              onChange: (e) => {
+                                props.setFieldValue(`schoolYearId`, (e as any)?.value ?? "");
+                                setSchoolYearId((e as any)?.value ?? "");
+                              },
+                            }}
+                          />
+
+                          <SelectForm
+                            formikProps={props}
+                            name={`stageId`}
+                            title={t("StageSubjectPage.StageName")}
+                            placeholder={t("SectionSchedulePage.select-StageName")}
+                            options={
+                              stage?.map((item) => {
+                                return {
+                                  label: t(item.name as any),
+                                  value: item.id,
+                                };
+                              }) ?? []
                             }
                             props={{
                               isLoading: isFetchingStage,
                               isClearable: true,
                               onChange: (e) => {
-                                const value = (e as any)?.value ?? "";
-                                props.setFieldValue(`classId`, value);
-                                props.setFieldValue(`sectionId`, undefined);
-                                setClassId(value);
+                                props.setFieldValue(`stageId`, (e as any)?.value ?? "");
+                                props.setFieldValue(`classId`, undefined);
+                                setStageId((e as any)?.value ?? "");
+                                setClassId(undefined);
                                 setSectionId(undefined);
                               },
                             }}
                           />
-                        )}
-                        {props?.values?.classId && (
-                          <SelectForm
-                            formikProps={props}
-                            name={`sectionId`}
-                            title={t("SectionSchedulePage.SectionName")}
-                            placeholder={t("SectionSchedulePage.select-SectionName")}
-                            options={
-                              stage
-                                ? stage
-                                    .find((item) => item.id === props?.values?.stageId)
-                                    ?.Class?.find((item) => item.id === props?.values?.classId)
-                                    ?.Section?.map((item) => {
-                                      return {
-                                        label: t(item.name as any),
-                                        value: item.id,
-                                      };
-                                    }) || []
-                                : []
-                            }
-                            props={{
-                              isLoading: isFetchingStage,
-                              isClearable: true,
-                              onChange: (e) => {
-                                props.setFieldValue(`sectionId`, (e as any)?.value ?? "");
-                                setSectionId((e as any)?.value ?? "");
-                              },
-                            }}
-                          />
-                        )}
+                          {props.values?.stageId && (
+                            <SelectForm
+                              formikProps={props}
+                              name={`classId`}
+                              title={t("SectionSchedulePage.ClassName")}
+                              placeholder={t("SectionSchedulePage.select-ClassName")}
+                              options={
+                                stage
+                                  ? stage
+                                      .find((item) => item.id === props.values?.stageId)
+                                      ?.Class?.map((item) => {
+                                        return {
+                                          label: t(item.name as any),
+                                          value: item.id,
+                                        };
+                                      }) || []
+                                  : []
+                              }
+                              props={{
+                                isLoading: isFetchingStage,
+                                isClearable: true,
+                                onChange: (e) => {
+                                  const value = (e as any)?.value ?? "";
+                                  props.setFieldValue(`classId`, value);
+                                  props.setFieldValue(`sectionId`, undefined);
+                                  setClassId(value);
+                                  setSectionId(undefined);
+                                },
+                              }}
+                            />
+                          )}
+                          {props?.values?.classId && (
+                            <SelectForm
+                              formikProps={props}
+                              name={`sectionId`}
+                              title={t("SectionSchedulePage.SectionName")}
+                              placeholder={t("SectionSchedulePage.select-SectionName")}
+                              options={
+                                stage
+                                  ? stage
+                                      .find((item) => item.id === props?.values?.stageId)
+                                      ?.Class?.find((item) => item.id === props?.values?.classId)
+                                      ?.Section?.map((item) => {
+                                        return {
+                                          label: t(item.name as any),
+                                          value: item.id,
+                                        };
+                                      }) || []
+                                  : []
+                              }
+                              props={{
+                                isLoading: isFetchingStage,
+                                isClearable: true,
+                                onChange: (e) => {
+                                  props.setFieldValue(`sectionId`, (e as any)?.value ?? "");
+                                  setSectionId((e as any)?.value ?? "");
+                                },
+                              }}
+                            />
+                          )}
 
-                        <div className="text-base font-semibold text-black dark:text-white-dark my-2">
-                          <CheckBoxFormWithCustom formikProps={props} name="allStudentsThisASectionsORClasses" title={t("NotificationPage.allStudentsThisASectionsORClasses")} />
-                        </div>
+                          <div className="text-base font-semibold text-black dark:text-white-dark my-2">
+                            <CheckBoxFormWithCustom formikProps={props} name="allStudentsThisASectionsORClasses" title={t("NotificationPage.allStudentsThisASectionsORClasses")} />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {props.values.sendTo === "parents" && (
+                      <>
+                        {isFetchingParents ? (
+                          <div className="flex justify-center">
+                            <div className="loader !bg-primary !w-8 !h-8" />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
+                              parents?.data?.map((item, index) => (
+                                <div className="Card !p-3" key={item.userId}>
+                                  {/* Use item.value for key if it's unique */}
+                                  <CheckBoxForm
+                                    key={index}
+                                    formikProps={props}
+                                    name={`userIds.${index}`}
+                                    title={`${item.fullName}`}
+                                    props={{
+                                      checked: props.values.userIds.some((it: any) => it == item.userId),
+                                      value: props.values.userIds.some((it: any) => it == item.userId),
+                                      onChange: (e) => {
+                                        if (e.target.checked) {
+                                          let newValues = props.values.userIds.concat(item.userId);
+                                          props.setFieldValue(`userIds`, newValues);
+                                        } else {
+                                          let newValues = props.values.userIds.filter((it: any) => it != item.userId);
+                                          props.setFieldValue(`userIds`, newValues);
+                                        }
+                                      },
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                          </div>
+                        )}
                       </>
                     )}
-                  </div>
-
-                  {props.values.sendTo === "parents" && (
-                    <>
-                      {isFetchingParents ? (
-                        <div className="flex justify-center">
-                          <div className="loader !bg-primary !w-8 !h-8" />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-2">
-                          {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
-                            parents?.data?.map((item, index) => (
-                              <div className="Card !p-3" key={item.userId}>
-                                {/* Use item.value for key if it's unique */}
-                                <CheckBoxForm
-                                  key={index}
-                                  formikProps={props}
-                                  name={`userIds.${index}`}
-                                  title={`${item.fullName}`}
-                                  props={{
-                                    checked: props.values.userIds.some((it: any) => it == item.userId),
-                                    value: props.values.userIds.some((it: any) => it == item.userId),
-                                    onChange: (e) => {
-                                      if (e.target.checked) {
-                                        let newValues = props.values.userIds.concat(item.userId);
-                                        props.setFieldValue(`userIds`, newValues);
-                                      } else {
-                                        let newValues = props.values.userIds.filter((it: any) => it != item.userId);
-                                        props.setFieldValue(`userIds`, newValues);
-                                      }
-                                    },
-                                  }}
-                                />
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                  {props.values.sendTo === "teachers" && (
-                    <>
-                      {isFetchingTeachers ? (
-                        <div className="flex justify-center">
-                          <div className="loader !bg-primary !w-8 !h-8" />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-2">
-                          {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
-                            teachers?.data?.map((item, index) => (
-                              <div className="Card !p-3" key={item.userId}>
-                                {/* Use item.value for key if it's unique */}
-                                <CheckBoxForm
-                                  key={index}
-                                  formikProps={props}
-                                  name={`userIds.${index}`}
-                                  title={`${item.fullName}`}
-                                  props={{
-                                    checked: props.values.userIds.some((it: any) => it == item.userId),
-                                    value: props.values.userIds.some((it: any) => it == item.userId),
-                                    onChange: (e) => {
-                                      if (e.target.checked) {
-                                        let newValues = props.values.userIds.concat(item.userId);
-                                        props.setFieldValue(`userIds`, newValues);
-                                      } else {
-                                        let newValues = props.values.userIds.filter((it: any) => it != item.userId);
-                                        props.setFieldValue(`userIds`, newValues);
-                                      }
-                                    },
-                                  }}
-                                />
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                  {props.values.sendTo === "selectedStudents" && (
-                    <>
-                      {isFetchingUserGetDataForAdmin ? (
-                        <div className="flex justify-center">
-                          <div className="loader !bg-primary !w-8 !h-8" />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-2">
-                          {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
-                            dataUserGetData?.map((item, index) => (
-                              <div className="Card !p-3" key={item.userId}>
-                                {/* Use item.value for key if it's unique */}
-                                <CheckBoxForm
-                                  key={index}
-                                  formikProps={props}
-                                  name={`userIds.${index}`}
-                                  title={`${item.fullName}`}
-                                  props={{
-                                    checked: props.values.userIds.some((it: any) => it == item.userId),
-                                    value: props.values.userIds.some((it: any) => it == item.userId),
-                                    onChange: (e) => {
-                                      if (e.target.checked) {
-                                        let newValues = props.values.userIds.concat(item.userId);
-                                        props.setFieldValue(`userIds`, newValues);
-                                      } else {
-                                        let newValues = props.values.userIds.filter((it: any) => it != item.userId);
-                                        props.setFieldValue(`userIds`, newValues);
-                                      }
-                                    },
-                                  }}
-                                />
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </>
+                    {props.values.sendTo === "teachers" && (
+                      <>
+                        {isFetchingTeachers ? (
+                          <div className="flex justify-center">
+                            <div className="loader !bg-primary !w-8 !h-8" />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
+                              teachers?.data?.map((item, index) => (
+                                <div className="Card !p-3" key={item.userId}>
+                                  {/* Use item.value for key if it's unique */}
+                                  <CheckBoxForm
+                                    key={index}
+                                    formikProps={props}
+                                    name={`userIds.${index}`}
+                                    title={`${item.fullName}`}
+                                    props={{
+                                      checked: props.values.userIds.some((it: any) => it == item.userId),
+                                      value: props.values.userIds.some((it: any) => it == item.userId),
+                                      onChange: (e) => {
+                                        if (e.target.checked) {
+                                          let newValues = props.values.userIds.concat(item.userId);
+                                          props.setFieldValue(`userIds`, newValues);
+                                        } else {
+                                          let newValues = props.values.userIds.filter((it: any) => it != item.userId);
+                                          props.setFieldValue(`userIds`, newValues);
+                                        }
+                                      },
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {props.values.sendTo === "selectedStudents" && (
+                      <>
+                        {isFetchingUserGetDataForAdmin ? (
+                          <div className="flex justify-center">
+                            <div className="loader !bg-primary !w-8 !h-8" />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            {props.values.allStudentsThisASectionsORClasses !== "TRUE" &&
+                              dataUserGetData?.map((item, index) => (
+                                <div className="Card !p-3" key={item.userId}>
+                                  {/* Use item.value for key if it's unique */}
+                                  <CheckBoxForm
+                                    key={index}
+                                    formikProps={props}
+                                    name={`userIds.${index}`}
+                                    title={`${item.fullName}`}
+                                    props={{
+                                      checked: props.values.userIds.some((it: any) => it == item.userId),
+                                      value: props.values.userIds.some((it: any) => it == item.userId),
+                                      onChange: (e) => {
+                                        if (e.target.checked) {
+                                          let newValues = props.values.userIds.concat(item.userId);
+                                          props.setFieldValue(`userIds`, newValues);
+                                        } else {
+                                          let newValues = props.values.userIds.filter((it: any) => it != item.userId);
+                                          props.setFieldValue(`userIds`, newValues);
+                                        }
+                                      },
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
 
                 <div className="flex flex-row-reverse gap-2">
                   <ButtonForm
