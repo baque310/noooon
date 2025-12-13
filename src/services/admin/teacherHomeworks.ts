@@ -83,7 +83,7 @@ export const TeacherHomeworks = api.injectEndpoints({
   endpoints: (build) => ({
     TeacherHomeworksGetData: build.query<BaseGetDataResponse<ITeacherHomeworks>, GetDataRequestParams>({
       query: (params) => ({
-        url: `supper/teacher/homeworks`,
+        url: `admin/homeworks`,
         params,
         method: "GET",
       }),

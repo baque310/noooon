@@ -81,7 +81,7 @@ export const TeacherLessons = api.injectEndpoints({
   endpoints: (build) => ({
     TeacherLessonsGetData: build.query<BaseGetDataResponse<ITeacherLessons>, GetDataRequestParams>({
       query: (params) => ({
-        url: `super/teacher/lessons`,
+        url: `admin/lessons`,
         params,
         method: "GET",
       }),

@@ -79,6 +79,7 @@ const TableComponent = () => {
       handleSearch();
     }
   };
+  console.log(data);
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -249,6 +250,24 @@ const TableComponent = () => {
                 title: t("StudentPage.fullNameParent"),
                 accessor: "Parent.fullName",
                 render: (data) => <ConnectedStudentWithParent data={data} />,
+              },
+              {
+                title: t("StudentPage.StageName"),
+                accessor: "StudentEnrollment[0].Stage.name",
+                sortable: true,
+                render: ({ StudentEnrollment }: any) => <div className="font-semibold text-gray-900 dark:text-white">{t(StudentEnrollment?.[0]?.Stage?.name)}</div>,
+              },
+              {
+                title: t("StudentPage.ClassName"),
+                accessor: "StudentEnrollment[0].Class.name",
+                sortable: true,
+                render: ({ StudentEnrollment }: any) => <div className="font-semibold text-gray-900 dark:text-white">{StudentEnrollment?.[0]?.Class?.name}</div>,
+              },
+              {
+                title: t("StudentPage.SectionName"),
+                accessor: "StudentEnrollment[0].Section.name",
+                sortable: true,
+                render: ({ StudentEnrollment }: any) => <div className="font-semibold text-gray-900 dark:text-white">{StudentEnrollment?.[0]?.Section?.name}</div>,
               },
               {
                 title: t("StudentPage.gender"),
