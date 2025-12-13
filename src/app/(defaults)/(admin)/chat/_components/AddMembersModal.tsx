@@ -93,7 +93,6 @@ const AddMembersModal: React.FC<AddMembersModalProps> = ({ open, setOpen, onAddM
   // Get available users based on selected type
   const availableUsers = useMemo(() => {
     let users: any[] = [];
-    console.log(parentsData);
 
     if (userType === "TEACHER" && teachersData?.data) {
       users = teachersData.data.map((teacher) => ({
