@@ -15,7 +15,7 @@ import moment from "moment";
 import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { ChangePasswordByAdminModel } from "@/components/Model/ChangePasswordByAdminModel";
-import { useUserManagerResetPasswordMutation } from "@/services/Manager/User";
+import { useUserManagerResetPasswordMutation, useUserRemoveMutation } from "@/services/Manager/User";
 import ConfirmModel from "@/components/Model/ConfirmModel";
 
 const PageComponent = () => {
@@ -23,11 +23,11 @@ const PageComponent = () => {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
+  const [openSuspend, setOpenSuspend] = useState(false);
+
   const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery();
   const [TeacherRemove, { isLoading: isLoadingTeacherRemove }] = useTeacherRemoveMutation();
   const [UserManagerResetPassword, { isLoading: isLoadingResetPassword }] = useUserManagerResetPasswordMutation();
-
-  console.log(data);
 
   useEffect(() => {
     if (id) {
@@ -38,6 +38,23 @@ const PageComponent = () => {
       });
     }
   }, [id]);
+
+  const [UserRemove, { isLoading: isLoadingUserRemove }] = useUserRemoveMutation();
+
+  const handleSuspend = async () => {
+    try {
+      await UserRemove({ id: String(data?.User?.id) }).unwrap();
+      toast.success(t("StudentPage.suspend-successfully"), { autoClose: 15000 });
+      setOpenSuspend(false);
+      router.back();
+    } catch (error: any) {
+      console.error("Failed to suspend user:", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
 
   const handleRemove = async () => {
     try {
@@ -130,6 +147,15 @@ const PageComponent = () => {
             <ItemList
               props={{
                 onClick: () => {
+                  setOpenSuspend(true);
+                },
+              }}
+              title={<div className="text-danger">{t("StudentPage.suspendUserAccount")}</div>}
+              value={<ArrowIcons className="rtl:rotate-180 text-danger/50" />}
+            />
+            <ItemList
+              props={{
+                onClick: () => {
                   setOpenDelete(true);
                 },
               }}
@@ -159,6 +185,19 @@ const PageComponent = () => {
           isAdmin
           open={openChangePassword}
           setOpen={setOpenChangePassword}
+        />
+      )}
+
+      {/* Suspend User Modal */}
+      {data?.User && (
+        <DeleteModel
+          description={t("StudentPage.Are-you-sure-you-want-to-suspend-this-User")}
+          title={t("StudentPage.suspendUserAccount")}
+          open={openSuspend}
+          setOpen={setOpenSuspend}
+          handleRemove={handleSuspend}
+          isLoading={isLoadingUserRemove}
+          name={data?.User?.username ?? ""}
         />
       )}
 
