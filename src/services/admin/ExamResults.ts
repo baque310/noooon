@@ -52,6 +52,17 @@ export interface GetExamResultsDataRequestParams extends GetDataRequestParams {
   schoolYearId?: string;
 }
 
+interface ExamResult {
+  score: number;
+  notes?: string;
+  studentId: string;
+  examSectionId: string;
+}
+
+interface ExamResultsPayload {
+  ExamResults: ExamResult[];
+}
+
 export const ExamResults = api.injectEndpoints({
   endpoints: (build) => ({
     ExamResultsGetData: build.query<BaseGetDataResponse<IExamResults[]>, GetExamResultsDataRequestParams>({
@@ -70,6 +81,16 @@ export const ExamResults = api.injectEndpoints({
       }),
       // providesTags: ["ExamResultsGetDataById"],
     }),
+
+    ExamResultsCreate: build.mutation<IExamResults, ExamResultsPayload>({
+      query: (body) => ({
+        url: `super/teacher/examResults`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: ["ExamResultsCreate", "ExamResultsGetDataById", "ExamResultsGetData"],
+    }),
+
     // ExamResultsUpdate: build.mutation<IExamResults, { id: string; body: { score: number; notes: string } }>({
     //   query: ({ id, body }) => ({
     //     url: `super/teacher/examResults/${id}`,
@@ -89,5 +110,11 @@ export const ExamResults = api.injectEndpoints({
     }),
   }),
 });
-export const { useExamResultsGetDataQuery, useLazyExamResultsGetDataQuery, useExamResultsUpdateMutation, useExamResultsGetDataByIdQuery, useLazyExamResultsGetDataByIdQuery } =
-  ExamResults;
+export const {
+  useExamResultsGetDataQuery,
+  useExamResultsCreateMutation,
+  useLazyExamResultsGetDataQuery,
+  useExamResultsUpdateMutation,
+  useExamResultsGetDataByIdQuery,
+  useLazyExamResultsGetDataByIdQuery,
+} = ExamResults;

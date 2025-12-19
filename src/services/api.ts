@@ -276,6 +276,8 @@ export const api = createApi({
     // ExamResults tags
     "ExamResultsGetData",
     "ExamResultsUpdate",
+    "ExamResultsCreate",
+    "ExamResultsGetDataById",
 
     // SchoolGetDataAdmin
     "SchoolGetDataAdmin",

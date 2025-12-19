@@ -3,7 +3,7 @@ import { DataTable } from "mantine-datatable";
 import React, { useEffect } from "react";
 
 import moment from "moment";
-import { withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import { withRole, RolePageAndActionBasedComponent } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
@@ -213,6 +213,25 @@ const TableComponent = () => {
               };
             })}
           />
+          {
+            <RolePageAndActionBasedComponent
+              component={(props) => {
+                return (
+                  <button
+                    className={` ${
+                      props.disabled && "hidden"
+                    } flex justify-center gap-1  items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border `}
+                    onClick={() => {
+                      router.push("/examResult/createOrUpdate");
+                    }}>
+                    {t("common.add")}
+                  </button>
+                );
+              }}
+              resource={"exam_result"}
+              permission={["create-any", "create-own"]}
+            />
+          }
         </div>
       </div>
       <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>

@@ -297,6 +297,12 @@
     "SchoolYear": "السنة الدراسية",
     "examResult": "نتآئج الامتحانات",
     "ExamResultsInformation": "معلومات نتائج الامتحان",
+    "add": "اضافة نتائج امتحانات",
+    "select-exam-section": "اختر امتحان الشعبة",
+    "search-student": "ابحث عن طالب",
+    "StudentsList": "قائمة الطلاب",
+    "no-students-found": "لا يوجد طلاب للشعبة المحددة",
+    "select-section-to-load-students": "يرجى اختيار المرحلة والصف والشعبة والامتحان لتحميل الطلاب",
     "enter-score": "ادخل الدرجة",
     "enter-notes": "ادخل الملاحظة",
     "update-exam-result": "تعديل نتيجة الامتحان"
