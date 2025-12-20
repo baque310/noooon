@@ -1,9 +1,9 @@
 import { api } from "@/services/api";
 import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
-import { IExamType } from "./ExamType";
-import { IStageSubject } from "./StageSubject";
-import { ISchoolYear } from "../SchoolYear";
-import { ISection } from "./section";
+// import { IExamType } from "./ExamType";
+// import { IStageSubject } from "./StageSubject";
+// import { ISchoolYear } from "../SchoolYear";
+// import { ISection } from "./section";
 
 export interface IExams {
   id: string;
@@ -14,14 +14,44 @@ export interface IExams {
   stageSubjectId: string;
   examTypeId: string;
   schoolYearId: string;
-  ExamType: IExamType;
+  subSubjectId: string | null;
+  subSubject: {
+    id: string;
+    name: string;
+  } | null;
+  ExamType: {
+    id: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+    schoolId: string;
+  };
   ExamSection: {
     id: string;
     examDate: string;
-    Section: ISection;
+    Section: {
+      id: string;
+      name: string;
+    };
   }[];
-  StageSubject: IStageSubject;
-  SchoolYear: ISchoolYear;
+  StageSubject: {
+    Stage: {
+      id: string;
+      name: string;
+    };
+    Subject: {
+      id: string;
+      name: string;
+    };
+    Class: {
+      id: string;
+      name: string;
+    };
+  };
+  SchoolYear: {
+    from: number;
+    to: number;
+  };
 }
 
 export interface AddExamsPayload {

@@ -751,6 +751,7 @@
     "score-must-be-less-than-100": "الدرجة يجب ان تكون اقل من 100",
     "score-must-be-more-than-0": "الدرجة يجب ان تكون اكبر من 0",
     "score": "الدرجة",
+    "subSubject": "المادة الفرعية",
     "subSubjects": "المواد الفرعية",
     "subjects": "المواد",
     "enter-score": "ادخل الدرجة",

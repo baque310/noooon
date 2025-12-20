@@ -6,7 +6,7 @@ import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
-import { useExamsGetDataQuery } from "@/services/admin/Exams";
+import { IExams, useExamsGetDataQuery } from "@/services/admin/Exams";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -296,31 +296,42 @@ const TableComponent = () => {
               {
                 title: t("ExamsPage.stageSubject"),
                 accessor: "StageSubject.Subject.name",
-                // sortable: true,
+                // render: (record: any) => {
+                //   console.log(record);
+
+                //   const label =
+                //     record.subSubject && typeof record.subSubject === "object" && "name" in record.subSubject ? record.subSubject.name : record.StageSubject?.Subject?.name ?? "";
+                //   return (
+                //     <div className="max-w-xs truncate" title={label}>
+                //       {label}
+                //     </div>
+                //   );
+                // },
+              },
+              {
+                title: t("ExamsPage.subSubject"),
+                accessor: "subSubject.name",
               },
               {
                 title: t("ExamsPage.examTypName"),
-                accessor: "ExamType.name",
-                // sortable: true,
+                accessor: "ExamType",
+                render: ({ ExamType }: any) => ExamType?.name ?? "",
               },
               {
                 title: t("StagePage.name"),
                 accessor: "StageSubject.Stage.name",
-                // sortable: true,
                 render: ({ StageSubject }: any) => StageSubject?.Stage?.name && t(StageSubject?.Stage?.name ?? ""),
               },
               {
                 title: t("ClassPage.name"),
-                accessor: "StageSubject.Class.name",
-                // sortable: true,
+                accessor: "StageSubject.Class.name", // Changed from "StageSubject"
+                render: ({ StageSubject }: any) => StageSubject?.Class?.name && t(StageSubject?.Class?.name ?? ""),
               },
               {
                 title: t("TeacherSubjectPage.SchoolYear"),
                 accessor: "SchoolYear",
-                // sortable: true,
                 render: ({ SchoolYear }: any) => SchoolYear.from + " - " + SchoolYear.to,
               },
-
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
