@@ -22,6 +22,7 @@ export interface NotificationToAll {
     [key: string]: string | null;
   };
   userIds?: string[];
+  isAlert?: "TRUE" | "FALSE";
 }
 
 export const Notification = api.injectEndpoints({

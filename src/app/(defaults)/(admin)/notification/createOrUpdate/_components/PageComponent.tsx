@@ -67,6 +67,7 @@ const PageComponent = () => {
           title: values.title,
           body: values.body,
           data: { type: "global", id: "" },
+          isAlert: "TRUE",
         }).unwrap();
       } else {
         await NotificationSendForMany({
@@ -74,6 +75,7 @@ const PageComponent = () => {
           body: values.body,
           userIds: values.allStudentsThisASectionsORClasses === "TRUE" ? dataUserGetData?.map((item) => item.userId) : values.userIds,
           data: { type: "global", id: "" },
+          isAlert: "TRUE",
         }).unwrap();
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
