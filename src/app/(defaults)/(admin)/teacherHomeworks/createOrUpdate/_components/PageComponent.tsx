@@ -243,7 +243,7 @@ const PageComponent = () => {
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(t("common.this-field-is-required")),
-    content: Yup.string().required(t("common.this-field-is-required")),
+    // content: Yup.string().required(t("common.this-field-is-required")),
     dueDate: Yup.string().required(t("common.this-field-is-required")),
     teacherSubjectId: Yup.string().required(t("common.this-field-is-required")),
   });
@@ -642,18 +642,6 @@ const PageComponent = () => {
                     )}
                   </div>
                 </div>
-              </div>
-
-              {/* Filter Selection Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                {/* <div className="border-b border-gray-200 dark:border-gray-700 p-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                      <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <h2 className="px-2 text-xl font-semibold text-gray-900 dark:text-white">{t("Select Classes/Sections")}</h2>
-                  </div>
-                </div> */}
               </div>
 
               {/* Students Selection Card */}

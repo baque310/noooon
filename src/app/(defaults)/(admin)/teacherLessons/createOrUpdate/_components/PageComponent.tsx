@@ -236,7 +236,7 @@ const PageComponent = () => {
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(t("common.this-field-is-required")),
-    content: Yup.string().required(t("common.this-field-is-required")),
+    // content: Yup.string().required(t("common.this-field-is-required")),
     teacherSubjectId: Yup.string().required(t("common.this-field-is-required")),
   });
 
