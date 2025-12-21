@@ -44,7 +44,7 @@ const TableComponent = () => {
     take: 30,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
-    isAlert: "TRUE",
+    isAlert: "FALSE",
     ...(search && { search: search as string }),
     ...param,
   };
