@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { Formik, Form, FormikHelpers, FormikProps } from "formik";
 import * as Yup from "yup";
-import { BookOpen, User, Rows3, SquareStack, GraduationCap } from "lucide-react";
+import { BookOpen, User, Rows3, SquareStack, GraduationCap, X, Users } from "lucide-react";
 
 // UI Components
 import { BackButton } from "@/components/common/BackButton";
@@ -27,6 +27,15 @@ import { Attachments } from "./Attachments";
 export interface FormValues extends AddTeacherLessonsPayload {
   schoolYearId?: string;
   allStudentsThisASectionsORClasses?: string;
+}
+
+interface FilterSelection {
+  stageId: string;
+  classId?: string;
+  sectionId?: string;
+  stageName: string;
+  className?: string;
+  sectionName?: string;
 }
 
 const PageComponent = () => {
@@ -51,12 +60,23 @@ const PageComponent = () => {
   const [teacherId, setTeacherId] = useState<string>();
   const [studentSearch, setStudentSearch] = useState("");
 
+  // Track selected filters and accumulated students
+  const [selectedFilters, setSelectedFilters] = useState<FilterSelection[]>([]);
+  const [accumulatedStudentIds, setAccumulatedStudentIds] = useState<Set<string>>(new Set());
+  const [accumulatedStudents, setAccumulatedStudents] = useState<any[]>([]);
+  const [filterStudentMap, setFilterStudentMap] = useState<Map<number, string[]>>(new Map());
+
   const { currentData: teacherSubjects, isFetching: isFetchingSubjects } = useTeacherSubjectGetDataQuery({
     schoolYearId,
     stageId,
     classId,
   });
-  const { currentData: students, isFetching: isFetchingStudents } = useStudentListQuery({ schoolYearId, stageId, classId, sectionId });
+  const { currentData: students, isFetching: isFetchingStudents } = useStudentListQuery({
+    schoolYearId,
+    stageId,
+    classId,
+    sectionId,
+  });
 
   useEffect(() => {
     if (id) {
@@ -72,28 +92,152 @@ const PageComponent = () => {
     }
   }, [settings]);
 
-  // Enhanced filtered students with search
+  // Enhanced filtered students with search - includes current filter + accumulated
   const filteredStudents = useMemo(() => {
-    if (!students) return [];
-    if (!studentSearch.trim()) return students;
+    // Combine current students with accumulated students
+    const allStudents = [...accumulatedStudents];
 
-    return students.filter((student) => student.fullName.toLowerCase().includes(studentSearch.toLowerCase()));
-  }, [students, studentSearch]);
-
-  const handleSelectAllStudents = (props: FormikProps<any>, checked: boolean) => {
-    if (checked) {
-      const allStudentIds = filteredStudents.map((student) => student.id);
-      props.setFieldValue("studentIds", allStudentIds);
-    } else {
-      props.setFieldValue("studentIds", []);
+    // Add current filter students if they're not already in accumulated
+    if (students) {
+      const existingIds = new Set(allStudents.map((s) => s.id));
+      const newStudents = students.filter((s) => !existingIds.has(s.id));
+      allStudents.push(...newStudents);
     }
+
+    if (!studentSearch.trim()) return allStudents;
+
+    return allStudents.filter((student) => student.fullName.toLowerCase().includes(studentSearch.toLowerCase()));
+  }, [students, accumulatedStudents, studentSearch]);
+
+  // Add current filter selection
+  const addFilterSelection = () => {
+    if (!stageId) {
+      toast.error(t("Please select at least a stage"));
+      return;
+    }
+
+    const stage = stages?.find((s) => s.id === stageId);
+    const classItem = stage?.Class?.find((c) => c.id === classId);
+    const section = classItem?.Section?.find((s) => s.id === sectionId);
+
+    const newFilter: FilterSelection = {
+      stageId,
+      classId,
+      sectionId,
+      stageName: t(stage?.name as any) || "",
+      className: classItem ? t(classItem.name as any) : undefined,
+      sectionName: section ? t(section.name as any) : undefined,
+    };
+
+    const exists = selectedFilters.some((f) => f.stageId === stageId && f.classId === classId && f.sectionId === sectionId);
+
+    if (exists) {
+      toast.info(t("This selection is already added"));
+      return;
+    }
+
+    const newFilterIndex = selectedFilters.length;
+    setSelectedFilters((prev) => [...prev, newFilter]);
+
+    if (students) {
+      // Track which students belong to this filter
+      const studentIdsForThisFilter = students.map((s) => s.id);
+      setFilterStudentMap((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(newFilterIndex, studentIdsForThisFilter);
+        return newMap;
+      });
+
+      // Add to accumulated
+      setAccumulatedStudentIds((prev) => {
+        const newSet = new Set(prev);
+        students.forEach((student) => newSet.add(student.id));
+        return newSet;
+      });
+
+      setAccumulatedStudents((prev) => {
+        const existingIds = new Set(prev.map((s) => s.id));
+        const newStudents = students.filter((s) => !existingIds.has(s.id));
+        return [...prev, ...newStudents];
+      });
+    }
+
+    toast.success(t("Selection added successfully"));
   };
+
+  // Remove a filter selection
+  // const removeFilterSelection = (index: number, props: FormikProps<any>) => {
+  //   const removedFilter = selectedFilters[index];
+  //   setSelectedFilters((prev) => prev.filter((_, i) => i !== index));
+
+  //   // Recalculate accumulated students based on remaining filters
+  //   // For now, we'll just show a message, but ideally you'd refetch
+  //   toast.info(t("Selection removed. Students from all remaining filters are still selected."));
+  // };
+  const removeFilterSelection = (index: number, props: FormikProps<any>) => {
+    const newFilters = selectedFilters.filter((_, i) => i !== index);
+    setSelectedFilters(newFilters);
+
+    // Get students from removed filter
+    const removedStudentIds = filterStudentMap.get(index) || [];
+
+    // Update the map (shift indices)
+    const newMap = new Map<number, string[]>();
+    filterStudentMap.forEach((studentIds, filterIndex) => {
+      if (filterIndex < index) {
+        newMap.set(filterIndex, studentIds);
+      } else if (filterIndex > index) {
+        newMap.set(filterIndex - 1, studentIds);
+      }
+    });
+    setFilterStudentMap(newMap);
+
+    // Collect all student IDs that should remain (from other filters)
+    const remainingStudentIds = new Set<string>();
+    newMap.forEach((studentIds) => {
+      studentIds.forEach((id) => remainingStudentIds.add(id));
+    });
+
+    // Update accumulated students
+    const newAccumulatedStudents = accumulatedStudents.filter((student) => remainingStudentIds.has(student.id));
+
+    setAccumulatedStudents(newAccumulatedStudents);
+    setAccumulatedStudentIds(remainingStudentIds);
+
+    // Update form values - remove students that are no longer in any filter
+    const currentSelectedIds = props.values.studentIds;
+    const validIds = currentSelectedIds.filter((id: string) => remainingStudentIds.has(id));
+    props.setFieldValue("studentIds", validIds);
+
+    toast.success(t("Selection removed successfully"));
+  };
+
+  // Get display list of accumulated students with search
+  const displayAccumulatedStudents = useMemo(() => {
+    if (!studentSearch.trim()) return accumulatedStudents;
+
+    return accumulatedStudents.filter((student) => student.fullName.toLowerCase().includes(studentSearch.toLowerCase()));
+  }, [accumulatedStudents, studentSearch]);
+
+  // Get current filter display for preview
+  const currentFilterPreview = useMemo(() => {
+    if (!stageId) return null;
+
+    const stage = stages?.find((s) => s.id === stageId);
+    const classItem = stage?.Class?.find((c) => c.id === classId);
+    const section = classItem?.Section?.find((s) => s.id === sectionId);
+
+    return {
+      stageName: stage ? t(stage.name as any) : "",
+      className: classItem ? t(classItem.name as any) : undefined,
+      sectionName: section ? t(section.name as any) : undefined,
+    };
+  }, [stageId, classId, sectionId, stages, t]);
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(t("common.this-field-is-required")),
     content: Yup.string().required(t("common.this-field-is-required")),
     teacherSubjectId: Yup.string().required(t("common.this-field-is-required")),
-    // teacherId: Yup.string().required(t("common.this-field-is-required")),
   });
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
@@ -106,10 +250,13 @@ const PageComponent = () => {
         formData.append("attachments", file);
       });
 
+      // Use accumulated student IDs
+      const finalStudentIds = Array.from(accumulatedStudentIds).filter((id) => values.studentIds.includes(id));
+
       if (values.allStudentsThisASectionsORClasses === "TRUE") {
-        formData.append("studentIds", JSON.stringify(students?.map((item) => item.id) || []));
+        formData.append("studentIds", JSON.stringify(Array.from(accumulatedStudentIds)));
       } else {
-        formData.append("studentIds", JSON.stringify(values.studentIds));
+        formData.append("studentIds", JSON.stringify(finalStudentIds));
       }
 
       if (id) {
@@ -120,8 +267,7 @@ const PageComponent = () => {
             title: values.title,
             content: values.content,
             teacherSubjectId: values.teacherSubjectId,
-
-            studentIds: values.allStudentsThisASectionsORClasses === "TRUE" ? JSON.stringify(students?.map((item) => item.id) || []) : JSON.stringify(values.studentIds),
+            studentIds: values.allStudentsThisASectionsORClasses === "TRUE" ? JSON.stringify(Array.from(accumulatedStudentIds)) : JSON.stringify(finalStudentIds),
           },
         }).unwrap();
         toast.success(t("common.updated-successfully"));
@@ -251,90 +397,6 @@ const PageComponent = () => {
 
                     <SelectForm
                       formikProps={props}
-                      name="stageId"
-                      title={t("StageSubjectPage.StageName")}
-                      placeholder={t("SectionSchedulePage.select-StageName")}
-                      options={
-                        stages?.map((item) => ({
-                          label: t(item.name as any),
-                          value: item.id,
-                        })) ?? []
-                      }
-                      props={{
-                        isLoading: isFetchingStages,
-                        isClearable: true,
-                        onChange: (e) => {
-                          props.setFieldValue("stageId", (e as any)?.value ?? "");
-                          props.setFieldValue("classId", undefined);
-                          setStageId((e as any)?.value ?? "");
-                          setClassId(undefined);
-                          setSectionId(undefined);
-                        },
-                      }}
-                    />
-
-                    {/* Conditional class select */}
-                    {props.values?.stageId && (
-                      <SelectForm
-                        formikProps={props}
-                        name="classId"
-                        title={t("SectionSchedulePage.ClassName")}
-                        placeholder={t("SectionSchedulePage.select-ClassName")}
-                        options={
-                          stages
-                            ? stages
-                                .find((item) => item.id === props.values?.stageId)
-                                ?.Class?.map((item) => ({
-                                  label: t(item.name as any),
-                                  value: item.id,
-                                })) || []
-                            : []
-                        }
-                        props={{
-                          isLoading: isFetchingStages,
-                          isClearable: true,
-                          onChange: (e) => {
-                            const value = (e as any)?.value ?? "";
-                            props.setFieldValue("classId", value);
-                            props.setFieldValue("sectionId", undefined);
-                            setClassId(value);
-                            setSectionId(undefined);
-                          },
-                        }}
-                      />
-                    )}
-
-                    {/* Conditional section select */}
-                    {props?.values?.classId && (
-                      <SelectForm
-                        formikProps={props}
-                        name="sectionId"
-                        title={t("SectionSchedulePage.SectionName")}
-                        placeholder={t("SectionSchedulePage.select-SectionName")}
-                        options={
-                          stages
-                            ? stages
-                                .find((item) => item.id === props?.values?.stageId)
-                                ?.Class?.find((item) => item.id === props?.values?.classId)
-                                ?.Section?.map((item) => ({
-                                  label: t(item.name as any),
-                                  value: item.id,
-                                })) || []
-                            : []
-                        }
-                        props={{
-                          isLoading: isFetchingStages,
-                          isClearable: true,
-                          onChange: (e) => {
-                            props.setFieldValue("sectionId", (e as any)?.value ?? "");
-                            setSectionId((e as any)?.value ?? "");
-                          },
-                        }}
-                      />
-                    )}
-
-                    <SelectForm
-                      formikProps={props}
                       name="teacherSubjectId"
                       title={t("SectionSchedulePage.teacherSubject")}
                       placeholder={t("SectionSchedulePage.select-teacherSubject")}
@@ -343,15 +405,15 @@ const PageComponent = () => {
                           label: (
                             <div
                               className="group relative rounded-2xl border border-gray-200 bg-white/60 p-4 shadow-sm
-                                      hover:shadow-md hover:bg-white transition-all duration-200 focus-within:ring-2
-                                      focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-900/60 dark:hover:bg-gray-900"
+                                 hover:shadow-md hover:bg-white transition-all duration-200 focus-within:ring-2
+                                 focus-within:ring-blue-500 dark:border-gray-700 dark:bg-gray-900/60 dark:hover:bg-gray-900"
                               tabIndex={0}
                               aria-label="Teacher subject card">
                               {/* Header: Subject */}
                               <div className="flex items-start gap-2">
                                 <span
                                   className="mt-0.5 rounded-lg p-1.5 bg-blue-50 text-blue-600 
-                                              dark:bg-blue-400/10 dark:text-blue-300">
+                                         dark:bg-blue-400/10 dark:text-blue-300">
                                   <BookOpen className="size-4" aria-hidden />
                                 </span>
                                 <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{item.StageSubject.Subject.name}</h3>
@@ -367,8 +429,8 @@ const PageComponent = () => {
                               <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
                                 <span
                                   className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
-                                          text-gray-700 ring-1 ring-gray-200
-                                          dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                                     text-gray-700 ring-1 ring-gray-200
+                                     dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
                                   title="Section">
                                   <Rows3 className="size-4 opacity-70" aria-hidden />
                                   {item?.Section?.name}
@@ -376,8 +438,8 @@ const PageComponent = () => {
 
                                 <span
                                   className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
-                                          text-gray-700 ring-1 ring-gray-200
-                                          dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                                     text-gray-700 ring-1 ring-gray-200
+                                     dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
                                   title="Class">
                                   <SquareStack className="size-4 opacity-70" aria-hidden />
                                   {item.StageSubject.Class.name}
@@ -385,8 +447,8 @@ const PageComponent = () => {
 
                                 <span
                                   className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 
-                                          text-gray-700 ring-1 ring-gray-200
-                                          dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                                     text-gray-700 ring-1 ring-gray-200
+                                     dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
                                   title="Stage">
                                   <GraduationCap className="size-4 opacity-70" aria-hidden />
                                   {t(item.StageSubject.Stage.name as any)}
@@ -396,7 +458,7 @@ const PageComponent = () => {
                               {/* Optional: subtle divider & right-caret affordance */}
                               <div
                                 className="pointer-events-none absolute inset-y-0 right-2 hidden items-center 
-                                           opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40">
+                                      opacity-0 transition-all duration-200 group-hover:flex group-hover:opacity-40">
                                 <svg viewBox="0 0 24 24" className="size-4 fill-current">
                                   <path d="M9 18l6-6-6-6" />
                                 </svg>
@@ -420,6 +482,194 @@ const PageComponent = () => {
                 </div>
               </div>
 
+              {/* Filter Selection Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                      <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <h2 className="px-2 text-xl font-semibold text-gray-900 dark:text-white">{t("Select Classes/Sections")}</h2>
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <SelectForm
+                      formikProps={props}
+                      name="stageId"
+                      title={t("StageSubjectPage.StageName")}
+                      placeholder={t("SectionSchedulePage.select-StageName")}
+                      options={
+                        stages?.map((item) => ({
+                          label: t(item.name as any),
+                          value: item.id,
+                        })) ?? []
+                      }
+                      props={{
+                        isLoading: isFetchingStages,
+                        isClearable: true,
+                        value:
+                          stages
+                            ?.map((item) => ({
+                              label: t(item.name as any),
+                              value: item.id,
+                            }))
+                            .find((o) => o.value === stageId) ?? null,
+                        onChange: (e) => {
+                          setStageId((e as any)?.value ?? "");
+                          setClassId(undefined);
+                          setSectionId(undefined);
+                        },
+                      }}
+                    />
+
+                    {stageId && (
+                      <SelectForm
+                        formikProps={props}
+                        name="classId"
+                        title={t("SectionSchedulePage.ClassName")}
+                        placeholder={t("SectionSchedulePage.select-ClassName")}
+                        options={
+                          stages
+                            ?.find((item) => item.id === stageId)
+                            ?.Class?.map((item) => ({
+                              label: t(item.name as any),
+                              value: item.id,
+                            })) ?? []
+                        }
+                        props={{
+                          isLoading: isFetchingStages,
+                          isClearable: true,
+                          value:
+                            stages
+                              ?.find((s) => s.id === stageId)
+                              ?.Class?.map((c) => ({
+                                label: t(c.name as any),
+                                value: c.id,
+                              }))
+                              .find((o) => o.value === classId) ?? null,
+                          onChange: (e) => {
+                            setClassId((e as any)?.value ?? "");
+                            setSectionId(undefined);
+                          },
+                        }}
+                      />
+                    )}
+
+                    {classId && (
+                      <SelectForm
+                        formikProps={props}
+                        name="sectionId"
+                        title={t("SectionSchedulePage.SectionName")}
+                        placeholder={t("SectionSchedulePage.select-SectionName")}
+                        options={
+                          stages
+                            ?.find((item) => item.id === stageId)
+                            ?.Class?.find((item) => item.id === classId)
+                            ?.Section?.map((item) => ({
+                              label: t(item.name as any),
+                              value: item.id,
+                            })) ?? []
+                        }
+                        props={{
+                          isLoading: isFetchingStages,
+                          isClearable: true,
+                          value:
+                            stages
+                              ?.find((s) => s.id === stageId)
+                              ?.Class?.find((c) => c.id === classId)
+                              ?.Section?.map((sec) => ({
+                                label: t(sec.name as any),
+                                value: sec.id,
+                              }))
+                              .find((o) => o.value === sectionId) ?? null,
+                          onChange: (e) => {
+                            setSectionId((e as any)?.value ?? "");
+                          },
+                        }}
+                      />
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={addFilterSelection}
+                    disabled={!stageId}
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg transition-colors font-medium">
+                    {t("Add Selection")}
+                  </button>
+
+                  {/* Current Filter Preview */}
+                  {currentFilterPreview && (
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-100">{t("Current Selection Preview")}:</h4>
+
+                          <div className="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 px-3 py-1.5 rounded-lg text-sm">
+                            <span>
+                              {currentFilterPreview.stageName}
+                              {currentFilterPreview.className && ` • ${currentFilterPreview.className}`}
+                              {currentFilterPreview.sectionName && ` • ${currentFilterPreview.sectionName}`}
+                            </span>
+                          </div>
+
+                          {students && (
+                            <p className="text-xs text-amber-700 dark:text-amber-300">
+                              {students.length} {t("students in this selection")}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Display selected filters */}
+                  {selectedFilters.length > 0 && (
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("Added Filters")}:</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedFilters.map((filter, index) => (
+                          <div
+                            key={index}
+                            className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-2 rounded-lg text-sm border border-green-200 dark:border-green-700">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            <span>
+                              {filter.stageName}
+                              {filter.className && ` • ${filter.className}`}
+                              {filter.sectionName && ` • ${filter.sectionName}`}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => removeFilterSelection(index, props)}
+                              className="hover:bg-green-200 dark:hover:bg-green-800 rounded p-1 transition-colors">
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               {/* Students Selection Card */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="border-b border-gray-200 dark:border-gray-700 p-6">
@@ -437,44 +687,94 @@ const PageComponent = () => {
                       </div>
                       <div className="px-2">
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t("TeacherLessonsPage.students")}</h2>
-                        {students && (
-                          <p className="text-sm text-gray-500 mt-1">
-                            {props.values.allStudentsThisASectionsORClasses === "TRUE"
-                              ? `${students.length} ${t("TeacherLessonsPage.studentsSelected")}`
-                              : `${props.values.studentIds.length}/${students.length} ${t("TeacherLessonsPage.studentsSelected")}`}
-                          </p>
-                        )}
+                        <p className="text-sm text-gray-500 mt-1">
+                          {props.values.allStudentsThisASectionsORClasses === "TRUE"
+                            ? `${accumulatedStudentIds.size} ${t("TeacherLessonsPage.studentsSelected")}`
+                            : `${props.values.studentIds.length}/${accumulatedStudentIds.size} ${t("TeacherLessonsPage.studentsSelected")}`}
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="p-6 space-y-6">
-                  {/* Select All Students Option */}
                   <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
                     <CheckBoxFormWithCustom formikProps={props} name="allStudentsThisASectionsORClasses" title={t("NotificationPage.allStudentsThisASectionsORClasses")} />
                   </div>
 
-                  {/* Individual Student Selection */}
                   {props.values.allStudentsThisASectionsORClasses !== "TRUE" && (
                     <div className="space-y-4">
+                      {/* Search Input */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder={t("Search students...")}
+                          value={studentSearch}
+                          onChange={(e) => setStudentSearch(e.target.value)}
+                          className="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        />
+                        <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+
                       {/* Students List */}
                       {isFetchingStudents ? (
                         <div className="flex justify-center py-12">
                           <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
                         </div>
+                      ) : filteredStudents.length === 0 ? (
+                        <div className="text-center py-12">
+                          <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                            />
+                          </svg>
+                          <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t("No students available")}</p>
+                          <p className="text-gray-500">{t("Please select filters above to load students")}</p>
+                        </div>
                       ) : (
-                        <div className="max-h-96 overflow-y-auto">
-                          {filteredStudents.length > 0 ? (
+                        <div>
+                          {/* Student count info */}
+                          {/* <div className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+                            {t("Showing")} {filteredStudents.length} {t("students")}
+                            {accumulatedStudents.length > 0 && (
+                              <span className="ml-2 text-green-600 dark:text-green-400">
+                                ({accumulatedStudents.length} {t("from saved filters")}
+                                {students && students.length > 0 && ` + ${students.length} ${t("from current selection")}`})
+                              </span>
+                            )}
+                          </div> */}
+
+                          <div className="max-h-96 overflow-y-auto">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              {filteredStudents.map((student, index) => (
+                              {filteredStudents.map((student) => (
                                 <div
                                   key={student.id}
-                                  className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors border border-gray-200 dark:border-gray-600">
+                                  className={`rounded-lg p-4 transition-colors border ${
+                                    accumulatedStudentIds.has(student.id)
+                                      ? "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700"
+                                      : "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
+                                  }`}>
                                   <CheckBoxForm
                                     formikProps={props}
                                     name={`studentIds.${student.id}`}
-                                    title={student.fullName}
+                                    title={
+                                      (
+                                        <div className="flex items-center gap-2">
+                                          <span>{student.fullName}</span>
+                                          {/* {accumulatedStudentIds.has(student.id) && !students?.some((s) => s.id === student.id) && (
+                                            <span className="text-xs bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-0.5 rounded">{t("Saved")}</span>
+                                          )}
+                                          {students?.some((s) => s.id === student.id) && (
+                                            <span className="text-xs bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded">{t("Current")}</span>
+                                          )} */}
+                                        </div>
+                                      ) as unknown as string
+                                    }
                                     props={{
                                       checked: props.values.studentIds.includes(student.id),
                                       onChange: (e) => {
@@ -493,22 +793,7 @@ const PageComponent = () => {
                                 </div>
                               ))}
                             </div>
-                          ) : (
-                            <div className="text-center py-12">
-                              <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                                />
-                              </svg>
-                              <p className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t("TeacherLessonsPage.no-students-found")}</p>
-                              <p className="text-gray-500">
-                                {studentSearch ? t("TeacherLessonsPage.try-adjusting-your-search-terms") : t("TeacherLessonsPage.no-students-available-for-the-selected-criteria")}
-                              </p>
-                            </div>
-                          )}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -524,7 +809,7 @@ const PageComponent = () => {
                 <ButtonForm
                   props={{
                     type: "submit",
-                    className: "px-8 py-3   text-white rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 font-medium",
+                    className: "px-8 py-3 text-white rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50 font-medium",
                   }}
                   title={
                     <div className="flex items-center space-x-2">

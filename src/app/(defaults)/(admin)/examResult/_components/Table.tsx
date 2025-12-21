@@ -23,6 +23,7 @@ import { DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
 import UpdateModel from "./UpdateModel";
 import { toast } from "react-toastify";
 import FormattedDate from "@/components/common/FormattedDate";
+import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -33,6 +34,11 @@ const TableComponent = () => {
   const [selectedItem, setSelectedItem] = useState<string>("");
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [selectedExamResult, setSelectedExamResult] = useState<any>(null);
+
+  const [stageId, setStageId] = useState<string | undefined>();
+  const [classId, setClassId] = useState<string | undefined>();
+  const [sectionId, setSectionId] = useState<string | undefined>();
+  const [schoolYearId, setSchoolYearId] = useState<string | undefined>();
 
   const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
     columnAccessor: "createdAt",
@@ -59,6 +65,7 @@ const TableComponent = () => {
         stageSubjectId?: string;
         sectionId?: string;
         schoolYearId?: string;
+        teacherSubjectId?: string;
         stageId?: string;
         classId?: string;
       }
@@ -74,6 +81,13 @@ const TableComponent = () => {
     }
   }, [SchoolYearData, Setting]);
 
+  const { currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
+    stageId,
+    classId,
+    schoolYearId: schoolYearId || Setting?.currentSchoolYearId || "",
+    sectionId,
+  });
+
   const params = {
     skip: pageNumber,
     take: 30,
@@ -85,6 +99,7 @@ const TableComponent = () => {
     ...(param?.classId && { classId: param.classId }),
     ...(param?.sectionId && { sectionId: param.sectionId }),
     ...(param?.stageSubjectId && { stageSubjectId: param.stageSubjectId }),
+    ...(param?.teacherSubjectId && { teacherSubjectId: param.teacherSubjectId }),
   };
 
   const { isFetching, currentData: data } = useExamResultsGetDataQuery(params);
@@ -113,6 +128,7 @@ const TableComponent = () => {
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl" ? true : false;
 
   const handleSelectSection = (value: any) => {
+    setSectionId(value || undefined);
     setParam((prev) => ({
       ...prev,
       sectionId: value || undefined,
@@ -121,6 +137,8 @@ const TableComponent = () => {
   };
 
   const handleSelectClass = (value: any) => {
+    const classId = value || undefined;
+    setClassId(classId);
     setParam((prev) => ({
       ...prev,
       classId: value || undefined,
@@ -130,6 +148,8 @@ const TableComponent = () => {
   };
 
   const handleSelectStage = (value: any) => {
+    const stageId = value || undefined;
+    setStageId(stageId);
     setParam((prev) => ({
       ...prev,
       stageId: value || undefined,
@@ -139,7 +159,16 @@ const TableComponent = () => {
     setPageNumber(1);
   };
 
+  const handleSelectTeacherSubject = (value: any) => {
+    setParam((prev) => ({
+      ...prev,
+      teacherSubjectId: value?.value || undefined,
+    }));
+  };
+
   const handleSelectSchoolYear = (value: any) => {
+    setSchoolYearId(value?.value || undefined);
+
     setParam((prev) => ({
       ...prev,
       schoolYearId: value?.value || undefined,
@@ -289,8 +318,30 @@ const TableComponent = () => {
           />
         )}
 
+        {param?.sectionId && (
+          <div className="max-w-60">
+            <SelectWithSearch
+              placeholder={t("HomeworksPage.teacherFullName")}
+              props={{
+                onChange: handleSelectTeacherSubject,
+              }}
+              options={
+                TeacherSubjectData?.map((item) => {
+                  return {
+                    label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
+
+                    // label: item.Teacher.fullName,
+                    //  + item.StageSubject.Subject.name,
+                    value: item.id,
+                  };
+                }) ?? []
+              }
+            />
+          </div>
+        )}
+
         {/* Stage Subject Filter */}
-        <div className="max-w-36">
+        <div className="max-w-60">
           <SelectWithSearch
             placeholder={t("ExamsPage.stageSubject")}
             props={{
