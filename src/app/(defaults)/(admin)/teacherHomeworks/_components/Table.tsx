@@ -87,7 +87,7 @@ const TableComponent = () => {
   // ------------------ API PARAMS (DATE ADDED) ------------------
   const params = {
     skip: pageNumber,
-    take: 10,
+    take: 30,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
     ...(search && { search }),
@@ -378,7 +378,7 @@ const TableComponent = () => {
             sortStatus={sortStatus}
             onSortStatusChange={setSortStatus}
             totalRecords={data?.totalCount}
-            recordsPerPage={10}
+            recordsPerPage={30}
             page={pageNumber}
             onPageChange={(p) => setPageNumber(p)}
           />

@@ -394,7 +394,89 @@ const PageComponent = () => {
                         },
                       }}
                     />
+                    <SelectForm
+                      formikProps={props}
+                      name="stageId"
+                      title={t("StageSubjectPage.StageName")}
+                      placeholder={t("SectionSchedulePage.select-StageName")}
+                      options={
+                        stages?.map((item) => ({
+                          label: t(item.name as any),
+                          value: item.id,
+                        })) ?? []
+                      }
+                      props={{
+                        isLoading: isFetchingStages,
+                        isClearable: true,
+                        onChange: (e) => {
+                          const value = (e as any)?.value ?? "";
 
+                          props.setFieldValue("stageId", value);
+                          props.setFieldValue("classId", "");
+                          props.setFieldValue("sectionId", "");
+
+                          setStageId(value);
+                          setClassId(undefined);
+                          setSectionId(undefined);
+                        },
+                      }}
+                    />
+
+                    {stageId && (
+                      <SelectForm
+                        formikProps={props}
+                        name="classId"
+                        title={t("SectionSchedulePage.ClassName")}
+                        placeholder={t("SectionSchedulePage.select-ClassName")}
+                        options={
+                          stages
+                            ?.find((s) => s.id === stageId)
+                            ?.Class?.map((c) => ({
+                              label: t(c.name as any),
+                              value: c.id,
+                            })) ?? []
+                        }
+                        props={{
+                          isClearable: true,
+                          onChange: (e) => {
+                            const value = (e as any)?.value ?? "";
+
+                            props.setFieldValue("classId", value);
+                            props.setFieldValue("sectionId", "");
+
+                            setClassId(value);
+                            setSectionId(undefined);
+                          },
+                        }}
+                      />
+                    )}
+
+                    {classId && (
+                      <SelectForm
+                        formikProps={props}
+                        name="sectionId"
+                        title={t("SectionSchedulePage.SectionName")}
+                        placeholder={t("SectionSchedulePage.select-SectionName")}
+                        options={
+                          stages
+                            ?.find((s) => s.id === stageId)
+                            ?.Class?.find((c) => c.id === classId)
+                            ?.Section?.map((sec) => ({
+                              label: t(sec.name as any),
+                              value: sec.id,
+                            })) ?? []
+                        }
+                        props={{
+                          isClearable: true,
+                          onChange: (e) => {
+                            const value = (e as any)?.value ?? "";
+
+                            props.setFieldValue("sectionId", value);
+                            setSectionId(value);
+                          },
+                        }}
+                      />
+                    )}
                     <SelectForm
                       formikProps={props}
                       name="teacherSubjectId"
@@ -479,194 +561,83 @@ const PageComponent = () => {
                       }}
                     />
                   </div>
-                </div>
-              </div>
+                  <div className="mt-6 space-y-6">
+                    <button
+                      type="button"
+                      onClick={addFilterSelection}
+                      disabled={!stageId}
+                      className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg transition-colors font-medium">
+                      {t("Add Selection")}
+                    </button>
 
-              {/* Filter Selection Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="border-b border-gray-200 dark:border-gray-700 p-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
-                      <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <h2 className="px-2 text-xl font-semibold text-gray-900 dark:text-white">{t("Select Classes/Sections")}</h2>
-                  </div>
-                </div>
+                    {/* Current Filter Preview */}
+                    {currentFilterPreview && (
+                      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
 
-                <div className="p-6 space-y-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <SelectForm
-                      formikProps={props}
-                      name="stageId"
-                      title={t("StageSubjectPage.StageName")}
-                      placeholder={t("SectionSchedulePage.select-StageName")}
-                      options={
-                        stages?.map((item) => ({
-                          label: t(item.name as any),
-                          value: item.id,
-                        })) ?? []
-                      }
-                      props={{
-                        isLoading: isFetchingStages,
-                        isClearable: true,
-                        value:
-                          stages
-                            ?.map((item) => ({
-                              label: t(item.name as any),
-                              value: item.id,
-                            }))
-                            .find((o) => o.value === stageId) ?? null,
-                        onChange: (e) => {
-                          setStageId((e as any)?.value ?? "");
-                          setClassId(undefined);
-                          setSectionId(undefined);
-                        },
-                      }}
-                    />
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-100">{t("Current Selection Preview")}:</h4>
 
-                    {stageId && (
-                      <SelectForm
-                        formikProps={props}
-                        name="classId"
-                        title={t("SectionSchedulePage.ClassName")}
-                        placeholder={t("SectionSchedulePage.select-ClassName")}
-                        options={
-                          stages
-                            ?.find((item) => item.id === stageId)
-                            ?.Class?.map((item) => ({
-                              label: t(item.name as any),
-                              value: item.id,
-                            })) ?? []
-                        }
-                        props={{
-                          isLoading: isFetchingStages,
-                          isClearable: true,
-                          value:
-                            stages
-                              ?.find((s) => s.id === stageId)
-                              ?.Class?.map((c) => ({
-                                label: t(c.name as any),
-                                value: c.id,
-                              }))
-                              .find((o) => o.value === classId) ?? null,
-                          onChange: (e) => {
-                            setClassId((e as any)?.value ?? "");
-                            setSectionId(undefined);
-                          },
-                        }}
-                      />
-                    )}
+                            <div className="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 px-3 py-1.5 rounded-lg text-sm">
+                              <span>
+                                {currentFilterPreview.stageName}
+                                {currentFilterPreview.className && ` • ${currentFilterPreview.className}`}
+                                {currentFilterPreview.sectionName && ` • ${currentFilterPreview.sectionName}`}
+                              </span>
+                            </div>
 
-                    {classId && (
-                      <SelectForm
-                        formikProps={props}
-                        name="sectionId"
-                        title={t("SectionSchedulePage.SectionName")}
-                        placeholder={t("SectionSchedulePage.select-SectionName")}
-                        options={
-                          stages
-                            ?.find((item) => item.id === stageId)
-                            ?.Class?.find((item) => item.id === classId)
-                            ?.Section?.map((item) => ({
-                              label: t(item.name as any),
-                              value: item.id,
-                            })) ?? []
-                        }
-                        props={{
-                          isLoading: isFetchingStages,
-                          isClearable: true,
-                          value:
-                            stages
-                              ?.find((s) => s.id === stageId)
-                              ?.Class?.find((c) => c.id === classId)
-                              ?.Section?.map((sec) => ({
-                                label: t(sec.name as any),
-                                value: sec.id,
-                              }))
-                              .find((o) => o.value === sectionId) ?? null,
-                          onChange: (e) => {
-                            setSectionId((e as any)?.value ?? "");
-                          },
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={addFilterSelection}
-                    disabled={!stageId}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg transition-colors font-medium">
-                    {t("Add Selection")}
-                  </button>
-
-                  {/* Current Filter Preview */}
-                  {currentFilterPreview && (
-                    <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-                      <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-100">{t("Current Selection Preview")}:</h4>
-
-                          <div className="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 px-3 py-1.5 rounded-lg text-sm">
-                            <span>
-                              {currentFilterPreview.stageName}
-                              {currentFilterPreview.className && ` • ${currentFilterPreview.className}`}
-                              {currentFilterPreview.sectionName && ` • ${currentFilterPreview.sectionName}`}
-                            </span>
+                            {students && (
+                              <p className="text-xs text-amber-700 dark:text-amber-300">
+                                {students.length} {t("students in this selection")}
+                              </p>
+                            )}
                           </div>
-
-                          {students && (
-                            <p className="text-xs text-amber-700 dark:text-amber-300">
-                              {students.length} {t("students in this selection")}
-                            </p>
-                          )}
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Display selected filters */}
-                  {selectedFilters.length > 0 && (
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("Added Filters")}:</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedFilters.map((filter, index) => (
-                          <div
-                            key={index}
-                            className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-2 rounded-lg text-sm border border-green-200 dark:border-green-700">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                            <span>
-                              {filter.stageName}
-                              {filter.className && ` • ${filter.className}`}
-                              {filter.sectionName && ` • ${filter.sectionName}`}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => removeFilterSelection(index, props)}
-                              className="hover:bg-green-200 dark:hover:bg-green-800 rounded p-1 transition-colors">
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
+                    {/* Display selected filters */}
+                    {selectedFilters.length > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("Added Filters")}:</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedFilters.map((filter, index) => (
+                            <div
+                              key={index}
+                              className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-2 rounded-lg text-sm border border-green-200 dark:border-green-700">
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <span>
+                                {filter.stageName}
+                                {filter.className && ` • ${filter.className}`}
+                                {filter.sectionName && ` • ${filter.sectionName}`}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => removeFilterSelection(index, props)}
+                                className="hover:bg-green-200 dark:hover:bg-green-800 rounded p-1 transition-colors">
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
 

@@ -34,24 +34,22 @@ const TableComponent = () => {
   const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
   const { isMounted } = useMounted();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
-  const [pageNumber, setPageNumber] = useState(Number(1));
+  const [pageNumber, setPageNumber] = useState<number>(1);
   const [stageId, setStageId] = useState<string | undefined>();
   const [classId, setClassId] = useState<string | undefined>();
   const [sectionId, setSectionId] = useState<string | undefined>();
   const [schoolYearId, setSchoolYearId] = useState<string | undefined>();
 
-  const [param, setParam] = useState<
-    | {
-        search?: string;
-        range?: string;
-        schoolYearId?: string;
-        teacherSubjectId?: string;
-        sectionId?: string;
-        classId?: string;
-        stageId?: string;
-      }
-    | undefined
-  >();
+  const [param, setParam] = useState<{
+    search?: string;
+    range?: string;
+    schoolYearId?: string;
+    teacherSubjectId?: string;
+    sectionId?: string;
+    classId?: string;
+    stageId?: string;
+  }>({});
+
   const { isFetching: isFetchingSectionData, currentData: SectionData } = useSectionGetDataQuery({});
   const { currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
     stageId,
@@ -65,39 +63,38 @@ const TableComponent = () => {
 
   useEffect(() => {
     if (SchoolYearData && Setting) {
-      setParam({
-        ...params,
+      setParam((prev) => ({
+        ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
-      });
+      }));
     }
   }, [SchoolYearData, Setting]);
-
-  const { classId: classIds, stageId: stageIds, ...restParam } = param ?? {};
 
   const params = {
     skip: pageNumber,
     take: 30,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
-    ...(search && { search: search as string }),
-    ...restParam,
+    ...(search && { search }),
+    range: param.range,
+    schoolYearId: param.schoolYearId,
+    teacherSubjectId: param.teacherSubjectId,
+    sectionId: param.sectionId,
   };
 
-  const { isFetching: isFetching, currentData: data } = useTeacherLessonsGetDataQuery({
-    ...params,
-  });
+  const { isFetching, currentData: data } = useTeacherLessonsGetDataQuery(params);
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
     const value = e.target.value;
     setSearch(value);
-    if (value == "") {
+    if (value === "") {
       handleSearch(value);
     }
   };
   const allParams = new URLSearchParams(searchParams);
   const handleSearch = (value?: string) => {
-    if (search != Search) {
+    if (search !== Search) {
       allParams.set("search", value ?? Search);
       router.push(`/teacherLessons?${allParams.toString()}`);
       setPageNumber(1);
@@ -136,11 +133,10 @@ const TableComponent = () => {
   };
 
   const handleSelectTeacherSubject = (value: any) => {
-    if (value) {
-      setParam({ ...param, teacherSubjectId: value.value });
-    } else {
-      setParam({ ...param, teacherSubjectId: undefined });
-    }
+    setParam((prev) => ({
+      ...prev,
+      teacherSubjectId: value?.value || undefined,
+    }));
   };
 
   const handleSelectSchoolYear = (value: any) => {
@@ -150,7 +146,6 @@ const TableComponent = () => {
       schoolYearId: value?.value || undefined,
     }));
   };
-  // console.log(data);
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -244,9 +239,6 @@ const TableComponent = () => {
                   TeacherSubjectData?.map((item) => {
                     return {
                       label: item.StageSubject?.Subject?.name + " - " + item?.Teacher?.fullName,
-
-                      // label: item.Teacher.fullName,
-                      //  + item.StageSubject.Subject.name,
                       value: item.id,
                     };
                   }) ?? []
@@ -254,36 +246,6 @@ const TableComponent = () => {
               />
             </div>
           )}
-          {/* <SelectFilter
-            title={t("StudentEnrollmentPage.SectionName")}
-            placement="bottom-end"
-            handleChange={handleSelectSection}
-            options={
-              SectionData?.map((item) => {
-                return {
-                  label: item.name + " - " + (item?.Class?.name ?? "") + " - " + (item?.Class?.Stage?.name ?? ""),
-                  value: item.id,
-                };
-              }) ?? []
-            }
-          /> */}
-          {/* <div className="max-w-36">
-            <SelectWithSearch
-              placeholder={t("LessonsPage.teacherFullName")}
-              props={{
-                onChange: handleSelectTeacherSubject,
-              }}
-              options={
-                TeacherSubjectData?.map((item) => {
-                  return {
-                    label: item.Teacher.fullName,
-                    //  + item.StageSubject.Subject.name,
-                    value: item.id,
-                  };
-                }) ?? []
-              }
-            />
-          </div> */}
         </div>
         {
           <RolePageAndActionBasedComponent
@@ -309,7 +271,7 @@ const TableComponent = () => {
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
-            onRowClick={async (item) => {
+            onRowClick={(item) => {
               router.push(`/teacherLessons/${item.record.id}`);
             }}
             fetching={isFetching}
@@ -324,7 +286,6 @@ const TableComponent = () => {
               {
                 title: t("LessonsPage.SubjectName"),
                 accessor: "teacherSubject.StageSubject.Subject.name",
-                // sortable: true,
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Subject.name && t(teacherSubject.StageSubject.Subject.name ?? ("" as any)),
               },
               {
@@ -345,7 +306,6 @@ const TableComponent = () => {
               {
                 title: t("LessonsPage.StageName"),
                 accessor: "teacherSubject.StageSubject.Stage.name",
-                // sortable: true,
                 render: ({ teacherSubject }: any) => teacherSubject.StageSubject.Stage.name && t(teacherSubject.StageSubject.Stage.name ?? ("" as any)),
               },
               {
@@ -356,19 +316,9 @@ const TableComponent = () => {
                   return name ? t(name as any) : "-";
                 },
               },
-              // {
-              //   title: t("HomeworksPage.SectionName"),
-              //   accessor: "StudentHomework",
-              //   render: ({ StudentHomework }) => {
-              //     const list = Array.isArray(StudentHomework) ? StudentHomework : [];
-              //     const sections = Array.from(new Set(list.map((item: any) => item?.Student?.StudentEnrollment?.[0]?.Section?.name).filter(Boolean)));
-              //     return sections.length > 0 ? sections.join(", ") : "-";
-              //   },
-              // },
               {
                 title: t("LessonsPage.SectionName"),
                 accessor: "teacherSubject.Section.name",
-                // sortable: true,
                 render: ({ teacherSubject }: any) => {
                   const name = teacherSubject?.Section?.name;
                   return name ? t(name as any) : "-";
@@ -377,7 +327,6 @@ const TableComponent = () => {
               {
                 title: t("LessonsPage.SchoolYear"),
                 accessor: "SchoolYear.from",
-                // sortable: true,
                 render: ({ SchoolYear }: any) => (SchoolYear.from || SchoolYear.to ? SchoolYear.from + " - " + SchoolYear.to : null),
               },
               {
@@ -404,17 +353,12 @@ const TableComponent = () => {
             customLoader={<div className="loader !bg-primary"></div>}
             noRecordsText={t("common.no-data")}
             noRecordsIcon={<></>}
-            {...(isFetching && { minHeight: 130 })}
             sortStatus={sortStatus}
-            onSortStatusChange={(sort) => {
-              setSortStatus(sort);
-            }}
+            onSortStatusChange={setSortStatus}
             totalRecords={data?.totalCount}
             recordsPerPage={30}
             page={pageNumber}
-            onPageChange={(p) => {
-              setPageNumber(p);
-            }}
+            onPageChange={(p) => setPageNumber(p)}
           />
         )}
       </div>
