@@ -89,8 +89,6 @@ const PageComponent = () => {
     }
   };
 
-  console.log(data);
-
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
       <BackButton title={t("StudentPage.StudentInformation")} />

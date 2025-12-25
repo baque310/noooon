@@ -276,7 +276,7 @@ const TableComponent = () => {
               const baseClasses = "transition-colors duration-200 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0";
 
               if (record.approval_status === "pending") {
-                return `${baseClasses} !bg-yellow-50/50 dark:bg-yellow-900/20 hover:!bg-yellow-100 dark:hover:bg-yellow-900/30`;
+                return `${baseClasses} !bg-yellow-50 dark:bg-yellow-900/20 hover:!bg-yellow-100 dark:hover:bg-yellow-900/30`;
               }
 
               return `${baseClasses} hover:bg-gray-50 dark:hover:bg-gray-700/50`;
