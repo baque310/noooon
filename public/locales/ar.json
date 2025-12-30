@@ -53,7 +53,9 @@
   "female": "انثى",
   "common": {
     "notAvailable": "غير متوفر",
+    "edit": "تعديل",
     "action": "إجراء",
+    "actions": "إجراءات",
     "confirm...": "تاكيد ...",
     "clear": "مسح",
     "members-added-successfully": "تمت الاضافة بنجاح",

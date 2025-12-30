@@ -5,7 +5,7 @@ import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
 
 import { getTranslation } from "@/ni18n/i18n";
-import { useLazyExamsGetDataByIdQuery, AddExamsCreateSection, useExamsCreateSectionsMutation } from "@/services/admin/Exams";
+import { useLazyExamsGetDataByIdQuery, AddExamsCreateSection, useExamsCreateSectionsMutation, useExamsUpdateSectionsMutation } from "@/services/admin/Exams";
 import { FieldArray, FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,6 +29,7 @@ const PageComponent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  const examSectionId = searchParams.get("examSectionId");
   const [ExamsGetDataById, { currentData: data, isFetching }] = useLazyExamsGetDataByIdQuery();
   const [getStageSubject, { currentData: StageSubject, isFetching: isFetchingStageSubject }] = useLazyStageSubjectGetDataQuery();
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
@@ -45,20 +46,30 @@ const PageComponent = () => {
   }, [id]);
 
   const [CreateSections, { isLoading: isLoadingCreateSections }] = useExamsCreateSectionsMutation();
+  const [UpdateSections, { isLoading: isLoadingUpdateSections }] = useExamsUpdateSectionsMutation();
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
       if (id) {
-        await CreateSections({
-          body: {
-            examDate: values.examDate,
-            sectionId: values.sectionId,
-          },
-          id: String(id),
-        }).unwrap();
-      } else {
+        if (examSectionId) {
+          await UpdateSections({
+            id: String(examSectionId),
+            body: {
+              examDate: values.examDate,
+              // sectionId: values.sectionId,
+            },
+          }).unwrap();
+        } else {
+          await CreateSections({
+            body: {
+              examDate: values.examDate,
+              sectionId: values.sectionId,
+            },
+            id: String(id),
+          }).unwrap();
+        }
       }
-      toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
+      toast.success(t(examSectionId ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
       if (id) {
         router.back();
@@ -91,11 +102,12 @@ const PageComponent = () => {
           <LoadingForm />
         ) : (
           <Formik<FormValues>
+            enableReinitialize
             initialValues={{
-              sectionId: "",
-              examDate: "",
-              stageId: data?.StageSubject.Stage.id ?? "",
-              classId: data?.StageSubject.Class.id ?? "",
+              sectionId: data?.ExamSection?.find((s) => s.id === examSectionId)?.Section?.id ?? "",
+              examDate: data?.ExamSection?.find((s) => s.id === examSectionId)?.examDate ?? "",
+              stageId: data?.StageSubject?.Stage?.id ?? "",
+              classId: data?.StageSubject?.Class?.id ?? "",
             }}
             validationSchema={sectionScheduleSchema}
             onSubmit={handleSubmit}>
@@ -138,7 +150,7 @@ const PageComponent = () => {
                       type: "submit",
                     }}
                     title={t("common.save")}
-                    isLoading={isLoadingCreateSections}
+                    isLoading={isLoadingCreateSections || isLoadingUpdateSections}
                   />
                 </div>
               </Form>

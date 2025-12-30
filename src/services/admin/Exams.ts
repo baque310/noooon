@@ -71,7 +71,7 @@ export interface UpdateExamsPayload {
 
 export interface AddExamsCreateSection {
   examDate: string;
-  sectionId: string;
+  sectionId?: string;
   score?: number;
 }
 
@@ -111,6 +111,15 @@ export const Exams = api.injectEndpoints({
       invalidatesTags: ["ExamsCreateSections", "ExamsGetDataById", "ExamsGetData"],
     }),
 
+    ExamsUpdateSections: build.mutation<IExams, { id: string; body: AddExamsCreateSection }>({
+      query: ({ body, id }) => ({
+        url: `admin/exams/examSections/${id}/date`,
+        body,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["ExamsUpdate", "ExamsGetDataById", "ExamsGetData"],
+    }),
+
     ExamsUpdate: build.mutation<IExams, { id: string; body: UpdateExamsPayload }>({
       query: ({ body, id }) => ({
         url: `admin/exams/${id}`,
@@ -137,6 +146,7 @@ export const Exams = api.injectEndpoints({
     }),
   }),
 });
+
 export const {
   useExamsGetDataQuery,
   useLazyExamsGetDataQuery,
@@ -145,6 +155,7 @@ export const {
   useExamsCreateMutation,
   useExamsRemoveMutation,
   useExamsUpdateMutation,
+  useExamsUpdateSectionsMutation,
   useExamsCreateSectionsMutation,
   useExamSectionsRemoveMutation,
 } = Exams;
