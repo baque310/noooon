@@ -23,6 +23,7 @@ export interface NotificationToAll {
   };
   userIds?: string[];
   isAlert?: "TRUE" | "FALSE";
+  image?: string; // image only for report optional in form data
 }
 
 export const Notification = api.injectEndpoints({
@@ -69,13 +70,31 @@ export const Notification = api.injectEndpoints({
       }),
       invalidatesTags: ["NotificationSendForManyAllForAdmin", "NotificationGetDataForAdmin"],
     }),
+    NotificationSendToAllForAdminReport: build.mutation<any, NotificationToAll | FormData>({
+      query: (body) => ({
+        url: "notification/report/forAdmin/sendToAll",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["NotificationSendToAllForAdmin", "NotificationGetDataForAdmin"],
+    }),
+    NotificationSendForManyAllForAdminReport: build.mutation<any, NotificationToAll | FormData>({
+      query: (body) => ({
+        url: "notification/report/forAdmin/sendForMany",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["NotificationSendForManyAllForAdmin", "NotificationGetDataForAdmin"],
+    }),
   }),
 });
 export const {
   useNotificationGetDataForAdminQuery,
   useLazyNotificationGetDataForAdminQuery,
   useNotificationChangeStatusForAdminMutation,
+  useNotificationSendToAllForManagerMutation,
   useNotificationSendToAllForAdminMutation,
   useNotificationSendForManyAllForAdminMutation,
-  useNotificationSendToAllForManagerMutation,
+  useNotificationSendToAllForAdminReportMutation,
+  useNotificationSendForManyAllForAdminReportMutation,
 } = Notification;

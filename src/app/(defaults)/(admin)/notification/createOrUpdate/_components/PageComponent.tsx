@@ -11,7 +11,8 @@ import * as Yup from "yup";
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import { Form, Formik, FormikProps } from "formik";
 import { InputForm } from "@/components/Form/inputForm";
-import { NotificationToAll, useNotificationSendForManyAllForAdminMutation, useNotificationSendToAllForAdminMutation } from "@/services/Notification";
+import { UploadFileForm } from "@/components/Form/uploadFileForm";
+import { NotificationToAll, useNotificationSendForManyAllForAdminReportMutation, useNotificationSendToAllForAdminReportMutation } from "@/services/Notification";
 import { CheckBoxForm, CheckBoxFormWithCustom } from "@/components/Form/CheckBoxForm";
 import { useStudentListQuery } from "@/services/admin/studentEnrollment";
 import { SelectForm } from "@/components/Form/SelectForm";
@@ -26,6 +27,7 @@ export interface FormValues extends NotificationToAll {
   schoolYearId?: string;
   allStudentsThisASectionsORClasses: string;
   sendTo?: string;
+  image?: any;
 }
 
 const PageComponent = () => {
@@ -57,26 +59,28 @@ const PageComponent = () => {
     sectionId: sectionId,
   });
 
-  const [NotificationSendToAll, { isLoading: isLoadingNotificationSendToAll }] = useNotificationSendToAllForAdminMutation();
-  const [NotificationSendForMany, { isLoading: isLoadingNotificationSendForMany }] = useNotificationSendForManyAllForAdminMutation();
+  const [NotificationSendToAll, { isLoading: isLoadingNotificationSendToAll }] = useNotificationSendToAllForAdminReportMutation();
+  const [NotificationSendForMany, { isLoading: isLoadingNotificationSendForMany }] = useNotificationSendForManyAllForAdminReportMutation();
 
   const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
     try {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("body", values.body);
+      formData.append("data", JSON.stringify({ type: "global", id: "" }));
+      formData.append("isAlert", "TRUE");
+
+      if (values.image && typeof values.image !== "string") {
+        formData.append("image", values.image);
+      }
+
       if (values.sendTo == "allStudents") {
-        await NotificationSendToAll({
-          title: values.title,
-          body: values.body,
-          data: { type: "global", id: "" },
-          isAlert: "TRUE",
-        }).unwrap();
+        await NotificationSendToAll(formData).unwrap();
       } else {
-        await NotificationSendForMany({
-          title: values.title,
-          body: values.body,
-          userIds: values.allStudentsThisASectionsORClasses === "TRUE" ? dataUserGetData?.map((item) => item.userId) : values.userIds,
-          data: { type: "global", id: "" },
-          isAlert: "TRUE",
-        }).unwrap();
+        const userIds = values.allStudentsThisASectionsORClasses === "TRUE" ? dataUserGetData?.map((item) => item.userId) : values.userIds;
+        formData.append("userIds", JSON.stringify(userIds));
+
+        await NotificationSendForMany(formData).unwrap();
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
@@ -140,6 +144,7 @@ const PageComponent = () => {
               title: title,
               body: body,
               schoolYearId: defaultSchoolYearId,
+              image: undefined,
             }}
             validationSchema={notificationSchema}
             onSubmit={handleSubmit}>
@@ -158,6 +163,11 @@ const PageComponent = () => {
                       ...({ as: "textarea" } as any),
                     }}
                   />
+
+                  <div className="my-2">
+                    <div className="text-base font-semibold text-black dark:text-white-dark mb-2">{t("BannerPage.img-info")}</div>
+                    <UploadFileForm valueFileName={props.values.image} formikProps={props} name={"image"} title={t("BannerPage.url")} placeholder={""} />
+                  </div>
                 </div>
 
                 {!title && (
