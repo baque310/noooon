@@ -154,6 +154,7 @@
     "discount": "الخصومات",
     "alerts": "التبليغات",
     "chats": "الدردشات",
+    "teacher_library": "المكتبة",
     "sub_subject": "المواد الفرعية",
     "studentOtherPayment": "مصاريف اخرى",
     "superTeacherAttendances": "حضور وغياب ",
@@ -1304,5 +1305,19 @@
   "STUDENT": "طالب",
   "ZainCash": "زين كاش",
   "QiCard": "كي كارد",
-  "partial": "مدفوع جزئي"
+  "partial": "مدفوع جزئي",
+  "SuperTeacherLibraryPage": {
+    "title": "العنوان",
+    "description": "الوصف",
+    "url": "الرابط",
+    "SuperTeacherLibraryInformation": "معلومات مكتبة المدرس المتميز",
+    "enter-title": "ادخل العنوان",
+    "enter-description": "ادخل الوصف",
+    "enter-url": "ادخل الرابط",
+    "update-info": "تعديل عنصر المكتبة",
+    "add-info": "إضافة عنصر مكتبة",
+    "Item Info": "معلومات العنصر",
+    "DeleteSuperTeacherLibrary": "حذف عنصر المكتبة",
+    "Are-you-sure-you-want-to-delete-this-SuperTeacherLibrary": "هل أنت متأكد أنك تريد حذف هذا العنصر؟"
+  }
 }

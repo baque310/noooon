@@ -39,6 +39,7 @@ export type PAGE_CODE =
   | "attendance"
   | "lesson"
   | "homework"
+  | "library"
   | "setting"
   | "notification"
   | "user"

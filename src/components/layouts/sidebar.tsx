@@ -465,6 +465,15 @@ const Sidebar = () => {
                   number={adminCountData?.lessonsCountToday ?? 0}
                   icon={<IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />}
                 />
+                <MenuItem
+                  permission={["read-any", "read-own"]}
+                  resource={"library"}
+                  toggleMenu={toggleMenu}
+                  to={"/superTeacherLibrary"}
+                  label={t("sidebar.teacher_library")}
+                  number={adminCountData?.lessonsCountToday ?? 0}
+                  icon={<IconLesson className="shrink-0 group-hover:!text-white group-active:!text-white" />}
+                />
 
                 <MenuSubItem
                   permission={["read-any", "read-own"]}

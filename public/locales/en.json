@@ -1177,5 +1177,19 @@
     "unpaid": "Unpaid"
   },
   "unpaid": "Unpaid",
-  "paid": "Paid"
+  "paid": "Paid",
+  "SuperTeacherLibraryPage": {
+    "title": "Title",
+    "description": "Description",
+    "url": "URL",
+    "SuperTeacherLibraryInformation": "Super Teacher Library Information",
+    "enter-title": "Enter title",
+    "enter-description": "Enter description",
+    "enter-url": "Enter URL",
+    "update-info": "Update Library Item",
+    "add-info": "Add Library Item",
+    "Item Info": "Item Info",
+    "DeleteSuperTeacherLibrary": "Delete Library Item",
+    "Are-you-sure-you-want-to-delete-this-SuperTeacherLibrary": "Are you sure you want to delete this library item?"
+  }
 }

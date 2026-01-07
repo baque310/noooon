@@ -151,6 +151,13 @@ export const api = createApi({
     "ClassRemove",
     "ClassUpdate",
 
+    // SuperTeacherLibrary Tag
+    "SuperTeacherLibraryGetData",
+    "SuperTeacherLibraryGetDataById",
+    "SuperTeacherLibraryCreate",
+    "SuperTeacherLibraryRemove",
+    "SuperTeacherLibraryUpdate",
+
     // SubSubject Tag
     "SubSubjectGetData",
     "SubSubjectGetDataById",

@@ -68,7 +68,7 @@ const PageComponent = () => {
       formData.append("title", values.title);
       formData.append("body", values.body);
       formData.append("data", JSON.stringify({ type: "global", id: "" }));
-      formData.append("isAlert", "TRUE");
+      // formData.append("isAlert", "TRUE");
 
       if (values.image && typeof values.image !== "string") {
         formData.append("image", values.image);
