@@ -129,6 +129,11 @@ const TableComponent = () => {
                 title: t("VideoPage.description"),
                 accessor: "description",
                 sortable: true,
+                render: ({ description }: any) => (
+                  <div className="truncate" style={{ maxWidth: "200px" }}>
+                    {description}
+                  </div>
+                ),
               },
               {
                 title: t("VideoPage.url"),

@@ -30,6 +30,17 @@ export interface IStudent {
       username: string;
     };
   };
+  StudentEnrollment: {
+    Stage: {
+      name: string;
+    };
+    Class: {
+      name: string;
+    };
+    Section: {
+      name: string;
+    };
+  }[];
 }
 
 export interface AddStudentPayload {

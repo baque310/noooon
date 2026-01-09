@@ -101,6 +101,11 @@ const PageComponent = () => {
             <ItemList title={t("StudentPage.fullName")} value={String(data?.fullName)} />
             <ItemList title={t("StudentPage.Username")} value={String(data?.User?.username)} isCopyToClipboard />
             <ItemList title={t("StudentPage.fullNameParent")} value={data?.Parent?.fullName} isCopyToClipboard />
+
+            <ItemList title={t("StudentPage.StageName")} value={t(data?.StudentEnrollment?.[0]?.Stage?.name?.toLowerCase() as any)} />
+            <ItemList title={t("StudentPage.ClassName")} value={t(data?.StudentEnrollment?.[0]?.Class?.name?.toLowerCase() as any)} />
+            <ItemList title={t("StudentPage.SectionName")} value={t(data?.StudentEnrollment?.[0]?.Section?.name?.toLowerCase() as any)} />
+
             <ItemList title={t("StudentPage.gender")} value={t(data?.gender?.toLowerCase() as any)} />
             <ItemList title={t("StudentPage.address")} value={String(data?.address)} />
             <ItemList title={t("StudentPage.phone1")} value={String(data?.phone1)} />

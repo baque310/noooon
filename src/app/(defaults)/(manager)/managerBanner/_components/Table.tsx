@@ -132,6 +132,11 @@ const TableComponent = () => {
                 title: t("ManagerBannerPage.description"),
                 accessor: "description",
                 sortable: true,
+                render: ({ description }: any) => (
+                  <div className="truncate" style={{ maxWidth: "200px" }}>
+                    {description}
+                  </div>
+                ),
               },
               {
                 title: t("ManagerBannerPage.priority"),

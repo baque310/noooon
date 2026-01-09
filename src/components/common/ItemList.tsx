@@ -14,22 +14,14 @@ export const ItemList = ({
   title: React.ReactNode;
   isCopyToClipboard?: boolean;
   value: string | React.ReactNode;
-  props?: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  >;
+  props?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 }) => {
   const { t } = getTranslation();
   return (
-    <div
-      {...props}
-      className={`available-item cursor-pointer ${props?.className || ""}`}
-    >
+    <div {...props} className={`available-item cursor-pointer ${props?.className || ""}`}>
       {title && (
-        <div className="flex justify-between items-center py-3 px-4">
-          <div className="font-medium text-gray-700 dark:text-gray-300 min-w-fit">
-            {title}
-          </div>
+        <div className="flex justify-between items-start gap-2 py-3 px-4">
+          <div className="font-medium  text-gray-700 dark:text-gray-300 min-w-fit">{title}</div>
           <div className="font-normal text-gray-600 dark:text-gray-400 text-right">
             {isCopyToClipboard ? (
               <CopyToClipboard
@@ -40,8 +32,7 @@ export const ItemList = ({
                   } else {
                     toast.error("Failed to copy to clipboard");
                   }
-                }}
-              >
+                }}>
                 <button className="flex items-center gap-2 hover:text-primary transition-colors duration-200 p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700">
                   <div>{value}</div>
                   {<IconCopy />}

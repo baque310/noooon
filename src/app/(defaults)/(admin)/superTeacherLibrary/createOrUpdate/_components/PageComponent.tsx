@@ -51,7 +51,7 @@ const PageComponent = () => {
       const formData = new FormData();
       formData.append("title", values.title);
       formData.append("description", values.description);
-      formData.append("classId", values.classId);
+      // formData.append("classId", values.classId);
       formData.append("sectionId", values.sectionId);
 
       if (values.image instanceof File) {
@@ -83,9 +83,9 @@ const PageComponent = () => {
     title: Yup.string().required(t("common.this-field-is-required")),
     description: Yup.string().required(t("common.this-field-is-required")),
     // url: Yup.string().required(t("common.this-field-is-required")),
-    classId: Yup.string().required(t("common.this-field-is-required")),
-    sectionId: Yup.string().required(t("common.this-field-is-required")),
-    stageId: Yup.string().required(t("common.this-field-is-required")), // Required for UX selection flow
+    // classId: Yup.string().required(t("common.this-field-is-required")),
+    // stageId: Yup.string().required(t("common.this-field-is-required")), // Required for UX selection flow
+    // sectionId: Yup.string().required(t("common.this-field-is-required")),
   });
 
   return (

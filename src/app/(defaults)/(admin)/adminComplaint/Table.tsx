@@ -188,6 +188,11 @@ const TableComponent = () => {
               {
                 title: t("ComplaintPage.description"),
                 accessor: "description",
+                render: ({ description }: any) => (
+                  <div className="truncate" style={{ maxWidth: "200px" }}>
+                    {description}
+                  </div>
+                ),
               },
               {
                 title: t("ComplaintPage.approval_status"),

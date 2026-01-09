@@ -345,6 +345,11 @@ const TableComponent = () => {
                 title: t("SuperTeacherLibraryPage.description"),
                 accessor: "description",
                 // sortable: true,
+                render: ({ description }: any) => (
+                  <div className="truncate" style={{ maxWidth: "200px" }}>
+                    {description}
+                  </div>
+                ),
               },
               {
                 title: t("SuperTeacherLibraryPage.url"),

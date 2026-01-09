@@ -57,7 +57,7 @@ const Index = () => {
       ) : (
         <>
           <div className="CardDetails internalMenu ">
-            <ItemList title={t("ComplaintPage.title")} value={String(DataComplaintGetDataById?.description)} />
+            <ItemList title={t("ComplaintPage.title")} value={String(DataComplaintGetDataById?.title)} />
             <ItemList title={t("ComplaintPage.description")} value={String(DataComplaintGetDataById?.description)} />
             <ItemList title={t("common.update")} value={moment(DataComplaintGetDataById?.updatedAt).format("YYYY-MM-DD")} />
             <ItemList title={t("common.createdAt")} value={moment(DataComplaintGetDataById?.createdAt).format("YYYY-MM-DD")} />
