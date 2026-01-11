@@ -396,16 +396,18 @@ const TableComponent = () => {
                   </>
                 ),
               },
-
               {
                 title: t("ExamResultsPage.notes"),
                 accessor: "notes",
                 sortable: true,
               },
               {
-                title: t("ExamResultsPage.StageName"),
-                accessor: "ExamSection.Exam.StageSubject.Stage.name",
-                render: ({ ExamSection }: any) => ExamSection.Exam.StageSubject.Stage.name && t(ExamSection.Exam.StageSubject.Stage.name ?? ("" as any)),
+                title: t("ExamResultsPage.SubjectName"),
+                accessor: "ExamSection.Exam.StageSubject.Subject.name",
+              },
+              {
+                title: t("ExamResultsPage.ExamTypeName"),
+                accessor: "ExamSection.Exam.ExamType.name",
               },
               {
                 title: t("ExamResultsPage.examDate"),
@@ -413,17 +415,14 @@ const TableComponent = () => {
                 render: ({ ExamSection }: any) => (ExamSection?.examDate ? <div>{moment(ExamSection.examDate).format("YYYY-MM-DD")}</div> : null),
               },
               {
+                title: t("ExamResultsPage.StageName"),
+                accessor: "ExamSection.Exam.StageSubject.Stage.name",
+                render: ({ ExamSection }: any) => ExamSection.Exam.StageSubject.Stage.name && t(ExamSection.Exam.StageSubject.Stage.name ?? ("" as any)),
+              },
+              {
                 title: t("ExamResultsPage.SectionName"),
                 accessor: "ExamSection.Section.name",
                 render: ({ ExamSection }: any) => ExamSection?.Section?.name && t(ExamSection?.Section?.name ?? ("" as any)),
-              },
-              {
-                title: t("ExamResultsPage.ExamTypeName"),
-                accessor: "ExamSection.Exam.ExamType.name",
-              },
-              {
-                title: t("ExamResultsPage.SubjectName"),
-                accessor: "ExamSection.Exam.StageSubject.Subject.name",
               },
               {
                 title: t("common.updatedAt"),

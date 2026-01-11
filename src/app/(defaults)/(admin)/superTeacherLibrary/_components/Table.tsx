@@ -351,15 +351,15 @@ const TableComponent = () => {
                   </div>
                 ),
               },
-              {
-                title: t("SuperTeacherLibraryPage.url"),
-                accessor: "url",
-                render: ({ url }: any) => (
-                  <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                    {url}
-                  </a>
-                ),
-              },
+              // {
+              //   title: t("SuperTeacherLibraryPage.url"),
+              //   accessor: "url",
+              //   render: ({ url }: any) => (
+              //     <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+              //       {url}
+              //     </a>
+              //   ),
+              // },
               {
                 title: t("StudentEnrollmentPage.ClassName"),
                 accessor: "Class.name",

@@ -103,6 +103,7 @@ const PageComponent = () => {
             <ItemList title={t("TeacherPage.Username")} value={String(data?.User?.username)} isCopyToClipboard />
             <ItemList title={t("TeacherPage.address")} value={String(data?.address ?? "")} />
             <ItemList title={t("TeacherPage.ClassName")} value={String(data?.TeacherSubject?.[0]?.Section?.Class?.name ?? "")} />
+            <ItemList title={t("TeacherPage.SectionName")} value={String(data?.TeacherSubject?.[0]?.Section?.name ?? "")} />
             <ItemList title={t("TeacherPage.Gender")} value={data?.Gender ? t(("TeacherPage." + (data?.Gender ?? "")) as any) : ""} />
             <ItemList title={t("TeacherPage.phone1")} value={String(data?.phone1 ?? "")} />
             <ItemList title={t("TeacherPage.phone2")} value={String(data?.phone2 ?? "")} />

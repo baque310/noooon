@@ -154,6 +154,7 @@ const TableComponent = () => {
       });
     }
   };
+  console.log(data);
 
   return (
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
@@ -284,16 +285,6 @@ const TableComponent = () => {
             records={data?.data as any}
             columns={[
               {
-                title: t("ExamsPage.content"),
-                accessor: "content",
-                sortable: true,
-                render: ({ content }: any) => (
-                  <div className="max-w-xs truncate" title={content}>
-                    {content}
-                  </div>
-                ),
-              },
-              {
                 title: t("ExamsPage.stageSubject"),
                 accessor: "StageSubject.Subject.name",
                 // render: (record: any) => {
@@ -311,6 +302,16 @@ const TableComponent = () => {
               {
                 title: t("ExamsPage.subSubject"),
                 accessor: "subSubject.name",
+              },
+              {
+                title: t("ExamsPage.content"),
+                accessor: "content",
+                sortable: true,
+                render: ({ content }: any) => (
+                  <div className="max-w-xs truncate" title={content}>
+                    {content}
+                  </div>
+                ),
               },
               {
                 title: t("ExamsPage.examTypName"),

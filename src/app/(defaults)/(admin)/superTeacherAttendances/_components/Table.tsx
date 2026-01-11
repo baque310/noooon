@@ -405,6 +405,16 @@ const TableComponent = () => {
             records={data?.data as any}
             columns={[
               {
+                title: t("SuperTeacherAttendancesPage.teacherName"),
+                accessor: "SectionSchedule.teacherSubject.Teacher.fullName",
+                sortable: true,
+              },
+              {
+                title: t("SuperTeacherAttendancesPage.subjectName"),
+                accessor: "SectionSchedule.teacherSubject.StageSubject.Subject.name",
+                sortable: true,
+              },
+              {
                 title: t("SuperTeacherAttendancesPage.studentName"),
                 accessor: "StudentEnrollment.Student.fullName",
                 sortable: true,
@@ -433,16 +443,6 @@ const TableComponent = () => {
                     </div>
                   );
                 },
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.subjectName"),
-                accessor: "SectionSchedule.teacherSubject.StageSubject.Subject.name",
-                sortable: true,
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.teacherName"),
-                accessor: "SectionSchedule.teacherSubject.Teacher.fullName",
-                sortable: true,
               },
               {
                 title: t("SuperTeacherAttendancesPage.stageName"),
