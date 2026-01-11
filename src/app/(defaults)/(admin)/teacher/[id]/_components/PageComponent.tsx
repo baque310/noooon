@@ -87,6 +87,7 @@ const PageComponent = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
   const [openResetPassword, setOpenResetPassword] = useState(false);
+  console.log(data);
 
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
@@ -101,6 +102,7 @@ const PageComponent = () => {
             <ItemList title={t("TeacherPage.fullName")} value={String(data?.fullName)} />
             <ItemList title={t("TeacherPage.Username")} value={String(data?.User?.username)} isCopyToClipboard />
             <ItemList title={t("TeacherPage.address")} value={String(data?.address ?? "")} />
+            <ItemList title={t("TeacherPage.ClassName")} value={String(data?.TeacherSubject?.[0]?.Section?.Class?.name ?? "")} />
             <ItemList title={t("TeacherPage.Gender")} value={data?.Gender ? t(("TeacherPage." + (data?.Gender ?? "")) as any) : ""} />
             <ItemList title={t("TeacherPage.phone1")} value={String(data?.phone1 ?? "")} />
             <ItemList title={t("TeacherPage.phone2")} value={String(data?.phone2 ?? "")} />

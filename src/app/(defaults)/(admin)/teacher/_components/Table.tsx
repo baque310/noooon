@@ -84,6 +84,7 @@ const TableComponent = () => {
       setParam({ ...param, Gender: undefined });
     }
   };
+  console.log(data);
 
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
