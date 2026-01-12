@@ -794,6 +794,21 @@
     "add": "اضافة",
     "relatedWirhExam": "هذا الامتحان مرتبط  لايمكن حذفه"
   },
+  "SuperTeacherLibraryPage": {
+    "LibraryInformation": "معلومات المكتبة",
+    "title": "العنوان",
+    "description": "الوصف",
+    "url": "الرابط",
+    "DeleteSuperTeacherLibrary": "حذف المكتبة",
+    "Are-you-sure-you-want-to-delete-this-SuperTeacherLibrary": "هل أنت متأكد أنك تريد حذف هذه المكتبة؟",
+    "SuperTeacherLibraryInformation": "معلومات مكتبة المدرس المتميز",
+    "enter-title": "ادخل العنوان",
+    "enter-description": "ادخل الوصف",
+    "enter-url": "ادخل الرابط",
+    "update-info": "تعديل عنصر المكتبة",
+    "add-info": "إضافة عنصر مكتبة",
+    "Item Info": "معلومات العنصر"
+  },
   "TeacherSubjectPage": {
     "TeacherSubject": " المواد حسب المدرسين",
     "TeacherSubjects": "المواضيع المدرسين",
@@ -1304,23 +1319,10 @@
   "unpaid": "غير مدفوع",
   "paid": "مدفوع",
   "Cash": "نقداً",
+  "Super Teacher Library": "المكتبة",
   "ADMIN": "المسؤول",
   "STUDENT": "طالب",
   "ZainCash": "زين كاش",
   "QiCard": "كي كارد",
-  "partial": "مدفوع جزئي",
-  "SuperTeacherLibraryPage": {
-    "title": "العنوان",
-    "description": "الوصف",
-    "url": "الرابط",
-    "SuperTeacherLibraryInformation": "معلومات مكتبة المدرس المتميز",
-    "enter-title": "ادخل العنوان",
-    "enter-description": "ادخل الوصف",
-    "enter-url": "ادخل الرابط",
-    "update-info": "تعديل عنصر المكتبة",
-    "add-info": "إضافة عنصر مكتبة",
-    "Item Info": "معلومات العنصر",
-    "DeleteSuperTeacherLibrary": "حذف عنصر المكتبة",
-    "Are-you-sure-you-want-to-delete-this-SuperTeacherLibrary": "هل أنت متأكد أنك تريد حذف هذا العنصر؟"
-  }
+  "partial": "مدفوع جزئي"
 }

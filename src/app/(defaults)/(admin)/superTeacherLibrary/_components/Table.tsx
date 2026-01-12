@@ -13,6 +13,7 @@ import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import Dropdown from "@/components/dropdown";
+import Avatar from "@/components/common/Avatar";
 import { toast } from "react-toastify";
 import DeleteModel from "@/components/Model/DeleteModel";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch"; // Keep if we want to add other search selects
@@ -138,7 +139,7 @@ const TableComponent = () => {
     <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
         <div className={"flex justify-between max-md:flex-col gap-2 "}>
-          <div className="text-xl uppercase ">Super Teacher Library</div>
+          <div className="text-xl uppercase ">{t("Super Teacher Library")}</div>
           <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
             <input
               value={Search ?? ""}
@@ -315,8 +316,7 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
-              // Optional: go to details page or edit page
-              // router.push(`/superTeacherLibrary/${item.record.id}`);
+              router.push(`/superTeacherLibrary/${item.record.id}`);
             }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
@@ -336,6 +336,20 @@ const TableComponent = () => {
             // I'll assume `data` is the array.
 
             columns={[
+              {
+                title: t("StudentPage.photo"),
+                accessor: "url",
+                sortable: true,
+                width: 80,
+                render: ({ url, title }: any) => (
+                  <div className="flex items-center justify-center">
+                    <div className="relative group">
+                      <Avatar photo={url} username={title} />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-full transition-colors duration-200"></div>
+                    </div>
+                  </div>
+                ),
+              },
               {
                 title: t("SuperTeacherLibraryPage.title"),
                 accessor: "title",

@@ -1,4 +1,4 @@
-import { api } from "@/services/api";
+import { api, BASE_URL } from "@/services/api";
 import { User } from "next-auth";
 import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
 import { IClass } from "./class";
@@ -46,6 +46,17 @@ export const SuperTeacherLibrary = api.injectEndpoints({
         params,
         method: "GET",
       }),
+      transformResponse: (response: BaseGetDataResponse<ISuperTeacherLibrary>) => {
+        if (response.data.length > 0) {
+          response.data.map((data) => {
+            if (data.url) {
+              data.url = BASE_URL + "uploads/" + data.url;
+            }
+            return data;
+          });
+        }
+        return response;
+      },
       providesTags: ["SuperTeacherLibraryGetData"],
     }),
 
