@@ -24,6 +24,7 @@ import {
   useChatCreateSchoolStaffGroupMutation,
   useChatCreateCustomTeachersGroupMutation,
   useChatCreateClassParentsGroupMutation,
+  useChatCreateSupervisorTeachersGroupMutation,
 } from "@/services/admin/chat";
 import { useStudentEnrollmentGetDataQuery } from "@/services/admin/studentEnrollment";
 import { useTeacherGetDataQuery } from "@/services/admin/teacher";
@@ -63,6 +64,7 @@ const CreateNewGroupComponent = ({
   const [ChatCreateSchoolStudentsGroup, { isLoading: isLoadingChatCreateSchoolStudentsGroup }] = useChatCreateClassStudentsGroupMutation();
   const [ChatCreateSchoolStaffGroup, { isLoading: isLoadingChatCreateSchoolStaffGroup }] = useChatCreateSchoolStaffGroupMutation();
   const [CreateCustomTeachersGroup, { isLoading: isLoadingCreateCustomTeachersGroup }] = useChatCreateCustomTeachersGroupMutation();
+  const [ChatCreateSupervisorTeachersGroup, { isLoading: isLoadingChatCreateSupervisorTeachersGroup }] = useChatCreateSupervisorTeachersGroupMutation();
   const [CreateClassParentsGroup, { isLoading: isLoadingCreateClassParentsGroup }] = useChatCreateClassParentsGroupMutation();
 
   const [searchStudent, setSearchStudent] = React.useState("");
@@ -119,12 +121,30 @@ const CreateNewGroupComponent = ({
           toast.error(t("common.this-field-is-required"));
           return;
         }
-        await CreateCustomTeachersGroup({
-          description: String(values.description),
-          groupName: String(values.groupName),
-          schoolId: session.data?.user.schoolId || "",
-          teacherIds: values.teacherIds,
-        }).unwrap();
+
+        const selectedTeacherId = values.teacherIds[0];
+        const selectedTeacher = teachers?.find((t) => t.id === selectedTeacherId);
+
+        if (!selectedTeacher) {
+          toast.error(t("ChatPage.selectedTeacher-not-found"));
+          return;
+        }
+
+        if (selectedTeacher.Section?.id) {
+          await ChatCreateSupervisorTeachersGroup({
+            sectionId: selectedTeacher.Section.id,
+            teacherId: selectedTeacher.Teacher.id,
+            groupName: values.groupName || "",
+            description: values.description || "",
+          }).unwrap();
+        } else {
+          await ChatCreateSupervisorTeachersGroup({
+            classId: selectedTeacher.StageSubject.Class.id,
+            teacherId: selectedTeacher.Teacher.id,
+            groupName: values.groupName || "",
+            description: values.description || "",
+          }).unwrap();
+        }
       } else if (values.GroupType === "otherGroup") {
         if (!values.teacherIds || values.teacherIds.length === 0) {
           toast.error(t("common.this-field-is-required"));
@@ -507,7 +527,9 @@ const CreateNewGroupComponent = ({
                     ? isLoadingChatCreateSchoolStudentsGroup
                     : props.values.GroupType === "staffGroup"
                     ? isLoadingChatCreateSchoolStaffGroup
-                    : props.values.GroupType === "teacherGroup" || props.values.GroupType === "otherGroup"
+                    : props.values.GroupType === "teacherGroup"
+                    ? isLoadingChatCreateSupervisorTeachersGroup
+                    : props.values.GroupType === "otherGroup"
                     ? isLoadingCreateCustomTeachersGroup
                     : props.values.GroupType === "parentGroup"
                     ? isLoadingCreateClassParentsGroup

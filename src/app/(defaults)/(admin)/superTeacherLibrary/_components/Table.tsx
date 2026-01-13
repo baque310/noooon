@@ -265,7 +265,7 @@ const TableComponent = () => {
           </div>
         </div>
       </div>
-      <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>
+      {/* <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>
         <SelectFilter
           placement="bottom-end"
           title={t("StudentEnrollmentPage.StageName")}
@@ -311,8 +311,8 @@ const TableComponent = () => {
             }
           />
         )}
-      </div>
-      <div className="datatables pagination-padding mt-2">
+      </div> */}
+      <div className="datatables pagination-padding mt-5">
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {

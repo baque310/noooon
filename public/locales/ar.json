@@ -1162,6 +1162,8 @@
   "ChatPage": {
     "direct": "مباشر",
     "message": "رسالة",
+    "section-not-found": "لا توجد شعبة للمشرف",
+    "selectedTeacher-not-found": "نقص في معلومات المشرف",
     "members-added-successfully": "تمت إضافة الأعضاء بنجاح",
     "members": "الأعضاء",
     "user-type": "نوع المستخدم",
