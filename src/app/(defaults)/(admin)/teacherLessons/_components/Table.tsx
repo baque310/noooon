@@ -17,7 +17,7 @@ import { useSettingGetDataQuery } from "@/services/Setting";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useSectionGetDataQuery } from "@/services/admin/section";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
-import { useTeacherLessonsGetDataQuery } from "@/services/admin/teacherLessons";
+import { useTeacherLessonsGetDataQuery, useTeacherLessonsIsSeenUpdateMutation } from "@/services/admin/teacherLessons";
 import { AddIcons } from "@/components/common/icons/Actions";
 import FormattedDate from "@/components/common/FormattedDate";
 import { useStageGetDataQuery } from "@/services/admin/stage";
@@ -83,6 +83,7 @@ const TableComponent = () => {
   };
 
   const { isFetching, currentData: data } = useTeacherLessonsGetDataQuery(params);
+  const [updateIsSeen] = useTeacherLessonsIsSeenUpdateMutation();
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -272,6 +273,7 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={(item) => {
+              updateIsSeen({ id: item.record.id as string, status: "TRUE" });
               router.push(`/teacherLessons/${item.record.id}`);
             }}
             fetching={isFetching}
@@ -358,7 +360,7 @@ const TableComponent = () => {
             totalRecords={data?.totalCount}
             rowClassName={(record) => {
               const baseClasses = "transition-colors duration-200 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0";
-              if (moment(record?.createdAt || "").isSame(moment(), "day")) {
+              if (record.isSeen === "FALSE") {
                 return `${baseClasses} !bg-yellow-50 dark:bg-yellow-900/20 hover:!bg-yellow-100 dark:hover:bg-yellow-900/30`;
               }
 

@@ -7,6 +7,7 @@ export interface ITeacherLessons {
   title: string;
   dueDate: string;
   content: string;
+  isSeen: string;
   createdAt: string;
   updatedAt: string;
   teacherSubjectId: string;
@@ -125,6 +126,14 @@ export const TeacherLessons = api.injectEndpoints({
       invalidatesTags: (res) => (res ? ["TeacherLessonsUpdate", "TeacherLessonsGetDataById", "TeacherLessonsGetData"] : []),
     }),
 
+    TeacherLessonsIsSeenUpdate: build.mutation<ITeacherLessons, { id: string; status: "TRUE" | "FALSE" }>({
+      query: ({ status, id }) => ({
+        url: `admin/lessons/isSeen/${id}/${status}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: (res) => (res ? ["TeacherLessonsUpdate", "TeacherLessonsGetDataById", "TeacherLessonsGetData"] : []),
+    }),
+
     TeacherLessonsRemove: build.mutation<void, { id: string }>({
       query: ({ id }) => ({
         url: `super/teacher/lessons/${id}`,
@@ -169,6 +178,7 @@ export const {
   useTeacherLessonsGetDataByIdQuery,
   useLazyTeacherLessonsGetDataByIdQuery,
   useTeacherLessonsCreateMutation,
+  useTeacherLessonsIsSeenUpdateMutation,
   useTeacherLessonsRemoveMutation,
   useTeacherLessonsUpdateMutation,
   useTeacherLessonsAttachmentsCreateMutation,
