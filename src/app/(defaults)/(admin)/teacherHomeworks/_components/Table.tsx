@@ -16,7 +16,7 @@ import { useSettingGetDataQuery } from "@/services/Setting";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useSectionGetDataQuery } from "@/services/admin/section";
 import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
-import { useTeacherHomeworksGetDataQuery } from "@/services/admin/teacherHomeworks";
+import { useTeacherHomeworksGetDataQuery, useTeacherHomeworksIsSeenUpdateMutation } from "@/services/admin/teacherHomeworks";
 import { AddIcons } from "@/components/common/icons/Actions";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { DatePicker } from "@/components/Filter/DatePicker";
@@ -101,6 +101,7 @@ const TableComponent = () => {
   };
 
   const { isFetching, currentData: data } = useTeacherHomeworksGetDataQuery(params);
+  const [updateIsSeen] = useTeacherHomeworksIsSeenUpdateMutation();
 
   const { currentData: StageData } = useStageGetDataQuery();
 
@@ -287,7 +288,10 @@ const TableComponent = () => {
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
             records={data?.data as any}
-            onRowClick={(item) => router.push(`/teacherHomeworks/${item.record.id}`)}
+            onRowClick={(item) => {
+              updateIsSeen({ id: item.record.id as string, status: "TRUE" });
+              router.push(`/teacherHomeworks/${item.record.id}`);
+            }}
             columns={[
               {
                 title: t("HomeworksPage.teacherFullName"),
@@ -380,7 +384,7 @@ const TableComponent = () => {
             totalRecords={data?.totalCount}
             rowClassName={(record) => {
               const baseClasses = "transition-colors duration-200 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0";
-              if (moment(record?.createdAt || "").isSame(moment(), "day")) {
+              if (record.isSeen === "FALSE") {
                 return `${baseClasses} !bg-yellow-50 dark:bg-yellow-900/20 hover:!bg-yellow-100 dark:hover:bg-yellow-900/30`;
               }
 

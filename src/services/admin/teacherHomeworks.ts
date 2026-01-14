@@ -12,6 +12,7 @@ export interface ITeacherHomeworks {
   teacherSubjectId: string;
   schoolYearId: string;
   schoolId: string;
+  isSeen: string;
   teacherSubject: {
     Teacher: {
       id: string;
@@ -127,6 +128,14 @@ export const TeacherHomeworks = api.injectEndpoints({
       invalidatesTags: (res) => (res ? ["TeacherHomeworksUpdate", "TeacherHomeworksGetDataById", "TeacherHomeworksGetData"] : []),
     }),
 
+    TeacherHomeworksIsSeenUpdate: build.mutation<ITeacherHomeworks, { id: string; status: "TRUE" | "FALSE" }>({
+      query: ({ status, id }) => ({
+        url: `admin/homeworks/isSeen/${id}/${status}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: (res) => (res ? ["TeacherHomeworksUpdate", "TeacherHomeworksGetDataById", "TeacherHomeworksGetData"] : []),
+    }),
+
     TeacherHomeworksRemove: build.mutation<void, { id: string }>({
       query: ({ id }) => ({
         url: `supper/teacher/homeworks/${id}`,
@@ -173,6 +182,7 @@ export const {
   useTeacherHomeworksCreateMutation,
   useTeacherHomeworksRemoveMutation,
   useTeacherHomeworksUpdateMutation,
+  useTeacherHomeworksIsSeenUpdateMutation,
   useTeacherHomeworksAttachmentsCreateMutation,
   useTeacherHomeworksAttachmentsRemoveMutation,
 } = TeacherHomeworks;
