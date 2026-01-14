@@ -97,17 +97,17 @@ const ChangeStatusComplaintModel = () => {
                     },
                   }}
                 />
-                {status == "rejected" && (
-                  <InputForm
-                    formikProps={props}
-                    name={"reason"}
-                    title={t("ComplaintPage.reason")}
-                    placeholder={t("ComplaintPage.enter-reason")}
-                    props={{
-                      ...({ as: "textarea" } as any),
-                    }}
-                  />
-                )}
+                {/* {status == "rejected" && ( */}
+                <InputForm
+                  formikProps={props}
+                  name={"reason"}
+                  title={t("ComplaintPage.reason")}
+                  placeholder={t("ComplaintPage.enter-reason")}
+                  props={{
+                    ...({ as: "textarea" } as any),
+                  }}
+                />
+                {/* )} */}
               </div>
               <div className="flex flex-row-reverse gap-2">
                 {
