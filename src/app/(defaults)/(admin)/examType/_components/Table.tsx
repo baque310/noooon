@@ -118,7 +118,7 @@ const TableComponent = () => {
             }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-            records={data as any}
+            records={(data as any)?.data || []}
             columns={[
               {
                 title: t("ExamTypePage.name"),

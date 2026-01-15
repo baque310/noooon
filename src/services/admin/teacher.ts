@@ -22,13 +22,18 @@ export interface ITeacher {
     username: string;
   };
   TeacherSubject?: Array<{
-    id?: string;
     Section?: {
       id?: string;
       name?: string;
       Class?: {
         id?: string;
         name?: string;
+      };
+    };
+    StageSubject: {
+      Subject: {
+        id: string;
+        name: string;
       };
     };
   }>;

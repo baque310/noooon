@@ -102,8 +102,19 @@ const PageComponent = () => {
             <ItemList title={t("TeacherPage.fullName")} value={String(data?.fullName)} />
             <ItemList title={t("TeacherPage.Username")} value={String(data?.User?.username)} isCopyToClipboard />
             <ItemList title={t("TeacherPage.address")} value={String(data?.address ?? "")} />
-            <ItemList title={t("TeacherPage.ClassName")} value={String(data?.TeacherSubject?.[0]?.Section?.Class?.name ?? "")} />
-            <ItemList title={t("TeacherPage.SectionName")} value={String(data?.TeacherSubject?.[0]?.Section?.name ?? "")} />
+          </div>
+          <div className="CardDetails internalMenu ">
+            {data?.TeacherSubject &&
+              data?.TeacherSubject?.length > 0 &&
+              data?.TeacherSubject?.map((item, index) => (
+                <div key={index}>
+                  <ItemList title={t("TeacherPage.SubjectName")} value={String(item?.StageSubject?.Subject?.name ?? "")} />
+                  <ItemList title={t("TeacherPage.ClassName")} value={String(item?.Section?.Class?.name ?? "")} />
+                  <ItemList title={t("TeacherPage.SectionName")} value={String(item?.Section?.name ?? "")} />
+                </div>
+              ))}
+          </div>
+          <div className="CardDetails internalMenu ">
             <ItemList title={t("TeacherPage.Gender")} value={data?.Gender ? t(("TeacherPage." + (data?.Gender ?? "")) as any) : ""} />
             <ItemList title={t("TeacherPage.phone1")} value={String(data?.phone1 ?? "")} />
             <ItemList title={t("TeacherPage.phone2")} value={String(data?.phone2 ?? "")} />

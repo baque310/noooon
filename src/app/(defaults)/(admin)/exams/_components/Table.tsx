@@ -325,8 +325,13 @@ const TableComponent = () => {
               },
               {
                 title: t("ClassPage.name"),
-                accessor: "StageSubject.Class.name", // Changed from "StageSubject"
-                render: ({ StageSubject }: any) => StageSubject?.Class?.name && t(StageSubject?.Class?.name ?? ""),
+                accessor: "StageSubject.Class.name",
+                render: ({ StageSubject }: any) => StageSubject?.Stage?.name && t(StageSubject?.Class?.name ?? ""),
+              },
+              {
+                title: t("SectionPage.name"),
+                accessor: "StageSubject.Section.name",
+                render: ({ StageSubject }: any) => StageSubject?.Stage?.name && t(StageSubject?.Section?.name ?? ""),
               },
               {
                 title: t("TeacherSubjectPage.SchoolYear"),

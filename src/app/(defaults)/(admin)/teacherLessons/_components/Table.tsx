@@ -360,7 +360,7 @@ const TableComponent = () => {
             totalRecords={data?.totalCount}
             rowClassName={(record) => {
               const baseClasses = "transition-colors duration-200 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0";
-              if (record.isSeen === "FALSE") {
+              if (record.isSeen === "FALSE" && moment(record?.createdAt || "").isSameOrAfter(moment().subtract(2, "days").startOf("day"))) {
                 return `${baseClasses} !bg-yellow-50 dark:bg-yellow-900/20 hover:!bg-yellow-100 dark:hover:bg-yellow-900/30`;
               }
 

@@ -574,7 +574,8 @@
     "TeacherInformation": "معلومات المدرس",
     "Are-you-sure-you-want-to-delete-this-Teacher": "هل أنت متأكد أنك تريد حذف هذا المدرس؟",
     "DeleteTeacher": "حذف المدرس",
-    "email-already-exists": "البريد الالكتروني موجود بالفعل"
+    "email-already-exists": "البريد الالكتروني موجود بالفعل",
+    "SubjectName": "اسم المادة"
   },
   "BusPage": {
     "DeleteBusStudent": "حذف الطالب من خط النقل",
