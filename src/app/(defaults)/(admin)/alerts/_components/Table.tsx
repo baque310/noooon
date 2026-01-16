@@ -117,6 +117,7 @@ const TableComponent = () => {
           <DataTable
             onRowClick={async (item) => {
               router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
+              // router.push(`/${item?.record?.data?.type}/${item?.record?.data?.id}`);
             }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}

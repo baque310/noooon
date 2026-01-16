@@ -12,6 +12,11 @@ export interface INotification {
   createdAt: string;
   updatedAt: string;
   adminId: string;
+  data?: {
+    type?: string;
+    id?: string;
+    [key: string]: any;
+  };
 }
 
 export interface NotificationToAll {

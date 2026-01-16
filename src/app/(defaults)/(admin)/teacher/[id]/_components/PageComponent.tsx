@@ -87,7 +87,6 @@ const PageComponent = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
   const [openResetPassword, setOpenResetPassword] = useState(false);
-  console.log(data);
 
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%] mb-20">
