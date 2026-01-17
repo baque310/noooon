@@ -285,6 +285,11 @@ const TableComponent = () => {
             records={data?.data as any}
             columns={[
               {
+                title: t("HomeworksPage.teacherFullName"),
+                accessor: "StageSubject.TeacherSubject[0].Teacher.fullName",
+                sortable: true,
+              },
+              {
                 title: t("ExamsPage.stageSubject"),
                 accessor: "StageSubject.Subject.name",
                 // render: (record: any) => {
