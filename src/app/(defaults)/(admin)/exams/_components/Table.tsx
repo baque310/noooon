@@ -286,8 +286,12 @@ const TableComponent = () => {
             columns={[
               {
                 title: t("HomeworksPage.teacherFullName"),
-                accessor: "StageSubject.TeacherSubject[0].Teacher.fullName",
+                accessor: "StageSubject.TeacherSubject",
                 sortable: true,
+                render: (record: any) => {
+                  const matchingTeacher = record.StageSubject?.TeacherSubject?.find((item: any) => item.sectionId === record.ExamSection[0]?.Section?.id);
+                  return matchingTeacher?.Teacher?.fullName || "";
+                },
               },
               {
                 title: t("ExamsPage.stageSubject"),
@@ -335,8 +339,8 @@ const TableComponent = () => {
               },
               {
                 title: t("SectionPage.name"),
-                accessor: "StageSubject.Section.name",
-                render: ({ StageSubject }: any) => StageSubject?.Stage?.name && t(StageSubject?.Section?.name ?? ""),
+                accessor: "ExamSection[0]?.Section?.name",
+                render: ({ ExamSection }: any) => ExamSection[0]?.Section?.name && t(ExamSection[0]?.Section?.name ?? ""),
               },
               {
                 title: t("TeacherSubjectPage.SchoolYear"),
