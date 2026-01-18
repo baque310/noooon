@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import { useNotificationGetDataForAdminQuery } from "@/services/Notification";
 import FormattedDate from "@/components/common/FormattedDate";
+import { PAGE_CODE } from "@/services/types/BaseType";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -116,7 +117,68 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
-              router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
+              // console.log(item.record.data.type);
+              const record = item.record as any;
+
+              // Define all valid PAGE_CODE values to compare with
+              const validPageCodes: PAGE_CODE[] = [
+                "admin",
+                "school",
+                "stage",
+                "class",
+                "section",
+                "student",
+                "student_enrollment",
+                "otherPayment",
+                "teacher",
+                "bus",
+                "banner",
+                "guidance",
+                "gallery",
+                "subject",
+                "sub_subject",
+                "stage_subject",
+                "teacher_subject",
+                "schedule",
+                "section_schedule",
+                "exam",
+                "exam_type",
+                "exam_result",
+                "attendance",
+                "lesson",
+                "homework",
+                "library",
+                "setting",
+                "notification",
+                "user",
+                "dashboard",
+                "parent",
+                "video",
+                "complaint",
+                "chat",
+                "discount",
+                "installment",
+                "student_installment",
+              ];
+
+              // Loop to compare record.data.type with all PAGE_CODE items
+              const isValidPageCode = validPageCodes.some((code) => record.data?.type === code);
+              const targetType = isValidPageCode
+                ? record.data.type === "student_enrollment"
+                  ? "studentEnrollment"
+                  : record.data.type === "student_installment"
+                    ? "installment"
+                    : record.data.type === "library"
+                      ? "superTeacherLibrary"
+                      : record.data.type === "lesson"
+                        ? "teacherLessons"
+                        : record.data.type === "homework"
+                          ? "teacherHomeworks"
+                          : record.data.type
+                : "notification";
+
+              router.push(`/${targetType}/${targetType === "notification" ? `createOrUpdate?title=${item.record.title}&body=${item.record.body}` : record.data?.id || ""}`);
+              // router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
               // router.push(`/${item?.record?.data?.type ? item?.record?.data?.type : "notification"}/${item?.record?.data?.id}`);
             }}
             fetching={isFetching}
