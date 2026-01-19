@@ -174,7 +174,13 @@ const TableComponent = () => {
                         ? "teacherLessons"
                         : record.data.type === "homework"
                           ? "teacherHomeworks"
-                          : record.data.type
+                          : record.data.type === "exam"
+                            ? "exams"
+                            : record.data.type === "exam_result"
+                              ? "examResult"
+                              : record.data.type === "attendance"
+                                ? "superTeacherAttendances"
+                                : record.data.type
                 : "notification";
 
               router.push(`/${targetType}/${targetType === "notification" ? `createOrUpdate?title=${item.record.title}&body=${item.record.body}` : record.data?.id || ""}`);
