@@ -97,9 +97,10 @@ export const SuperTeacherAttendances = api.injectEndpoints({
       invalidatesTags: ["SuperTeacherAttendancesUpdate", "SuperTeacherAttendancesGetDataById", "SuperTeacherAttendancesGetData"],
     }),
 
-    SuperTeacherAttendancesRemove: build.mutation<void, { id: string }>({
-      query: ({ id }) => ({
-        url: `super/teacher/attendances/${id}`,
+    SuperTeacherAttendancesRemove: build.mutation<void, { body: { attendanceIds: string[] } }>({
+      query: ({ body }) => ({
+        url: `super/teacher/attendances`,
+        body,
         method: "DELETE",
       }),
       invalidatesTags: ["SuperTeacherAttendancesRemove", "SuperTeacherAttendancesGetDataById", "SuperTeacherAttendancesGetData"],

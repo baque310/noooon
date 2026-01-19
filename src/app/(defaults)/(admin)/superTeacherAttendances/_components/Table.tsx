@@ -4,6 +4,7 @@ import React, { useEffect, useMemo } from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import { AddIcons, ArrowIcons, DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
@@ -12,8 +13,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { AddIcons } from "@/components/common/icons/Actions";
-import { useSuperTeacherAttendancesGetDataQuery, useSuperTeacherAttendancesUpdateMutation } from "@/services/admin/Super-Teacher-attendances";
+import {
+  useSuperTeacherAttendancesGetDataQuery,
+  useSuperTeacherAttendancesUpdateMutation,
+  useSuperTeacherAttendancesRemoveMutation,
+} from "@/services/admin/Super-Teacher-attendances";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { useSectionScheduleGetDataQuery } from "@/services/admin/SectionSchedule";
@@ -28,6 +32,8 @@ import UpdateModel from "./UpdateModel";
 import { toast } from "react-toastify";
 import { useExamResultsUpdateMutation } from "@/services/admin/ExamResults";
 import FormattedDate from "@/components/common/FormattedDate";
+import Dropdown from "@/components/dropdown";
+import DeleteModel from "@/components/Model/DeleteModel";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -45,6 +51,8 @@ const TableComponent = () => {
   const [pageNumber, setPageNumber] = useState(Number(1));
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<any>(null);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
   const [param, setParam] = useState<
     | {
@@ -190,7 +198,7 @@ const TableComponent = () => {
 
     return SectionScheduleData.data[selectedDay].map((item: any) => ({
       label: `${item.teacherSubject.Teacher.fullName} | ${item.teacherSubject.StageSubject.Subject.name} | ${item.section.Class.name} (${new Date(
-        item.Schedule.timeFrom
+        item.Schedule.timeFrom,
       ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${new Date(item.Schedule.timeTo).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})`,
       value: item.id,
     }));
@@ -209,6 +217,8 @@ const TableComponent = () => {
   };
 
   const [StatusUpdate, { isLoading: isLoadingUpdate }] = useSuperTeacherAttendancesUpdateMutation();
+  const [SuperTeacherAttendancesRemove, { isLoading: isLoadingRemove }] = useSuperTeacherAttendancesRemoveMutation();
+  const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl" ? true : false;
 
   const handleUpdateSubmit = async (values: { Status: "Absent" | "Present" | "Vacation" }, formikHelpers: any) => {
     try {
@@ -231,6 +241,25 @@ const TableComponent = () => {
   const handleUpdateClick = (record: any) => {
     setSelectedStatus(record);
     setOpenUpdateModal(true);
+  };
+
+  const handleRemove = async () => {
+    try {
+      const ids = selectedRecords.map((record) => record.id);
+      await SuperTeacherAttendancesRemove({
+        body: { attendanceIds: ids },
+      }).unwrap();
+
+      toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
+      setOpenDelete(false);
+      setSelectedRecords([]);
+    } catch (error: any) {
+      console.error("Failed to delete:", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error?.data?.message ?? error?.message ?? JSON.stringify(error), { autoClose: 15000 });
+    }
   };
 
   return (
@@ -291,24 +320,60 @@ const TableComponent = () => {
             <span className="relative z-10">{t("common.ExportExcel")}</span>
           </button>
           {
-            // <RolePageAndActionBasedComponent
-            //   component={(props) => {
-            //     return (
-            <button
-              className={` 
-                      
-                    flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-              onClick={() => {
-                router.push("/superTeacherAttendances/createOrUpdate");
-              }}>
-              <AddIcons className="h-4 w-4" />
-              {t("common.add")}
-            </button>
-            //     );
-            //   }}
-            //   resource={"admin"}
-            //   permission={["create-any", "create-own"]}
-            // />
+            <RolePageAndActionBasedComponent
+              component={(props) => {
+                return (
+                  <div className="inline-flex relative">
+                    <button
+                      className={`${
+                        props.disabled && "hidden"
+                      } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2 rounded border ltr:rounded-r-none rtl:rounded-l-none`}
+                      onClick={() => {
+                        router.push("/superTeacherAttendances/createOrUpdate");
+                      }}>
+                      {t("common.add")}
+                    </button>
+                    <div className="relative w-0 h-0">
+                      <span
+                        className={`${
+                          selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
+                        } badge absolute top-[-15px] z-10 left-[-70px] p-0.5 px-1.5 rounded-full`}>
+                        {selectedRecords.length > 0 ? selectedRecords.length : ""}
+                      </span>
+                    </div>
+                    <div className="dropdown">
+                      <Dropdown
+                        placement={`${isRtl ? "bottom-start" : "bottom-end"}`}
+                        btnClassName="dropdown-toggle h-full transition-all"
+                        button={
+                          <button
+                            className={`relative h-full ltr:rounded-l-none rtl:rounded-r-none flex justify-center gap-1 items-center border-primary/70 text-primary hover:scale-[1.01] transition-transform py-1 px-2 rounded border`}>
+                            {t("common.options")}
+                            <ArrowIcons className="h-4 w-4 rotate-90" />
+                          </button>
+                        }>
+                        <ul className="!min-w-[170px]">
+                          <li className={`${selectedRecords.length > 0 ? "text-danger hover:bg-danger/20 hover:!text-danger" : ""}`}>
+                            <button
+                              disabled={selectedRecords.length == 0}
+                              onClick={() => {
+                                setOpenDelete(true);
+                              }}
+                              type="button"
+                              className={`${selectedRecords.length > 0 ? "!text-danger" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "} flex justify-between`}>
+                              {t("common.delete")}
+                              <DeleteIcons className="h-4 w-4" />
+                            </button>
+                          </li>
+                        </ul>
+                      </Dropdown>
+                    </div>
+                  </div>
+                );
+              }}
+              resource={"admin"}
+              permission={["create-any", "create-own"]}
+            />
           }
         </div>
       </div>
@@ -488,6 +553,12 @@ const TableComponent = () => {
             onPageChange={(p) => {
               setPageNumber(p);
             }}
+            {...({
+              selectedRecords: selectedRecords,
+              onSelectedRecordsChange: (records: any) => {
+                setSelectedRecords(records);
+              },
+            } as any)}
           />
         )}
       </div>
@@ -500,6 +571,15 @@ const TableComponent = () => {
         onSubmit={handleUpdateSubmit}
         isLoading={isLoadingUpdate}
         initialValues={{ Status: selectedStatus?.Status ?? "" }}
+      />
+      <DeleteModel
+        description={t("SuperTeacherAttendancesPage.Are-you-sure-you-want-to-delete-this-attendance")}
+        title={t("SuperTeacherAttendancesPage.DeleteAttendance")}
+        open={openDelete}
+        setOpen={setOpenDelete}
+        handleRemove={handleRemove}
+        isLoading={isLoadingRemove}
+        name={`${selectedRecords.length}`}
       />
     </div>
   );
