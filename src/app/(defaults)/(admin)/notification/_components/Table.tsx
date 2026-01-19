@@ -183,7 +183,6 @@ const TableComponent = () => {
                                   ? "superTeacherAttendances"
                                   : record.data.type
                 : "none";
-              // console.log(record.data.type);
               if (targetType !== "none") {
                 router.push(`/${targetType}/${`createOrUpdate?title=${item.record.title}&body=${item.record.body}`}`);
               } else {
