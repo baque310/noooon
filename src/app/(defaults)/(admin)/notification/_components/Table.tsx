@@ -2,8 +2,7 @@
 import { DataTable } from "mantine-datatable";
 import React from "react";
 
-import moment from "moment";
-import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import { withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
@@ -12,10 +11,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { AddIcons } from "@/components/common/icons/Actions";
 import { useNotificationGetDataForAdminQuery } from "@/services/Notification";
 import FormattedDate from "@/components/common/FormattedDate";
 import { PAGE_CODE } from "@/services/types/BaseType";
+import { toast } from "react-toastify";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -180,10 +179,16 @@ const TableComponent = () => {
                               ? "examResult"
                               : record.data.type === "attendance"
                                 ? "superTeacherAttendances"
-                                : record.data.type
-                : "notification";
-
-              router.push(`/${targetType}/${targetType === "notification" ? `createOrUpdate?title=${item.record.title}&body=${item.record.body}` : record.data?.id || ""}`);
+                                : record.data.type === "attendance"
+                                  ? "superTeacherAttendances"
+                                  : record.data.type
+                : "none";
+              // console.log(record.data.type);
+              if (targetType !== "none") {
+                router.push(`/${targetType}/${`createOrUpdate?title=${item.record.title}&body=${item.record.body}`}`);
+              } else {
+                toast.warning(t("NotificationPage.no page to redirect"));
+              }
               // router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
               // router.push(`/${item?.record?.data?.type ? item?.record?.data?.type : "notification"}/${item?.record?.data?.id}`);
             }}

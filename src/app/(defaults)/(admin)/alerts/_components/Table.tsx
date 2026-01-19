@@ -116,7 +116,7 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
-              router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
+              // router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
               // router.push(`/${item?.record?.data?.type}/${item?.record?.data?.id}`);
             }}
             fetching={isFetching}
