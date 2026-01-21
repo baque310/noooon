@@ -119,8 +119,10 @@ const TableComponent = () => {
               // console.log(item.record.data.type);
               const record = item.record as any;
 
-              // Define all valid PAGE_CODE values to compare with
-              const validPageCodes: PAGE_CODE[] = [
+              /**
+               * Use Set for faster lookup and cleaner intent
+               */
+              const validPageCodes = new Set<PAGE_CODE>([
                 "admin",
                 "school",
                 "stage",
@@ -158,35 +160,39 @@ const TableComponent = () => {
                 "discount",
                 "installment",
                 "student_installment",
-              ];
+                "payment_reminder",
+                "payment_overdue",
+              ]);
 
-              // Loop to compare record.data.type with all PAGE_CODE items
-              const isValidPageCode = validPageCodes.some((code) => record.data?.type === code);
-              const targetType = isValidPageCode
-                ? record.data.type === "student_enrollment"
-                  ? "studentEnrollment"
-                  : record.data.type === "student_installment"
-                    ? "installment"
-                    : record.data.type === "library"
-                      ? "superTeacherLibrary"
-                      : record.data.type === "lesson"
-                        ? "teacherLessons"
-                        : record.data.type === "homework"
-                          ? "teacherHomeworks"
-                          : record.data.type === "exam"
-                            ? "exams"
-                            : record.data.type === "exam_result"
-                              ? "examResult"
-                              : record.data.type === "attendance"
-                                ? "superTeacherAttendances"
-                                : record.data.type === "attendance"
-                                  ? "superTeacherAttendances"
-                                  : record.data.type
-                : "none";
-              if (targetType !== "none") {
-                router.push(`/${targetType}/${`createOrUpdate?title=${item.record.title}&body=${item.record.body}`}`);
+              const isValidPageCode = validPageCodes.has(record.data?.type);
+
+              /**
+               * Centralized type mapping
+               */
+              const typeMap: Record<string, string> = {
+                student_enrollment: "studentEnrollment",
+                student_installment: "installment",
+                library: "superTeacherLibrary",
+                lesson: "teacherLessons",
+                homework: "teacherHomeworks",
+                exam: "exams",
+                exam_result: "examResult",
+                complaint: "adminComplaint",
+                payment_reminder: "installment",
+                payment_overdue: "installment",
+                attendance: "superTeacherAttendances",
+              };
+
+              const targetType = isValidPageCode ? (typeMap[record.data.type] ?? record.data.type) : "notification";
+
+              console.log(targetType);
+
+              if (targetType !== "notification") {
+                // console.log("true");
+                // router.push(`/${targetType}/${item.record.id}`);
+                router.push(`/${targetType}`);
               } else {
-                toast.warning(t("NotificationPage.no page to redirect"));
+                toast.success(t("NotificationPage.no page to redirect"));
               }
               // router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
               // router.push(`/${item?.record?.data?.type ? item?.record?.data?.type : "notification"}/${item?.record?.data?.id}`);

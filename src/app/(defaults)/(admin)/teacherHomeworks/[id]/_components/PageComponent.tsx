@@ -9,10 +9,7 @@ import { getTranslation } from "@/ni18n/i18n";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
-import {
-  useLazyTeacherHomeworksGetDataByIdQuery,
-  useTeacherHomeworksRemoveMutation,
-} from "@/services/admin/teacherHomeworks";
+import { useLazyTeacherHomeworksGetDataByIdQuery, useTeacherHomeworksRemoveMutation } from "@/services/admin/teacherHomeworks";
 import { ArrowIcons } from "@/components/common/icons/Actions";
 import { toast } from "react-toastify";
 import DeleteModel from "@/components/Model/DeleteModel";
@@ -24,8 +21,7 @@ const PageComponent = () => {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
-  const [TeacherHomeworksGetDataById, { currentData: data, isFetching }] =
-    useLazyTeacherHomeworksGetDataByIdQuery();
+  const [TeacherHomeworksGetDataById, { currentData: data, isFetching }] = useLazyTeacherHomeworksGetDataByIdQuery();
 
   useEffect(() => {
     if (id) {
@@ -38,10 +34,7 @@ const PageComponent = () => {
   }, [id]);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const [
-    TeacherHomeworksRemove,
-    { isLoading: isLoadingTeacherHomeworksRemove },
-  ] = useTeacherHomeworksRemoveMutation();
+  const [TeacherHomeworksRemove, { isLoading: isLoadingTeacherHomeworksRemove }] = useTeacherHomeworksRemoveMutation();
 
   const handleRemove = async () => {
     try {
@@ -74,12 +67,7 @@ const PageComponent = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
-                  <svg
-                    className="w-5 h-5 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -93,104 +81,68 @@ const PageComponent = () => {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t("TeacherHomeworksPage.title")}
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.title")}</label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <p className="text-gray-900 dark:text-white font-medium">
-                      {data?.title}
-                    </p>
+                    <p className="text-gray-900 dark:text-white font-medium">{data?.title}</p>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t("TeacherHomeworksPage.content")}
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.content")}</label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                      {data?.content}
-                    </p>
+                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">{data?.content}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherHomeworksPage.dueDate")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.dueDate")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {moment(data?.dueDate).format("YYYY-MM-DD")}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{moment(data?.dueDate).format("YYYY-MM-DD")}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherHomeworksPage.teacherFullName")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.teacherFullName")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.Teacher?.fullName || "N/A"}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{data?.teacherSubject?.Teacher?.fullName || "N/A"}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherHomeworksPage.StageName")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.StageName")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.StageSubject?.Stage?.name || "N/A"}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{data?.teacherSubject?.StageSubject?.Stage?.name || "N/A"}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("TeacherHomeworksPage.SubjectName")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.SubjectName")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-900 dark:text-white font-medium">
-                        {data?.teacherSubject?.StageSubject?.Subject?.name || "N/A"}
-                      </p>
+                      <p className="text-gray-900 dark:text-white font-medium">{data?.teacherSubject?.StageSubject?.Subject?.name || "N/A"}</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {t("TeacherHomeworksPage.SchoolYear")}
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.SchoolYear")}</label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                    <p className="text-gray-900 dark:text-white font-medium">
-                      {`${data?.SchoolYear?.from || ""} - ${data?.SchoolYear?.to || ""}`}
-                    </p>
+                    <p className="text-gray-900 dark:text-white font-medium">{`${data?.SchoolYear?.from || ""} - ${data?.SchoolYear?.to || ""}`}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("common.createdAt")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("common.createdAt")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-700 dark:text-gray-300 text-sm">
-                        {moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-                      </p>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm">{moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}</p>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t("common.updatedAt")}
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("common.updatedAt")}</label>
                     <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                      <p className="text-gray-700 dark:text-gray-300 text-sm">
-                        {moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-                      </p>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm">{moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</p>
                     </div>
                   </div>
                 </div>
@@ -200,50 +152,30 @@ const PageComponent = () => {
             {/* Statistics */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                  {t("TeacherHomeworksPage.statisticsOverview")}
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t("TeacherHomeworksPage.statisticsOverview")}</h3>
               </div>
 
               <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {data?.StudentHomework?.length || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("TeacherHomeworksPage.totalStudents")}
-                  </div>
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{data?.StudentHomework?.length || 0}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t("TeacherHomeworksPage.totalStudents")}</div>
                 </div>
 
                 <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {data?.StudentHomework?.filter(
-                      (s) => s.HomeworkStatus === "Completed"
-                    )?.length || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("Completed")}
-                  </div>
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">{data?.StudentHomework?.filter((s) => s.HomeworkStatus === "Completed")?.length || 0}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t("Completed")}</div>
                 </div>
 
                 <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                   <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {data?.StudentHomework?.filter(
-                      (s) => s.HomeworkStatus === "Assigned"
-                    )?.length || 0}
+                    {data?.StudentHomework?.filter((s) => s.HomeworkStatus === "Assigned")?.length || 0}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("Assigned")}
-                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t("Assigned")}</div>
                 </div>
 
                 <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                    {data?.HomeworkAttachment?.length || 0}
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t("Attachments")}
-                  </div>
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{data?.HomeworkAttachment?.length || 0}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{t("Attachments")}</div>
                 </div>
               </div>
             </div>
@@ -256,24 +188,14 @@ const PageComponent = () => {
             {/* Actions */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                  {t("common.settings")}
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t("common.settings")}</h3>
               </div>
 
               <div className="p-6 flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() =>
-                    router.push(`/teacherHomeworks/createOrUpdate?id=${id}`)
-                  }
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  onClick={() => router.push(`/teacherHomeworks/createOrUpdate?id=${id}`)}
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -286,14 +208,8 @@ const PageComponent = () => {
 
                 <button
                   onClick={() => setOpenDelete(true)}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -307,9 +223,7 @@ const PageComponent = () => {
             </div>
 
             <DeleteModel
-              description={t(
-                "TeacherHomeworksPage.Are-you-sure-you-want-to-delete-this-teacherHomeworks"
-              )}
+              description={t("TeacherHomeworksPage.Are-you-sure-you-want-to-delete-this-teacherHomeworks")}
               title={t("TeacherHomeworksPage.DeleteTeacherHomeworks")}
               open={openDelete}
               setOpen={setOpenDelete}
@@ -325,4 +239,3 @@ const PageComponent = () => {
 };
 
 export default PageComponent;
-                 
