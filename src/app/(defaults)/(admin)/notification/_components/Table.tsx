@@ -162,6 +162,7 @@ const TableComponent = () => {
                 "student_installment",
                 "payment_reminder",
                 "payment_overdue",
+                "chat_message",
               ]);
 
               const isValidPageCode = validPageCodes.has(record.data?.type);
@@ -181,16 +182,21 @@ const TableComponent = () => {
                 payment_reminder: "installment",
                 payment_overdue: "installment",
                 attendance: "superTeacherAttendances",
+                chat_message: "chat",
               };
 
               const targetType = isValidPageCode ? (typeMap[record.data.type] ?? record.data.type) : "notification";
 
               console.log(targetType);
+              console.log(record.data?.id);
 
               if (targetType !== "notification") {
                 // console.log("true");
-                // router.push(`/${targetType}/${item.record.id}`);
-                router.push(`/${targetType}`);
+                if (targetType === "chat") {
+                  router.push(`/${targetType}/${record.data?.id}`);
+                } else {
+                  router.push(`/${targetType}/${record.data?.id}`);
+                } // router.push(`/${targetType}`);
               } else {
                 toast.success(t("NotificationPage.no page to redirect"));
               }

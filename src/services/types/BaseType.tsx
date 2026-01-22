@@ -53,7 +53,8 @@ export type PAGE_CODE =
   | "installment"
   | "student_installment"
   | "payment_reminder"
-  | "payment_overdue";
+  | "payment_overdue"
+  | "chat_message";
 
 export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
 

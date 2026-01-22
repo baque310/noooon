@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import { useNotificationGetDataForAdminQuery } from "@/services/Notification";
 import FormattedDate from "@/components/common/FormattedDate";
+import { toast } from "react-toastify";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -116,6 +117,7 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
+              toast.success(t("NotificationPage.no page to redirect"));
               // router.push(`/notification/createOrUpdate?title=${item.record.title}&body=${item.record.body}`);
               // router.push(`/${item?.record?.data?.type}/${item?.record?.data?.id}`);
             }}
