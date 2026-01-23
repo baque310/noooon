@@ -458,7 +458,7 @@ const PageComponent = () => {
                         title={t("ExamsPage.examTypName")}
                         placeholder={t("ExamsPage.select-examTypName")}
                         options={
-                          ExamType?.map((item) => ({
+                          ExamType?.data?.map((item) => ({
                             label: item.name,
                             value: item.id,
                           })) ?? []

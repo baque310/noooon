@@ -1,6 +1,24 @@
 import { api } from "@/services/api";
 import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
 
+export interface ExamPeriod {
+  id: string;
+  name: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  schoolId: string;
+}
+
+export interface PaginatedExamPeriodData {
+  data: ExamPeriod[];
+  totalCount: number;
+  pageCount: number;
+}
+
+export interface ExamPeriodResponse {
+  data: PaginatedExamPeriodData;
+}
+
 export interface IExamType {
   id: string;
   name: string;
@@ -27,7 +45,7 @@ export interface AddExamTypePayload {
 
 export const ExamType = api.injectEndpoints({
   endpoints: (build) => ({
-    ExamTypeGetData: build.query<IExamType[], GetDataRequestParams>({
+    ExamTypeGetData: build.query<PaginatedExamPeriodData, GetDataRequestParams>({
       query: (params) => ({
         url: `admin/examType`,
         params,
