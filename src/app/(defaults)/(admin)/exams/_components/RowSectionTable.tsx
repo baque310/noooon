@@ -54,6 +54,13 @@ const RowSectionTable = ({ data, id }: { data: any[]; id: string }) => {
           {t("ExamsPage.addSection")}
         </button>
         <button
+          className={` flex justify-center gap-1  items-center bg-info border-info/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border `}
+          onClick={() => {
+            router.push(`/exams/createOrUpdate?id=${id}`);
+          }}>
+          {t("ExamsPage.update")}
+        </button>
+        <button
           disabled={!(selectedRecords.length > 0)}
           className={` ${
             !(selectedRecords.length > 0) && "!bg-danger/50 !border-danger/50 cursor-not-allowed"

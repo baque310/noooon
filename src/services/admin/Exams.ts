@@ -67,11 +67,14 @@ export interface AddExamsPayload {
 export interface UpdateExamsPayload {
   content: string;
   score: number;
+  examTypeId?: string;
+  url?: string;
 }
 
 export interface AddExamsCreateSection {
   examDate: string;
   sectionId?: string;
+  examTypeId?: string;
   score?: number;
 }
 
@@ -146,7 +149,6 @@ export const Exams = api.injectEndpoints({
     }),
   }),
 });
-
 export const {
   useExamsGetDataQuery,
   useLazyExamsGetDataQuery,

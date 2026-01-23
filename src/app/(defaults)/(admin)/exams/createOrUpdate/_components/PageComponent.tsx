@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-export interface FormValues extends AddExamsPayload, UpdateExamsPayload {}
+export interface FormValues extends AddExamsPayload, Omit<UpdateExamsPayload, "examTypeId"> {}
 
 import { ButtonForm } from "@/components/Form/ButtonForm";
 import { Form, Formik, FormikProps } from "formik";
@@ -58,6 +58,7 @@ const PageComponent = () => {
           body: {
             content: values.content,
             score: values.score,
+            examTypeId: values.examTypeId,
           },
           id: String(id),
         }).unwrap();
@@ -89,7 +90,7 @@ const PageComponent = () => {
           if (matchingStageSubject) {
             payload.stageSubjectId = matchingStageSubject.id;
           } else {
-            toast.error("ExamsPage.no-matching-subject-found"), { autoClose: 30000 };
+            (toast.error("ExamsPage.no-matching-subject-found"), { autoClose: 30000 });
             return;
           }
         } else {
@@ -126,7 +127,7 @@ const PageComponent = () => {
                   examDate: Yup.string().required(t("common.this-field-is-required")),
                   sectionId: Yup.string().required(t("common.this-field-is-required")),
                 })
-                .nullable() // Allow null values in the array
+                .nullable(), // Allow null values in the array
             )
             .test("at-least-one", t("common.at-least-oneDay-required-content-subject"), (value) => value?.some((item) => item !== null && item.sectionId && item.examDate)),
           stageId: Yup.string().required(t("common.this-field-is-required")),
@@ -147,6 +148,16 @@ const PageComponent = () => {
   console.log("StageSubject");
   console.log(StageSubject);
   console.log(StageSubSubject);
+  // console.log(Array.isArray(ExamType));
+  // console.log(ExamType);
+  // console.log(
+  //   Array.isArray(ExamType)
+  //     ? ExamType?.map((item) => ({
+  //         label: item.name,
+  //         value: item.id,
+  //       }))
+  //     : [],
+  // );
 
   return (
     <>
@@ -161,7 +172,7 @@ const PageComponent = () => {
               // data
               content: data?.content ?? "",
               ExamSection: [],
-              examTypeId: "",
+              examTypeId: data?.examTypeId ?? "",
               stageSubjectId: "",
               score: data?.score ?? 0,
             }}
@@ -201,12 +212,10 @@ const PageComponent = () => {
                         title={t("ExamsPage.examTypName")}
                         placeholder={t("ExamsPage.select-examTypName")}
                         options={
-                          Array.isArray(ExamType)
-                            ? ExamType.map((item) => ({
-                                label: item.name,
-                                value: item.id,
-                              }))
-                            : []
+                          ExamType?.map((item) => ({
+                            label: item.name,
+                            value: item.id,
+                          })) ?? []
                         }
                         props={{
                           isLoading: isFetchingExamType,
@@ -440,6 +449,26 @@ const PageComponent = () => {
                           max: 100,
                           min: 0,
                           type: "number",
+                        }}
+                      />
+
+                      <SelectForm
+                        formikProps={props}
+                        name={`examTypeId`}
+                        title={t("ExamsPage.examTypName")}
+                        placeholder={t("ExamsPage.select-examTypName")}
+                        options={
+                          ExamType?.map((item) => ({
+                            label: item.name,
+                            value: item.id,
+                          })) ?? []
+                        }
+                        props={{
+                          isLoading: isFetchingExamType,
+                          isClearable: true,
+                          onChange: (e) => {
+                            props.setFieldValue(`examTypeId`, (e as any)?.value ?? "");
+                          },
                         }}
                       />
                     </div>
