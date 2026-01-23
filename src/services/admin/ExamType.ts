@@ -33,7 +33,7 @@ export const ExamType = api.injectEndpoints({
         params,
         method: "GET",
       }),
-      transformResponse: (response: BaseGetDataResponse<IExamType>) => response.data,
+      // transformResponse: (response: BaseGetDataResponse<IExamType>) => response.data,
       providesTags: ["ExamTypeGetData"],
     }),
 
