@@ -128,6 +128,7 @@ const PageComponent = () => {
     ...params,
   });
   console.log(dataUserGetData);
+
   return (
     <>
       <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">

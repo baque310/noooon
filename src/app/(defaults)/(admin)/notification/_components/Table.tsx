@@ -160,7 +160,7 @@ const TableComponent = () => {
                 "discount",
                 "installment",
                 "student_installment",
-                "payment_reminder",
+                // "payment_reminder",
                 "payment_overdue",
                 "chat_message",
               ]);
@@ -179,7 +179,7 @@ const TableComponent = () => {
                 exam: "exams",
                 exam_result: "examResult",
                 complaint: "adminComplaint",
-                payment_reminder: "installment",
+                // payment_reminder: "installment",
                 payment_overdue: "installment",
                 attendance: "superTeacherAttendances",
                 chat_message: "chat",
@@ -187,16 +187,18 @@ const TableComponent = () => {
 
               const targetType = isValidPageCode ? (typeMap[record.data.type] ?? record.data.type) : "notification";
 
-              console.log(targetType);
-              console.log(record.data?.id);
+              // console.log(targetType);
+              // console.log(record.data?.id);
+              // console.log(record);
 
               if (targetType !== "notification") {
-                // console.log("true");
-                if (targetType === "chat") {
-                  router.push(`/${targetType}/${record.data?.id}`);
+                if (targetType !== "chat" || record.data?.type !== "exam_result") {
+                  // console.log("second");
+                  router.push(`/${targetType}`);
                 } else {
+                  // console.log("first");
                   router.push(`/${targetType}/${record.data?.id}`);
-                } // router.push(`/${targetType}`);
+                }
               } else {
                 toast.success(t("NotificationPage.no page to redirect"));
               }
