@@ -373,7 +373,6 @@ const TableComponent = () => {
                 title: t("ExamResultsPage.StudentFullName"),
                 accessor: "Student.fullName",
               },
-
               {
                 title: t("ExamResultsPage.score"),
                 accessor: "score",
@@ -397,22 +396,19 @@ const TableComponent = () => {
                 ),
               },
               {
-                title: t("ExamResultsPage.notes"),
-                accessor: "notes",
+                title: t("HomeworksPage.teacherFullName"),
+                accessor: "StageSubject.TeacherSubject",
                 sortable: true,
+                render: (record: any) => {
+                  const matchingTeacher = record.ExamSection.Exam.StageSubject.TeacherSubject?.find((item: any) => item.sectionId === record.ExamSection.Section?.id);
+                  console.log(record);
+                  console.log(matchingTeacher);
+                  return matchingTeacher?.Teacher?.fullName || "";
+                },
               },
               {
                 title: t("ExamResultsPage.SubjectName"),
                 accessor: "ExamSection.Exam.StageSubject.Subject.name",
-              },
-              {
-                title: t("ExamResultsPage.ExamTypeName"),
-                accessor: "ExamSection.Exam.ExamType.name",
-              },
-              {
-                title: t("ExamResultsPage.examDate"),
-                accessor: "ExamSection.examDate",
-                render: ({ ExamSection }: any) => (ExamSection?.examDate ? <div>{moment(ExamSection.examDate).format("YYYY-MM-DD")}</div> : null),
               },
               {
                 title: t("ExamResultsPage.StageName"),
@@ -424,6 +420,23 @@ const TableComponent = () => {
                 accessor: "ExamSection.Section.name",
                 render: ({ ExamSection }: any) => ExamSection?.Section?.name && t(ExamSection?.Section?.name ?? ("" as any)),
               },
+
+              {
+                title: t("ExamResultsPage.notes"),
+                accessor: "notes",
+                sortable: true,
+              },
+
+              {
+                title: t("ExamResultsPage.ExamTypeName"),
+                accessor: "ExamSection.Exam.ExamType.name",
+              },
+              {
+                title: t("ExamResultsPage.examDate"),
+                accessor: "ExamSection.examDate",
+                render: ({ ExamSection }: any) => (ExamSection?.examDate ? <div>{moment(ExamSection.examDate).format("YYYY-MM-DD")}</div> : null),
+              },
+
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
