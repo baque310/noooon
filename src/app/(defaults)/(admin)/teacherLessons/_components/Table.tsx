@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "mantine-datatable";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
@@ -40,6 +40,9 @@ const TableComponent = () => {
   const [sectionId, setSectionId] = useState<string | undefined>();
   const [schoolYearId, setSchoolYearId] = useState<string | undefined>();
 
+  // --- NEW: Scroll position preservation ---
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const [param, setParam] = useState<{
     search?: string;
     range?: string;
@@ -61,37 +64,27 @@ const TableComponent = () => {
 
   const { currentData: StageData } = useStageGetDataQuery();
 
-  // --- NEW: Initialize filters from URL on mount ---
   useEffect(() => {
-    const urlStageId = searchParams.get("stageId");
-    const urlClassId = searchParams.get("classId");
-    const urlSectionId = searchParams.get("sectionId");
-    const urlTeacherSubjectId = searchParams.get("teacherSubjectId");
-    const urlSchoolYearId = searchParams.get("schoolYearId");
-
-    if (urlStageId) setStageId(urlStageId);
-    if (urlClassId) setClassId(urlClassId);
-    if (urlSectionId) setSectionId(urlSectionId);
-    if (urlSchoolYearId) setSchoolYearId(urlSchoolYearId);
-
-    setParam((prev) => ({
-      ...prev,
-      ...(urlStageId && { stageId: urlStageId }),
-      ...(urlClassId && { classId: urlClassId }),
-      ...(urlSectionId && { sectionId: urlSectionId }),
-      ...(urlTeacherSubjectId && { teacherSubjectId: urlTeacherSubjectId }),
-      ...(urlSchoolYearId && { schoolYearId: urlSchoolYearId }),
-    }));
-  }, []);
-
-  useEffect(() => {
-    if (SchoolYearData && Setting && !searchParams.get("schoolYearId")) {
+    if (SchoolYearData && Setting) {
       setParam((prev) => ({
         ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
       }));
     }
   }, [SchoolYearData, Setting]);
+
+  // --- NEW: Restore scroll position on mount ---
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedScrollPosition = sessionStorage.getItem("teacherLessons_scrollPosition");
+      if (savedScrollPosition && scrollContainerRef.current) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10));
+        }, 100);
+        sessionStorage.removeItem("teacherLessons_scrollPosition");
+      }
+    }
+  }, []);
 
   const params = {
     skip: pageNumber,
@@ -155,7 +148,7 @@ const TableComponent = () => {
     }
   };
 
-  // ------------------ SELECT HANDLERS WITH URL PERSISTENCE ------------------
+  // --- SELECT HANDLERS WITH URL PERSISTENCE ---
   const handleSelectStage = (value: any) => {
     const stageId = value || undefined;
     setStageId(stageId);
@@ -212,8 +205,17 @@ const TableComponent = () => {
     pushWithCurrentParams("/teacherLessons", { schoolYearId });
   };
 
+  // --- NEW: Handle row click with scroll position saving ---
+  const handleRowClick = (item: any) => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("teacherLessons_scrollPosition", window.scrollY.toString());
+    }
+    updateIsSeen({ id: item.record.id as string, status: "TRUE" });
+    router.push(`/teacherLessons/${item.record.id}`);
+  };
+
   return (
-    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
+    <div ref={scrollContainerRef} className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
       <div className={"flex justify-between max-md:flex-col gap-2 "}>
         <div className="text-xl uppercase ">{t("TeacherLessonsPage.Lessons")}</div>
         <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
@@ -299,7 +301,6 @@ const TableComponent = () => {
                 placeholder={t("HomeworksPage.teacherFullName")}
                 props={{
                   onChange: handleSelectTeacherSubject,
-                  value: param?.teacherSubjectId,
                 }}
                 options={
                   TeacherSubjectData?.map((item) => {
@@ -337,10 +338,7 @@ const TableComponent = () => {
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
           <DataTable
-            onRowClick={(item) => {
-              updateIsSeen({ id: item.record.id as string, status: "TRUE" });
-              router.push(`/teacherLessons/${item.record.id}`);
-            }}
+            onRowClick={handleRowClick}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
             records={data?.data as any}

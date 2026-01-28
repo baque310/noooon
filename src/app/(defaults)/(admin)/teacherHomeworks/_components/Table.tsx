@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "mantine-datatable";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import moment, { now } from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
@@ -45,6 +45,9 @@ const TableComponent = () => {
   const [schoolYearId, setSchoolYearId] = useState<string | undefined>();
   const [selectedDate, setSelectedDate] = useState<string>("");
 
+  // --- NEW: Scroll position preservation ---
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const [param, setParam] = useState<{
     search?: string;
     range?: string;
@@ -65,41 +68,28 @@ const TableComponent = () => {
   });
   const { currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
-  // --- NEW: Initialize filters from URL on mount ---
-  useEffect(() => {
-    const urlStageId = searchParams.get("stageId");
-    const urlClassId = searchParams.get("classId");
-    const urlSectionId = searchParams.get("sectionId");
-    const urlTeacherSubjectId = searchParams.get("teacherSubjectId");
-    const urlSchoolYearId = searchParams.get("schoolYearId");
-    const urlDate = searchParams.get("date");
-
-    if (urlStageId) setStageId(urlStageId);
-    if (urlClassId) setClassId(urlClassId);
-    if (urlSectionId) setSectionId(urlSectionId);
-    if (urlSchoolYearId) setSchoolYearId(urlSchoolYearId);
-    if (urlDate) setSelectedDate(urlDate);
-
-    setParam((prev) => ({
-      ...prev,
-      ...(urlStageId && { stageId: urlStageId }),
-      ...(urlClassId && { classId: urlClassId }),
-      ...(urlSectionId && { sectionId: urlSectionId }),
-      ...(urlTeacherSubjectId && { teacherSubjectId: urlTeacherSubjectId }),
-      ...(urlSchoolYearId && { schoolYearId: urlSchoolYearId }),
-      ...(urlDate && { date: urlDate }),
-    }));
-  }, []);
-
   // ------------------ SCHOOL YEAR DEFAULT ------------------
   useEffect(() => {
-    if (SchoolYearData && Setting && !searchParams.get("schoolYearId")) {
+    if (SchoolYearData && Setting) {
       setParam((prev) => ({
         ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
       }));
     }
   }, [SchoolYearData, Setting]);
+
+  // --- NEW: Restore scroll position on mount ---
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedScrollPosition = sessionStorage.getItem("teacherHomeworks_scrollPosition");
+      if (savedScrollPosition && scrollContainerRef.current) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10));
+        }, 100);
+        sessionStorage.removeItem("teacherHomeworks_scrollPosition");
+      }
+    }
+  }, []);
 
   // ------------------ API PARAMS (DATE ADDED) ------------------
   const params = {
@@ -169,7 +159,7 @@ const TableComponent = () => {
     }
   };
 
-  // ------------------ SELECT HANDLERS WITH URL PERSISTENCE ------------------
+  // ------------------ UPDATED: SELECT HANDLERS WITH URL PERSISTENCE ------------------
   const handleSelectDate = (value: string) => {
     setSelectedDate(value);
     const date = value || undefined;
@@ -236,8 +226,17 @@ const TableComponent = () => {
     });
   };
 
+  // --- NEW: Handle row click with scroll position saving ---
+  const handleRowClick = (item: any) => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("teacherHomeworks_scrollPosition", window.scrollY.toString());
+    }
+    updateIsSeen({ id: item.record.id as string, status: "TRUE" });
+    router.push(`/teacherHomeworks/${item.record.id}`);
+  };
+
   return (
-    <div className="m-4 rtl:transition-[left] ltr:transition-[right] duration-1000">
+    <div ref={scrollContainerRef} className="m-4 rtl:transition-[left] ltr:transition-[right] duration-1000">
       <div className="flex justify-between max-md:flex-col gap-2">
         <div className="text-xl uppercase">{t("HomeworksPage.Homeworks")}</div>
 
@@ -318,7 +317,6 @@ const TableComponent = () => {
                 placeholder={t("HomeworksPage.teacherFullName")}
                 props={{
                   onChange: handleSelectTeacherSubject,
-                  value: param?.teacherSubjectId,
                 }}
                 options={
                   TeacherSubjectData?.map((item) => {
@@ -356,10 +354,7 @@ const TableComponent = () => {
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
             records={data?.data as any}
-            onRowClick={(item) => {
-              updateIsSeen({ id: item.record.id as string, status: "TRUE" });
-              router.push(`/teacherHomeworks/${item.record.id}`);
-            }}
+            onRowClick={handleRowClick}
             columns={[
               {
                 title: t("HomeworksPage.teacherFullName"),
