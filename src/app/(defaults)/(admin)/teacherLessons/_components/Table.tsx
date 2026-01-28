@@ -61,31 +61,8 @@ const TableComponent = () => {
 
   const { currentData: StageData } = useStageGetDataQuery();
 
-  // --- NEW: Initialize filters from URL on mount ---
   useEffect(() => {
-    const urlStageId = searchParams.get("stageId");
-    const urlClassId = searchParams.get("classId");
-    const urlSectionId = searchParams.get("sectionId");
-    const urlTeacherSubjectId = searchParams.get("teacherSubjectId");
-    const urlSchoolYearId = searchParams.get("schoolYearId");
-
-    if (urlStageId) setStageId(urlStageId);
-    if (urlClassId) setClassId(urlClassId);
-    if (urlSectionId) setSectionId(urlSectionId);
-    if (urlSchoolYearId) setSchoolYearId(urlSchoolYearId);
-
-    setParam((prev) => ({
-      ...prev,
-      ...(urlStageId && { stageId: urlStageId }),
-      ...(urlClassId && { classId: urlClassId }),
-      ...(urlSectionId && { sectionId: urlSectionId }),
-      ...(urlTeacherSubjectId && { teacherSubjectId: urlTeacherSubjectId }),
-      ...(urlSchoolYearId && { schoolYearId: urlSchoolYearId }),
-    }));
-  }, []);
-
-  useEffect(() => {
-    if (SchoolYearData && Setting && !searchParams.get("schoolYearId")) {
+    if (SchoolYearData && Setting) {
       setParam((prev) => ({
         ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
@@ -130,7 +107,7 @@ const TableComponent = () => {
     }
   };
 
-  // --- URL parameter helper function ---
+  // --- NEW: URL parameter helper function (mirrored from second page) ---
   const pushWithCurrentParams = (path = "/teacherLessons", extra: Record<string, any> = {}) => {
     const allParams = new URLSearchParams();
     searchParams.forEach((value, key) => {
@@ -149,13 +126,14 @@ const TableComponent = () => {
     const newUrl = `${path}${query ? `?${query}` : ""}`;
 
     if (typeof window !== "undefined" && window.history && window.history.replaceState) {
-      window.history.replaceState(null, "", newUrl);
+      // Preserve scroll position by using scroll: false option through replaceState
+      window.history.replaceState({ ...window.history.state, scroll: false }, "", newUrl);
     } else {
       router.push(newUrl);
     }
   };
 
-  // ------------------ SELECT HANDLERS WITH URL PERSISTENCE ------------------
+  // ------------------ UPDATED: SELECT HANDLERS WITH URL PERSISTENCE ------------------
   const handleSelectStage = (value: any) => {
     const stageId = value || undefined;
     setStageId(stageId);
@@ -299,7 +277,6 @@ const TableComponent = () => {
                 placeholder={t("HomeworksPage.teacherFullName")}
                 props={{
                   onChange: handleSelectTeacherSubject,
-                  value: param?.teacherSubjectId,
                 }}
                 options={
                   TeacherSubjectData?.map((item) => {
