@@ -56,15 +56,6 @@ const TableComponent = () => {
     date?: string;
   }>({});
 
-  // ------------------ FIXED DATE FILTER ------------------
-  const handleSelectDate = (value: string) => {
-    setSelectedDate(value);
-    setParam((prev) => ({
-      ...prev,
-      date: value || undefined,
-    }));
-  };
-
   const { currentData: SectionData } = useSectionGetDataQuery({});
   const { currentData: TeacherSubjectData } = useTeacherSubjectGetDataQuery({
     stageId,
@@ -74,9 +65,35 @@ const TableComponent = () => {
   });
   const { currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
+  // --- NEW: Initialize filters from URL on mount ---
+  useEffect(() => {
+    const urlStageId = searchParams.get("stageId");
+    const urlClassId = searchParams.get("classId");
+    const urlSectionId = searchParams.get("sectionId");
+    const urlTeacherSubjectId = searchParams.get("teacherSubjectId");
+    const urlSchoolYearId = searchParams.get("schoolYearId");
+    const urlDate = searchParams.get("date");
+
+    if (urlStageId) setStageId(urlStageId);
+    if (urlClassId) setClassId(urlClassId);
+    if (urlSectionId) setSectionId(urlSectionId);
+    if (urlSchoolYearId) setSchoolYearId(urlSchoolYearId);
+    if (urlDate) setSelectedDate(urlDate);
+
+    setParam((prev) => ({
+      ...prev,
+      ...(urlStageId && { stageId: urlStageId }),
+      ...(urlClassId && { classId: urlClassId }),
+      ...(urlSectionId && { sectionId: urlSectionId }),
+      ...(urlTeacherSubjectId && { teacherSubjectId: urlTeacherSubjectId }),
+      ...(urlSchoolYearId && { schoolYearId: urlSchoolYearId }),
+      ...(urlDate && { date: urlDate }),
+    }));
+  }, []);
+
   // ------------------ SCHOOL YEAR DEFAULT ------------------
   useEffect(() => {
-    if (SchoolYearData && Setting) {
+    if (SchoolYearData && Setting && !searchParams.get("schoolYearId")) {
       setParam((prev) => ({
         ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
@@ -127,25 +144,66 @@ const TableComponent = () => {
     if (event.key === "Enter") handleSearch();
   };
 
-  // ------------------ SELECT HANDLERS ------------------
+  // --- URL parameter helper function ---
+  const pushWithCurrentParams = (path = "/teacherHomeworks", extra: Record<string, any> = {}) => {
+    const allParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      allParams.set(key, value);
+    });
+
+    Object.entries(extra).forEach(([k, v]) => {
+      if (v === undefined || v === null) {
+        allParams.delete(k);
+      } else {
+        allParams.set(k, String(v));
+      }
+    });
+
+    const query = allParams.toString();
+    const newUrl = `${path}${query ? `?${query}` : ""}`;
+
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", newUrl);
+    } else {
+      router.push(newUrl);
+    }
+  };
+
+  // ------------------ SELECT HANDLERS WITH URL PERSISTENCE ------------------
+  const handleSelectDate = (value: string) => {
+    setSelectedDate(value);
+    const date = value || undefined;
+    setParam((prev) => ({
+      ...prev,
+      date,
+    }));
+    pushWithCurrentParams("/teacherHomeworks", { date });
+  };
+
   const handleSelectSection = (value: any) => {
     setSectionId(value || undefined);
-    setParam((prev) => ({ ...prev, sectionId: value || undefined }));
+    const sectionId = value || undefined;
+    setParam((prev) => ({ ...prev, sectionId }));
+    pushWithCurrentParams("/teacherHomeworks", { sectionId });
   };
 
   const handleSelectTeacherSubject = (value: any) => {
+    const teacherSubjectId = value?.value || undefined;
     setParam((prev) => ({
       ...prev,
-      teacherSubjectId: value?.value || undefined,
+      teacherSubjectId,
     }));
+    pushWithCurrentParams("/teacherHomeworks", { teacherSubjectId });
   };
 
   const handleSelectSchoolYear = (value: any) => {
-    setSchoolYearId(value?.value || undefined);
+    const schoolYearId = value?.value || undefined;
+    setSchoolYearId(schoolYearId);
     setParam((prev) => ({
       ...prev,
-      schoolYearId: value?.value || undefined,
+      schoolYearId,
     }));
+    pushWithCurrentParams("/teacherHomeworks", { schoolYearId });
   };
 
   const handleSelectClass = (value: any) => {
@@ -156,6 +214,10 @@ const TableComponent = () => {
       classId,
       sectionId: undefined,
     }));
+    pushWithCurrentParams("/teacherHomeworks", {
+      classId,
+      sectionId: undefined,
+    });
   };
 
   const handleSelectStage = (value: any) => {
@@ -167,6 +229,11 @@ const TableComponent = () => {
       classId: undefined,
       sectionId: undefined,
     }));
+    pushWithCurrentParams("/teacherHomeworks", {
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    });
   };
 
   return (
@@ -251,6 +318,7 @@ const TableComponent = () => {
                 placeholder={t("HomeworksPage.teacherFullName")}
                 props={{
                   onChange: handleSelectTeacherSubject,
+                  value: param?.teacherSubjectId,
                 }}
                 options={
                   TeacherSubjectData?.map((item) => {

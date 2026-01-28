@@ -61,8 +61,31 @@ const TableComponent = () => {
 
   const { currentData: StageData } = useStageGetDataQuery();
 
+  // --- NEW: Initialize filters from URL on mount ---
   useEffect(() => {
-    if (SchoolYearData && Setting) {
+    const urlStageId = searchParams.get("stageId");
+    const urlClassId = searchParams.get("classId");
+    const urlSectionId = searchParams.get("sectionId");
+    const urlTeacherSubjectId = searchParams.get("teacherSubjectId");
+    const urlSchoolYearId = searchParams.get("schoolYearId");
+
+    if (urlStageId) setStageId(urlStageId);
+    if (urlClassId) setClassId(urlClassId);
+    if (urlSectionId) setSectionId(urlSectionId);
+    if (urlSchoolYearId) setSchoolYearId(urlSchoolYearId);
+
+    setParam((prev) => ({
+      ...prev,
+      ...(urlStageId && { stageId: urlStageId }),
+      ...(urlClassId && { classId: urlClassId }),
+      ...(urlSectionId && { sectionId: urlSectionId }),
+      ...(urlTeacherSubjectId && { teacherSubjectId: urlTeacherSubjectId }),
+      ...(urlSchoolYearId && { schoolYearId: urlSchoolYearId }),
+    }));
+  }, []);
+
+  useEffect(() => {
+    if (SchoolYearData && Setting && !searchParams.get("schoolYearId")) {
       setParam((prev) => ({
         ...prev,
         schoolYearId: Setting?.currentSchoolYearId,
@@ -107,6 +130,32 @@ const TableComponent = () => {
     }
   };
 
+  // --- URL parameter helper function ---
+  const pushWithCurrentParams = (path = "/teacherLessons", extra: Record<string, any> = {}) => {
+    const allParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      allParams.set(key, value);
+    });
+
+    Object.entries(extra).forEach(([k, v]) => {
+      if (v === undefined || v === null) {
+        allParams.delete(k);
+      } else {
+        allParams.set(k, String(v));
+      }
+    });
+
+    const query = allParams.toString();
+    const newUrl = `${path}${query ? `?${query}` : ""}`;
+
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", newUrl);
+    } else {
+      router.push(newUrl);
+    }
+  };
+
+  // ------------------ SELECT HANDLERS WITH URL PERSISTENCE ------------------
   const handleSelectStage = (value: any) => {
     const stageId = value || undefined;
     setStageId(stageId);
@@ -116,6 +165,11 @@ const TableComponent = () => {
       classId: undefined,
       sectionId: undefined,
     }));
+    pushWithCurrentParams("/teacherLessons", {
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    });
   };
 
   const handleSelectClass = (value: any) => {
@@ -126,26 +180,36 @@ const TableComponent = () => {
       classId,
       sectionId: undefined,
     }));
+    pushWithCurrentParams("/teacherLessons", {
+      classId,
+      sectionId: undefined,
+    });
   };
 
   const handleSelectSection = (value: any) => {
-    setSectionId(value || undefined);
-    setParam((prev) => ({ ...prev, sectionId: value || undefined }));
+    const sectionId = value || undefined;
+    setSectionId(sectionId);
+    setParam((prev) => ({ ...prev, sectionId }));
+    pushWithCurrentParams("/teacherLessons", { sectionId });
   };
 
   const handleSelectTeacherSubject = (value: any) => {
+    const teacherSubjectId = value?.value || undefined;
     setParam((prev) => ({
       ...prev,
-      teacherSubjectId: value?.value || undefined,
+      teacherSubjectId,
     }));
+    pushWithCurrentParams("/teacherLessons", { teacherSubjectId });
   };
 
   const handleSelectSchoolYear = (value: any) => {
-    setSchoolYearId(value?.value || undefined);
+    const schoolYearId = value?.value || undefined;
+    setSchoolYearId(schoolYearId);
     setParam((prev) => ({
       ...prev,
-      schoolYearId: value?.value || undefined,
+      schoolYearId,
     }));
+    pushWithCurrentParams("/teacherLessons", { schoolYearId });
   };
 
   return (
@@ -235,6 +299,7 @@ const TableComponent = () => {
                 placeholder={t("HomeworksPage.teacherFullName")}
                 props={{
                   onChange: handleSelectTeacherSubject,
+                  value: param?.teacherSubjectId,
                 }}
                 options={
                   TeacherSubjectData?.map((item) => {

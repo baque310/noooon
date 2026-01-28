@@ -57,12 +57,34 @@ const TableComponent = () => {
       }
     | undefined
   >();
+
+  // --- NEW: Initialize filters from URL on mount ---
   useEffect(() => {
-    if (SchoolYearData && Setting) {
-      setParam({
-        ...params,
+    const urlStageId = searchParams.get("stageId");
+    const urlClassId = searchParams.get("classId");
+    const urlSectionId = searchParams.get("sectionId");
+    const urlStageSubjectId = searchParams.get("stageSubjectId");
+    const urlSchoolYearId = searchParams.get("schoolYearId");
+
+    if (urlStageId) setStageId(urlStageId);
+    if (urlClassId) setClassId(urlClassId);
+
+    setParam((prev) => ({
+      ...(prev ?? {}),
+      ...(urlStageId && { stageId: urlStageId }),
+      ...(urlClassId && { classId: urlClassId }),
+      ...(urlSectionId && { sectionId: urlSectionId }),
+      ...(urlStageSubjectId && { stageSubjectId: urlStageSubjectId }),
+      ...(urlSchoolYearId && { schoolYearId: urlSchoolYearId }),
+    }));
+  }, []);
+
+  useEffect(() => {
+    if (SchoolYearData && Setting && !searchParams.get("schoolYearId")) {
+      setParam((prev) => ({
+        ...(prev ?? {}),
         schoolYearId: Setting?.currentSchoolYearId,
-      });
+      }));
     }
   }, [SchoolYearData, Setting]);
 
@@ -106,54 +128,76 @@ const TableComponent = () => {
     }
   };
 
-  const handleSelectStageSubjectId = (value: any) => {
-    if (value) {
-      setParam({ ...param, stageSubjectId: value.value });
+  // --- URL parameter helper function ---
+  const pushWithCurrentParams = (path = "/exams", extra: Record<string, any> = {}) => {
+    const allParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      allParams.set(key, value);
+    });
+
+    Object.entries(extra).forEach(([k, v]) => {
+      if (v === undefined || v === null) {
+        allParams.delete(k);
+      } else {
+        allParams.set(k, String(v));
+      }
+    });
+
+    const query = allParams.toString();
+    const newUrl = `${path}${query ? `?${query}` : ""}`;
+
+    if (typeof window !== "undefined" && window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", newUrl);
     } else {
-      setParam({ ...param, stageSubjectId: undefined });
-    }
-  };
-  const handleSelectSchoolYear = (value: any) => {
-    if (value) {
-      setParam({ ...param, schoolYearId: value.value });
-    } else {
-      setParam({ ...param, schoolYearId: undefined });
+      router.push(newUrl);
     }
   };
 
+  // --- Filter handlers ---
+  const handleSelectStageSubjectId = (value: any) => {
+    const stageSubjectId = value ? value.value : undefined;
+    setParam((old) => ({ ...(old ?? {}), stageSubjectId }));
+    pushWithCurrentParams("/exams", { stageSubjectId });
+  };
+
+  const handleSelectSchoolYear = (value: any) => {
+    const schoolYearId = value ? value.value : undefined;
+    setParam((old) => ({ ...(old ?? {}), schoolYearId }));
+    pushWithCurrentParams("/exams", { schoolYearId });
+  };
+
   const handleSelectClass = (value: any) => {
-    setClassId(value);
-    if (value) {
-      setParam({ ...param, classId: value, sectionId: undefined });
-    } else {
-      setParam({ ...param, classId: undefined, sectionId: undefined });
-    }
+    setClassId(value ?? "");
+    const classId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), classId, sectionId: undefined }));
+    pushWithCurrentParams("/exams", {
+      classId,
+      sectionId: undefined,
+    });
   };
+
   const handleSelectSection = (value: any) => {
-    if (value) {
-      setParam({ ...param, sectionId: value });
-    } else {
-      setParam({ ...param, sectionId: undefined });
-    }
+    const sectionId = value ?? undefined;
+    setParam((old) => ({ ...(old ?? {}), sectionId }));
+    pushWithCurrentParams("/exams", { sectionId });
   };
+
   const handleSelectStage = (value: any) => {
-    if (value) {
-      setStageId(value);
-      setParam({
-        ...param,
-        stageId: value,
-        classId: undefined,
-        sectionId: undefined,
-      });
-    } else {
-      setParam({
-        ...param,
-        stageId: undefined,
-        classId: undefined,
-        sectionId: undefined,
-      });
-    }
+    setStageId(value ?? "");
+    const stageId = value ?? undefined;
+    setParam((old) => ({
+      ...(old ?? {}),
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    }));
+    pushWithCurrentParams("/exams", {
+      stageId,
+      classId: undefined,
+      sectionId: undefined,
+    });
   };
+
   console.log(data);
 
   return (
@@ -261,6 +305,7 @@ const TableComponent = () => {
               placeholder={t("ExamsPage.stageSubject")}
               props={{
                 onChange: handleSelectStageSubjectId,
+                value: param?.stageSubjectId,
               }}
               options={
                 StageSubjectData?.map((item) => {
