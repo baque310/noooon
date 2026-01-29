@@ -24,7 +24,7 @@ export const MenuItem = ({
   const [isActive, setIsActive] = useState(false);
 
   return (
-    <li className={`nav-item ${isActive && "hidden"}`} onClick={() => toggleMenu(to)}>
+    <li className={`nav-item text-base ${isActive && "hidden"}`} onClick={() => toggleMenu(to)}>
       <Link href={to} className="group">
         <RolePageAndActionBasedComponent
           component={(props: any) => <MenuRoleComponent number={number} disabled={props.disabled} icon={icon} label={label} setIsActive={setIsActive} />}
