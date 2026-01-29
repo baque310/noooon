@@ -66,9 +66,12 @@ export const Header = () => {
   const [openChangePassword, setOpenChangePassword] = useState(false);
 
   return (
-    <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === "horizontal" ? "dark" : ""} shadow-3xl `}>
-      <div className="border-b border-dark-dark-light">
-        <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
+    <header className={`z-40 px-10 pt-5 rounded-xl ${themeConfig.semidark && themeConfig.menu === "horizontal" ? "dark" : ""}`}>
+      <div
+        className=""
+        // className="border-b border-dark-dark-light"
+      >
+        <div className="relative flex w-full rounded-3xl items-center bg-white px-5 py-5 dark:bg-black">
           <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
             <Link href="/" className="main-logo flex shrink-0 items-center">
               {/* <img className="inline  w-10 h-10 rounded-full ltr:-ml-1 rtl:-mr-1" src="/favicon.png" alt="logo" /> */}
@@ -241,7 +244,7 @@ export const Header = () => {
             </div>
           </div>
         </div>
-      </div>{" "}
+      </div>
       {session.data?.user && openChangePassword && (
         <ChangePasswordByAdminModel
           open={openChangePassword}

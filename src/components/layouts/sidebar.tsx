@@ -113,7 +113,7 @@ const Sidebar = () => {
   return (
     <div className={semidark ? "dark" : ""}>
       <nav className={`sidebar fixed bottom-0 top-0 z-50 h-[100vh] w-[280px] transition-all duration-300 ltr:left-4 rtl:right-4 ${semidark ? "text-white-dark" : ""}`}>
-        <div className={`h-full bg-white rounded-l-[40px] shadow-[0_0_40px_rgba(0,0,0,0.05)] dark:bg-[#1a1a1a] `}>
+        <div className={`h-full bg-white dark:bg-[#1a1a1a] `}>
           <div className="flex items-center justify-between px-4 py-3">
             <div className="main-logo flex shrink-0 items-center">
               {/* <img className="ml-[5px] w-10 h-10 rounded-full flex-none" src="/favicon.png" alt="logo" /> */}

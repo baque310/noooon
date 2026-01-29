@@ -46,7 +46,7 @@ export const MenuSubItem = ({
   const getCaretClass = () => (currentMenu !== name ? "-rotate-90 rtl:rotate-90 transition-transform duration-200" : "transition-transform duration-200");
 
   return (
-    <li className={`menu nav-item text-base ${isActive && "hidden"}`}>
+    <li className={`menu nav-item text-base pr-5 ${isActive && "hidden"}`}>
       <button type="button" className={getNavLinkClass()} onClick={() => toggleMenu(name)}>
         <RolePageAndActionBasedComponent
           component={(props) => <RoleComponent number={number} disabled={props.disabled} icon={icon} label={label} setIsActive={setIsActive} />}

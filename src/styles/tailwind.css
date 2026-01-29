@@ -13,7 +13,13 @@
 @layer components {
   html {
     @apply scroll-smooth;
-    --main-bg: #f2ebfd;
+    --nav-item-active-bg: #f5f6f8;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer and Edge */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
   }
 
   body {
@@ -21,7 +27,8 @@
   }
 
   body.dark {
-    @apply bg-[#060818];
+    @apply bg-[#241D2F];
+    --nav-item-active-bg: #241d2f;
   }
 
   /* Panel */
@@ -70,48 +77,67 @@
 
   .sidebar .nav-item > button,
   .sidebar .nav-item > a {
-    @apply mb-2 flex w-full items-center justify-between overflow-hidden whitespace-nowrap  p-3 text-[#6E6E6E] transition-all duration-200 hover:bg-primary/5 hover:text-primary dark:text-white/80 dark:hover:bg-primary/10;
+    @apply relative mb-2 flex w-full items-center justify-between whitespace-nowrap p-3 text-[#6E6E6E] dark:text-white/80;
+    transition: all 300ms ease-in-out;
   }
+
   .sidebar .nav-item > button.active,
   .sidebar .nav-item > a.active {
-    @apply bg-primary/10 text-primary font-bold dark:bg-primary/20 dark:text-primary !overflow-visible relative !duration-0;
+    @apply bg-primary-light text-primary rounded-r-full dark:bg-primary-dark-light dark:text-primary;
   }
 
-  /* المنحني العلوي المقلوب - معالجة الزيادة */
+  /* المنحني العلوي المقلوب */
+  .sidebar .nav-item > button::before,
+  .sidebar .nav-item > a::before {
+    content: "";
+    position: absolute;
+    top: -30px;
+    left: -5px;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border-bottom-left-radius: 30px;
+    box-shadow: 0 13px 0 0 transparent;
+    pointer-events: none;
+    z-index: 1;
+    transition: box-shadow 300ms ease-in-out;
+  }
+
   .sidebar .nav-item > button.active::before,
   .sidebar .nav-item > a.active::before {
-    content: "";
-    position: absolute;
-    top: -20px;
-    left: -3px;
-    width: 20px;
-    height: 20px;
-    background: transparent;
-    border-bottom-left-radius: 20px;
-    box-shadow: 0 10px 0 0 var(--main-bg);
-    pointer-events: none;
-    z-index: 1;
+    box-shadow: 0 13px 0 0 var(--nav-item-active-bg);
   }
 
-  /* المنحني السفلي المقلوب - معالجة الزيادة */
-  .sidebar .nav-item > button.active::after,
-  .sidebar .nav-item > a.active::after {
+  /* المنحني السفلي المقلوب */
+  .sidebar .nav-item > button::after,
+  .sidebar .nav-item > a::after {
     content: "";
     position: absolute;
-    bottom: -20px;
-    left: -3px;
-    width: 20px;
-    height: 20px;
+    bottom: -30px;
+    left: -5px;
+    width: 30px;
+    height: 30px;
     background: transparent;
-    border-top-left-radius: 20px;
-    box-shadow: 0 -10px 0 0 var(--main-bg);
+    border-top-left-radius: 30px;
+    box-shadow: 0 -13px 0 0 transparent;
     pointer-events: none;
     z-index: 1;
+    transition: box-shadow 300ms ease-in-out;
+  }
+
+  .sidebar .nav-item > button.active::after,
+  .sidebar .nav-item > a.active::after {
+    box-shadow: 0 -13px 0 0 var(--nav-item-active-bg);
   }
 
   .sidebar .nav-item > button.active > div > span,
   .sidebar .nav-item > a.active > div > span {
     @apply dark:!text-white-dark;
+  }
+
+  .sidebar .nav-item > button > div,
+  .sidebar .nav-item > a > div {
+    @apply overflow-hidden;
   }
 
   .sidebar ul.sub-menu li button,
