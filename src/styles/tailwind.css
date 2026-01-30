@@ -77,13 +77,13 @@
 
   .sidebar .nav-item > button,
   .sidebar .nav-item > a {
-    @apply relative mb-2 flex w-full items-center justify-between whitespace-nowrap p-3 text-[#6E6E6E] dark:text-white/80;
+    @apply relative mb-2 flex w-full items-center justify-between hover:text-primary whitespace-nowrap p-3 text-[#6E6E6E] dark:text-white/80;
     transition: all 300ms ease-in-out;
   }
 
   .sidebar .nav-item > button.active,
   .sidebar .nav-item > a.active {
-    @apply bg-primary-light text-primary rounded-r-full dark:bg-primary-dark-light dark:text-primary;
+    @apply bg-primary-light text-primary rounded-r-full hover:text-primary dark:bg-primary-dark-light dark:text-primary;
   }
 
   /* المنحني العلوي المقلوب */
