@@ -46,7 +46,7 @@ export const MenuSubItem = ({
   const getCaretClass = () => (currentMenu !== name ? "-rotate-90 rtl:rotate-90 transition-transform duration-200" : "transition-transform duration-200");
 
   return (
-    <li className={`menu nav-item text-base pr-5 ${isActive && "hidden"}`}>
+    <li className={`menu nav-item text-base pr-4 ${isActive && "hidden"}`}>
       <button type="button" className={getNavLinkClass()} onClick={() => toggleMenu(name)}>
         <RolePageAndActionBasedComponent
           component={(props) => <RoleComponent number={number} disabled={props.disabled} icon={icon} label={label} setIsActive={setIsActive} />}
@@ -81,10 +81,10 @@ const RoleComponent = ({
   }, [disabled]);
 
   return (
-    <div className="flex items-center justify-between w-full">
+    <div className="flex items-center py-1 justify-between w-full font-bold ltr:pl-3 rtl:pr-3">
       <div className="flex items-center ">
         {icon}
-        <span className="  ltr:pl-3 rtl:pr-3  ">{label}</span>
+        <span className="ltr:pl-3 rtl:pr-3">{label}</span>
       </div>
 
       {number > 0 && <div className="flex h-5 w-5 items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white">{toLocaleString(number)}</div>}
@@ -112,7 +112,7 @@ function ListMenu(
 ): React.JSX.Element {
   const [isActive, setIsActive] = useState(false);
   return (
-    <li key={index} className={isActive ? "hidden" : ""}>
+    <li key={index} className={`nav-item text-base pr-4 ${isActive ? "hidden" : ""}`}>
       <Link href={item.isNoSub ? `/${item.to}` : `/${name}/${item.to}`}>
         <RolePageAndActionBasedComponent
           component={(props) => <RoleComponent number={item.number ?? 0} disabled={props.disabled} icon={item.icon} label={item.label} setIsActive={setIsActive} />}

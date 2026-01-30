@@ -19,10 +19,10 @@ const RoleComponent = ({
   }, [disabled]);
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center ">
+    <div className="flex items-center py-1 justify-between w-full font-bold ltr:pl-3 rtl:pr-3">
+      <div className="flex items-center">
         {icon}
-        <span className="  ltr:pl-3 rtl:pr-3  ">{label}</span>
+        <span className="ltr:pl-3 rtl:pr-3">{label}</span>
       </div>
 
       {number > 0 && <div className="flex h-5 w-5 items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white">{toLocaleString(number)}</div>}

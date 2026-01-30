@@ -39,7 +39,7 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: "#7c3aed", // Slightly deeper purple
-          light: "#F5F6F8", // Very light purple for active background
+          light: "#F0F1F3", // Very light purple for active background
           "dark-light": "rgba(124, 58, 237, 0.1)",
         },
         secondary: {
