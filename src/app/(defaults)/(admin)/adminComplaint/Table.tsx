@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
 import { useComplaintGetDataForAdminQuery } from "@/services/admin/complaint";
+import FormattedDate from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -219,26 +220,22 @@ const TableComponent = () => {
               {
                 title: t("common.updatedAt"),
                 accessor: "updatedAt",
-                sortable: true,
-                render: ({ updatedAt }: any) =>
-                  updatedAt ? (
-                    <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">{moment(updatedAt).format("MMM DD, YYYY")}</div>
-                      <div className="text-gray-400 dark:text-gray-500">{moment(updatedAt).format("hh:mm A")}</div>
-                    </div>
-                  ) : null,
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
+                    <FormattedDate date={row.updatedAt} />
+                  </div>
+                ),
               },
               {
                 title: t("common.createdAt"),
                 accessor: "createdAt",
-                sortable: true,
-                render: ({ createdAt }: any) =>
-                  createdAt ? (
-                    <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">{moment(createdAt).format("MMM DD, YYYY")}</div>
-                      <div className="text-gray-400 dark:text-gray-500">{moment(createdAt).format("hh:mm A")}</div>
-                    </div>
-                  ) : null,
+                render: (row: any) => (
+                  <div className="text-center">
+                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
+                    <FormattedDate date={row.createdAt} />
+                  </div>
+                ),
               },
             ]}
             customLoader={

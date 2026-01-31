@@ -54,6 +54,8 @@
   "common": {
     "notAvailable": "غير متوفر",
     "edit": "تعديل",
+    "all": "الكل",
+    "reset": "اعادة التعيين",
     "action": "إجراء",
     "actions": "إجراءات",
     "confirm...": "تاكيد ...",
