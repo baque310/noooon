@@ -412,7 +412,7 @@ const TableComponent = () => {
                   title: t("HomeworksPage.teacherFullName"),
                   accessor: "teacherSubject.Teacher.fullName",
                   sortable: true,
-                  width: 200,
+                  width: 220,
                   render: ({ teacherSubject }: any) => (
                     <div className="flex items-center gap-2.5">
                       <div
@@ -421,7 +421,7 @@ const TableComponent = () => {
                         border-2 border-primary/20 shadow-sm">
                         {teacherSubject?.Teacher?.fullName?.charAt(0)}
                       </div>
-                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{teacherSubject?.Teacher?.fullName}</span>
+                      <span className="text-base font-medium text-gray-800 dark:text-gray-200">{teacherSubject?.Teacher?.fullName}</span>
                     </div>
                   ),
                 },
@@ -460,35 +460,6 @@ const TableComponent = () => {
                       </div>
                     </div>
                   ),
-                },
-                {
-                  title: t("HomeworksPage.dueDate"),
-                  accessor: "dueDate",
-                  sortable: true,
-                  width: 140,
-                  render: ({ dueDate }: any) => {
-                    if (!dueDate) return <span className="text-gray-400 text-sm">-</span>;
-
-                    const isOverdue = moment(dueDate).isBefore(moment());
-                    const isDueSoon = moment(dueDate).isBetween(moment(), moment().add(3, "days"));
-
-                    return (
-                      <div
-                        className={`flex items-center gap-2 text-sm font-medium
-                        ${isOverdue ? "text-red-600 dark:text-red-400" : isDueSoon ? "text-orange-600 dark:text-orange-400" : "text-gray-600 dark:text-gray-400"}`}>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        {moment(dueDate).format("MM/DD")}
-                        {/* {isOverdue && <span className="text-xs">(متأخر)</span>} */}
-                      </div>
-                    );
-                  },
                 },
                 {
                   title: t("HomeworksPage.StageName"),
@@ -547,6 +518,35 @@ const TableComponent = () => {
                   },
                 },
                 {
+                  title: t("HomeworksPage.dueDate"),
+                  accessor: "dueDate",
+                  sortable: true,
+                  width: 140,
+                  render: ({ dueDate }: any) => {
+                    if (!dueDate) return <span className="text-gray-400 text-sm">-</span>;
+
+                    const isOverdue = moment(dueDate).isBefore(moment());
+                    const isDueSoon = moment(dueDate).isBetween(moment(), moment().add(3, "days"));
+
+                    return (
+                      <div
+                        className={`flex items-center gap-2 text-sm font-medium
+                        ${isOverdue ? "text-red-600 dark:text-red-400" : isDueSoon ? "text-orange-600 dark:text-orange-400" : "text-gray-600 dark:text-gray-400"}`}>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                        {moment(dueDate).format("MM/DD")}
+                        {/* {isOverdue && <span className="text-xs">(متأخر)</span>} */}
+                      </div>
+                    );
+                  },
+                },
+                {
                   title: t("HomeworksPage.SchoolYear"),
                   accessor: "SchoolYear.from",
                   width: 140,
@@ -570,15 +570,35 @@ const TableComponent = () => {
                   ),
                 },
                 {
+                  title: t("common.updatedAt"),
+                  accessor: "updatedAt",
+                  render: (row: any) => (
+                    <div className="text-center">
+                      <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
+                      <FormattedDate date={row.updatedAt} />
+                    </div>
+                  ),
+                },
+                {
                   title: t("common.createdAt"),
                   accessor: "createdAt",
-                  width: 150,
                   render: (row: any) => (
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-center">
+                      <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
                       <FormattedDate date={row.createdAt} />
                     </div>
                   ),
                 },
+                // {
+                //   title: t("common.createdAt"),
+                //   accessor: "createdAt",
+                //   width: 150,
+                //   render: (row: any) => (
+                //     <div className="text-sm text-gray-600 dark:text-gray-400">
+                //       <FormattedDate date={row.createdAt} />
+                //     </div>
+                //   ),
+                // },
               ]}
               customLoader={
                 <div className="flex flex-col items-center justify-center py-16">
