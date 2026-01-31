@@ -559,16 +559,16 @@ const TableComponent = () => {
                       <span className="text-gray-400 text-sm">-</span>
                     ),
                 },
-                {
-                  title: t("common.updatedAt"),
-                  accessor: "updatedAt",
-                  width: 150,
-                  render: (row: any) => (
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
-                      <FormattedDate date={row.updatedAt} />
-                    </div>
-                  ),
-                },
+                // {
+                //   title: t("common.updatedAt"),
+                //   accessor: "updatedAt",
+                //   width: 150,
+                //   render: (row: any) => (
+                //     <div className="text-sm text-gray-600 dark:text-gray-400">
+                //       <FormattedDate date={row.updatedAt} />
+                //     </div>
+                //   ),
+                // },
                 {
                   title: t("common.updatedAt"),
                   accessor: "updatedAt",
