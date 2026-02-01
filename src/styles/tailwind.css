@@ -23,7 +23,7 @@
   }
 
   body {
-    @apply bg-primary-light font-nunito;
+    @apply bg-primary-light font-cairo;
     background-image: url("/bg.svg");
     background-size: cover;
     background-attachment: fixed;
@@ -623,19 +623,6 @@
   to {
     transform: rotate(1turn);
   }
-}
-
-@font-face {
-  font-family: "Cairo";
-  src:
-    local("Cairo"),
-    url("/Cairo.ttf") format("opentype");
-}
-
-* {
-  /* direction: rtl; */
-  font-family: "Cairo" !important;
-  /* font-weight: bold !important; */
 }
 
 .CardDetails .available-item:not(:last-child) {

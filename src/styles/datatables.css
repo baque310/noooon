@@ -27,7 +27,7 @@ table > tbody > tr > td {
 .datatables table,
 .mantine-datatable-table,
 .mantine-Table-root {
-  @apply font-nunito !text-black dark:!text-white-dark !bg-transparent !important;
+  @apply font-cairo !text-black dark:!text-white-dark !bg-transparent !important;
   border-collapse: collapse !important;
   border-spacing: 0 !important;
 }
@@ -164,7 +164,7 @@ table tr .mantine-Checkbox-root {
 
 .mantine-Pagination-item {
   @apply h-9 w-9 rounded-full border-white-light
-         !bg-white-light font-nunito text-sm
+         !bg-white-light font-cairo text-sm
          !text-[#3b3f5c]
          hover:!bg-primary hover:!text-white
          dark:border-[#191e3a]
@@ -188,7 +188,7 @@ table tr .mantine-Checkbox-root {
 }
 
 .mantine-Menu-item .mantine-Text-root {
-  @apply text-center font-nunito !text-sm;
+  @apply text-center font-cairo !text-sm;
 }
 
 .mantine-Menu-arrow {

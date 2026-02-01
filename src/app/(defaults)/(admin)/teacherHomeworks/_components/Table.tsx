@@ -20,7 +20,7 @@ import { useTeacherHomeworksGetDataQuery, useTeacherHomeworksIsSeenUpdateMutatio
 import { AddIcons } from "@/components/common/icons/Actions";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { DatePicker } from "@/components/Filter/DatePicker";
-import FormattedDate from "@/components/common/FormattedDate";
+import FormattedDate, { FormattedDate2 } from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -236,6 +236,19 @@ const TableComponent = () => {
           />
 
           <DatePicker value={selectedDate} onChange={handleSelectDate} placeholder={t("SuperTeacherAttendancesPage.Select_Date")} className="min-w-[180px]" />
+
+          <RolePageAndActionBasedComponent
+            resource={"homework"}
+            permission={["create-any", "create-own"]}
+            component={(props) => (
+              <button
+                className={`${props.disabled && "hidden"} flex w-full items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors shadow-sm`}
+                onClick={() => router.push("/teacherHomeworks/createOrUpdate")}>
+                <AddIcons className="h-4 w-4" />
+                {t("HomeworksPage.addNewHomework")}
+              </button>
+            )}
+          />
         </div>
       </div>
 
@@ -380,19 +393,6 @@ const TableComponent = () => {
                 />
               </svg>
             </button>
-
-            <RolePageAndActionBasedComponent
-              resource={"homework"}
-              permission={["create-any", "create-own"]}
-              component={(props) => (
-                <button
-                  className={`${props.disabled && "hidden"} flex items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors shadow-sm`}
-                  onClick={() => router.push("/teacherHomeworks/createOrUpdate")}>
-                  <AddIcons className="h-4 w-4" />
-                  {t("common.add")}
-                </button>
-              )}
-            />
           </div>
         </div>
       </div>
@@ -411,7 +411,7 @@ const TableComponent = () => {
                 {
                   title: t("HomeworksPage.teacherFullName"),
                   accessor: "teacherSubject.Teacher.fullName",
-                  sortable: true,
+                  // sortable: true,
                   width: 220,
                   render: ({ teacherSubject }: any) => (
                     <div className="flex items-center gap-2.5">
@@ -421,7 +421,7 @@ const TableComponent = () => {
                         border-2 border-primary/20 shadow-sm">
                         {teacherSubject?.Teacher?.fullName?.charAt(0)}
                       </div>
-                      <span className="text-base font-medium text-gray-800 dark:text-gray-200">{teacherSubject?.Teacher?.fullName}</span>
+                      <span className="text-base text-gray-800 dark:text-gray-200 font-bold">{teacherSubject?.Teacher?.fullName}</span>
                     </div>
                   ),
                 },
@@ -450,7 +450,7 @@ const TableComponent = () => {
                         <span className="flex-shrink-0 w-2.5 h-2.5 mt-1.5 rounded-full bg-blue-500 animate-pulse shadow-lg shadow-blue-500/50" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2 leading-snug">{title}</div>
+                        <div className="font-semibold text-gray-500 dark:text-white mb-1 line-clamp-2 leading-snug">{title}</div>
                         {/* <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -517,88 +517,65 @@ const TableComponent = () => {
                     );
                   },
                 },
-                {
-                  title: t("HomeworksPage.dueDate"),
-                  accessor: "dueDate",
-                  sortable: true,
-                  width: 140,
-                  render: ({ dueDate }: any) => {
-                    if (!dueDate) return <span className="text-gray-400 text-sm">-</span>;
-
-                    const isOverdue = moment(dueDate).isBefore(moment());
-                    const isDueSoon = moment(dueDate).isBetween(moment(), moment().add(3, "days"));
-
-                    return (
-                      <div
-                        className={`flex items-center gap-2 text-sm font-medium
-                        ${isOverdue ? "text-red-600 dark:text-red-400" : isDueSoon ? "text-orange-600 dark:text-orange-400" : "text-gray-600 dark:text-gray-400"}`}>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        {moment(dueDate).format("MM/DD")}
-                        {/* {isOverdue && <span className="text-xs">(متأخر)</span>} */}
-                      </div>
-                    );
-                  },
-                },
-                {
-                  title: t("HomeworksPage.SchoolYear"),
-                  accessor: "SchoolYear.from",
-                  width: 140,
-                  render: ({ SchoolYear }: any) =>
-                    SchoolYear?.from || SchoolYear?.to ? (
-                      <span className="text-gray-700 dark:text-gray-300 font-medium text-sm">
-                        {SchoolYear.from} - {SchoolYear.to}
-                      </span>
-                    ) : (
-                      <span className="text-gray-400 text-sm">-</span>
-                    ),
-                },
                 // {
-                //   title: t("common.updatedAt"),
-                //   accessor: "updatedAt",
-                //   width: 150,
-                //   render: (row: any) => (
-                //     <div className="text-sm text-gray-600 dark:text-gray-400">
-                //       <FormattedDate date={row.updatedAt} />
-                //     </div>
-                //   ),
+                //   title: t("HomeworksPage.dueDate"),
+                //   accessor: "dueDate",
+                //   sortable: true,
+                //   width: 140,
+                //   render: ({ dueDate }: any) => {
+                //     if (!dueDate) return <span className="text-gray-400 text-sm">-</span>;
+
+                //     const isOverdue = moment(dueDate).isBefore(moment());
+                //     const isDueSoon = moment(dueDate).isBetween(moment(), moment().add(3, "days"));
+
+                //     return (
+                //       <div
+                //         className={`flex items-center gap-2 text-sm font-medium
+                //         ${isOverdue ? "text-red-600 dark:text-red-400" : isDueSoon ? "text-orange-600 dark:text-orange-400" : "text-gray-600 dark:text-gray-400"}`}>
+                //         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                //           <path
+                //             strokeLinecap="round"
+                //             strokeLinejoin="round"
+                //             strokeWidth={2}
+                //             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                //           />
+                //         </svg>
+                //         {moment(dueDate).format("MM/DD")}
+                //         {/* {isOverdue && <span className="text-xs">(متأخر)</span>} */}
+                //       </div>
+                //     );
+                //   },
+                // },
+                // {
+                //   title: t("HomeworksPage.SchoolYear"),
+                //   accessor: "SchoolYear.from",
+                //   width: 140,
+                //   render: ({ SchoolYear }: any) =>
+                //     SchoolYear?.from || SchoolYear?.to ? (
+                //       <span className="text-gray-700 dark:text-gray-300 font-medium text-sm">
+                //         {SchoolYear.from} - {SchoolYear.to}
+                //       </span>
+                //     ) : (
+                //       <span className="text-gray-400 text-sm">-</span>
+                //     ),
                 // },
                 {
-                  title: t("common.updatedAt"),
+                  title: t("common.allDates"),
                   accessor: "updatedAt",
+                  sortable: true,
                   render: (row: any) => (
-                    <div className="text-center">
-                      <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
-                      <FormattedDate date={row.updatedAt} />
+                    <div className="space-y-2">
+                      <FormattedDate2
+                        date={row.updatedAt}
+                        label={t("common.updatedAt")} // "التحديث"
+                      />
+                      <FormattedDate2
+                        date={row.createdAt}
+                        label={t("common.createdAt")} // "التقديم"
+                      />
                     </div>
                   ),
                 },
-                {
-                  title: t("common.createdAt"),
-                  accessor: "createdAt",
-                  render: (row: any) => (
-                    <div className="text-center">
-                      <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
-                      <FormattedDate date={row.createdAt} />
-                    </div>
-                  ),
-                },
-                // {
-                //   title: t("common.createdAt"),
-                //   accessor: "createdAt",
-                //   width: 150,
-                //   render: (row: any) => (
-                //     <div className="text-sm text-gray-600 dark:text-gray-400">
-                //       <FormattedDate date={row.createdAt} />
-                //     </div>
-                //   ),
-                // },
               ]}
               customLoader={
                 <div className="flex flex-col items-center justify-center py-16">

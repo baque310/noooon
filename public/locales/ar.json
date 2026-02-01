@@ -55,6 +55,7 @@
     "notAvailable": "غير متوفر",
     "edit": "تعديل",
     "all": "الكل",
+    "allDates": "التواريخ",
     "reset": "اعادة التعيين",
     "action": "إجراء",
     "actions": "إجراءات",
@@ -94,8 +95,8 @@
     "Copied-to-clipboard": "تم النسخ إلى الحافظة",
     "this-field-is-required": "هذا الحقل مطلوب",
     "no-data": "لا توجد بيانات",
-    "createdAt": "تاريخ الانشاء",
-    "updatedAt": "تاريخ التحديث",
+    "createdAt": "الانشاء",
+    "updatedAt": "التحديث",
     "status": "الحالة",
     "isActive": "نشط",
     "isNotActive": "غير نشط",
@@ -340,7 +341,8 @@
     "SubjectName": "اسم المادة",
     "SchoolYear": "السنة الدراسية",
     "Homework": "الواجب",
-    "Homeworks": "الواجبات",
+    "addNewHomework": "اضافة واجب جديد",
+    "Homeworks": "إدارة واجبات الطلبة",
     "HomeworksInformation": "معلومات الواجب "
   },
   "ClassPage": {

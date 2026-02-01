@@ -84,7 +84,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        nunito: ["var(--font-nunito)"],
+        cairo: ["var(--font-cairo)"],
       },
       spacing: {
         4.5: "18px",
