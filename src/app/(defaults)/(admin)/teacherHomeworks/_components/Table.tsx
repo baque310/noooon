@@ -1,6 +1,6 @@
 "use client";
 import { DataTable } from "mantine-datatable";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import moment, { now } from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
@@ -8,7 +8,6 @@ import { getTranslation } from "@/ni18n/i18n";
 import { IRootState } from "@/store";
 import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import { SelectWithSearch } from "@/components/Filter/SelectSearch";
 import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
@@ -21,8 +20,10 @@ import { AddIcons } from "@/components/common/icons/Actions";
 import { useStageGetDataQuery } from "@/services/admin/stage";
 import { DatePicker } from "@/components/Filter/DatePicker";
 import FormattedDate, { FormattedDate2 } from "@/components/common/FormattedDate";
+import HomeworkModal from "./HomeworkModal";
 
 const TableComponent = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -243,7 +244,7 @@ const TableComponent = () => {
             component={(props) => (
               <button
                 className={`${props.disabled && "hidden"} flex w-full items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors shadow-sm`}
-                onClick={() => router.push("/teacherHomeworks/createOrUpdate")}>
+                onClick={() => setIsModalOpen(true)}>
                 <AddIcons className="h-4 w-4" />
                 {t("HomeworksPage.addNewHomework")}
               </button>
@@ -621,6 +622,16 @@ const TableComponent = () => {
           </div>
         )}
       </div>
+
+      {/* Homework Modal */}
+      <HomeworkModal
+        open={isModalOpen}
+        setOpen={setIsModalOpen}
+        onSuccess={() => {
+          setIsModalOpen(false);
+          // Optionally refetch data here if needed
+        }}
+      />
     </div>
   );
 };

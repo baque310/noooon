@@ -44,7 +44,13 @@ interface FilterSelection {
   sectionName?: string;
 }
 
-const PageComponent = () => {
+interface PageComponentProps {
+  isModal?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+}
+
+const PageComponent: React.FC<PageComponentProps> = ({ isModal = false, onClose, onSuccess }) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -290,7 +296,13 @@ const PageComponent = () => {
         resetForm();
       }
 
-      router.back();
+      // Handle modal mode
+      if (isModal) {
+        onSuccess?.();
+        onClose?.();
+      } else {
+        router.back();
+      }
     } catch (error: any) {
       console.error("Homework operation failed:", error);
       toast.error(error?.message || JSON.stringify(error));
@@ -299,7 +311,7 @@ const PageComponent = () => {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <BackButton title={t(id ? "TeacherHomeworksPage.update-info" : "TeacherHomeworksPage.add")} />
+      {!isModal && <BackButton title={t(id ? "TeacherHomeworksPage.update-info" : "TeacherHomeworksPage.add")} />}
 
       {isFetching || isFetchingSettings ? (
         <div className="space-y-6 p-6">
@@ -758,7 +770,7 @@ const PageComponent = () => {
                                         } else {
                                           props.setFieldValue(
                                             "studentIds",
-                                            currentIds.filter((id: string) => id !== student.id)
+                                            currentIds.filter((id: string) => id !== student.id),
                                           );
                                         }
                                       },
