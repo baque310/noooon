@@ -8,7 +8,8 @@
   "appName": "Noon Iraq",
   "signInPage": {
     "signIn": "تسجيل الدخول",
-    "signInDesc": "تسجيل الدخول للمتابعة",
+    "signInWelcome": "أهلاً بك مجدداً 👋",
+    "signInDesc": "قم بتسجيل الدخول للوصول إلى لوحة التحكم المدرسية",
     "username": "اسم المستخدم",
     "password": "كلمة المرور",
     "enter-username": "ادخل اسم المستخدم",
