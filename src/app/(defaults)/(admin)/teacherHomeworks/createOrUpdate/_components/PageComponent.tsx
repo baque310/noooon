@@ -1100,7 +1100,7 @@ const PageComponent: React.FC<PageComponentProps> = ({ isModal = false, onClose,
 
               {/* Submit Actions */}
               {isModal ? (
-                <div className="flex gap-3 border-t border-slate-200 bg-white px-6 py-5 dark:border-slate-700 dark:bg-slate-800">
+                <div className="flex gap-3 rounded-xl bg-white px-6 py-5 dark:border-slate-700 dark:bg-slate-800">
                   <button
                     type="submit"
                     disabled={isCreating || isUpdating}
@@ -1115,7 +1115,7 @@ const PageComponent: React.FC<PageComponentProps> = ({ isModal = false, onClose,
                   </button>
                 </div>
               ) : (
-                <div className="flex justify-end border-t border-gray-200 pt-6 dark:border-gray-700">
+                <div className="flex justify-end pt-6 dark:border-gray-700">
                   <ButtonForm
                     props={{
                       type: "submit",
