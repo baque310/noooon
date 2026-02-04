@@ -42,7 +42,7 @@ export const InputForm = <T extends FormikValues>({
 
   return (
     <div className={`w-full ${formikProps.submitCount ? (errorValue && touchedValue ? "has-error" : "") : ""}`}>
-      <label className="font-normal" htmlFor={name}>
+      <label className="font-bold" htmlFor={name}>
         {title}
       </label>
       <div className="relative w-full">

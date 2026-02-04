@@ -13,7 +13,7 @@
 @layer components {
   html {
     @apply scroll-smooth;
-    --nav-item-active-bg: #f0f1f3;
+    --nav-item-active-bg: #f5f3ff;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer and Edge */
   }
@@ -23,12 +23,7 @@
   }
 
   body {
-    @apply bg-primary-light font-cairo;
-    background-image: url("/bg.svg");
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
+    @apply bg-[#f5f3ff] font-cairo;
   }
 
   body.dark {
