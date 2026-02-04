@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
