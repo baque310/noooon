@@ -50,7 +50,7 @@ export const Attachments = (props: AttachmentsProps) => {
 
   if (isModal) {
     return (
-      <div className="bg-white dark:bg-slate-800 p-5 rounded-[20px] border border-slate-200 dark:border-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+      <div className="bg-white my-2 dark:bg-slate-800 p-5 rounded-[20px] border border-slate-200 dark:border-slate-700 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
         <div className="text-[0.95rem] font-extrabold mb-4 text-slate-900 dark:text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Paperclip className="w-4 h-4 text-violet-600 dark:text-violet-400" />
@@ -64,6 +64,37 @@ export const Attachments = (props: AttachmentsProps) => {
         </div>
 
         <div className="space-y-4">
+          {props.values.attachments?.length > 0 && (
+            <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto pr-1 custom-scrollbar">
+              {props.values.attachments.map((file: File, index: number) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl group transition-all hover:border-violet-200 dark:hover:border-violet-900">
+                  <div className="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
+                    {file.type.startsWith("image/") ? (
+                      <img src={createImagePreview(file, index) || ""} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <FileText className="w-5 h-5 text-slate-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{file.name}</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{formatFileSize(file.size)}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile(index);
+                    }}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div
             onDragOver={(e) => {
               e.preventDefault();
@@ -97,37 +128,6 @@ export const Attachments = (props: AttachmentsProps) => {
               }}
             />
           </div>
-
-          {props.values.attachments?.length > 0 && (
-            <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto pr-1 custom-scrollbar">
-              {props.values.attachments.map((file: File, index: number) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl group transition-all hover:border-violet-200 dark:hover:border-violet-900">
-                  <div className="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
-                    {file.type.startsWith("image/") ? (
-                      <img src={createImagePreview(file, index) || ""} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <FileText className="w-5 h-5 text-slate-400" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{file.name}</p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">{formatFileSize(file.size)}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFile(index);
-                    }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     );
