@@ -1,5 +1,5 @@
 import { FormikProps, FormikValues } from "formik";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useRef } from "react";
 import Select, { ActionMeta, MultiValue, Props as SelectProps, SingleValue } from "react-select";
 
 export interface OptionType {
@@ -20,9 +20,21 @@ interface SelectFormProps<T = FormikValues> {
 }
 
 export const SelectForm = <T extends FormikValues>({ formikProps, name, title, placeholder, props, className, isLoading, options }: SelectFormProps<T>): React.ReactElement => {
+  const selectRef = useRef<HTMLDivElement>(null);
+
   let pathArr = name.split(".");
   let errorValue = pathArr.reduce((prev: any, curr) => prev && prev[curr], formikProps.errors);
   let touchedValue = pathArr.reduce((prev: any, curr) => prev && prev[curr], formikProps.touched);
+
+  // Scroll to this element when clicked
+  const handleFocus = () => {
+    if (selectRef.current) {
+      selectRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center", // You can use 'start', 'center', or 'end'
+      });
+    }
+  };
 
   // Custom onChange handler to integrate with Formik
   const handleChange = (newValue: SingleValue<OptionType> | MultiValue<OptionType>, actionMeta: ActionMeta<OptionType>) => {
@@ -37,6 +49,7 @@ export const SelectForm = <T extends FormikValues>({ formikProps, name, title, p
       }
     }
   };
+
   const handleValue = props?.isMulti
     ? pathArr.reduce((prev: any, curr) => prev && prev[curr], formikProps.values)
     : options?.find((item) => item.value == pathArr.reduce((prev: any, curr) => prev && prev[curr], formikProps.values));
@@ -45,10 +58,11 @@ export const SelectForm = <T extends FormikValues>({ formikProps, name, title, p
     ...props,
     onChange: props?.onChange ? props.onChange : handleChange,
     value: handleValue ?? null, // Use Formik's value, or default if not set
+    onFocus: handleFocus, // Add scroll on focus
   };
 
   return (
-    <div className={`custom-select text-sm font-normal  ${formikProps.submitCount ? (errorValue && touchedValue ? "has-error" : "") : ""} ${className || ""}`}>
+    <div ref={selectRef} className={`custom-select text-sm font-normal  ${formikProps.submitCount ? (errorValue && touchedValue ? "has-error" : "") : ""} ${className || ""}`}>
       <label className="font-normal" htmlFor={name}>
         {title}{" "}
       </label>
