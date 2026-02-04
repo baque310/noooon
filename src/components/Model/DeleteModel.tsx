@@ -22,7 +22,7 @@ const DeleteModel = ({
 }) => {
   const { t } = getTranslation();
   return (
-    <Model title={title} open={open} setOpen={setOpen}>
+    <Model title={title} open={open} setOpen={setOpen} className="z-[3000]">
       <div>
         <h3 className="font-bold my-3  ">
           {description} <span className=" font-bold text-red-700 px-1">{name}</span>

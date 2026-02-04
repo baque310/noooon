@@ -1,18 +1,45 @@
 "use client";
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import PageComponent from "../createOrUpdate/_components/PageComponent";
+import DetailsPageComponent from "../[id]/_components/PageComponent";
 
 interface HomeworkModalProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onSuccess?: () => void;
+  homeworkId?: string;
 }
 
-const HomeworkModal = ({ open, setOpen, onSuccess }: HomeworkModalProps) => {
+const HomeworkModal = ({ open, setOpen, onSuccess, homeworkId }: HomeworkModalProps) => {
+  const [viewMode, setViewMode] = useState<"details" | "edit" | "create">("create");
+
+  useEffect(() => {
+    if (open) {
+      if (homeworkId) {
+        setViewMode("details");
+      } else {
+        setViewMode("create");
+      }
+    }
+  }, [open, homeworkId]);
+
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const getTitle = () => {
+    switch (viewMode) {
+      case "create":
+        return "إضافة واجب جديد";
+      case "edit":
+        return "تعديل الواجب";
+      case "details":
+        return "تفاصيل الواجب";
+      default:
+        return "";
+    }
   };
 
   return (
@@ -49,7 +76,7 @@ const HomeworkModal = ({ open, setOpen, onSuccess }: HomeworkModalProps) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                       </svg>
                     </div>
-                    <span>إضافة واجب جديد</span>
+                    <span>{getTitle()}</span>
                   </h3>
 
                   <button onClick={handleClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
@@ -61,7 +88,11 @@ const HomeworkModal = ({ open, setOpen, onSuccess }: HomeworkModalProps) => {
 
                 {/* Scrollable Body (overlay scrollbar) */}
                 <div className="flex-1 overflow-y-auto overlay-scrollbar p-2 pl-1 space-y-6">
-                  <PageComponent isModal={true} onClose={handleClose} onSuccess={onSuccess} />
+                  {viewMode === "details" ? (
+                    <DetailsPageComponent isModal={true} onClose={handleClose} onEdit={() => setViewMode("edit")} id={homeworkId} />
+                  ) : (
+                    <PageComponent isModal={true} onClose={handleClose} onSuccess={onSuccess} id={homeworkId} />
+                  )}
                 </div>
               </Dialog.Panel>
             </Transition.Child>

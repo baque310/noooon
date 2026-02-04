@@ -48,13 +48,15 @@ interface PageComponentProps {
   isModal?: boolean;
   onClose?: () => void;
   onSuccess?: () => void;
+  id?: string;
 }
 
-const PageComponent: React.FC<PageComponentProps> = ({ isModal = false, onClose, onSuccess }) => {
+const PageComponent: React.FC<PageComponentProps> = ({ isModal = false, onClose, onSuccess, id: propId }) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const queryId = searchParams.get("id");
+  const id = propId || queryId;
 
   // Fetching data
   const { currentData: settings, isFetching: isFetchingSettings } = useSettingGetDataQuery();
@@ -94,7 +96,7 @@ const PageComponent: React.FC<PageComponentProps> = ({ isModal = false, onClose,
   useEffect(() => {
     if (id) {
       fetchHomeworkById({ id }).then((res) => {
-        if (!res.data) router.back();
+        if (!res.data && !isModal) router.back();
       });
     }
   }, [id]);

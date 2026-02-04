@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
@@ -16,22 +14,30 @@ import DeleteModel from "@/components/Model/DeleteModel";
 import { HomeworkAttachment } from "./HomeworkAttachment";
 import { StudentHomework } from "./StudentHomework";
 
-const PageComponent = () => {
+interface PageComponentProps {
+  id?: string;
+  isModal?: boolean;
+  onEdit?: () => void;
+  onClose?: () => void;
+}
+
+const PageComponent = ({ id: propId, isModal = false, onEdit, onClose }: PageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const params = useParams();
-  const { id } = params;
+  const id = propId || params?.id;
   const [TeacherHomeworksGetDataById, { currentData: data, isFetching }] = useLazyTeacherHomeworksGetDataByIdQuery();
 
   useEffect(() => {
     if (id) {
       TeacherHomeworksGetDataById({ id: String(id) }).then((data) => {
-        if (!data.data) {
+        if (!data.data && !isModal) {
           router.back();
         }
       });
     }
-  }, [id]);
+  }, [id, isModal]);
+
   const [openDelete, setOpenDelete] = useState(false);
 
   const [TeacherHomeworksRemove, { isLoading: isLoadingTeacherHomeworksRemove }] = useTeacherHomeworksRemoveMutation();
@@ -40,7 +46,11 @@ const PageComponent = () => {
     try {
       await TeacherHomeworksRemove({ id: String(id) }).unwrap();
       toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
-      router.back();
+      if (isModal) {
+        onClose?.();
+      } else {
+        router.back();
+      }
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error && error.message) {
@@ -51,11 +61,13 @@ const PageComponent = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <BackButton title={t("TeacherHomeworksPage.infoTeacherHomeworks")} />
-        </div>
+    <div className={isModal ? "" : "max-w-4xl mx-auto"}>
+      <div className={isModal ? "px-6 py-2" : "max-w-5xl mx-auto px-6 py-8"}>
+        {!isModal && (
+          <div className="mb-6">
+            <BackButton title={t("TeacherHomeworksPage.infoTeacherHomeworks")} />
+          </div>
+        )}
 
         {isFetching ? (
           <div className="flex justify-center py-12">
@@ -64,22 +76,24 @@ const PageComponent = () => {
         ) : (
           <div className="space-y-6">
             {/* Main Homework Details */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                  {t("TeacherHomeworksPage.infoTeacherHomeworks")}
-                </h2>
-              </div>
+            <div className={`bg-white p-2 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${isModal ? "border-0 shadow-none" : ""}`}>
+              {!isModal && (
+                <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                      />
+                    </svg>
+                    {t("TeacherHomeworksPage.infoTeacherHomeworks")}
+                  </h2>
+                </div>
+              )}
 
-              <div className="p-6 space-y-6">
+              <div className={`${isModal ? "p-0" : "p-6"} space-y-6`}>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("TeacherHomeworksPage.title")}</label>
                   <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
@@ -150,7 +164,8 @@ const PageComponent = () => {
             </div>
 
             {/* Statistics */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div
+              className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${isModal ? "border-0 shadow-none border-t rounded-none" : ""}`}>
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t("TeacherHomeworksPage.statisticsOverview")}</h3>
               </div>
@@ -186,14 +201,21 @@ const PageComponent = () => {
             <StudentHomework data={data} />
 
             {/* Actions */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div
+              className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${isModal ? "border-0 shadow-none border-t rounded-none" : ""}`}>
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t("common.settings")}</h3>
               </div>
 
               <div className="p-6 flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => router.push(`/teacherHomeworks/createOrUpdate?id=${id}`)}
+                  onClick={() => {
+                    if (isModal && onEdit) {
+                      onEdit();
+                    } else {
+                      router.push(`/teacherHomeworks/createOrUpdate?id=${id}`);
+                    }
+                  }}
                   className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path

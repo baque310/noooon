@@ -23,6 +23,7 @@ import FormattedDate, { FormattedDate2 } from "@/components/common/FormattedDate
 import HomeworkModal from "./HomeworkModal";
 
 const TableComponent = () => {
+  const [selectedHomeworkId, setSelectedHomeworkId] = useState<string | undefined>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = getTranslation();
   const router = useRouter();
@@ -200,7 +201,9 @@ const TableComponent = () => {
       sessionStorage.setItem("teacherHomeworks_scrollPosition", window.scrollY.toString());
     }
     updateIsSeen({ id: item.record.id as string, status: "TRUE" });
-    router.push(`/teacherHomeworks/${item.record.id}`);
+    // router.push(`/teacherHomeworks/${item.record.id}`);
+    setSelectedHomeworkId(item.record.id);
+    setIsModalOpen(true);
   };
 
   // Calculate statistics
@@ -244,7 +247,10 @@ const TableComponent = () => {
             component={(props) => (
               <button
                 className={`${props.disabled && "hidden"} flex w-full items-center gap-2 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors shadow-sm`}
-                onClick={() => setIsModalOpen(true)}>
+                onClick={() => {
+                  setSelectedHomeworkId(undefined);
+                  setIsModalOpen(true);
+                }}>
                 <AddIcons className="h-4 w-4" />
                 {t("HomeworksPage.addNewHomework")}
               </button>
@@ -627,6 +633,7 @@ const TableComponent = () => {
       <HomeworkModal
         open={isModalOpen}
         setOpen={setIsModalOpen}
+        homeworkId={selectedHomeworkId}
         onSuccess={() => {
           setIsModalOpen(false);
           // Optionally refetch data here if needed
