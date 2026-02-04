@@ -63,7 +63,7 @@ const PageComponent = ({ id: propId, isModal = false, onEdit, onClose }: PageCom
 
   return (
     <div className={isModal ? "" : "max-w-4xl mx-auto"}>
-      <div className={isModal ? "px-6 py-2" : "max-w-5xl mx-auto px-6 py-8"}>
+      <div className={isModal ? "p-6" : "max-w-5xl mx-auto p-6"}>
         {!isModal && (
           <div className="mb-6">
             <BackButton title={t("TeacherHomeworksPage.infoTeacherHomeworks")} />
@@ -77,7 +77,7 @@ const PageComponent = ({ id: propId, isModal = false, onEdit, onClose }: PageCom
         ) : (
           <div className="space-y-6">
             {/* Main Homework Details */}
-            <div className={`bg-white p-2 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${isModal ? "border-0 shadow-none" : ""}`}>
+            <div className={`bg-white p-4 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${isModal ? "border-0 shadow-none" : ""}`}>
               {!isModal && (
                 <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                   <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
