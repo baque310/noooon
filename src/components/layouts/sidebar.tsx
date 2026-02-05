@@ -133,7 +133,7 @@ const Sidebar = () => {
               wheelPropagation: false,
             }}
             style={{
-              direction: isRTL ? "ltr" : "rtl",
+              direction: isRTL ? "rtl" : "ltr",
             }}>
             <div style={{ direction: isRTL ? "rtl" : "ltr" }}>
               {isLoading || isFetchingAdminGetDataById ? (
