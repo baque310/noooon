@@ -31,6 +31,7 @@ import {
   UserRoundCheck,
   Video,
   BookText,
+  Scale,
 } from "lucide-react";
 import { useGetAdminCountQuery } from "@/services/admin/Dashboard";
 import MenuSubItem from "../common/Menu/MenuSubitems";
@@ -488,6 +489,16 @@ const Sidebar = () => {
                     label={t("sidebar.teacher_library")}
                     number={adminCountData?.lessonsCountToday ?? 0}
                     icon={<BookText className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
+                  />
+
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"library"}
+                    // resource={"behaviors"}
+                    toggleMenu={toggleMenu}
+                    to={"/behaviors"}
+                    label={t("sidebar.Behaviors")}
+                    icon={<Scale className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
                   />
 
                   <MenuSubItem

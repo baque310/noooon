@@ -9,7 +9,7 @@ import { signOut } from "next-auth/react";
 
 const axiosBaseQuery =
   (
-    { baseUrl }: { baseUrl: string } = { baseUrl: "" }
+    { baseUrl }: { baseUrl: string } = { baseUrl: "" },
   ): BaseQueryFn<
     {
       url: string;
@@ -143,6 +143,27 @@ export const api = createApi({
     "StageGetDataById",
     "StageCreate",
     "StageRemove",
+
+    // BehaviorType Tag
+    "BehaviorTypeGetData",
+    "BehaviorTypeGetDataById",
+    "BehaviorTypeCreate",
+    "BehaviorTypeRemove",
+    "BehaviorTypeUpdate",
+
+    // BehaviorSection Tag
+    "BehaviorSectionGetData",
+    "BehaviorSectionGetDataById",
+    "BehaviorSectionCreate",
+    "BehaviorSectionRemove",
+    "BehaviorSectionUpdate",
+
+    // Behaviors Tag
+    "BehaviorsGetData",
+    "BehaviorsGetDataById",
+    "BehaviorsCreate",
+    "BehaviorsRemove",
+    "BehaviorsUpdate",
 
     // Class Tag
     "ClassGetData",

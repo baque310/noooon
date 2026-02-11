@@ -22,6 +22,8 @@ export const MenuItem = ({
   permission: PERMISSION | PERMISSION[];
 }) => {
   const [isActive, setIsActive] = useState(false);
+  // console.log(resource);
+  // console.log(permission);
 
   return (
     <li className={`nav-item text-base pr-4 ${isActive && "hidden"}`} onClick={() => toggleMenu(to)}>
