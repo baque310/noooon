@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
+
 import { getTranslation } from "@/ni18n/i18n";
-import * as Yup from "yup";
-
-import { FormikHelpers } from "formik";
-import { useSearchParams, useRouter } from "next/navigation";
 import { AddStudentPayload, useLazyStudentGetDataByIdQuery, useStudentCreateMultiMutation, useStudentCreateMutation, useStudentUpdateMutation } from "@/services/admin/student";
-
-import { Tab, TabOption } from "@/app/(defaults)/(admin)/student/_components/student/Tab";
-import SingleAdd from "@/app/(defaults)/(admin)/student/_components/student/SingleAdd";
-import MuiltAdd from "@/app/(defaults)/(admin)/student/_components/student/MuiltAdd";
-import ExcelAdd from "@/app/(defaults)/(admin)/student/_components/student/ExcelAdd";
+import { FormikHelpers } from "formik";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import * as Yup from "yup";
 
 export interface FormValues extends AddStudentPayload {}
 export interface FormValuesMulti {
@@ -26,17 +23,28 @@ export interface FormValuesMulti {
   p_phone: string;
 }
 
-const PageComponent = () => {
+import { Tab, TabOption } from "./Tab";
+import SingleAdd from "./SingleAdd";
+import MuiltAdd from "./MuiltAdd";
+import ExcelAdd from "./ExcelAdd";
+
+interface PageComponentProps {
+  isModal?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+  id?: string;
+}
+
+const StudentAddEdit = ({ isModal = false, onClose, onSuccess, id: propId }: PageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryId = searchParams.get("id");
-  const id = queryId || undefined;
-
+  const id = propId || queryId;
   const [selected, setSelected] = useState<TabOption>("add");
   const [StudentGetDataById, { currentData: data, isFetching }] = useLazyStudentGetDataByIdQuery();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (id) {
       StudentGetDataById({ id: String(id) }).then((data) => {
         if (!data.data) {
@@ -81,13 +89,14 @@ const PageComponent = () => {
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
+      if (onSuccess) onSuccess();
       if (id) {
         router.back();
       }
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
-        if (error.message == `Resource already exists. More details: {"modelName":"Student","target":"students_email_key"}`) {
+        if (error.message == `Resource already exists. More details: {\"modelName\":\"Student\",\"target\":\"students_email_key\"}`) {
           return toast.error(t("StudentPage.email-already-exists"), {
             autoClose: 30000,
           });
@@ -122,13 +131,14 @@ const PageComponent = () => {
 
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000 });
       resetForm();
+      if (onSuccess) onSuccess();
       if (id) {
         router.back();
       }
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
-        if (error.message == `Resource already exists. More details: {"modelName":"Student","target":"students_email_key"}`) {
+        if (error.message == `Resource already exists. More details: {\"modelName\":\"Student\",\"target\":\"students_email_key\"}`) {
           return toast.error(t("StudentPage.email-already-exists"), {
             autoClose: 30000,
           });
@@ -166,12 +176,10 @@ const PageComponent = () => {
 
   return (
     <div className="mx-auto my-0 max-md:max-w-[100%]">
-      <BackButton title={t(id ? "StudentPage.update-info" : "StudentPage.add")} />
+      {/* <BackButton title={t(id ? "StudentPage.update-info" : "StudentPage.add")} /> */}
 
       {isFetching ? (
-        <div className="flex justify-center py-10">
-          <div className="loader !bg-primary" />
-        </div>
+        <LoadingForm />
       ) : !id ? (
         <>
           <Tab selected={selected} setSelected={setSelected} />
@@ -184,10 +192,12 @@ const PageComponent = () => {
           )}
         </>
       ) : (
-        <SingleAdd id={id} t={t} data={data} studentSchema={studentSchema} handleSubmit={handleSubmit} isLoadingStudentUpdate={isLoadingStudentUpdate} />
+        <>
+          <SingleAdd id={id} t={t} data={data} studentSchema={studentSchema} handleSubmit={handleSubmit} isLoadingStudentUpdate={isLoadingStudentUpdate} />
+        </>
       )}
     </div>
   );
 };
 
-export default PageComponent;
+export default StudentAddEdit;

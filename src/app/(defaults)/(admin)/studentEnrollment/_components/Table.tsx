@@ -24,6 +24,9 @@ import { useSettingGetDataQuery } from "@/services/Setting";
 import SelectFilter from "@/components/Filter/SelectFilter";
 import { exportJsonToExcel } from "@/utils/excelParser";
 import FormattedDate from "@/components/common/FormattedDate";
+import StudentEnrollmentModal from "./StudentEnrollmentModal";
+import { useStudentGetDataHasNoEnrollmentQuery } from "@/services/admin/student";
+import { BASE_URL } from "@/services/api";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -41,6 +44,8 @@ const TableComponent = () => {
   const { isMounted } = useMounted();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
   const [pageNumber, setPageNumber] = useState(Number(1));
+  const [selectedEnrollmentId, setSelectedEnrollmentId] = useState<string | undefined>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
   const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
 
@@ -74,13 +79,20 @@ const TableComponent = () => {
       ...(search ? { search: search as string } : {}),
       ...(param ?? {}),
     }),
-    [pageNumber, sortStatus, search, param]
+    [pageNumber, sortStatus, search, param],
   );
 
-  const { isFetching: isFetching, currentData: data } = useStudentEnrollmentGetDataQuery({
+  // const { isFetching: isFetching, currentData: data } = useStudentEnrollmentGetDataQuery({
+  //   ...params,
+  //   skip: pageNumber,
+  // });
+
+  const { currentData: data, isFetching: isFetching } = useStudentGetDataHasNoEnrollmentQuery({
     ...params,
     skip: pageNumber,
+    schoolYearId: Setting?.currentSchoolYearId,
   });
+  console.log(data);
 
   const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
@@ -232,7 +244,8 @@ const TableComponent = () => {
                           props.disabled && "hidden"
                         } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border  ltr:rounded-r-none rtl:rounded-l-none`}
                         onClick={() => {
-                          router.push("/studentEnrollment/createOrUpdate");
+                          setSelectedEnrollmentId(undefined);
+                          setIsModalOpen(true);
                         }}>
                         {t("common.add")}
                       </button>
@@ -344,67 +357,48 @@ const TableComponent = () => {
         {isMounted && (
           <DataTable
             onRowClick={async (item) => {
-              router.push(`/studentEnrollment/${item.record.id}`);
+              setSelectedEnrollmentId(item.record.id);
+              setIsModalOpen(true);
             }}
             fetching={isFetching}
             className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
             records={data?.data as any}
             columns={[
               {
+                title: t("StudentEnrollmentPage.photo"),
+                accessor: "photo",
+                render: (row: any) => (
+                  <div className="mx-auto h-10 w-10 overflow-hidden rounded-full border-2 border-white dark:border-gray-700 bg-slate-100 dark:bg-gray-800 shadow-sm">
+                    <img
+                      src={row.photo ? `${BASE_URL}uploads/${row.photo}` : `https://api.dicebear.com/7.x/avataaars/svg?seed=${row.User?.username}`}
+                      alt={row.fullName || ""}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ),
+              },
+              {
                 title: t("StudentEnrollmentPage.StudentFullName"),
-                accessor: "Student.fullName",
+                accessor: "fullName",
                 // sortable: true,
               },
               {
                 title: t("StudentEnrollmentPage.StudentUsername"),
-                accessor: "Student.User.username",
+                accessor: "User.username",
                 // sortable: true,
-                render: ({ Student }: any) => (
+                render: ({ User }: any) => (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">{Student?.User?.username}</span>
+                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">{User?.username}</span>
                   </div>
                 ),
               },
               {
-                title: t("StudentEnrollmentPage.SchoolYear"),
-                accessor: "SchoolYear",
+                title: t("StudentEnrollmentPage.StudentFullName"),
+                accessor: "gender",
                 // sortable: true,
-                render: ({ SchoolYear }: any) => SchoolYear.from + " - " + SchoolYear.to,
-              },
-              {
-                title: t("StudentEnrollmentPage.StageName"),
-                accessor: "Stage.name",
-                // sortable: true,
-                render: ({ Stage }: any) => t(Stage.name),
-              },
-              {
-                title: t("StudentEnrollmentPage.ClassName"),
-                accessor: "Class.name",
-                // sortable: true,
-              },
-              {
-                title: t("StudentEnrollmentPage.SectionName"),
-                accessor: "Section.name",
-                // sortable: true,
-                render: ({ Section }: any) => t(Section.name),
-              },
-              {
-                title: t("common.updatedAt"),
-                accessor: "updatedAt",
-                render: (row: any) => (
-                  <div className="text-center">
-                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
-                    <FormattedDate date={row.updatedAt} />
-                  </div>
-                ),
-              },
-              {
-                title: t("common.createdAt"),
-                accessor: "createdAt",
-                render: (row: any) => (
-                  <div className="text-center">
-                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
-                    <FormattedDate date={row.createdAt} />
+                render: ({ gender }: any) => (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">{t(gender as any)}</span>
                   </div>
                 ),
               },
@@ -442,6 +436,16 @@ const TableComponent = () => {
         handleRemove={handleRemove}
         isLoading={isLoadingStudentEnrollmentRemove}
         name={`${selectedRecords.length}`}
+      />
+
+      {/* Student Enrollment Modal */}
+      <StudentEnrollmentModal
+        open={isModalOpen}
+        setOpen={setIsModalOpen}
+        enrollmentId={selectedEnrollmentId}
+        onSuccess={() => {
+          setIsModalOpen(false);
+        }}
       />
     </div>
   );

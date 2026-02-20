@@ -169,7 +169,15 @@
     "exam": "Exam Information",
     "examType": "Exam Type",
     "examResult": "Exam Results",
-    "video": "Videos"
+    "video": "Videos",
+    "studentTest": "Students Management",
+    "StudentEnrollmentUsername": "Username",
+    "sub_subject": "Sub-Subjects",
+    "teacher_library": "Teacher Library",
+    "Behaviors": "Behaviors",
+    "discount": "Discounts",
+    "studentOtherPayment": "Other Payments",
+    "alerts": "Alerts"
   },
   "SupperAdminPage": {
     "supperAdmin": "Super Admins",

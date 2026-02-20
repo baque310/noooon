@@ -39,7 +39,7 @@ const SelectFilter = ({
   }, [value, options]);
 
   return (
-    <div className="dropdown shrink-0 min-w-[160px] flex-1 max-w-[240px]">
+    <div className="dropdown shrink-0 min-w-[160px] flex-1 max-w-[300px]">
       <div className="flex flex-col gap-2">
         <label className={`text-sm font-bold flex items-center gap-1.5 ${disabled ? "text-gray-400 dark:text-gray-600" : "text-gray-800 dark:text-white"}`}>
           {icon && <span className={disabled ? "text-gray-400" : "text-primary"}>{icon}</span>}

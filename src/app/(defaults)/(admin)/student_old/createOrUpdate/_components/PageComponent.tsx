@@ -1,20 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { LoadingForm } from "@/components/Form/loadingForm";
 import { BackButton } from "@/components/common/BackButton";
+
 import { getTranslation } from "@/ni18n/i18n";
-import * as Yup from "yup";
-
-import { FormikHelpers } from "formik";
-import { useSearchParams, useRouter } from "next/navigation";
 import { AddStudentPayload, useLazyStudentGetDataByIdQuery, useStudentCreateMultiMutation, useStudentCreateMutation, useStudentUpdateMutation } from "@/services/admin/student";
-
-import { Tab, TabOption } from "@/app/(defaults)/(admin)/student/_components/student/Tab";
-import SingleAdd from "@/app/(defaults)/(admin)/student/_components/student/SingleAdd";
-import MuiltAdd from "@/app/(defaults)/(admin)/student/_components/student/MuiltAdd";
-import ExcelAdd from "@/app/(defaults)/(admin)/student/_components/student/ExcelAdd";
+import { FormikHelpers } from "formik";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-
+import * as Yup from "yup";
 export interface FormValues extends AddStudentPayload {}
 export interface FormValuesMulti {
   studentsData: {
@@ -25,18 +21,27 @@ export interface FormValuesMulti {
   p_name: string;
   p_phone: string;
 }
+import { Tab, TabOption } from "./Tab";
+import SingleAdd from "./SingleAdd";
+import MuiltAdd from "./MuiltAdd";
+import ExcelAdd from "./ExcelAdd";
 
-const PageComponent = () => {
+interface PageComponentProps {
+  isModal?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+  id?: string;
+}
+
+const PageComponent = ({ isModal = false, onClose, onSuccess, id: propId }: PageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryId = searchParams.get("id");
-  const id = queryId || undefined;
-
+  const id = propId || queryId;
   const [selected, setSelected] = useState<TabOption>("add");
   const [StudentGetDataById, { currentData: data, isFetching }] = useLazyStudentGetDataByIdQuery();
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (id) {
       StudentGetDataById({ id: String(id) }).then((data) => {
         if (!data.data) {
@@ -68,6 +73,7 @@ const PageComponent = () => {
           id: String(id),
         }).unwrap();
       } else {
+        // remove if values is '' or undefined or null ?
         Object.keys(values).forEach((key) => {
           if ((values as any)[key] === undefined || (values as any)[key] === "") {
             delete (values as any)[key];
@@ -87,7 +93,7 @@ const PageComponent = () => {
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
-        if (error.message == `Resource already exists. More details: {"modelName":"Student","target":"students_email_key"}`) {
+        if (error.message == `Resource already exists. More details: {\"modelName\":\"Student\",\"target\":\"students_email_key\"}`) {
           return toast.error(t("StudentPage.email-already-exists"), {
             autoClose: 30000,
           });
@@ -100,7 +106,6 @@ const PageComponent = () => {
       toast.error(error, { autoClose: 30000 });
     }
   };
-
   const handleSubmitMulti = async (values: FormValuesMulti, { setSubmitting, resetForm }: FormikHelpers<FormValuesMulti>) => {
     try {
       await StudentCreateMulti({
@@ -128,7 +133,7 @@ const PageComponent = () => {
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error) {
-        if (error.message == `Resource already exists. More details: {"modelName":"Student","target":"students_email_key"}`) {
+        if (error.message == `Resource already exists. More details: {\"modelName\":\"Student\",\"target\":\"students_email_key\"}`) {
           return toast.error(t("StudentPage.email-already-exists"), {
             autoClose: 30000,
           });
@@ -138,7 +143,6 @@ const PageComponent = () => {
       toast.error(error, { autoClose: 30000 });
     }
   };
-
   const studentSchema = Yup.object().shape({
     fullName: Yup.string().required(t("common.this-field-is-required")),
     phone1: Yup.string()
@@ -148,45 +152,48 @@ const PageComponent = () => {
     email: Yup.string().email(t("common.invalid-email")).optional(),
     gender: Yup.string().oneOf(["Male", "Female"], t("common.invalid-gender")).required(t("common.this-field-is-required")),
   });
-
   const studentSchemaMulti = Yup.object().shape({
     studentsData: Yup.array().of(
       Yup.object().shape({
         s_name: Yup.string().required(t("common.this-field-is-required")),
         s_phone: Yup.string()
+          // 07xxxxxxxxx
           .matches(/^07\d{9}$/, t("common.invalid-phone"))
           .required(t("common.this-field-is-required")),
       }),
     ),
     p_name: Yup.string().required(t("common.this-field-is-required")),
     p_phone: Yup.string()
+      // 07xxxxxxxxx
       .matches(/^07\d{9}$/, t("common.invalid-phone"))
       .required(t("common.this-field-is-required")),
   });
 
   return (
-    <div className="mx-auto my-0 max-md:max-w-[100%]">
-      <BackButton title={t(id ? "StudentPage.update-info" : "StudentPage.add")} />
+    <>
+      <div className="mx-auto my-0 max-md:max-w-[100%]">
+        <BackButton title={t(id ? "StudentPage.update-info" : "StudentPage.add")} />
 
-      {isFetching ? (
-        <div className="flex justify-center py-10">
-          <div className="loader !bg-primary" />
-        </div>
-      ) : !id ? (
-        <>
-          <Tab selected={selected} setSelected={setSelected} />
-          {selected == "add" ? (
-            <SingleAdd id={id} t={t} data={data} studentSchema={studentSchema} handleSubmit={handleSubmit} isLoadingStudentUpdate={isLoadingStudentCreate} />
-          ) : selected == "muilt" ? (
-            <MuiltAdd t={t} studentSchemaMulti={studentSchemaMulti} handleSubmitMulti={handleSubmitMulti} isLoadingStudentCreateMulti={isLoadingStudentCreateMulti} />
-          ) : (
-            <ExcelAdd />
-          )}
-        </>
-      ) : (
-        <SingleAdd id={id} t={t} data={data} studentSchema={studentSchema} handleSubmit={handleSubmit} isLoadingStudentUpdate={isLoadingStudentUpdate} />
-      )}
-    </div>
+        {isFetching ? (
+          <LoadingForm />
+        ) : !id ? (
+          <>
+            <Tab selected={selected} setSelected={setSelected} />
+            {selected == "add" ? (
+              <SingleAdd id={id} t={t} data={data} studentSchema={studentSchema} handleSubmit={handleSubmit} isLoadingStudentUpdate={isLoadingStudentCreate} />
+            ) : selected == "muilt" ? (
+              <MuiltAdd t={t} studentSchemaMulti={studentSchemaMulti} handleSubmitMulti={handleSubmitMulti} isLoadingStudentCreateMulti={isLoadingStudentCreateMulti} />
+            ) : (
+              <ExcelAdd />
+            )}
+          </>
+        ) : (
+          <>
+            <SingleAdd id={id} t={t} data={data} studentSchema={studentSchema} handleSubmit={handleSubmit} isLoadingStudentUpdate={isLoadingStudentUpdate} />
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

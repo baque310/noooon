@@ -10,22 +10,24 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import moment from "moment";
 import { RestoreIcons } from "@/components/common/icons/Actions";
-import {
-  IInstallmentPayments,
-  useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery,
-} from "@/services/admin/installmentPayment";
+import { IInstallmentPayments, useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery } from "@/services/admin/installmentPayment";
 import ChangeStatusInstallmentComponent from "./changeStatusInstallmentComponent";
-const PageComponent = () => {
+
+interface PageComponentProps {
+  id?: string;
+  isModal?: boolean;
+  onEdit?: () => void;
+  onClose?: () => void;
+}
+
+const PageComponent = ({ id: propId, isModal = false, onEdit, onClose }: PageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const params = useParams();
-  const { id } = params;
-  const [StudentEnrollmentGetDataById, { currentData: data, isFetching }] =
-    useLazyStudentEnrollmentGetDataByIdQuery();
-  const [
-    InstallmentPaymentGetDataByStudentEnrollmentId,
-    { currentData: installmentData, isFetching: isFetchingInstallment },
-  ] = useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery();
+  const id = propId || params?.id;
+  const [StudentEnrollmentGetDataById, { currentData: data, isFetching }] = useLazyStudentEnrollmentGetDataByIdQuery();
+  const [InstallmentPaymentGetDataByStudentEnrollmentId, { currentData: installmentData, isFetching: isFetchingInstallment }] =
+    useLazyInstallmentPaymentGetDataByStudentEnrollmentIdQuery();
 
   useEffect(() => {
     if (id) {
@@ -40,11 +42,9 @@ const PageComponent = () => {
     }
   }, [id]);
 
-  const [selectedInstallment, setSelectedInstallment] =
-    useState<IInstallmentPayments | null>(null);
+  const [selectedInstallment, setSelectedInstallment] = useState<IInstallmentPayments | null>(null);
   const [installmentModalOpen, setInstallmentModalOpen] = useState(false);
-  const [changeInstallmentModalOpen, setChangeInstallmentModalOpen] =
-    useState(false);
+  const [changeInstallmentModalOpen, setChangeInstallmentModalOpen] = useState(false);
 
   // Handler for update button
   const handleUpdateInstallment = (installment: IInstallmentPayments) => {
@@ -58,9 +58,7 @@ const PageComponent = () => {
 
   return (
     <div className="mx-auto my-0 mb-20 px-2 ">
-      <BackButton
-        title={t("StudentEnrollmentPage.StudentEnrollmentInformation")}
-      />
+      <BackButton title={t("StudentEnrollmentPage.StudentEnrollmentInformation")} />
 
       {isFetching ? (
         <LoadingForm />
@@ -74,64 +72,26 @@ const PageComponent = () => {
                   <circle cx="14" cy="14" r="12" fill="#14b8a6" />
                 </svg>
               </span>
-              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                {t("StudentEnrollmentPage.StudentEnrollmentInformation")}
-              </h2>
+              <h2 className="text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">{t("StudentEnrollmentPage.StudentEnrollmentInformation")}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
-              <ItemList
-                title={t("StudentEnrollmentPage.StudentFullName")}
-                value={String(data?.Student.fullName)}
-              />
-              <ItemList
-                title={t("StudentEnrollmentPage.enrollmentDate")}
-                value={
-                  data?.Student.enrollmentDate
-                    ? moment(data?.Student.enrollmentDate).format("YYYY-MM-DD")
-                    : ""
-                }
-              />
-              <ItemList
-                title={t("StudentEnrollmentPage.SchoolYear")}
-                value={
-                  String(data?.SchoolYear.from) +
-                  " - " +
-                  String(data?.SchoolYear.to)
-                }
-              />
-              <ItemList
-                title={t("StudentEnrollmentPage.StageName")}
-                value={data?.Stage.name && t(data?.Stage.name as any)}
-              />
-              <ItemList
-                title={t("StudentEnrollmentPage.ClassName")}
-                value={String(data?.Class.name)}
-              />
-              <ItemList
-                title={t("StudentEnrollmentPage.SectionName")}
-                value={data?.Section.name && t(data?.Section.name as any)}
-              />
+              <ItemList title={t("StudentEnrollmentPage.StudentFullName")} value={String(data?.Student.fullName)} />
+              <ItemList title={t("StudentEnrollmentPage.enrollmentDate")} value={data?.Student.enrollmentDate ? moment(data?.Student.enrollmentDate).format("YYYY-MM-DD") : ""} />
+              <ItemList title={t("StudentEnrollmentPage.SchoolYear")} value={String(data?.SchoolYear.from) + " - " + String(data?.SchoolYear.to)} />
+              <ItemList title={t("StudentEnrollmentPage.StageName")} value={data?.Stage.name && t(data?.Stage.name as any)} />
+              <ItemList title={t("StudentEnrollmentPage.ClassName")} value={String(data?.Class.name)} />
+              <ItemList title={t("StudentEnrollmentPage.SectionName")} value={data?.Section.name && t(data?.Section.name as any)} />
               <ItemList
                 title={t("StudentInstallmentPage.amount")}
                 value={
                   <div className="flex gap-1 items-center">
-                    <span className="font-bold text-lg text-teal-600">
-                      {data?.amount?.toLocaleString()}
-                    </span>
-                    <span className="font-bold text-teal-500 bg-teal-500/20 w-fit rounded-md flex text-xs px-2 py-1">
-                      {t("IQD")}
-                    </span>
+                    <span className="font-bold text-lg text-teal-600">{data?.amount?.toLocaleString()}</span>
+                    <span className="font-bold text-teal-500 bg-teal-500/20 w-fit rounded-md flex text-xs px-2 py-1">{t("IQD")}</span>
                   </div>
                 }
               />
-              <ItemList
-                title={t("common.updatedAt")}
-                value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")}
-              />
-              <ItemList
-                title={t("common.createdAt")}
-                value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")}
-              />
+              <ItemList title={t("common.updatedAt")} value={moment(data?.updatedAt).format("YYYY-MM-DD hh:mm:ss A")} />
+              <ItemList title={t("common.createdAt")} value={moment(data?.createdAt).format("YYYY-MM-DD hh:mm:ss A")} />
             </div>
           </div>
 
@@ -372,11 +332,7 @@ const PageComponent = () => {
           </div> */}
         </>
       )}
-      <ChangeStatusInstallmentComponent
-        data={selectedInstallment as any}
-        open={changeInstallmentModalOpen}
-        setOpen={setChangeInstallmentModalOpen}
-      />
+      <ChangeStatusInstallmentComponent data={selectedInstallment as any} open={changeInstallmentModalOpen} setOpen={setChangeInstallmentModalOpen} />
     </div>
   );
 };

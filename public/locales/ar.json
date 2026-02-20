@@ -168,6 +168,7 @@
     "parent": "أولياء الأمور",
     "notifications": "الاشعارات",
     "studentInstallment": "الاقساط",
+    "studentsInstallment": "ادارة الاقساط",
     "settings": "الاعدادات",
     "admins": "المدراء",
     "users": "المستخدمين",
@@ -200,7 +201,8 @@
     "exams": "الامتحانات",
     "exam": "معلومات الامتحان",
     "examType": "نوع الامتحان",
-    "examResult": "نتآئج الامتحانات"
+    "examResult": "نتآئج الامتحانات",
+    "studentTest": "إدارة بيانات الطلبة"
   },
   "SupperAdminPage": {
     "supperAdmin": "المدراء",
@@ -520,6 +522,7 @@
     "remainingInstallments": "المدفوعات المتبقية",
     "numberOfPaidInstallments": "عدد المدفوعات",
     "amount": "السعر",
+    "photo": "الصور",
     "StudentUsername": "اسم مستخدم",
     "AmountStudent": "السعر الافتراضي للطالب",
     "enter-AmountStudent": "ادخل السعر الافتراضي للطالب",
@@ -1333,6 +1336,8 @@
   "unpaid": "غير مدفوع",
   "paid": "مدفوع",
   "Cash": "نقداً",
+  "Male": "ذكر",
+  "Female": "أنثى",
   "Super Teacher Library": "المكتبة",
   "ADMIN": "المسؤول",
   "STUDENT": "طالب",

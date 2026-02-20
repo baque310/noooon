@@ -25,11 +25,19 @@ export interface FormValues extends AddStudentEnrollmentPayload {
   amountStudent: string;
 }
 
-const PageComponent = () => {
+interface PageComponentProps {
+  isModal?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+  id?: string;
+}
+
+const PageComponent = ({ isModal = false, onClose, onSuccess, id: propId }: PageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const queryId = searchParams.get("id");
+  const id = propId || queryId;
   const [searchStudent, setSearchStudent] = useState("");
   const [StudentEnrollmentGetDataById, { currentData: data, isFetching }] = useLazyStudentEnrollmentGetDataByIdQuery();
   useEffect(() => {
@@ -50,6 +58,8 @@ const PageComponent = () => {
     take: 100,
     schoolYearId: SchoolYearId,
   });
+  // console.log(StudentData);
+
   const { currentData: stage, isFetching: isFetchingStage } = useStageGetDataQuery();
   const { currentData: SchoolYear, isFetching: isFetchingSchoolYear } = useSchoolYearGetDataQuery();
   const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
@@ -110,7 +120,7 @@ const PageComponent = () => {
 
   return (
     <>
-      <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
+      <div className="mx-auto my-0 max-md:max-w-[100%]">
         <BackButton title={t(id ? "StudentEnrollmentPage.update-info" : "StudentEnrollmentPage.add")} />
 
         {isFetching || isFetchingSchoolYear || isFetchingSetting ? (

@@ -248,6 +248,25 @@ const Sidebar = () => {
                     </>
                   )}
 
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"student"}
+                    toggleMenu={toggleMenu}
+                    to={"/student"}
+                    label={t("sidebar.student" as any)}
+                    icon={<GraduationCap className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
+                  />
+
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"library"}
+                    // resource={"behaviors"}
+                    toggleMenu={toggleMenu}
+                    to={"/behaviors"}
+                    label={t("sidebar.Behaviors")}
+                    icon={<Scale className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
+                  />
+
                   <MenuSubItem
                     permission={["read-any", "read-own"]}
                     resource={["stage", "class", "section"]}
@@ -287,32 +306,15 @@ const Sidebar = () => {
                     toggleMenu={toggleMenu}
                     setCurrentMenu={setCurrentMenu}
                   />
+
                   <MenuSubItem
                     permission={["read-any", "read-own"]}
                     resource={["student", "student_enrollment"]}
                     name={"students"}
                     currentMenu={currentMenu}
-                    label={t("sidebar.students")}
+                    label={t("sidebar.studentsInstallment")}
                     icon={<GraduationCap className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
                     menuList={[
-                      {
-                        number: 0,
-                        label: t("sidebar.student"),
-                        resource: "student",
-                        permission: ["read-any", "read-own"],
-                        to: "student",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.studentEnrollment"),
-                        resource: "student_enrollment",
-                        permission: ["read-any", "read-own"],
-                        to: "studentEnrollment",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
                       {
                         number: 0,
                         label: t("sidebar.studentInstallment"),
@@ -489,16 +491,6 @@ const Sidebar = () => {
                     label={t("sidebar.teacher_library")}
                     number={adminCountData?.lessonsCountToday ?? 0}
                     icon={<BookText className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"library"}
-                    // resource={"behaviors"}
-                    toggleMenu={toggleMenu}
-                    to={"/behaviors"}
-                    label={t("sidebar.Behaviors")}
-                    icon={<Scale className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
                   />
 
                   <MenuSubItem
