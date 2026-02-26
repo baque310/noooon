@@ -11,6 +11,9 @@ export interface GetDataRequestParams {
   sortBy?: string;
   sortDirection?: "asc" | "desc";
   schoolYearId?: string;
+  stageId?: string;
+  classId?: string;
+  sectionId?: string;
 }
 
 export type PAGE_CODE =

@@ -5,267 +5,143 @@ import { toggleSidebar } from "@/store/themeConfigSlice";
 import { IRootState } from "@/store";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { MenuItem } from "../common/Menu/MenuItem";
 import { useSession } from "next-auth/react";
 import useNotification from "@/hooks/useNotification";
 import { usePlaySound } from "@/hooks/usePlaySound";
 import { getTranslation } from "@/ni18n/i18n";
 import {
-  Bell,
+  BellRing,
   BookCopy,
-  BookOpenText,
-  Bus,
-  CalendarDays,
-  ChevronDown,
-  ClipboardList,
-  Compass,
+  BusFront,
+  CalendarClock,
+  Award,
+  Lightbulb,
   GraduationCap,
-  Image,
-  Layers,
-  LayoutDashboard,
-  MessageCircle,
-  NotebookPen,
+  Images,
+  Network,
+  LayoutGrid,
+  MessagesSquare,
+  AlertOctagon,
   School,
-  Settings,
-  ShieldCheck,
-  UserRoundCheck,
-  Video,
-  BookText,
-  Scale,
+  Sliders,
+  Fingerprint,
+  UserCheck,
+  MonitorPlay,
+  Gavel,
+  Users,
+  Backpack,
+  Library,
+  Heart,
+  Flag,
+  FileSignature,
+  Presentation,
+  Zap,
+  Megaphone,
+  Wallet,
 } from "lucide-react";
 import { useGetAdminCountQuery } from "@/services/admin/Dashboard";
-import MenuSubItem from "../common/Menu/MenuSubitems";
 import { useAdminGetDataByIdQuery } from "@/services/Manager/Admin";
 import { getTitleApp } from "@/utils/getTitleApp";
+
+import MenuItem from "./Sidebar/MenuItem";
+import MenuSubItem from "./Sidebar/MenuSubItem";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const { t } = getTranslation();
   const pathname = usePathname();
   const [currentMenu, setCurrentMenu] = useState<string>("");
-  const [errorSubMenu, setErrorSubMenu] = useState(false);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
   const rtlClass = useSelector((state: IRootState) => state.themeConfig.rtlClass);
 
   const toggleMenu = (value: string) => {
-    setCurrentMenu((oldValue) => {
-      return oldValue === value ? "" : value;
-    });
+    setCurrentMenu((oldValue) => (oldValue === value ? "" : value));
   };
   const session = useSession();
-
   const notification = useNotification();
   const playSound = usePlaySound();
 
   useEffect(() => {
-    if (notification) {
-      playSound();
-    }
+    if (notification) playSound();
   }, [notification]);
 
-  const isLoading = session.status == "loading";
-
-  const isManager = session.data?.user.RoleType == "Manager";
-  // ||
-  // session.data?.user.RoleType == "Admin";
-
-  const { currentData: DataAdminGetDataById, isFetching: isFetchingAdminGetDataById } = useAdminGetDataByIdQuery({ id: String(session?.data?.user.id) });
+  const isLoading = session.status === "loading";
+  const isManager = session.data?.user.RoleType === "Manager";
+  const { currentData: DataAdminGetDataById, isFetching: isFetchingAdminGetDataById } =
+    useAdminGetDataByIdQuery({ id: String(session?.data?.user.id) });
 
   useEffect(() => {
-    const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
-    if (selector) {
-      selector.classList.add("active");
-      const ul: any = selector.closest("ul.sub-menu");
-      if (ul) {
-        let ele: any = ul.closest("li.menu").querySelectorAll(".nav-link") || [];
-        if (ele.length) {
-          ele = ele[0];
-          setTimeout(() => {
-            ele.click();
-          });
-        }
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    setActiveRoute();
     if (window.innerWidth < 1024 && themeConfig.sidebar) {
       dispatch(toggleSidebar());
     }
   }, [pathname]);
 
-  const setActiveRoute = () => {
-    let allLinks = document.querySelectorAll(".sidebar ul a.active");
-    for (let i = 0; i < allLinks.length; i++) {
-      const element = allLinks[i];
-      element?.classList.remove("active");
-    }
-    const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
-    selector?.classList.add("active");
-  };
-
   const { data: adminCountData } = useGetAdminCountQuery();
-
-  // Determine if RTL based on rtlClass
   const isRTL = rtlClass === "rtl";
 
   return (
     <div className={semidark ? "dark" : ""}>
-      <nav className={`sidebar fixed bottom-0 top-0 z-50 h-[100vh] w-[280px] transition-all duration-300 ltr:left-4 rtl:right-4 ${semidark ? "text-white-dark" : ""}`}>
-        <div className={`h-full bg-white dark:bg-[#1a1a1a] `}>
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="main-logo flex shrink-0 items-center">
-              {/* <img className="ml-[5px] w-10 h-10 rounded-full flex-none" src="/favicon.png" alt="logo" /> */}
-              <span className="align-middle text-lg font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">{getTitleApp(window.location.origin)}</span>
+      <nav
+        className={`sidebar fixed bottom-4 top-4 z-[51] w-[280px] transition-all duration-300 ltr:left-4 rtl:right-4 ${semidark ? "text-white-dark" : ""
+          } ${!themeConfig.sidebar ? "ltr:-left-[300px] rtl:-right-[300px]" : ""}`}
+      >
+        <div className="h-full overflow-hidden rounded-[2.5rem] bg-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-2xl border border-white/40 dark:bg-[#1a1a1a]/90 dark:border-white/10 dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+          {/* Dashboard Header */}
+          <div className="relative flex flex-col items-center justify-center px-6 py-8 text-center pt-10">
+            <div className="absolute -top-10 -left-10 h-32 w-32 rounded-full bg-primary/20 blur-[80px]"></div>
+            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-secondary/20 blur-[80px]"></div>
+
+            <div className="mb-4 relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-primary to-secondary rounded-[1.8rem] opacity-20 blur-lg group-hover:opacity-40 transition duration-500"></div>
+              <div className="relative flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-primary to-secondary p-3 shadow-xl shadow-primary/40 transition-transform duration-500 group-hover:scale-110">
+                <GraduationCap className="h-full w-full text-white" />
+              </div>
             </div>
-            <button
-              type="button"
-              className="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
-              onClick={() => dispatch(toggleSidebar())}>
-              <ChevronDown className="m-auto rotate-90" />
-            </button>
+
+            <h2 className="text-xl font-black tracking-tight text-slate-800 dark:text-white">
+              {getTitleApp(typeof window !== 'undefined' ? window.location.origin : '')}
+            </h2>
+
           </div>
+
           <PerfectScrollbar
-            className="relative h-[calc(100vh-80px)]"
-            options={{
-              suppressScrollX: true,
-              wheelPropagation: false,
-            }}
-            style={{
-              direction: isRTL ? "rtl" : "ltr",
-            }}>
-            <div style={{ direction: isRTL ? "rtl" : "ltr" }}>
+            className="relative h-[calc(100vh-180px)]"
+            options={{ suppressScrollX: true, wheelPropagation: false }}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
+          >
+            <div className="pb-32">
               {isLoading || isFetchingAdminGetDataById ? (
-                <ul className="relative space-y-1.5 mt-4 p-4 py-0 font-semibold">
-                  {Array.from({ length: 15 }, (_, index) => (
-                    <li key={index} className="bg-white/50 h-9 w-full rounded-lg animate-pulse"></li>
+                <ul className="space-y-4 px-6 mt-4">
+                  {Array.from({ length: 8 }, (_, index) => (
+                    <li key={index} className="h-12 w-full rounded-2xl bg-slate-100 animate-pulse dark:bg-white/5"></li>
                   ))}
                 </ul>
               ) : (
-                <ul className="relative space-y-0.5 mt-4 py-0 font-semibold">
-                  {isManager && (
+                <ul className="space-y-1 pt-2">
+                  <li className="px-8 pb-3 pt-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                    القائمة الرئيسية
+                  </li>
+
+                  {isManager ? (
                     <>
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"dashboard"}
-                        toggleMenu={toggleMenu}
-                        to={"/"}
-                        label={t("sidebar.dashboard")}
-                        icon={<LayoutDashboard className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"admin"}
-                        toggleMenu={toggleMenu}
-                        to={"/admin"}
-                        label={t("sidebar.admins")}
-                        icon={<ShieldCheck className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"school"}
-                        toggleMenu={toggleMenu}
-                        to={"/school"}
-                        label={t("sidebar.schools")}
-                        icon={<School className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"banner"}
-                        toggleMenu={toggleMenu}
-                        to={"/managerBanner"}
-                        label={t("sidebar.banner")}
-                        icon={<Image className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"user"}
-                        toggleMenu={toggleMenu}
-                        to={"/user"}
-                        label={t("sidebar.users")}
-                        icon={<GraduationCap className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"complaint"}
-                        toggleMenu={toggleMenu}
-                        to={"/complaint"}
-                        label={t("sidebar.complaint")}
-                        number={adminCountData?.complaintsCount ?? 0}
-                        icon={<NotebookPen className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"setting"}
-                        toggleMenu={toggleMenu}
-                        to={"/setting"}
-                        label={t("sidebar.settings")}
-                        icon={<Settings className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"dashboard"} toggleMenu={toggleMenu} to={"/"} label={t("sidebar.dashboard")} pathname={pathname} icon={<LayoutGrid size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"admin"} toggleMenu={toggleMenu} to={"/admin"} label={t("sidebar.admins")} pathname={pathname} icon={<Fingerprint size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"school"} toggleMenu={toggleMenu} to={"/school"} label={t("sidebar.schools")} pathname={pathname} icon={<School size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"user"} toggleMenu={toggleMenu} to={"/user"} label={t("sidebar.users")} pathname={pathname} icon={<Users size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"setting"} toggleMenu={toggleMenu} to={"/setting"} label={t("sidebar.settings")} pathname={pathname} icon={<Sliders size={18} />} />
                     </>
-                  )}
-                  {!isManager && (
+                  ) : (
                     <>
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"dashboard"}
-                        toggleMenu={toggleMenu}
-                        to={"/dashboard"}
-                        label={t("sidebar.dashboard")}
-                        icon={<LayoutDashboard className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"admin"}
-                        toggleMenu={toggleMenu}
-                        to={"/supperAdmin"}
-                        label={t("sidebar.admin")}
-                        icon={<ShieldCheck className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"school"}
-                        toggleMenu={toggleMenu}
-                        to={"/adminSchool"}
-                        label={t("sidebar.school")}
-                        icon={<School className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"complaint"}
-                        toggleMenu={toggleMenu}
-                        to={"/adminComplaint"}
-                        label={t("sidebar.complaint")}
-                        number={adminCountData?.complaintsCount ?? 0}
-                        icon={<NotebookPen className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"dashboard"} toggleMenu={toggleMenu} to={"/dashboard"} label={t("sidebar.dashboard")} pathname={pathname} icon={<LayoutGrid size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"admin"} toggleMenu={toggleMenu} to={"/supperAdmin"} label={t("sidebar.admin")} pathname={pathname} icon={<Fingerprint size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"school"} toggleMenu={toggleMenu} to={"/adminSchool"} label={t("sidebar.school")} pathname={pathname} icon={<School size={18} />} />
                     </>
                   )}
 
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"student"}
-                    toggleMenu={toggleMenu}
-                    to={"/student"}
-                    label={t("sidebar.student" as any)}
-                    icon={<GraduationCap className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"library"}
-                    // resource={"behaviors"}
-                    toggleMenu={toggleMenu}
-                    to={"/behaviors"}
-                    label={t("sidebar.Behaviors")}
-                    icon={<Scale className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
+                  <li className="px-8 pb-3 pt-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                    الأكاديمي
+                  </li>
 
                   <MenuSubItem
                     permission={["read-any", "read-own"]}
@@ -273,225 +149,82 @@ const Sidebar = () => {
                     name={"stages"}
                     currentMenu={currentMenu}
                     label={t("sidebar.stages")}
-                    icon={<Layers className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                    menuList={[
-                      {
-                        number: 0,
-                        label: t("sidebar.stage"),
-                        resource: "stage",
-                        permission: ["read-any", "read-own"],
-                        to: "stage",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.class"),
-                        resource: "class",
-                        permission: ["read-any", "read-own"],
-                        to: "class",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.section"),
-                        resource: "section",
-                        permission: ["read-any", "read-own"],
-                        to: "section",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                    ]}
+                    pathname={pathname}
+                    icon={<Network size={18} />}
                     toggleMenu={toggleMenu}
-                    setCurrentMenu={setCurrentMenu}
+                    menuList={[
+                      { label: t("sidebar.stage"), resource: "stage", permission: ["read-any", "read-own"], to: "stage" },
+                      { label: t("sidebar.class"), resource: "class", permission: ["read-any", "read-own"], to: "class" },
+                      { label: t("sidebar.section"), resource: "section", permission: ["read-any", "read-own"], to: "section" },
+                    ]}
                   />
+
+                  <MenuItem permission={["read-any", "read-own"]} resource={"student"} toggleMenu={toggleMenu} to={"/student"} label={"معلومات الطلاب"} pathname={pathname} icon={<Backpack size={18} />} />
+
+                  <MenuItem permission={["read-any", "read-own"]} resource={"teacher"} toggleMenu={toggleMenu} to={"/teacher"} label={t("sidebar.teacher")} pathname={pathname} icon={<GraduationCap size={18} />} />
 
                   <MenuSubItem
                     permission={["read-any", "read-own"]}
-                    resource={["student", "student_enrollment"]}
-                    name={"students"}
-                    currentMenu={currentMenu}
-                    label={t("sidebar.studentsInstallment")}
-                    icon={<GraduationCap className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                    menuList={[
-                      {
-                        number: 0,
-                        label: t("sidebar.studentInstallment"),
-                        resource: "installment",
-                        permission: ["read-any", "read-own"],
-                        to: "installment",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.studentOtherPayment"),
-                        resource: "installment",
-                        permission: ["read-any", "read-own"],
-                        to: "otherPayment",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.discount"),
-                        resource: "discount",
-                        permission: ["read-any", "read-own"],
-                        to: "discount",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                    ]}
-                    toggleMenu={toggleMenu}
-                    setCurrentMenu={setCurrentMenu}
-                  />
-
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"teacher"}
-                    toggleMenu={toggleMenu}
-                    to={"/teacher"}
-                    label={t("sidebar.teacher")}
-                    icon={<UserRoundCheck className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-                  <MenuSubItem
-                    permission={["read-any", "read-own"]}
-                    resource={["subject", "stage_subject", "stage_subject"]}
+                    resource={["subject", "stage_subject"]}
                     name={"subjects"}
                     currentMenu={currentMenu}
                     label={t("sidebar.subjects")}
-                    icon={<BookCopy className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
+                    pathname={pathname}
+                    icon={<Library size={18} />}
+                    toggleMenu={toggleMenu}
                     menuList={[
-                      {
-                        number: 0,
-                        label: t("sidebar.subject"),
-                        resource: "subject",
-                        permission: ["read-any", "read-own"],
-                        to: "subject",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.sub_subject"),
-                        resource: "subject",
-                        permission: ["read-any", "read-own"],
-                        to: "sub-subject",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.stageSubject"),
-                        resource: "stage_subject",
-                        permission: ["read-any", "read-own"],
-                        to: "stageSubject",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.teacherSubject"),
-                        resource: "teacher_subject",
-                        permission: ["read-any", "read-own"],
-                        to: "teacherSubject",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
+                      { label: t("sidebar.subject"), resource: "subject", permission: ["read-any", "read-own"], to: "subject" },
+                      { label: t("sidebar.sub_subject"), resource: "subject", permission: ["read-any", "read-own"], to: "sub-subject" },
+                      { label: t("sidebar.stageSubject"), resource: "stage_subject", permission: ["read-any", "read-own"], to: "stageSubject" },
+                      { label: t("sidebar.teacherSubject"), resource: "teacher_subject", permission: ["read-any", "read-own"], to: "teacherSubject" },
                     ]}
-                    toggleMenu={toggleMenu}
-                    setCurrentMenu={setCurrentMenu}
-                  />
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"parent"}
-                    toggleMenu={toggleMenu}
-                    to={"/parent"}
-                    label={t("sidebar.parent")}
-                    icon={<UserRoundCheck className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
                   />
 
-                  <MenuItem
+                  <MenuItem permission={["read-any", "read-own"]} resource={"parent"} toggleMenu={toggleMenu} to={"/parent"} label={t("sidebar.parent")} pathname={pathname} icon={<Heart size={18} />} />
+
+                  <MenuSubItem
                     permission={["read-any", "read-own"]}
-                    resource={"bus"}
+                    resource={["installment", "discount"]}
+                    name={"installments"}
+                    currentMenu={currentMenu}
+                    label={"إدارة الأقساط"}
+                    pathname={pathname}
+                    icon={<Wallet size={18} />}
                     toggleMenu={toggleMenu}
-                    to={"/bus"}
-                    label={t("sidebar.bus")}
-                    icon={<Bus className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
+                    menuList={[
+                      { label: t("sidebar.studentInstallment"), resource: "installment", permission: ["read-any", "read-own"], to: "installment" },
+                      { label: t("sidebar.studentOtherPayment"), resource: "installment", permission: ["read-any", "read-own"], to: "otherPayment" },
+                      { label: t("sidebar.discount"), resource: "discount", permission: ["read-any", "read-own"], to: "discount" },
+                    ]}
                   />
-                  {!isManager && (
-                    <MenuItem
-                      permission={["read-any", "read-own"]}
-                      resource={"banner"}
-                      toggleMenu={toggleMenu}
-                      to={"/banner"}
-                      label={t("sidebar.banner")}
-                      icon={<Image className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                    />
+
+                  <MenuItem permission={["read-any", "read-own"]} resource={"bus"} toggleMenu={toggleMenu} to={"/bus"} label={t("sidebar.bus")} pathname={pathname} icon={<BusFront size={18} />} />
+
+
+                  <li className="px-8 pb-3 pt-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                    الأنشطة والمتابعة
+                  </li>
+
+                  <MenuItem permission={["read-any", "read-own"]} resource={"video"} toggleMenu={toggleMenu} to={"/video"} label={t("sidebar.video")} pathname={pathname} icon={<MonitorPlay size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"guidance"} toggleMenu={toggleMenu} to={"/guidance"} label={t("sidebar.guidance")} pathname={pathname} icon={<Lightbulb size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"gallery"} toggleMenu={toggleMenu} to={"/gallery"} label={t("sidebar.gallery")} pathname={pathname} icon={<Images size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"homework"} toggleMenu={toggleMenu} to={"/teacherHomeworks"} label={t("sidebar.homeworks")} pathname={pathname} number={adminCountData?.homeworkCountToday ?? 0} icon={<FileSignature size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"attendance"} toggleMenu={toggleMenu} to={"/superTeacherAttendances"} label={t("sidebar.superTeacherAttendances")} pathname={pathname} number={(adminCountData?.attendanceToday.Absent ?? 0) + (adminCountData?.attendanceToday.Present ?? 0) + (adminCountData?.attendanceToday.Vacation ?? 0)} icon={<UserCheck size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"lesson"} toggleMenu={toggleMenu} to={"/teacherLessons"} label={t("sidebar.lessons")} pathname={pathname} number={adminCountData?.lessonsCountToday ?? 0} icon={<Presentation size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"library"} toggleMenu={toggleMenu} to={"/superTeacherLibrary"} label={t("sidebar.teacher_library")} pathname={pathname} icon={<Library size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"library"} toggleMenu={toggleMenu} to={"/behaviors"} label={t("sidebar.Behaviors")} pathname={pathname} icon={<Gavel size={18} />} />
+
+                  {isManager ? (
+                    <>
+                      <MenuItem permission={["read-any", "read-own"]} resource={"banner"} toggleMenu={toggleMenu} to={"/managerBanner"} label={t("sidebar.banner")} pathname={pathname} icon={<Megaphone size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"complaint"} toggleMenu={toggleMenu} to={"/complaint"} label={t("sidebar.complaint")} pathname={pathname} number={adminCountData?.complaintsCount ?? 0} icon={<AlertOctagon size={18} />} />
+                    </>
+                  ) : (
+                    <>
+                      <MenuItem permission={["read-any", "read-own"]} resource={"banner"} toggleMenu={toggleMenu} to={"/banner"} label={t("sidebar.banner")} pathname={pathname} icon={<Flag size={18} />} />
+                      <MenuItem permission={["read-any", "read-own"]} resource={"complaint"} toggleMenu={toggleMenu} to={"/adminComplaint"} label={t("sidebar.complaint")} pathname={pathname} number={adminCountData?.complaintsCount ?? 0} icon={<AlertOctagon size={18} />} />
+                    </>
                   )}
-
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"video"}
-                    toggleMenu={toggleMenu}
-                    to={"/video"}
-                    label={t("sidebar.video")}
-                    icon={<Video className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"guidance"}
-                    toggleMenu={toggleMenu}
-                    to={"/guidance"}
-                    label={t("sidebar.guidance")}
-                    icon={<Compass className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"gallery"}
-                    toggleMenu={toggleMenu}
-                    to={"/gallery"}
-                    label={t("sidebar.gallery")}
-                    icon={<Image className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"homework"}
-                    toggleMenu={toggleMenu}
-                    to={"/teacherHomeworks"}
-                    label={t("sidebar.homeworks")}
-                    number={adminCountData?.homeworkCountToday ?? 0}
-                    icon={<NotebookPen className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"attendance"}
-                    toggleMenu={toggleMenu}
-                    to={"/superTeacherAttendances"}
-                    label={t("sidebar.superTeacherAttendances")}
-                    number={(adminCountData?.attendanceToday.Absent ?? 0) + (adminCountData?.attendanceToday.Present ?? 0) + (adminCountData?.attendanceToday.Vacation ?? 0)}
-                    icon={<CalendarDays className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"lesson"}
-                    toggleMenu={toggleMenu}
-                    to={"/teacherLessons"}
-                    label={t("sidebar.lessons")}
-                    number={adminCountData?.lessonsCountToday ?? 0}
-                    icon={<BookOpenText className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
-                  <MenuItem
-                    permission={["read-any", "read-own"]}
-                    resource={"library"}
-                    toggleMenu={toggleMenu}
-                    to={"/superTeacherLibrary"}
-                    label={t("sidebar.teacher_library")}
-                    number={adminCountData?.lessonsCountToday ?? 0}
-                    icon={<BookText className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                  />
 
                   <MenuSubItem
                     permission={["read-any", "read-own"]}
@@ -499,101 +232,88 @@ const Sidebar = () => {
                     name={"schedules"}
                     currentMenu={currentMenu}
                     label={t("sidebar.schedules")}
-                    icon={<CalendarDays className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                    menuList={[
-                      {
-                        number: 0,
-                        label: t("sidebar.schedule"),
-                        resource: "schedule",
-                        permission: ["read-any", "read-own"],
-                        to: "schedule",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.sectionSchedule"),
-                        resource: ["section_schedule", "schedule"],
-                        permission: ["read-any", "read-own"],
-                        to: "sectionSchedule",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                    ]}
+                    pathname={pathname}
+                    icon={<CalendarClock size={18} />}
                     toggleMenu={toggleMenu}
-                    setCurrentMenu={setCurrentMenu}
+                    menuList={[
+                      { label: t("sidebar.schedule"), resource: "schedule", permission: ["read-any", "read-own"], to: "schedule" },
+                      { label: t("sidebar.sectionSchedule"), resource: ["section_schedule", "schedule"], permission: ["read-any", "read-own"], to: "sectionSchedule" },
+                    ]}
                   />
+
                   <MenuSubItem
                     permission={["read-any", "read-own"]}
                     resource={["exam", "exam_type", "exam_result"]}
                     name={"exam"}
                     currentMenu={currentMenu}
                     label={t("sidebar.exams")}
-                    icon={<ClipboardList className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                    menuList={[
-                      {
-                        number: 0,
-                        label: t("sidebar.examType"),
-                        resource: "exam_type",
-                        permission: ["read-any", "read-own"],
-                        to: "examType",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.exam"),
-                        resource: "exam",
-                        permission: ["read-any", "read-own"],
-                        to: "exams",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                      {
-                        number: 0,
-                        label: t("sidebar.examResult"),
-                        resource: "exam_result",
-                        permission: ["read-any", "read-own"],
-                        to: "examResult",
-                        isNoSub: true,
-                        // icon: <IconMenuSubscription className="shrink-0 group-hover:!text-primary" />
-                      },
-                    ]}
+                    pathname={pathname}
+                    icon={<Award size={18} />}
                     toggleMenu={toggleMenu}
-                    setCurrentMenu={setCurrentMenu}
+                    menuList={[
+                      { label: t("sidebar.examType"), resource: "exam_type", permission: ["read-any", "read-own"], to: "examType" },
+                      { label: t("sidebar.exam"), resource: "exam", permission: ["read-any", "read-own"], to: "exams" },
+                      { label: t("sidebar.examResult"), resource: "exam_result", permission: ["read-any", "read-own"], to: "examResult" },
+                    ]}
                   />
-                  {!isManager && (
-                    <>
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"chat"}
-                        toggleMenu={toggleMenu}
-                        to={"/chat"}
-                        label={t("sidebar.chats")}
-                        icon={<MessageCircle className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"notification"}
-                        toggleMenu={toggleMenu}
-                        to={"/notification"}
-                        label={t("sidebar.notifications")}
-                        icon={<Bell className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                      <MenuItem
-                        permission={["read-any", "read-own"]}
-                        resource={"notification"}
-                        toggleMenu={toggleMenu}
-                        to={"/alerts"}
-                        label={t("sidebar.alerts")}
-                        icon={<Bell className="shrink-0 group-hover:!text-primary group-active:!text-white" />}
-                      />
-                    </>
-                  )}
+
+                  <li className="px-8 pb-3 pt-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                    التواصل
+                  </li>
+
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"chat"}
+                    toggleMenu={toggleMenu}
+                    to={"/chat"}
+                    label={t("sidebar.chats")}
+                    pathname={pathname}
+                    icon={<MessagesSquare size={18} />}
+                  />
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"notification"}
+                    toggleMenu={toggleMenu}
+                    to={"/notification"}
+                    label={t("sidebar.notifications")}
+                    pathname={pathname}
+                    icon={<BellRing size={18} />}
+                  />
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"notification"}
+                    toggleMenu={toggleMenu}
+                    to={"/alerts"}
+                    label={t("sidebar.alerts")}
+                    pathname={pathname}
+                    icon={<Zap size={18} />}
+                  />
+
+                  <li className="px-8 pb-3 pt-6 text-[11px] font-black uppercase tracking-[0.2em] text-slate-600 dark:text-slate-300">
+                    الأجهزة
+                  </li>
+
+                  <MenuItem
+                    permission={["read-any", "read-own"]}
+                    resource={"attendance"}
+                    toggleMenu={toggleMenu}
+                    to={"/fingerprint"}
+                    label={"نظام البصمة"}
+                    pathname={pathname}
+                    icon={<Fingerprint size={18} />}
+                  />
                 </ul>
               )}
             </div>
           </PerfectScrollbar>
+
+          {/* Footer Branding */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent p-6 dark:from-[#1a1a1a] dark:via-[#1a1a1a]">
+            <p className="text-center text-[10px] font-medium text-slate-400 dark:text-slate-500">
+              © {new Date().getFullYear()} Noon Iraq System <br />
+
+            </p>
+          </div>
         </div>
       </nav>
     </div>

@@ -1,15 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
 import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { useStudentGetDataQuery } from "@/services/admin/student";
+import { useStageGetDataQuery } from "@/services/admin/stage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AddIcons } from "@/components/common/icons/Actions";
 import { exportJsonToExcel } from "@/utils/excelParser";
 import { BASE_URL } from "@/services/api";
-import { CalendarPlus, Search as SearchIcon, ChevronRight, ChevronLeft } from "lucide-react";
+import { CalendarPlus, Search as SearchIcon, ChevronRight, ChevronLeft, Filter, X } from "lucide-react";
 import { DataTableSortStatus } from "mantine-datatable";
 import StudentModal from "./StudentModal";
 import ConnectedStudentWithParent from "./student/ConnectedStudentWithParent";
@@ -30,12 +31,19 @@ const TableComponent = () => {
   const [selectedStudentId, setSelectedStudentId] = useState<string | undefined>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [searchValue, setSearchValue] = useState(search);
+
+  // Filter states
+  const [selectedStage, setSelectedStage] = useState<string>("");
+  const [selectedClass, setSelectedClass] = useState<string>("");
+  const [selectedSection, setSelectedSection] = useState<string>("");
+
   const [param, setParam] = useState<
     | {
-        approval_status?: string;
-        search?: string;
-        range?: string;
-      }
+      approval_status?: string;
+      search?: string;
+      range?: string;
+    }
     | undefined
   >();
 
@@ -46,13 +54,32 @@ const TableComponent = () => {
     sortDirection: sortStatus.direction,
     ...(search && { search: search as string }),
     ...param,
+    ...(selectedStage && { stageId: selectedStage }),
+    ...(selectedClass && { classId: selectedClass }),
+    ...(selectedSection && { sectionId: selectedSection }),
   };
 
   const { isFetching, currentData: data } = useStudentGetDataQuery({
     ...params,
   });
 
-  const [searchValue, setSearchValue] = useState(search);
+  // Fetch stages data (includes classes and sections)
+  const { data: stagesData } = useStageGetDataQuery();
+
+  // Computed: classes based on selected stage
+  const filteredClasses = useMemo(() => {
+    if (!selectedStage || !stagesData) return [];
+    const stage = stagesData.find((s: any) => s.id === selectedStage);
+    return stage?.Class || [];
+  }, [selectedStage, stagesData]);
+
+  // Computed: sections based on selected class
+  const filteredSections = useMemo(() => {
+    if (!selectedClass || !filteredClasses) return [];
+    const cls = filteredClasses.find((c: any) => c.id === selectedClass);
+    return cls?.Section || [];
+  }, [selectedClass, filteredClasses]);
+
   const handleChange = (e: any) => {
     const value = e.target.value;
     setSearchValue(value);
@@ -79,14 +106,27 @@ const TableComponent = () => {
     const enrollment = student?.StudentEnrollment?.[0];
     return {
       stage: enrollment?.Stage?.name,
+      stageId: enrollment?.stageId,
       class: enrollment?.Class?.name,
+      classId: enrollment?.classId,
       section: enrollment?.Section?.name,
+      sectionId: enrollment?.sectionId,
     };
+  };
+
+
+
+  const hasActiveFilters = selectedStage || selectedClass || selectedSection;
+
+  const resetFilters = () => {
+    setSelectedStage("");
+    setSelectedClass("");
+    setSelectedSection("");
   };
 
   return (
     <div className="p-4">
-      {/* Header Section - Matching index.html style */}
+      {/* Header Section */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-extrabold text-gray-800 dark:text-gray-100">قائمة الطلاب الكلية</h2>
         <RolePageAndActionBasedComponent
@@ -107,7 +147,7 @@ const TableComponent = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="relative max-w-md">
           <SearchIcon className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           <input
@@ -118,6 +158,84 @@ const TableComponent = () => {
             placeholder="بحث عن طالب..."
             className="w-full rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-4 py-3 ps-10 text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition shadow-sm"
           />
+        </div>
+      </div>
+
+      {/* Filters Section */}
+      <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-2 mb-3">
+          <Filter className="w-4 h-4 text-primary" />
+          <span className="text-sm font-extrabold text-gray-700 dark:text-gray-300">فلترة حسب</span>
+          {hasActiveFilters && (
+            <button
+              onClick={resetFilters}
+              className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-600 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-lg transition mr-auto"
+            >
+              <X className="w-3 h-3" />
+              مسح الفلاتر
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Stage Filter */}
+          <div>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">المرحلة</label>
+            <select
+              value={selectedStage}
+              onChange={(e) => {
+                setSelectedStage(e.target.value);
+                setSelectedClass("");
+                setSelectedSection("");
+              }}
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2.5 text-sm font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition"
+            >
+              <option value="">الكل</option>
+              {stagesData?.map((stage: any) => (
+                <option key={stage.id} value={stage.id}>
+                  {t(stage.name)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Class Filter */}
+          <div>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">الصف</label>
+            <select
+              value={selectedClass}
+              onChange={(e) => {
+                setSelectedClass(e.target.value);
+                setSelectedSection("");
+              }}
+              disabled={!selectedStage}
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2.5 text-sm font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">الكل</option>
+              {filteredClasses?.map((cls: any) => (
+                <option key={cls.id} value={cls.id}>
+                  {t(cls.name)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Section Filter */}
+          <div>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">الشعبة</label>
+            <select
+              value={selectedSection}
+              onChange={(e) => setSelectedSection(e.target.value)}
+              disabled={!selectedClass}
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2.5 text-sm font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">الكل</option>
+              {filteredSections?.map((sec: any) => (
+                <option key={sec.id} value={sec.id}>
+                  {sec.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -164,15 +282,21 @@ const TableComponent = () => {
                   setSelectedStudentId(student.id);
                   setIsModalOpen(true);
                 }}
-                className="grid grid-cols-1 md:grid-cols-[70px_1.5fr_1fr_0.8fr_0.8fr_1.5fr_1.2fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl border-r-4 border-primary shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                className="grid grid-cols-1 md:grid-cols-[70px_1.5fr_1fr_0.8fr_0.8fr_1.5fr_1.2fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
                 {/* Photo */}
                 <div className="flex justify-center">
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm bg-gray-100 dark:bg-gray-700">
-                    <img
-                      src={student.photo ? `${BASE_URL}uploads/${student.photo}` : `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.User?.username || student.id}`}
-                      alt={student.fullName}
-                      className="w-full h-full object-cover"
-                    />
+                    {student.photo ? (
+                      <img
+                        src={`${BASE_URL}uploads/${student.photo}`}
+                        alt={student.fullName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-extrabold text-lg">
+                        {student.fullName?.charAt(0) || "?"}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -255,11 +379,10 @@ const TableComponent = () => {
                       <button
                         key={page}
                         onClick={() => setPageNumber(page)}
-                        className={`w-10 h-10 rounded-xl font-extrabold text-sm transition-all duration-200 ${
-                          pageNumber === page
-                            ? "bg-primary text-white shadow-md shadow-primary/30 scale-110"
-                            : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-primary hover:text-primary"
-                        }`}>
+                        className={`w-10 h-10 rounded-xl font-extrabold text-sm transition-all duration-200 ${pageNumber === page
+                          ? "bg-primary text-white shadow-md shadow-primary/30 scale-110"
+                          : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-primary hover:text-primary"
+                          }`}>
                         {page}
                       </button>
                     );
@@ -285,7 +408,7 @@ const TableComponent = () => {
           onClick={() => {
             exportJsonToExcel({
               data:
-                data?.data.map((item: any) => {
+                data?.data?.map((item: any) => {
                   const enrollment = getEnrollmentInfo(item);
                   return {
                     fullName: item.fullName,

@@ -9,7 +9,6 @@ import { useSettingGetDataQuery } from "@/services/Setting";
 import { useStudentEnrollmentCreateMutation } from "@/services/admin/studentEnrollment";
 import { BASE_URL } from "@/services/api";
 import { GraduationCap, Layers, LayoutGrid, UserCheck, Search, ListChecks } from "lucide-react";
-import SelectFilter from "@/components/Filter/SelectFilter";
 
 const EnrollmentRegistrationView = () => {
   const { t } = getTranslation();
@@ -132,63 +131,64 @@ const EnrollmentRegistrationView = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-6 border-b border-dashed border-gray-200 dark:border-gray-700">
           {/* Stage */}
           <div className="flex flex-col gap-2">
-            {/* <label className="flex items-center gap-2 text-xs font-extrabold text-gray-700 dark:text-gray-300">
+            <label className="flex items-center gap-2 text-xs font-extrabold text-gray-700 dark:text-gray-300">
               <Layers className="w-3.5 h-3.5 text-primary" />
-              {t("StudentEnrollmentPage.StageName")}
-            </label> */}
-            <SelectFilter
-              value={stageId || undefined}
-              placement="bottom-end"
-              title={t("StudentEnrollmentPage.enter-StageName")}
-              handleChange={handleSelectStage}
-              icon={<Layers className="w-3.5 h-3.5" />}
-              options={
-                StageData?.map((stage) => ({
-                  value: stage.id,
-                  label: t(stage.name as any),
-                })) ?? []
-              }
-            />
+              {t("StudentEnrollmentPage.enter-StageName")}
+            </label>
+            <select
+              value={stageId}
+              onChange={(e) => handleSelectStage(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2.5 text-sm font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition"
+            >
+              <option value="">{t("StudentEnrollmentPage.enter-StageName")}</option>
+              {StageData?.map((stage: any) => (
+                <option key={stage.id} value={stage.id}>
+                  {t(stage.name)}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Class */}
           <div className="flex flex-col gap-2">
-            {/* <label className="flex items-center gap-2 text-xs font-extrabold text-gray-700 dark:text-gray-300">
+            <label className="flex items-center gap-2 text-xs font-extrabold text-gray-700 dark:text-gray-300">
               <LayoutGrid className="w-3.5 h-3.5 text-primary" />
-              {t("StudentEnrollmentPage.ClassName")}
-            </label> */}
-            <SelectFilter
-              value={classId || undefined}
-              placement="bottom-end"
-              title={t("StudentEnrollmentPage.enter-ClassName")}
-              handleChange={handleSelectClass}
+              {t("StudentEnrollmentPage.enter-ClassName")}
+            </label>
+            <select
+              value={classId}
+              onChange={(e) => handleSelectClass(e.target.value)}
               disabled={!stageId}
-              icon={<LayoutGrid className="w-3.5 h-3.5" />}
-              options={availableClasses.map((cls) => ({
-                value: cls.id,
-                label: t(cls.name as any),
-              }))}
-            />
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2.5 text-sm font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">{t("StudentEnrollmentPage.enter-ClassName")}</option>
+              {availableClasses.map((cls: any) => (
+                <option key={cls.id} value={cls.id}>
+                  {t(cls.name)}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Section */}
           <div className="flex flex-col gap-2">
-            {/* <label className="flex items-center gap-2 text-xs font-extrabold text-gray-700 dark:text-gray-300">
+            <label className="flex items-center gap-2 text-xs font-extrabold text-gray-700 dark:text-gray-300">
               <GraduationCap className="w-3.5 h-3.5 text-primary" />
-              {t("StudentEnrollmentPage.SectionName")}
-            </label> */}
-            <SelectFilter
-              value={sectionId || undefined}
-              placement="bottom-end"
-              title={t("StudentEnrollmentPage.enter-SectionName")}
-              handleChange={handleSelectSection}
+              {t("StudentEnrollmentPage.enter-SectionName")}
+            </label>
+            <select
+              value={sectionId}
+              onChange={(e) => handleSelectSection(e.target.value)}
               disabled={!classId}
-              icon={<GraduationCap className="w-3.5 h-3.5" />}
-              options={availableSections.map((sec) => ({
-                value: sec.id,
-                label: t(sec.name as any),
-              }))}
-            />
+              className="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-2.5 text-sm font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <option value="">{t("StudentEnrollmentPage.enter-SectionName")}</option>
+              {availableSections.map((sec: any) => (
+                <option key={sec.id} value={sec.id}>
+                  {t(sec.name)}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -232,16 +232,14 @@ const EnrollmentRegistrationView = () => {
                     <div
                       key={student.id}
                       onClick={() => toggleStudent(student.id)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all duration-150 ${
-                        isSelected
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all duration-150 ${isSelected
                           ? "border-primary/40 bg-primary/5 dark:bg-primary/10"
                           : "border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/30 hover:bg-gray-50 dark:hover:bg-gray-700/40"
-                      }`}>
+                        }`}>
                       {/* Checkbox */}
                       <div
-                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                          isSelected ? "bg-primary border-primary" : "border-gray-300 dark:border-gray-600"
-                        }`}>
+                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${isSelected ? "bg-primary border-primary" : "border-gray-300 dark:border-gray-600"
+                          }`}>
                         {isSelected && (
                           <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -251,11 +249,17 @@ const EnrollmentRegistrationView = () => {
 
                       {/* Small Avatar */}
                       <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm bg-gray-100 dark:bg-gray-800 flex-shrink-0">
-                        <img
-                          src={student.photo ? `${BASE_URL}uploads/${student.photo}` : `https://api.dicebear.com/7.x/avataaars/svg?seed=${student.User?.username || student.id}`}
-                          alt={student.fullName || ""}
-                          className="w-full h-full object-cover"
-                        />
+                        {student.photo ? (
+                          <img
+                            src={`${BASE_URL}uploads/${student.photo}`}
+                            alt={student.fullName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-extrabold text-xs">
+                            {student.fullName?.charAt(0) || "?"}
+                          </div>
+                        )}
                       </div>
 
                       {/* Name + Code */}
