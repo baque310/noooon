@@ -73,12 +73,19 @@ export const SelectForm = <T extends FormikValues>({ formikProps, name, title, p
         isSearchable={true}
         // isLoading={isLoading}
         styles={{
+          ...props?.styles,
           control: (baseStyle) => ({
             ...baseStyle,
             backgroundColor: formikProps.submitCount ? (errorValue && touchedValue ? "#F7ECF0" : "#F3F4F6") : "#F3F4F6",
             borderColor: formikProps.submitCount ? (errorValue && touchedValue ? "rgb(231 81 90 /1)" : "#F3F4F6") : "rgb(224 230 237)",
           }),
+          menuPortal: (base) => ({
+            ...base,
+            ...(props?.styles?.menuPortal ? (props.styles.menuPortal as any)(base) : {}),
+          }),
         }}
+        menuPortalTarget={combinedProps.menuPortalTarget}
+        menuPosition={combinedProps.menuPosition}
       />
       {formikProps.submitCount ? errorValue && touchedValue ? <div className="mt-[2px] w-full p-1 text-sm text-danger">{errorValue}</div> : <></> : <></>}
     </div>

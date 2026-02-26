@@ -20,6 +20,20 @@ export interface IStudent {
   User: {
     id: string;
     username: string;
+    attachments?: {
+      id: string;
+      url_face?: string | null;
+      url_back?: string | null;
+      status: boolean;
+      approval_status: string;
+      approval_date?: string | null;
+      approval_reason?: string | null;
+      notes?: string | null;
+      AttType: {
+        id: string;
+        title: string;
+      };
+    }[];
   };
   Parent: {
     id: string;

@@ -123,6 +123,11 @@ const ConnectedStudentWithParent = ({ data, open: controlledOpen, setOpen: setCo
                     onChange: (value: any) => {
                       props.setFieldValue("parentId", value?.value || "");
                     },
+                    menuPortalTarget: typeof document !== "undefined" ? document.body : undefined,
+                    menuPosition: "fixed" as any,
+                    styles: {
+                      menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                    },
                   }}
                 />
 

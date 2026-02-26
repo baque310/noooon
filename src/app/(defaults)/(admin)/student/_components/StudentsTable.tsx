@@ -52,7 +52,7 @@ const TableComponent = () => {
     take: 30,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
-    ...(search && { search: search as string }),
+    ...(searchValue && { search: searchValue as string }),
     ...param,
     ...(selectedStage && { stageId: selectedStage }),
     ...(selectedClass && { classId: selectedClass }),
@@ -83,17 +83,12 @@ const TableComponent = () => {
   const handleChange = (e: any) => {
     const value = e.target.value;
     setSearchValue(value);
-    if (value == "") {
-      handleSearch(value);
-    }
-  };
-  const allParams = new URLSearchParams(searchParams);
-  const handleSearch = (value?: string) => {
-    if (search != searchValue) {
-      allParams.set("search", value ?? searchValue);
-      router.push(`/studentTest?${allParams.toString()}`);
+    if (value === "") {
       setPageNumber(1);
     }
+  };
+  const handleSearch = () => {
+    setPageNumber(1);
   };
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
@@ -286,11 +281,15 @@ const TableComponent = () => {
                 {/* Photo */}
                 <div className="flex justify-center">
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm bg-gray-100 dark:bg-gray-700">
-                    {student.photo ? (
+                    {student.photo && student.photo !== "null" && student.photo !== "undefined" && student.photo.trim() !== "" ? (
                       <img
-                        src={`${BASE_URL}uploads/${student.photo}`}
+                        src={student.photo.startsWith("http") ? student.photo : `${BASE_URL}uploads/${student.photo}`}
                         alt={student.fullName}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                          (e.target as HTMLImageElement).parentElement!.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-extrabold text-lg">${student.fullName?.charAt(0) || "?"}</div>`;
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-extrabold text-lg">

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { AttachmentsImage } from "@/components/common/LightboxImagePreview";
+import { BASE_URL } from "@/services/api";
 import { getTranslation } from "@/ni18n/i18n";
 import { StudentData } from "../../../student_old/[id]/_components";
 
@@ -74,7 +75,9 @@ const StudentProfileCard: React.FC<StudentProfileCardProps> = ({ data, studentId
               <div className="relative">
                 <AttachmentsImage
                   className="w-40 h-40 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-2xl transform hover:scale-105 transition-all duration-500"
-                  src={String(data?.photo || "")}
+                  src={data?.photo && data.photo !== "null" && data.photo !== "undefined" && data.photo.trim() !== ""
+                    ? (data.photo.startsWith("http") ? data.photo : `${BASE_URL}uploads/${data.photo}`)
+                    : ""}
                 />
                 {/* Status Badge */}
                 <div className="absolute -bottom-1 -right-1 w-12 h-12 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center shadow-lg">
