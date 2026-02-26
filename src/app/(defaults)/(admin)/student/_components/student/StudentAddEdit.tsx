@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-export interface FormValues extends AddStudentPayload {}
+export interface FormValues extends AddStudentPayload { }
 export interface FormValuesMulti {
   studentsData: {
     id: number;
@@ -48,7 +48,11 @@ const StudentAddEdit = ({ isModal = false, onClose, onSuccess, id: propId }: Pag
     if (id) {
       StudentGetDataById({ id: String(id) }).then((data) => {
         if (!data.data) {
-          router.back();
+          if (isModal && onClose) {
+            onClose();
+          } else {
+            router.back();
+          }
         }
       });
     }
@@ -91,7 +95,11 @@ const StudentAddEdit = ({ isModal = false, onClose, onSuccess, id: propId }: Pag
       resetForm();
       if (onSuccess) onSuccess();
       if (id) {
-        router.back();
+        if (isModal && onClose) {
+          onClose();
+        } else {
+          router.back();
+        }
       }
     } catch (error: any) {
       console.error("Failed to operation :", error);

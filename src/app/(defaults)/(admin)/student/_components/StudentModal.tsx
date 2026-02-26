@@ -53,7 +53,7 @@ const StudentModal = ({ open, setOpen, onSuccess, studentId }: StudentModalProps
       {viewMode === "details" ? (
         <StudentDetails isModal={true} onClose={handleClose} onEdit={() => setViewMode("edit")} id={studentId} />
       ) : (
-        <StudentAddEdit isModal={true} onClose={handleClose} onSuccess={onSuccess} id={studentId} />
+        <StudentAddEdit isModal={true} onClose={() => setViewMode("details")} onSuccess={onSuccess} id={studentId} />
       )}
     </Model>
   );

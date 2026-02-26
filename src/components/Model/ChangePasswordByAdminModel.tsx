@@ -97,7 +97,7 @@ export const ChangePasswordByAdminModel = ({
   return (
     <>
       {open && (
-        <Model title={t("common.changePassword")} open={open} setOpen={setOpen}>
+        <Model title={t("common.changePassword")} open={open} setOpen={setOpen} className="z-[3000]">
           <Formik<FormValues>
             initialValues={{
               newPassword: "",

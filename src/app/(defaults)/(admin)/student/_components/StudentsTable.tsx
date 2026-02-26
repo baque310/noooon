@@ -446,7 +446,9 @@ const TableComponent = () => {
         setOpen={setIsModalOpen}
         studentId={selectedStudentId}
         onSuccess={() => {
-          setIsModalOpen(false);
+          if (!selectedStudentId) {
+            setIsModalOpen(false);
+          }
         }}
       />
     </div>
