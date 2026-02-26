@@ -143,21 +143,7 @@ const Sidebar = () => {
                     الأكاديمي
                   </li>
 
-                  <MenuSubItem
-                    permission={["read-any", "read-own"]}
-                    resource={["stage", "class", "section"]}
-                    name={"stages"}
-                    currentMenu={currentMenu}
-                    label={t("sidebar.stages")}
-                    pathname={pathname}
-                    icon={<Network size={18} />}
-                    toggleMenu={toggleMenu}
-                    menuList={[
-                      { label: t("sidebar.stage"), resource: "stage", permission: ["read-any", "read-own"], to: "stage" },
-                      { label: t("sidebar.class"), resource: "class", permission: ["read-any", "read-own"], to: "class" },
-                      { label: t("sidebar.section"), resource: "section", permission: ["read-any", "read-own"], to: "section" },
-                    ]}
-                  />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"stage"} toggleMenu={toggleMenu} to={"/stage"} label={t("sidebar.stages")} pathname={pathname} icon={<Network size={18} />} />
 
                   <MenuItem permission={["read-any", "read-own"]} resource={"student"} toggleMenu={toggleMenu} to={"/student"} label={"معلومات الطلاب"} pathname={pathname} icon={<Backpack size={18} />} />
 

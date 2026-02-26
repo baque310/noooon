@@ -99,11 +99,11 @@ const CreateComponent = ({
     name: Yup.string().required(t("common.this-field-is-required")),
     ...(id
       ? {
-          isActive: Yup.string().required(t("common.this-field-is-required")),
-        }
+        isActive: Yup.string().required(t("common.this-field-is-required")),
+      }
       : {
-          classId: Yup.string().required(t("common.this-field-is-required")),
-        }),
+        classId: Yup.string().required(t("common.this-field-is-required")),
+      }),
   });
 
   return (
@@ -111,6 +111,7 @@ const CreateComponent = ({
       title={t(id ? "SectionPage.update" : "SectionPage.add")}
       open={open}
       setOpen={setOpen}
+      panelClassName="!overflow-visible"
     >
       {isFetching ? (
         <LoadingForm className="!h-36" />

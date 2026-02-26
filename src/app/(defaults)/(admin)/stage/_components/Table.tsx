@@ -12,6 +12,7 @@ import { useStageGetDataQuery } from "@/services/admin/stage";
 import { IRootState } from "@/store";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import { AcademicTabs } from "@/components/common/AcademicTabs";
 
 
 
@@ -24,29 +25,28 @@ const TableComponent = () => {
   const [open, setOpen] = useState(false)
   return (
     <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
-      <div className={"flex justify-between gap-2 "}>
-        <div className="text-xl uppercase ">{t("StagePage.Stages")}</div>
-        <div className={"flex gap-3"}>
-          {
-            <RolePageAndActionBasedComponent
-              component={(props) => {
-                return (
-                  <button
-                    className={` ${props.disabled && "hidden"
-                      } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      setOpen(true)
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
-                );
-              }}
-              resource={"admin"}
-              permission={["create-any", "create-own"]}
-            />
-          }
-        </div>
+      <AcademicTabs selected="stage">
+        <RolePageAndActionBasedComponent
+          component={(props) => {
+            return (
+              <button
+                className={` ${props.disabled && "hidden"
+                  } flex justify-center gap-2 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-2 px-4 rounded-xl font-bold shadow-sm `}
+                onClick={() => {
+                  setOpen(true)
+                }}>
+                <AddIcons className="h-4 w-4" />
+                {t("common.add")}
+              </button>
+            );
+          }}
+          resource={"admin"}
+          permission={["create-any", "create-own"]}
+        />
+      </AcademicTabs>
+
+      <div className={"flex justify-between items-center mb-4"}>
+        <div className="text-xl font-bold text-slate-800 dark:text-white uppercase ">{t("StagePage.Stages")}</div>
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (

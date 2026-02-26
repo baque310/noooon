@@ -90,6 +90,7 @@ const CreateComponent = ({
     <Model title={t(id ? "ClassPage.update" : "ClassPage.add")}
       open={open}
       setOpen={setOpen}
+      panelClassName="!overflow-visible"
     >
       {isFetching ? (
         <LoadingForm className='!h-36' />
