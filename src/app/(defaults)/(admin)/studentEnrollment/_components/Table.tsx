@@ -1,0 +1,454 @@
+"use client";
+import { DataTable } from "mantine-datatable";
+import React, { use, useEffect, useMemo } from "react";
+
+import moment from "moment";
+import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
+import { AddIcons, ArrowIcons, DeleteIcons, UpdateIcons } from "@/components/common/icons/Actions";
+import useMounted from "@/hooks/useMounted";
+import { getTranslation } from "@/ni18n/i18n";
+import { useStudentEnrollmentGetDataQuery, useStudentEnrollmentRemoveMutation } from "@/services/admin/studentEnrollment";
+import { IRootState } from "@/store";
+import { DataTableSortStatus } from "mantine-datatable";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import UpdateComponent from "./UpdateComponent";
+import Dropdown from "@/components/dropdown";
+import { toast } from "react-toastify";
+import DeleteModel from "@/components/Model/DeleteModel";
+import { SelectWithSearch } from "@/components/Filter/SelectSearch";
+import { useStageGetDataQuery } from "@/services/admin/stage";
+import { useSchoolYearGetDataQuery } from "@/services/SchoolYear";
+import { useSettingGetDataQuery } from "@/services/Setting";
+import SelectFilter from "@/components/Filter/SelectFilter";
+import { exportJsonToExcel } from "@/utils/excelParser";
+import FormattedDate from "@/components/common/FormattedDate";
+import StudentEnrollmentModal from "./StudentEnrollmentModal";
+import { useStudentGetDataHasNoEnrollmentQuery } from "@/services/admin/student";
+import { BASE_URL } from "@/services/api";
+
+const TableComponent = () => {
+  const { t } = getTranslation();
+  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || "";
+  const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+    columnAccessor: "createdAt",
+    direction: "desc",
+  });
+  const [selectedRecords, setSelectedRecords] = useState([]);
+  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
+  const { isMounted } = useMounted();
+  const { currentData: Setting, isFetching: isFetchingSetting } = useSettingGetDataQuery();
+  const [pageNumber, setPageNumber] = useState(Number(1));
+  const [selectedEnrollmentId, setSelectedEnrollmentId] = useState<string | undefined>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isFetching: isFetchingStageData, currentData: StageData } = useStageGetDataQuery();
+  const { isFetching: isFetchingSchoolYearData, currentData: SchoolYearData } = useSchoolYearGetDataQuery();
+
+  const [param, setParam] = useState<
+    | {
+        approval_status?: string;
+        search?: string;
+        range?: string;
+        classId?: string;
+        sectionId?: string;
+        stageId?: string;
+        schoolYearId?: string;
+      }
+    | undefined
+  >();
+  useEffect(() => {
+    if (SchoolYearData && Setting) {
+      setParam({
+        ...params,
+        schoolYearId: Setting?.currentSchoolYearId,
+      });
+    }
+  }, [SchoolYearData, Setting]);
+
+  const params = useMemo(
+    () => ({
+      skip: pageNumber,
+      take: 30,
+      sortBy: sortStatus.columnAccessor,
+      sortDirection: sortStatus.direction,
+      ...(search ? { search: search as string } : {}),
+      ...(param ?? {}),
+    }),
+    [pageNumber, sortStatus, search, param],
+  );
+
+  // const { isFetching: isFetching, currentData: data } = useStudentEnrollmentGetDataQuery({
+  //   ...params,
+  //   skip: pageNumber,
+  // });
+
+  const { currentData: data, isFetching: isFetching } = useStudentGetDataHasNoEnrollmentQuery({
+    ...params,
+    skip: pageNumber,
+    schoolYearId: Setting?.currentSchoolYearId,
+  });
+  console.log(data);
+
+  const [Search, setSearch] = useState(search);
+  const handleChange = (e: any) => {
+    const value = e.target.value;
+    setSearch(value);
+    if (value == "") {
+      handleSearch(value);
+    }
+  };
+  const allParams = new URLSearchParams(searchParams);
+  const handleSearch = (value?: string) => {
+    if (search != Search) {
+      allParams.set("search", value ?? Search);
+      router.push(`/studentEnrollment?${allParams.toString()}`);
+      setPageNumber(1);
+    }
+  };
+  const handleKeyPress = (event: any) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
+  const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl" ? true : false;
+  const [StudentEnrollmentRemove, { isLoading: isLoadingStudentEnrollmentRemove }] = useStudentEnrollmentRemoveMutation();
+
+  const handleRemove = async () => {
+    try {
+      await StudentEnrollmentRemove({
+        studentEnrollmentIds: selectedRecords.map((record: any) => record.id),
+      }).unwrap();
+      toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
+      setOpenDelete(false);
+    } catch (error: any) {
+      console.error("Failed to operation :", error);
+      if (error && error.message) {
+        return toast.error(t(error.message), { autoClose: 15000 });
+      }
+      toast.error(error, { autoClose: 15000 });
+    }
+  };
+
+  const handleSelectClass = (value: any) => {
+    if (value) {
+      setParam({ ...param, classId: value });
+    } else {
+      setParam({ ...param, classId: undefined, sectionId: undefined });
+    }
+  };
+  const handleSelectSection = (value: any) => {
+    if (value) {
+      setParam({ ...param, sectionId: value });
+    } else {
+      setParam({ ...param, sectionId: undefined });
+    }
+  };
+  const handleSelectStage = (value: any) => {
+    if (value) {
+      setParam({ ...param, stageId: value });
+    } else {
+      setParam({
+        ...param,
+        stageId: undefined,
+        classId: undefined,
+        sectionId: undefined,
+      });
+    }
+  };
+  const handleSelectSchoolYear = (value: any) => {
+    if (value) {
+      setParam({ ...param, schoolYearId: value.value });
+    } else {
+      setParam({ ...param, schoolYearId: undefined });
+    }
+  };
+  // console.log(data);
+
+  return (
+    <div className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
+        <div className={"flex justify-between max-md:flex-col gap-2 "}>
+          <div className="text-xl uppercase ">{t("StudentEnrollmentPage.studentEnrollment")}</div>
+          <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
+            <input
+              value={Search ?? ""}
+              placeholder={`${t("common.search")} ...`}
+              onKeyDown={handleKeyPress}
+              onChange={handleChange}
+              id="search"
+              className="form-input text-white-dark"
+              name="search"
+            />
+
+            <SelectWithSearch
+              placeholder={t("StudentEnrollmentPage.enter-SchoolYear")}
+              isLoading={isFetchingSchoolYearData || isFetchingSetting}
+              props={{
+                onChange: handleSelectSchoolYear,
+                value: param?.schoolYearId,
+              }}
+              options={SchoolYearData?.map((item) => {
+                return {
+                  value: item.id,
+                  label: item.from + "-" + item.to,
+                };
+              })}
+            />
+            {
+              <RolePageAndActionBasedComponent
+                component={(props) => {
+                  return (
+                    <div className="inline-flex relative">
+                      {/* Export to Excel Button */}
+                      <button
+                        onClick={() => {
+                          exportJsonToExcel({
+                            data:
+                              (data?.data ?? []).map((item: any) => {
+                                return {
+                                  StudentFullName: item.Student?.fullName ?? "",
+                                  Username: item.Student?.User?.username ?? "",
+                                  SchoolYear: item.SchoolYear ? `${item.SchoolYear.from} - ${item.SchoolYear.to}` : "",
+                                  Stage: item.Stage ? t(item.Stage.name as any) : "",
+                                  Class: item.Class?.name ?? "",
+                                  Section: item.Section?.name ?? "",
+                                  UpdatedAt: item.updatedAt ? moment(item.updatedAt).format("YYYY-MM-DD hh:mm:ss A") : "",
+                                  CreatedAt: item.createdAt ? moment(item.createdAt).format("YYYY-MM-DD hh:mm:ss A") : "",
+                                };
+                              }) ?? [],
+                            fileName: "students",
+                            sheetName: "Students",
+                          });
+                        }}
+                        disabled={!data?.data || data.data.length === 0 || isFetching}
+                        className={`relative overflow-hidden group flex items-center gap-3 mx-2 px-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:shadow-md transform hover:scale-105 active:scale-95 disabled:transform-none transition-all duration-200 border border-green-500/20 disabled:border-gray-400/20 min-w-fit whitespace-nowrap`}>
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                        <svg className="h-5 w-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+
+                        <span className="relative z-10">{t("common.ExportExcel")}</span>
+                      </button>
+                      <button
+                        className={` ${
+                          props.disabled && "hidden"
+                        } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2  rounded border  ltr:rounded-r-none rtl:rounded-l-none`}
+                        onClick={() => {
+                          setSelectedEnrollmentId(undefined);
+                          setIsModalOpen(true);
+                        }}>
+                        {t("common.add")}
+                      </button>
+                      <div className="relative w-0 h-0">
+                        <span
+                          className={`${
+                            selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
+                          } badge absolute top-[-15px] z-10 left-[-70px]  p-0.5 px-1.5 rounded-full`}>
+                          {selectedRecords.length > 0 ? selectedRecords.length : ""}
+                        </span>
+                      </div>
+                      <div className="dropdown">
+                        <Dropdown
+                          placement={`${isRtl ? "bottom-start" : "bottom-end"}`}
+                          btnClassName="dropdown-toggle h-full transition-all"
+                          button={
+                            <button
+                              className={`relative h-full ltr:rounded-l-none rtl:rounded-r-none flex justify-center gap-1 items-center  border-primary/70 text-primary hover:scale-[1.01] transition-transform py-1 px-2    rounded border  `}>
+                              {t("common.options")}
+                              <ArrowIcons className="h-4 w-4 rotate-90" />
+                            </button>
+                          }>
+                          <ul className="!min-w-[170px]">
+                            <li>
+                              <button
+                                disabled={selectedRecords.length == 0}
+                                className={` ${selectedRecords.length > 0 ? "" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "} flex justify-between`}
+                                onClick={() => {
+                                  setOpen(true);
+                                }}
+                                type="button">
+                                {t("common.update")}
+                                <UpdateIcons className="h-4 w-4" />
+                              </button>
+                            </li>
+                            <li className={`${selectedRecords.length > 0 ? "text-danger hover:bg-danger/20 hover:!text-danger" : ""}`}>
+                              <button
+                                disabled={selectedRecords.length == 0}
+                                onClick={() => {
+                                  setOpenDelete(true);
+                                }}
+                                type="button"
+                                className={`${selectedRecords.length > 0 ? "!text-danger" : " !cursor-not-allowed hover:!bg-gray-500/20 !text-gray-500 "}  flex justify-between`}>
+                                {t("common.delete")}
+                                <DeleteIcons className="h-4 w-4" />
+                              </button>
+                            </li>
+                          </ul>
+                        </Dropdown>
+                      </div>
+                    </div>
+                  );
+                }}
+                resource={"admin"}
+                permission={["create-any", "create-own"]}
+              />
+            }
+          </div>
+        </div>
+      </div>
+      <div className={"flex justify-start max-md:flex-col gap-3 mt-2"}>
+        <SelectFilter
+          placement="bottom-end"
+          title={t("StudentEnrollmentPage.StageName")}
+          handleChange={handleSelectStage}
+          options={
+            StageData?.map((item) => {
+              return {
+                value: item.id,
+                label: t(item.name as any),
+              };
+            }) ?? []
+          }
+        />
+        {param?.stageId && (
+          <SelectFilter
+            title={t("SectionPage.ClassName")}
+            placement="bottom-end"
+            handleChange={handleSelectClass}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                return {
+                  value: item.id,
+                  label: t(item.name as any),
+                };
+              }) ?? []
+            }
+          />
+        )}
+        {param?.classId && (
+          <SelectFilter
+            title={t("StudentEnrollmentPage.SectionName")}
+            placement="bottom-end"
+            handleChange={handleSelectSection}
+            options={
+              StageData?.find((it) => it.id == param?.stageId)
+                ?.Class.find((it) => it.id == param?.classId)
+                ?.Section?.map((item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }) ?? []
+            }
+          />
+        )}
+      </div>
+      <div className="datatables pagination-padding mt-2">
+        {isMounted && (
+          <DataTable
+            onRowClick={async (item) => {
+              setSelectedEnrollmentId(item.record.id);
+              setIsModalOpen(true);
+            }}
+            fetching={isFetching}
+            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
+            records={data?.data as any}
+            columns={[
+              {
+                title: t("StudentEnrollmentPage.photo"),
+                accessor: "photo",
+                render: (row: any) => (
+                  <div className="mx-auto h-10 w-10 overflow-hidden rounded-full border-2 border-white dark:border-gray-700 bg-slate-100 dark:bg-gray-800 shadow-sm">
+                    <img
+                      src={row.photo ? `${BASE_URL}uploads/${row.photo}` : `https://api.dicebear.com/7.x/avataaars/svg?seed=${row.User?.username}`}
+                      alt={row.fullName || ""}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ),
+              },
+              {
+                title: t("StudentEnrollmentPage.StudentFullName"),
+                accessor: "fullName",
+                // sortable: true,
+              },
+              {
+                title: t("StudentEnrollmentPage.StudentUsername"),
+                accessor: "User.username",
+                // sortable: true,
+                render: ({ User }: any) => (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">{User?.username}</span>
+                  </div>
+                ),
+              },
+              {
+                title: t("StudentEnrollmentPage.StudentFullName"),
+                accessor: "gender",
+                // sortable: true,
+                render: ({ gender }: any) => (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">{t(gender as any)}</span>
+                  </div>
+                ),
+              },
+            ]}
+            customLoader={<div className="loader !bg-primary"></div>}
+            noRecordsText={t("common.no-data")}
+            noRecordsIcon={<></>}
+            {...(isFetching && { minHeight: 130 })}
+            sortStatus={sortStatus}
+            onSortStatusChange={(sort) => {
+              setSortStatus(sort);
+            }}
+            totalRecords={data?.totalCount}
+            recordsPerPage={30}
+            page={pageNumber}
+            onPageChange={(p) => {
+              setPageNumber(p);
+            }}
+            {...({
+              selectedRecords: selectedRecords,
+              onSelectedRecordsChange: (records: any) => {
+                setSelectedRecords(records);
+              },
+              // isRecordSelectable: (record: any) => record.isPaid == false
+            } as any)}
+          />
+        )}
+      </div>
+      <UpdateComponent open={open} setOpen={setOpen} data={selectedRecords.map((record: any) => record.id)} />
+      <DeleteModel
+        description={t("StudentEnrollmentPage.Are-you-sure-you-want-to-delete-this-StudentEnrollment")}
+        title={t("StudentEnrollmentPage.DeleteStudentEnrollment")}
+        open={openDelete}
+        setOpen={setOpenDelete}
+        handleRemove={handleRemove}
+        isLoading={isLoadingStudentEnrollmentRemove}
+        name={`${selectedRecords.length}`}
+      />
+
+      {/* Student Enrollment Modal */}
+      <StudentEnrollmentModal
+        open={isModalOpen}
+        setOpen={setIsModalOpen}
+        enrollmentId={selectedEnrollmentId}
+        onSuccess={() => {
+          setIsModalOpen(false);
+        }}
+      />
+    </div>
+  );
+};
+
+export default withRole(TableComponent, "student_enrollment", ["read-any", "read-own"]);

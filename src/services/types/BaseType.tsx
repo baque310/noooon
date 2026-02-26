@@ -1,0 +1,72 @@
+export type BaseTheme = "light" | "dark" | "system";
+export interface BaseGetDataResponse<T> {
+  totalCount: number;
+  pageCount: number;
+  data: T[];
+}
+export interface GetDataRequestParams {
+  search?: string;
+  skip?: number;
+  take?: number;
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
+  schoolYearId?: string;
+  stageId?: string;
+  classId?: string;
+  sectionId?: string;
+}
+
+export type PAGE_CODE =
+  | "admin"
+  | "school"
+  | "stage"
+  | "class"
+  | "section"
+  | "student"
+  | "student_enrollment"
+  | "otherPayment"
+  | "teacher"
+  | "bus"
+  | "banner"
+  | "guidance"
+  | "gallery"
+  | "subject"
+  | "sub_subject"
+  | "stage_subject"
+  | "teacher_subject"
+  | "schedule"
+  | "section_schedule"
+  | "exam"
+  | "exam_type"
+  | "exam_result"
+  | "attendance"
+  | "lesson"
+  | "homework"
+  | "library"
+  | "setting"
+  | "notification"
+  | "user"
+  | "dashboard"
+  | "parent"
+  | "video"
+  | "attendance"
+  | "complaint"
+  | "chat"
+  | "discount"
+  | "installment"
+  | "student_installment"
+  | "payment_reminder"
+  | "payment_overdue"
+  | "chat_message";
+
+export type PERMISSION = "read-any" | "read-own" | "create-any" | "create-own" | "delete-any" | "delete-own" | "update-any" | "update-own";
+
+export enum Days {
+  SUNDAY = "SUNDAY",
+  MONDAY = "MONDAY",
+  TUESDAY = "TUESDAY",
+  WEDNESDAY = "WEDNESDAY",
+  THURSDAY = "THURSDAY",
+  FRIDAY = "FRIDAY",
+  SATURDAY = "SATURDAY",
+}

@@ -1,0 +1,43 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: ["alghad"]
+jobs:
+  build:
+    runs-on: [alghad]
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          # cache: "npm"
+
+      - run: rm -rf node_modules package-lock.json yarn.lock
+      - name: cp .env
+        run: cp /home/dashboard-noon-iraq/alghad.env /home/actions-runner-alghad/_work/dashboard-noon-iraq/dashboard-noon-iraq/.env
+
+      - name: Install Dependencies
+        # run: |
+        #   export NODE_OPTIONS="--max_old_space_size=512"
+        #   npm install --legacy-peer-deps --maxsockets=1
+        run: npm install
+
+      - run: npm run build --if-present
+      - name: Pm2 Start
+        run: pm2 restart alghad-dashboard
+      # - run: pm2 describe alghad-dashboard
+      # - run: pm2 logs alghad-dashboard
+      # - run: PORT=3031 pm2 start npm  --name "alghad-dashboard" -- start
+      # - run: pm2 delete alghad-dashboard 
+

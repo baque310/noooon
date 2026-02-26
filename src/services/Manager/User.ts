@@ -1,0 +1,82 @@
+import { api } from "@/services/api";
+import { BaseGetDataResponse, GetDataRequestParams } from "../types/BaseType";
+
+export interface IUser {
+  id: string;
+  username: string;
+  isActive: string;
+  isDeleted: string;
+  School: {
+    id: string;
+    name: string;
+    address: string;
+    email: string;
+    phone1: string;
+    phone2: string;
+    hasBanner: string;
+    isActive: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const User = api.injectEndpoints({
+  endpoints: (build) => ({
+    UserGetData: build.query<BaseGetDataResponse<IUser>, GetDataRequestParams>({
+      query: (params) => ({
+        url: `user/forManager`,
+        params,
+        method: "GET",
+      }),
+      // providesTags: ["UserGetData"],
+    }),
+    UserAdminUpdatePassword: build.mutation<
+      BaseGetDataResponse<IUser>,
+      {
+        id: string;
+        body: {
+          newPassword: string;
+        };
+      }
+    >({
+      query: ({ id, body }) => ({
+        url: `user/admin/updatePassword/${id}`,
+        body,
+        method: "PATCH",
+      }),
+      // providesTags: (res) => (res ? ["UserAdminUpdatePassword"] : []),
+    }),
+    UserManagerUpdatePassword: build.mutation<BaseGetDataResponse<IUser>, { id: string; body: { newPassword: string } }>({
+      query: ({ id, body }) => ({
+        url: `user/manager/updatePassword/${id}`,
+        body,
+        method: "PATCH",
+      }),
+      // providesTags: (res) => (res ? ["UserManagerUpdatePassword"] : []),
+    }),
+    UserManagerResetPassword: build.mutation<BaseGetDataResponse<IUser>, { id: string }>({
+      query: ({ id }) => ({
+        url: `user/forAdmin/reset-default/${id}`,
+        method: "PATCH",
+      }),
+      // providesTags: (res) => (res ? ["UserManagerUpdatePassword"] : []),
+    }),
+    UserRemove: build.mutation<void, { id: string }>({
+      query: ({ id }) => ({
+        url: `user/${id}`,
+        method: "DELETE",
+      }),
+      // invalidatesTags: ["UserRemove", "UserGetDataById", "UserGetData"],
+    }),
+  }),
+});
+export const {
+  useUserGetDataQuery,
+  useUserManagerResetPasswordMutation,
+  useUserRemoveMutation,
+  useLazyUserGetDataQuery,
+  useUserAdminUpdatePasswordMutation,
+  useUserManagerUpdatePasswordMutation,
+} = User;

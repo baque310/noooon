@@ -1,0 +1,25 @@
+{
+  "name": "noon iraq app",
+  "description": "noon iraq app",
+  "short_name": "noon iraq app",
+ "icons": [],
+  "theme_color": "#FFFFFF",
+  "background_color": "#FFFFFF",
+  "start_url": "/",
+  "display": "standalone",
+  "shortcuts": [
+    {
+      "name": "noon iraq app",
+      "url": "/",
+      "description": "noon iraq app",
+      "icons": [
+        {
+          "src": "favicon.png",
+          "type": "image/png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "orientation": "portrait"
+}
