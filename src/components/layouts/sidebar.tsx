@@ -190,26 +190,28 @@ const Sidebar = () => {
                     الأنشطة والمتابعة
                   </li>
 
-                  <MenuItem permission={["read-any", "read-own"]} resource={"video"} toggleMenu={toggleMenu} to={"/video"} label={t("sidebar.video")} pathname={pathname} icon={<MonitorPlay size={18} />} />
-                  <MenuItem permission={["read-any", "read-own"]} resource={"guidance"} toggleMenu={toggleMenu} to={"/guidance"} label={t("sidebar.guidance")} pathname={pathname} icon={<Lightbulb size={18} />} />
-                  <MenuItem permission={["read-any", "read-own"]} resource={"gallery"} toggleMenu={toggleMenu} to={"/gallery"} label={t("sidebar.gallery")} pathname={pathname} icon={<Images size={18} />} />
                   <MenuItem permission={["read-any", "read-own"]} resource={"homework"} toggleMenu={toggleMenu} to={"/teacherHomeworks"} label={t("sidebar.homeworks")} pathname={pathname} number={adminCountData?.homeworkCountToday ?? 0} icon={<FileSignature size={18} />} />
-                  <MenuItem permission={["read-any", "read-own"]} resource={"attendance"} toggleMenu={toggleMenu} to={"/superTeacherAttendances"} label={t("sidebar.superTeacherAttendances")} pathname={pathname} number={(adminCountData?.attendanceToday.Absent ?? 0) + (adminCountData?.attendanceToday.Present ?? 0) + (adminCountData?.attendanceToday.Vacation ?? 0)} icon={<UserCheck size={18} />} />
                   <MenuItem permission={["read-any", "read-own"]} resource={"lesson"} toggleMenu={toggleMenu} to={"/teacherLessons"} label={t("sidebar.lessons")} pathname={pathname} number={adminCountData?.lessonsCountToday ?? 0} icon={<Presentation size={18} />} />
-                  <MenuItem permission={["read-any", "read-own"]} resource={"library"} toggleMenu={toggleMenu} to={"/superTeacherLibrary"} label={t("sidebar.teacher_library")} pathname={pathname} icon={<Library size={18} />} />
-                  <MenuItem permission={["read-any", "read-own"]} resource={"library"} toggleMenu={toggleMenu} to={"/behaviors"} label={t("sidebar.Behaviors")} pathname={pathname} icon={<Gavel size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"attendance"} toggleMenu={toggleMenu} to={"/superTeacherAttendances"} label={t("sidebar.superTeacherAttendances")} pathname={pathname} number={(adminCountData?.attendanceToday.Absent ?? 0) + (adminCountData?.attendanceToday.Present ?? 0) + (adminCountData?.attendanceToday.Vacation ?? 0)} icon={<UserCheck size={18} />} />
 
                   {isManager ? (
-                    <>
-                      <MenuItem permission={["read-any", "read-own"]} resource={"banner"} toggleMenu={toggleMenu} to={"/managerBanner"} label={t("sidebar.banner")} pathname={pathname} icon={<Megaphone size={18} />} />
-                      <MenuItem permission={["read-any", "read-own"]} resource={"complaint"} toggleMenu={toggleMenu} to={"/complaint"} label={t("sidebar.complaint")} pathname={pathname} number={adminCountData?.complaintsCount ?? 0} icon={<AlertOctagon size={18} />} />
-                    </>
+                    <MenuItem permission={["read-any", "read-own"]} resource={"complaint"} toggleMenu={toggleMenu} to={"/complaint"} label={t("sidebar.complaint")} pathname={pathname} number={adminCountData?.complaintsCount ?? 0} icon={<AlertOctagon size={18} />} />
                   ) : (
-                    <>
-                      <MenuItem permission={["read-any", "read-own"]} resource={"banner"} toggleMenu={toggleMenu} to={"/banner"} label={t("sidebar.banner")} pathname={pathname} icon={<Flag size={18} />} />
-                      <MenuItem permission={["read-any", "read-own"]} resource={"complaint"} toggleMenu={toggleMenu} to={"/adminComplaint"} label={t("sidebar.complaint")} pathname={pathname} number={adminCountData?.complaintsCount ?? 0} icon={<AlertOctagon size={18} />} />
-                    </>
+                    <MenuItem permission={["read-any", "read-own"]} resource={"complaint"} toggleMenu={toggleMenu} to={"/adminComplaint"} label={t("sidebar.complaint")} pathname={pathname} number={adminCountData?.complaintsCount ?? 0} icon={<AlertOctagon size={18} />} />
                   )}
+
+                  <MenuItem permission={["read-any", "read-own"]} resource={"library"} toggleMenu={toggleMenu} to={"/behaviors"} label={t("sidebar.Behaviors")} pathname={pathname} icon={<Gavel size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"guidance"} toggleMenu={toggleMenu} to={"/guidance"} label={t("sidebar.guidance")} pathname={pathname} icon={<Lightbulb size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"gallery"} toggleMenu={toggleMenu} to={"/gallery"} label={t("sidebar.gallery")} pathname={pathname} icon={<Images size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"library"} toggleMenu={toggleMenu} to={"/superTeacherLibrary"} label={t("sidebar.teacher_library")} pathname={pathname} icon={<Library size={18} />} />
+
+                  {isManager ? (
+                    <MenuItem permission={["read-any", "read-own"]} resource={"banner"} toggleMenu={toggleMenu} to={"/managerBanner"} label={t("sidebar.banner")} pathname={pathname} icon={<Megaphone size={18} />} />
+                  ) : (
+                    <MenuItem permission={["read-any", "read-own"]} resource={"banner"} toggleMenu={toggleMenu} to={"/banner"} label={t("sidebar.banner")} pathname={pathname} icon={<Flag size={18} />} />
+                  )}
+
+                  <MenuItem permission={["read-any", "read-own"]} resource={"video"} toggleMenu={toggleMenu} to={"/video"} label={t("sidebar.video")} pathname={pathname} icon={<MonitorPlay size={18} />} />
 
                   <MenuSubItem
                     permission={["read-any", "read-own"]}

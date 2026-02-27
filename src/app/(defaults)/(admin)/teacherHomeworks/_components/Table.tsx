@@ -404,230 +404,160 @@ const TableComponent = () => {
         </div>
       </div>
 
-      {/* Data Table */}
-      <div className="datatables pagination-padding">
-        {isMounted && (
-          <div className="bg-white dark:bg-[#0e1726] rounded-xl shadow-sm border border-gray-100 dark:border-[#1b2e4b] overflow-hidden">
-            <DataTable
-              fetching={isFetching}
-              className={`${isDark ? "dark" : ""} table-hover whitespace-nowrap`}
-              records={data?.data as any}
-              onRowClick={handleRowClick}
-              minHeight={400}
-              columns={[
-                {
-                  title: t("HomeworksPage.teacherFullName"),
-                  accessor: "teacherSubject.Teacher.fullName",
-                  // sortable: true,
-                  width: 220,
-                  render: ({ teacherSubject }: any) => (
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className="flex items-center justify-center w-9 h-9 rounded-full 
-                        bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold text-sm
-                        border-2 border-primary/20 shadow-sm">
-                        {teacherSubject?.Teacher?.fullName?.charAt(0)}
-                      </div>
-                      <span className="text-base text-gray-800 dark:text-gray-200 font-bold">{teacherSubject?.Teacher?.fullName}</span>
-                    </div>
-                  ),
-                },
-                {
-                  title: t("HomeworksPage.SubjectName"),
-                  accessor: "teacherSubject.StageSubject.Subject.name",
-                  // width: 150,
-                  render: ({ teacherSubject }: any) => (
-                    <span
-                      className="inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold 
-                      bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 
-                      dark:from-indigo-900/30 dark:to-indigo-800/20 dark:text-indigo-300
-                      border border-indigo-200 dark:border-indigo-800/50 shadow-sm">
-                      {teacherSubject?.StageSubject?.Subject?.name && t(teacherSubject.StageSubject.Subject.name)}
-                    </span>
-                  ),
-                },
-                {
-                  title: t("HomeworksPage.title"),
-                  accessor: "title",
-                  sortable: true,
-                  width: 280,
-                  render: ({ title, isSeen, updatedAt }: any) => (
-                    <div className="flex items-start gap-3 py-1">
-                      {isSeen === "FALSE" && moment(updatedAt || "").isSameOrAfter(moment().subtract(2, "days").startOf("day")) && (
-                        <span className="flex-shrink-0 w-2.5 h-2.5 mt-1.5 rounded-full bg-blue-500 animate-pulse shadow-lg shadow-blue-500/50" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-gray-500 dark:text-white mb-1 line-clamp-2 leading-snug">{title}</div>
-                        {/* <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <FormattedDate date={updatedAt} />
-                        </div> */}
-                      </div>
-                    </div>
-                  ),
-                },
-                {
-                  title: t("HomeworksPage.StageName"),
-                  accessor: "teacherSubject.StageSubject.Stage.name",
-                  width: 120,
-                  render: ({ teacherSubject }: any) => (
-                    <span
-                      className="inline-flex px-2.5 py-1 rounded-md text-sm font-semibold 
-                      bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300
-                      border border-purple-200 dark:border-purple-800/50">
-                      {teacherSubject?.StageSubject?.Stage?.name && t(teacherSubject.StageSubject.Stage.name)}
-                    </span>
-                  ),
-                },
-                {
-                  title: t("HomeworksPage.ClassName"),
-                  accessor: "teacherSubject.StageSubject.Class.name",
-                  width: 160,
-                  render: ({ teacherSubject }: any) => {
-                    const name = teacherSubject?.StageSubject?.Class?.name;
-                    return name ? (
-                      <span
-                        className="inline-flex px-2.5 py-1 rounded-md text-sm font-semibold 
-                        bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300
-                        border border-emerald-200 dark:border-emerald-800/50">
-                        {t(name)}
-                      </span>
-                    ) : (
-                      <span className="text-gray-400 text-sm">-</span>
-                    );
-                  },
-                },
-                {
-                  title: t("HomeworksPage.SectionName"),
-                  accessor: "StudentHomework",
-                  width: 180,
-                  render: ({ StudentHomework }) => {
-                    const list = Array.isArray(StudentHomework) ? StudentHomework : [];
+      {/* List Header - Matching index.html grid style */}
+      <div className="hidden md:grid grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-4 px-6 py-4 bg-primary/5 dark:bg-primary/10 rounded-xl mb-4 text-primary font-extrabold text-sm text-center">
+        <div>{t("HomeworksPage.teacherFullName")}</div>
+        <div>{t("HomeworksPage.SubjectName")}</div>
+        <div>{t("HomeworksPage.title")}</div>
+        <div>{t("HomeworksPage.StageName")}</div>
+        <div>{t("HomeworksPage.ClassName")}</div>
+        <div>{t("common.allDates")}</div>
+      </div>
+
+      {/* Cards List */}
+      <div className="flex flex-col gap-3">
+        {isFetching ? (
+          <div className="flex justify-center items-center py-16">
+            <div className="loader !bg-primary !w-8 !h-8" />
+          </div>
+        ) : data?.data?.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-14 gap-3 text-gray-400 dark:text-gray-500">
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+                />
+              </svg>
+            </div>
+            <p className="font-bold text-sm">{t("common.no-data")}</p>
+          </div>
+        ) : (
+          data?.data?.map((record: any) => {
+            const isMarkedUnseen = record.isSeen === "FALSE" && moment(record?.createdAt || "").isSameOrAfter(moment().subtract(2, "days").startOf("day"));
+
+            return (
+              <div
+                key={record.id}
+                onClick={() => handleRowClick({ record })}
+                className={`grid grid-cols-1 md:grid-cols-[1.5fr_1fr_2fr_1fr_1.5fr_1fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer ${isMarkedUnseen ? "!bg-gradient-to-r !from-blue-50/50 !to-blue-100/30 dark:!from-blue-900/10 dark:!to-blue-800/5 hover:!from-blue-100/60 hover:!to-blue-200/40 border-l-4 !border-l-blue-500" : ""
+                  }`}>
+
+                {/* Teacher FullName */}
+                <div className="flex items-center gap-2.5 justify-center md:justify-start">
+                  <div className="flex items-center justify-center w-9 h-9 rounded-full bg-primary/10 text-primary font-semibold text-sm border border-primary/20 shadow-sm">
+                    {record.teacherSubject?.Teacher?.fullName?.charAt(0)}
+                  </div>
+                  <span className="text-sm text-gray-800 dark:text-gray-200 font-bold text-center md:text-start">{record.teacherSubject?.Teacher?.fullName}</span>
+                </div>
+
+                {/* Subject Name */}
+                <div className="text-center">
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {record.teacherSubject?.StageSubject?.Subject?.name && t(record.teacherSubject.StageSubject.Subject.name)}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <div className="flex items-start gap-3 py-1 justify-center md:justify-start">
+                  {isMarkedUnseen && (
+                    <span className="flex-shrink-0 w-2.5 h-2.5 mt-1.5 rounded-full bg-blue-500 animate-pulse shadow-lg shadow-blue-500/50" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-gray-700 dark:text-white mb-1 line-clamp-2 leading-snug text-center md:text-start">{record.title}</div>
+                  </div>
+                </div>
+
+                {/* Stage */}
+                <div className="text-center">
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {record.teacherSubject?.StageSubject?.Stage?.name && t(record.teacherSubject.StageSubject.Stage.name)}
+                  </span>
+                </div>
+
+                {/* Class & Section */}
+                <div className="text-center">
+                  {(() => {
+                    const className = record.teacherSubject?.StageSubject?.Class?.name ? t(record.teacherSubject.StageSubject.Class.name) : "";
+                    const list = Array.isArray(record.StudentHomework) ? record.StudentHomework : [];
                     const sections = Array.from(new Set(list.map((item: any) => item?.Student?.StudentEnrollment?.[0]?.Section?.name).filter(Boolean)));
 
-                    return sections.length > 0 ? (
-                      <div className="flex flex-wrap gap-1.5">
-                        {sections.map((section, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold 
-                              bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300
-                              border border-orange-200 dark:border-orange-800/50">
-                            {section}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400 text-sm">-</span>
-                    );
-                  },
-                },
-                // {
-                //   title: t("HomeworksPage.dueDate"),
-                //   accessor: "dueDate",
-                //   sortable: true,
-                //   width: 140,
-                //   render: ({ dueDate }: any) => {
-                //     if (!dueDate) return <span className="text-gray-400 text-sm">-</span>;
-
-                //     const isOverdue = moment(dueDate).isBefore(moment());
-                //     const isDueSoon = moment(dueDate).isBetween(moment(), moment().add(3, "days"));
-
-                //     return (
-                //       <div
-                //         className={`flex items-center gap-2 text-sm font-medium
-                //         ${isOverdue ? "text-red-600 dark:text-red-400" : isDueSoon ? "text-orange-600 dark:text-orange-400" : "text-gray-600 dark:text-gray-400"}`}>
-                //         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                //           <path
-                //             strokeLinecap="round"
-                //             strokeLinejoin="round"
-                //             strokeWidth={2}
-                //             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                //           />
-                //         </svg>
-                //         {moment(dueDate).format("MM/DD")}
-                //         {/* {isOverdue && <span className="text-xs">(متأخر)</span>} */}
-                //       </div>
-                //     );
-                //   },
-                // },
-                // {
-                //   title: t("HomeworksPage.SchoolYear"),
-                //   accessor: "SchoolYear.from",
-                //   width: 140,
-                //   render: ({ SchoolYear }: any) =>
-                //     SchoolYear?.from || SchoolYear?.to ? (
-                //       <span className="text-gray-700 dark:text-gray-300 font-medium text-sm">
-                //         {SchoolYear.from} - {SchoolYear.to}
-                //       </span>
-                //     ) : (
-                //       <span className="text-gray-400 text-sm">-</span>
-                //     ),
-                // },
-                {
-                  title: t("common.allDates"),
-                  accessor: "updatedAt",
-                  sortable: true,
-                  render: (row: any) => (
-                    <div className="space-y-2">
-                      <FormattedDate2
-                        date={row.updatedAt}
-                        label={t("common.updatedAt")} // "التحديث"
-                      />
-                      <FormattedDate2
-                        date={row.createdAt}
-                        label={t("common.createdAt")} // "التقديم"
-                      />
-                    </div>
-                  ),
-                },
-              ]}
-              customLoader={
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="loader !bg-primary mb-4"></div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">جاري التحميل...</p>
+                    if (className && sections.length > 0) {
+                      return <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{className} / {sections.join(" , ")}</span>;
+                    } else if (className) {
+                      return <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{className}</span>;
+                    }
+                    return <span className="text-gray-400 text-sm">-</span>;
+                  })()}
                 </div>
-              }
-              noRecordsText={t("common.no-data")}
-              noRecordsIcon={
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="w-20 h-20 mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                    <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 dark:text-gray-400 font-medium">لا توجد واجبات للعرض</p>
-                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">جرب تغيير الفلاتر أو البحث</p>
+
+                {/* Dates */}
+                <div className="flex flex-col items-center justify-center space-y-2 text-sm">
+                  <FormattedDate2 date={record.updatedAt} label={t("common.updatedAt")} />
+                  <FormattedDate2 date={record.createdAt} label={t("common.createdAt")} />
                 </div>
-              }
-              sortStatus={sortStatus}
-              onSortStatusChange={setSortStatus}
-              totalRecords={data?.totalCount}
-              rowClassName={(record) => {
-                const baseClasses = "transition-all duration-200 cursor-pointer border-b border-gray-50 dark:border-gray-800/50";
-                if (record.isSeen === "FALSE" && moment(record?.createdAt || "").isSameOrAfter(moment().subtract(2, "days").startOf("day"))) {
-                  return `${baseClasses} !bg-gradient-to-r !from-blue-50/50 !to-blue-100/30 
-                    dark:!from-blue-900/10 dark:!to-blue-800/5 
-                    hover:!from-blue-100/60 hover:!to-blue-200/40 
-                    dark:hover:!from-blue-900/20 dark:hover:!to-blue-800/10
-                    border-l-4 !border-l-blue-500 shadow-sm`;
-                }
-                return `${baseClasses} hover:bg-gray-50/50 dark:hover:bg-[#1b2e4b]/30`;
-              }}
-              recordsPerPage={30}
-              page={pageNumber}
-              onPageChange={(p) => setPageNumber(p)}
-            />
-          </div>
+              </div>
+            );
+          })
         )}
       </div>
+
+      {/* Pagination */}
+      {(data?.totalCount ?? 0) > 30 &&
+        (() => {
+          const totalPages = Math.ceil((data?.totalCount ?? 0) / 30);
+          const startRecord = (pageNumber - 1) * 30 + 1;
+          const endRecord = Math.min(pageNumber * 30, data?.totalCount ?? 0);
+          return (
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+              <div className="text-sm font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl">
+                عرض{" "}
+                <span className="text-primary font-extrabold">{startRecord}–{endRecord}</span>{" "}
+                من أصل <span className="text-gray-700 dark:text-gray-200 font-extrabold">{data?.totalCount}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
+                  disabled={pageNumber === 1}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm shadow-sm hover:bg-primary hover:text-white hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 disabled:hover:border-gray-200 transition-all duration-200">
+                  <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                  السابق
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let page: number;
+                    if (totalPages <= 5) page = i + 1;
+                    else if (pageNumber <= 3) page = i + 1;
+                    else if (pageNumber >= totalPages - 2) page = totalPages - 4 + i;
+                    else page = pageNumber - 2 + i;
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setPageNumber(page)}
+                        className={`w-10 h-10 rounded-xl font-extrabold text-sm transition-all duration-200 ${pageNumber === page ? "bg-primary text-white shadow-md shadow-primary/30 scale-110" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-primary hover:text-primary"}`}>
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setPageNumber((p) => p + 1)}
+                  disabled={!data?.data || data.data.length < 30}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm shadow-sm hover:bg-primary hover:text-white hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 disabled:hover:border-gray-200 transition-all duration-200">
+                  التالي
+                  <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          );
+        })()}
 
       {/* Homework Modal */}
       <HomeworkModal

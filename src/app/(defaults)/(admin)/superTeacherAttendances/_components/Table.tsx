@@ -28,12 +28,11 @@ import { useTeacherSubjectGetDataQuery } from "@/services/admin/TeacherSubject";
 import { Days } from "@/services/types/BaseType";
 import { DatePicker } from "@/components/Filter/DatePicker"; // Adjust path as needed
 import { exportJsonToExcel } from "@/utils/excelParser";
-import UpdateModel from "./UpdateModel";
-import { toast } from "react-toastify";
-import { useExamResultsUpdateMutation } from "@/services/admin/ExamResults";
-import FormattedDate from "@/components/common/FormattedDate";
 import Dropdown from "@/components/dropdown";
 import DeleteModel from "@/components/Model/DeleteModel";
+import GroupedUpdateModal from "./GroupedUpdateModal";
+import { toast } from "react-toastify";
+import { FormattedDate2 } from "@/components/common/FormattedDate";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -56,20 +55,20 @@ const TableComponent = () => {
 
   const [param, setParam] = useState<
     | {
-        classId?: string;
-        stageId?: string;
-        sectionId?: string;
-        sectionScheduleId?: string;
-        search?: string;
-        schoolYearId?: string;
-        teacherSubjectId?: string;
-        date?: string;
-      }
+      classId?: string;
+      stageId?: string;
+      sectionId?: string;
+      sectionScheduleId?: string;
+      search?: string;
+      schoolYearId?: string;
+      teacherSubjectId?: string;
+      date?: string;
+    }
     | undefined
   >();
   const params = {
     skip: pageNumber,
-    take: 30,
+    take: 100,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
     ...(search && { search: search as string }),
@@ -220,27 +219,57 @@ const TableComponent = () => {
   const [SuperTeacherAttendancesRemove, { isLoading: isLoadingRemove }] = useSuperTeacherAttendancesRemoveMutation();
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === "rtl" ? true : false;
 
-  const handleUpdateSubmit = async (values: { Status: "Absent" | "Present" | "Vacation" }, formikHelpers: any) => {
+  const handleUpdateGroupSubmit = async (updates: Record<string, "Absent" | "Present" | "Vacation">) => {
     try {
-      if (!selectedStatus?.id) return;
-      await StatusUpdate({
-        id: selectedStatus.id,
-        body: { Status: values.Status },
-      }).unwrap();
+      const updatePromises = Object.entries(updates).map(([id, newStatus]) => {
+        return StatusUpdate({
+          id,
+          body: { Status: newStatus },
+        }).unwrap();
+      });
+
+      await Promise.all(updatePromises);
+
       toast.success(String(t("common.updated-successfully" as any)), { autoClose: 3000 });
-      formikHelpers.resetForm();
       setOpenUpdateModal(false);
       setSelectedStatus(null);
     } catch (error: any) {
-      console.error("Failed to update exam result:", error);
+      console.error("Failed to update attendances:", error);
       toast.error(error?.data?.message ?? error?.message ?? JSON.stringify(error), { autoClose: 30000 });
-      formikHelpers.setSubmitting(false);
     }
   };
 
-  const handleUpdateClick = (record: any) => {
-    setSelectedStatus(record);
+  const groupedData = useMemo(() => {
+    if (!data?.data) return [];
+    const groups: Record<string, any[]> = {};
+    data.data.forEach((record: any) => {
+      const key = `${record.sectionScheduleId}_${moment(record.date).format("YYYY-MM-DD")}`;
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(record);
+    });
+    return Object.values(groups);
+  }, [data?.data]);
+
+  const handleUpdateClick = (groupRecords: any[]) => {
+    setSelectedStatus(groupRecords);
     setOpenUpdateModal(true);
+  };
+
+  const handleRemoveIds = async (ids: string[]) => {
+    try {
+      await SuperTeacherAttendancesRemove({
+        body: { attendanceIds: ids },
+      }).unwrap();
+
+      toast.success(t("common.deleted-successfully"), { autoClose: 3000 });
+      setOpenUpdateModal(false);
+      setSelectedStatus(null);
+    } catch (error: any) {
+      console.error("Failed to delete specific attendances:", error);
+      toast.error(error?.data?.message ?? error?.message ?? JSON.stringify(error), { autoClose: 15000 });
+    }
   };
 
   const handleRemove = async () => {
@@ -325,9 +354,8 @@ const TableComponent = () => {
                 return (
                   <div className="inline-flex relative">
                     <button
-                      className={`${
-                        props.disabled && "hidden"
-                      } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2 rounded border ltr:rounded-r-none rtl:rounded-l-none`}
+                      className={`${props.disabled && "hidden"
+                        } flex justify-center gap-1 border-l-dark-light/35 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2 rounded border ltr:rounded-r-none rtl:rounded-l-none`}
                       onClick={() => {
                         router.push("/superTeacherAttendances/createOrUpdate");
                       }}>
@@ -335,9 +363,8 @@ const TableComponent = () => {
                     </button>
                     <div className="relative w-0 h-0">
                       <span
-                        className={`${
-                          selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
-                        } badge absolute top-[-15px] z-10 left-[-70px] p-0.5 px-1.5 rounded-full`}>
+                        className={`${selectedRecords.length > 0 ? "bg-danger" : "bg-transparent text-transparent"
+                          } badge absolute top-[-15px] z-10 left-[-70px] p-0.5 px-1.5 rounded-full`}>
                         {selectedRecords.length > 0 ? selectedRecords.length : ""}
                       </span>
                     </div>
@@ -379,199 +406,379 @@ const TableComponent = () => {
       </div>
       <div className={"flex justify-between max-md:flex-col gap-2 "}></div>
 
-      <div className="flex py-3 gap-3 max-md:flex-col max-md:items-end">
-        <SelectFilter
-          value={param?.stageId}
-          placement="bottom-end"
-          title={t("StudentEnrollmentPage.StageName")}
-          handleChange={handleSelectStage}
-          options={
-            StageData?.map((item) => {
-              return {
-                value: item.id,
-                label: t(item.name as any),
-              };
-            }) ?? []
-          }
-        />
-        {param?.stageId && (
-          <SelectFilter
-            value={param?.classId}
-            title={t("SectionPage.ClassName")}
-            placement="bottom-end"
-            handleChange={handleSelectClass}
-            options={
-              StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
-                return {
-                  value: item.id,
-                  label: t(item.name as any),
-                };
-              }) ?? []
-            }
-          />
-        )}
-        {param?.classId && (
-          <SelectFilter
-            value={param?.sectionId}
-            title={t("StudentEnrollmentPage.SectionName")}
-            placement="bottom-end"
-            handleChange={handleSelectSection}
-            options={
-              StageData?.find((it) => it.id == param?.stageId)
-                ?.Class.find((it) => it.id == param?.classId)
-                ?.Section?.map((item) => {
+      {/* Filters Section */}
+      <div className="bg-white dark:bg-[#0e1726] p-5 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#f1f5f9] dark:border-[#1b2e4b] mt-4 mb-6">
+        <div className="flex justify-between items-end gap-5 flex-wrap">
+          <div className="flex gap-5 flex-wrap flex-1">
+            <SelectFilter
+              value={param?.stageId}
+              placement="bottom-end"
+              title={t("StudentEnrollmentPage.StageName")}
+              handleChange={handleSelectStage}
+              icon={
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
+                </svg>
+              }
+              options={
+                StageData?.map((item) => {
                   return {
                     value: item.id,
                     label: t(item.name as any),
                   };
                 }) ?? []
-            }
-          />
-        )}
-        <div className="flex gap-3 max-md:flex-col max-md:items-end">
-          {/* Day Selector */}
-          <SelectWithSearch
-            placeholder={t("SuperTeacherAttendancesPage.Select_Day")}
-            props={{
-              onChange: (option: any) => {
-                setSelectedDay(option?.value as Days);
-                setParam({ ...param, sectionScheduleId: undefined });
-              },
-              value: selectedDay,
-            }}
-            options={days.map((day) => ({
-              label: t(day),
-              value: day,
-            }))}
-          />
-
-          {/* Section Schedule Selector */}
-          {selectedDay && (
-            <SelectWithSearch
-              placeholder={t("SuperTeacherAttendancesPage.Select_Section_Schedule")}
-              props={{
-                onChange: (option: any) => handleSelectSectionSchedule(option?.value),
-                value: param?.sectionScheduleId,
-                isDisabled: !selectedDay,
-              }}
-              options={sectionOptions}
+              }
             />
-          )}
+
+            <SelectFilter
+              value={param?.classId}
+              title={t("SectionPage.ClassName")}
+              placement="bottom-end"
+              handleChange={handleSelectClass}
+              disabled={!param?.stageId}
+              icon={
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+              }
+              options={
+                StageData?.find((it) => it.id == param?.stageId)?.Class?.map((item) => {
+                  return {
+                    value: item.id,
+                    label: t(item.name as any),
+                  };
+                }) ?? []
+              }
+            />
+
+            <SelectFilter
+              value={param?.sectionId}
+              title={t("StudentEnrollmentPage.SectionName")}
+              placement="bottom-end"
+              handleChange={handleSelectSection}
+              disabled={!param?.classId}
+              icon={
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              }
+              options={
+                StageData?.find((it) => it.id == param?.stageId)
+                  ?.Class.find((it) => it.id == param?.classId)
+                  ?.Section?.map((item) => {
+                    return {
+                      value: item.id,
+                      label: t(item.name as any),
+                    };
+                  }) ?? []
+              }
+            />
+
+            <div className="min-w-[160px] flex-1 max-w-[240px]">
+              <div className="flex flex-col gap-2">
+                <label className="text-[0.85rem] font-bold text-gray-800 dark:text-white flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {t("SuperTeacherAttendancesPage.Select_Day")}
+                </label>
+                <SelectWithSearch
+                  placeholder={t("common.all") || "الكل"}
+                  props={{
+                    onChange: (option: any) => {
+                      setSelectedDay(option?.value as Days);
+                      setParam({ ...param, sectionScheduleId: undefined });
+                    },
+                    value: selectedDay,
+                  }}
+                  options={days.map((day) => ({
+                    label: t(day),
+                    value: day,
+                  }))}
+                />
+              </div>
+            </div>
+
+            {selectedDay && (
+              <div className="min-w-[160px] flex-1 max-w-[240px]">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[0.85rem] font-bold text-gray-800 dark:text-white flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {t("SuperTeacherAttendancesPage.Select_Section_Schedule")}
+                  </label>
+                  <SelectWithSearch
+                    placeholder={t("common.all") || "الكل"}
+                    props={{
+                      onChange: (option: any) => handleSelectSectionSchedule(option?.value),
+                      value: param?.sectionScheduleId,
+                      isDisabled: !selectedDay,
+                    }}
+                    options={sectionOptions}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-2.5">
+            <button
+              onClick={() => {
+                setSelectedDay(null);
+                setParam((prev) => ({
+                  ...prev,
+                  stageId: undefined,
+                  classId: undefined,
+                  sectionId: undefined,
+                  sectionScheduleId: undefined,
+                }));
+                pushWithCurrentParams("/superTeacherAttendances", {
+                  stageId: undefined,
+                  classId: undefined,
+                  sectionId: undefined,
+                  sectionScheduleId: undefined,
+                });
+              }}
+              className="flex items-center justify-center w-10 h-10 bg-[#f8fafc] dark:bg-[#1b2e4b] text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-[#253b5c] transition-colors border border-gray-200 dark:border-[#1b2e4b]"
+              title={t("common.reset") || "إعادة تعيين"}>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
       <div className="datatables pagination-padding mt-2">
         {isMounted && (
-          <DataTable
-            onRowClick={async (item) => {
-              // router.push(`/superTeacherAttendances/${item.record.id}`);
-            }}
-            fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-            records={data?.data as any}
-            columns={[
-              {
-                title: t("SuperTeacherAttendancesPage.teacherName"),
-                accessor: "SectionSchedule.teacherSubject.Teacher.fullName",
-                sortable: true,
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.subjectName"),
-                accessor: "SectionSchedule.teacherSubject.StageSubject.Subject.name",
-                sortable: true,
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.studentName"),
-                accessor: "StudentEnrollment.Student.fullName",
-                sortable: true,
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.Status"),
-                accessor: "Status",
-                sortable: true,
-                render: (record: any) => {
-                  const statusColors: Record<string, string> = {
-                    Present: "bg-green-50 border-green-200",
-                    Absent: "bg-red-50 border-red-200",
-                    Vacation: "bg-blue-50 border-blue-200",
-                  };
+          <>
+            {/* List Header */}
+            <div className="hidden md:grid grid-cols-[40px_1.5fr_1.5fr_1fr_1fr_1.5fr] gap-4 px-6 py-4 bg-primary/5 dark:bg-primary/10 rounded-xl mb-4 text-primary font-extrabold text-sm items-center text-center">
+              <div className="flex items-center justify-center w-[40px]">
+                <input
+                  type="checkbox"
+                  className="form-checkbox w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/50 cursor-pointer transition-all"
+                  checked={(data?.data?.length ?? 0) > 0 && selectedRecords.length === (data?.data?.length ?? 0)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedRecords(data?.data || []);
+                    } else {
+                      setSelectedRecords([]);
+                    }
+                  }}
+                />
+              </div>
+              <div>{t("SuperTeacherAttendancesPage.teacherName")}</div>
+              <div>{t("SuperTeacherAttendancesPage.subjectName")}</div>
+              <div>{t("SuperTeacherAttendancesPage.stageName")}</div>
+              <div>{t("SuperTeacherAttendancesPage.className")}</div>
+              <div>{t("SuperTeacherAttendancesPage.date")}</div>
+            </div>
+
+            {/* Cards List */}
+            <div className="flex flex-col gap-3">
+              {isFetching ? (
+                <div className="flex justify-center items-center py-16">
+                  <div className="loader !bg-primary !w-8 !h-8" />
+                </div>
+              ) : data?.data?.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-14 gap-3 text-gray-400 dark:text-gray-500">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    </svg>
+                  </div>
+                  <p className="font-bold text-sm">{t("common.no-data")}</p>
+                </div>
+              ) : (
+                groupedData.map((groupRecords: any, index: number) => {
+                  const firstRecord = groupRecords[0];
 
                   return (
                     <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleUpdateClick(record);
-                      }}
-                      className={`border cursor-pointer ${
-                        statusColors[record.Status as keyof typeof statusColors] || "bg-yellow-50 border-yellow-200"
-                      } px-2 py-1 rounded-full text-xs font-semibold`}>
-                      {t(`SuperTeacherAttendancesPage.${record.Status}` as any)}
+                      key={index}
+                      onClick={(e) => handleUpdateClick(groupRecords)}
+                      className="relative grid grid-cols-1 md:grid-cols-[40px_1.5fr_1.5fr_1fr_1fr_1.5fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+
+                      {/* Checkbox */}
+                      <div className="flex-shrink-0 absolute ltr:left-4 rtl:right-4 top-4 md:relative md:top-auto md:ltr:left-auto md:rtl:right-auto md:w-[40px] md:flex md:justify-center z-10 transition-transform duration-200">
+                        <input
+                          type="checkbox"
+                          className="form-checkbox w-5 h-5 rounded border-gray-300 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-all duration-200 cursor-pointer"
+                          checked={groupRecords.every((r: any) => selectedRecords.some((sr: any) => sr.id === r.id))}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            if (e.target.checked) {
+                              // add all group records to selected records (preventing duplicates)
+                              const newRecords = groupRecords.filter((r: any) => !selectedRecords.some((sr: any) => sr.id === r.id));
+                              setSelectedRecords([...selectedRecords, ...newRecords]);
+                            } else {
+                              // remove all group records from selected records
+                              setSelectedRecords(selectedRecords.filter((r: any) => !groupRecords.some((gr: any) => gr.id === r.id)));
+                            }
+                          }}
+                        />
+                      </div>
+
+                      {/* Teacher Name */}
+                      <div className="flex items-center gap-2.5 justify-center">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20 shadow-sm hidden md:flex shrink-0">
+                          {firstRecord?.SectionSchedule?.teacherSubject?.Teacher?.fullName?.charAt(0)}
+                        </div>
+                        <span className="text-sm text-gray-800 dark:text-gray-200 font-bold text-center">{firstRecord?.SectionSchedule?.teacherSubject?.Teacher?.fullName}</span>
+                      </div>
+
+                      {/* Subject Name */}
+                      <div className="text-center">
+                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                          {t(firstRecord?.SectionSchedule?.teacherSubject?.StageSubject?.Subject?.name)}
+                        </span>
+                      </div>
+
+                      {/* Stage Name */}
+                      <div className="flex justify-center flex-col gap-1 items-center">
+                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                          {firstRecord?.StudentEnrollment?.Section?.Class?.Stage?.name && t(firstRecord.StudentEnrollment.Section.Class.Stage.name)}
+                        </span>
+                      </div>
+
+                      {/* Class and Section */}
+                      <div className="flex justify-center flex-col gap-1 items-center">
+                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                          {firstRecord?.StudentEnrollment?.Section?.Class?.name} / {firstRecord?.StudentEnrollment?.Section?.name}
+                        </span>
+                      </div>
+
+                      {/* Date */}
+                      <div className="flex justify-center">
+                        <FormattedDate2 date={firstRecord?.date} />
+                      </div>
                     </div>
                   );
-                },
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.stageName"),
-                accessor: "StudentEnrollment.Section.Class.Stage.name",
-                sortable: true,
-                render: ({ StudentEnrollment }: any) => {
-                  return <div>{t(`${StudentEnrollment.Section.Class.Stage.name}` as any)}</div>;
-                },
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.className"),
-                accessor: "StudentEnrollment.Section.Class.name",
-                sortable: true,
-              },
-              {
-                title: t("SuperTeacherAttendancesPage.sectionName"),
-                accessor: "StudentEnrollment.Section.name",
-                sortable: true,
-              },
+                })
+              )}
+            </div>
 
-              {
-                title: t("SuperTeacherAttendancesPage.date"),
-                accessor: "date",
-                render: (row: any) => (
-                  <div className="text-center">
-                    <div className="mb-1 text-xs text-gray-500">{t("SuperTeacherAttendancesPage.date")}</div>
-                    <FormattedDate date={row.date} />
+            {/* Pagination */}
+            {(data?.totalCount ?? 0) > 100 &&
+              (() => {
+                const totalPages = Math.ceil((data?.totalCount ?? 0) / 100);
+                const startRecord = (pageNumber - 1) * 100 + 1;
+                const endRecord = Math.min(pageNumber * 100, data?.totalCount ?? 0);
+                return (
+                  <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+                    <div className="text-sm font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl">
+                      عرض{" "}
+                      <span className="text-primary font-extrabold">{startRecord}–{endRecord}</span>{" "}
+                      من أصل <span className="text-gray-700 dark:text-gray-200 font-extrabold">{data?.totalCount}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
+                        disabled={pageNumber === 1}
+                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm shadow-sm hover:bg-primary hover:text-white hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 disabled:hover:border-gray-200 transition-all duration-200">
+                        <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                        السابق
+                      </button>
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                          let page: number;
+                          if (totalPages <= 5) page = i + 1;
+                          else if (pageNumber <= 3) page = i + 1;
+                          else if (pageNumber >= totalPages - 2) page = totalPages - 4 + i;
+                          else page = pageNumber - 2 + i;
+
+                          return (
+                            <button
+                              key={page}
+                              onClick={() => setPageNumber(page)}
+                              className={`w-10 h-10 rounded-xl font-extrabold text-sm transition-all duration-200 ${pageNumber === page ? "bg-primary text-white shadow-md shadow-primary/30 scale-110" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-primary hover:text-primary"}`}>
+                              {page}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <button
+                        onClick={() => setPageNumber((p) => p + 1)}
+                        disabled={!data?.data || data.data.length < 100}
+                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm shadow-sm hover:bg-primary hover:text-white hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 disabled:hover:border-gray-200 transition-all duration-200">
+                        التالي
+                        <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                ),
-              },
-            ]}
-            customLoader={<div className="loader !bg-primary"></div>}
-            noRecordsText={t("common.no-data")}
-            noRecordsIcon={<></>}
-            {...(isFetching && { minHeight: 130 })}
-            sortStatus={sortStatus}
-            onSortStatusChange={(sort) => {
-              setSortStatus(sort);
-            }}
-            totalRecords={data?.totalCount}
-            recordsPerPage={30}
-            page={pageNumber}
-            onPageChange={(p) => {
-              setPageNumber(p);
-            }}
-            {...({
-              selectedRecords: selectedRecords,
-              onSelectedRecordsChange: (records: any) => {
-                setSelectedRecords(records);
-              },
-            } as any)}
-          />
+                );
+              })()}
+          </>
         )}
       </div>
-      <UpdateModel
-        open={openUpdateModal}
-        setOpen={setOpenUpdateModal}
-        name={selectedStatus?.Student?.fullName || ""}
-        title={String(t("common.update" as any))}
-        description={String(t("SuperTeacherAttendancesPage.update-attendance" as any) || t("common.update" as any))}
-        onSubmit={handleUpdateSubmit}
-        isLoading={isLoadingUpdate}
-        initialValues={{ Status: selectedStatus?.Status ?? "" }}
-      />
+
+      {/* Export Button - Floating */}
+      <div className="fixed bottom-6 left-6 z-50">
+        <button
+          onClick={() => {
+            exportJsonToExcel({
+              data:
+                data?.data?.map((item: any) => {
+                  return {
+                    "اسم المدرس": item.sectionSchedule?.TeacherSubject?.Teacher?.fullName,
+                    "المادة": item.sectionSchedule?.TeacherSubject?.StageSubject?.Subject?.name,
+                    "المرحلة": item.sectionSchedule?.TeacherSubject?.StageSubject?.Stage?.name,
+                    "الصف": item.sectionSchedule?.TeacherSubject?.StageSubject?.Class?.name,
+                    "اسم الطالب": item.student?.fullName,
+                    "الحالة": t(item.status),
+                    "التاريخ": moment(item.date).format("YYYY-MM-DD"),
+                  };
+                }) ?? [],
+              fileName: "attendances",
+              sheetName: "Attendances",
+            });
+          }}
+          disabled={!data?.data || data.data.length === 0 || isFetching}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold px-5 py-3 rounded-2xl shadow-lg hover:shadow-xl disabled:cursor-not-allowed transition-all duration-200">
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          تصدير Excel
+        </button>
+      </div>
+
+      {openUpdateModal && selectedStatus && (
+        <GroupedUpdateModal
+          open={openUpdateModal}
+          setOpen={setOpenUpdateModal}
+          title={t("SuperTeacherAttendancesPage.update-attendance" as any) || "تحديث الحضور والغياب"}
+          records={selectedStatus}
+          onSubmit={handleUpdateGroupSubmit}
+          isLoading={isLoadingUpdate}
+          onDelete={handleRemoveIds}
+          isDeleting={isLoadingRemove}
+        />
+      )}
       <DeleteModel
         description={t("SuperTeacherAttendancesPage.Are-you-sure-you-want-to-delete-this-attendance")}
         title={t("SuperTeacherAttendancesPage.DeleteAttendance")}

@@ -38,11 +38,18 @@ interface FilterSelection {
   sectionName?: string;
 }
 
-const PageComponent = () => {
+export interface CreatePageComponentProps {
+  id?: string;
+  isModal?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+}
+
+const PageComponent = ({ id: propsId, isModal, onClose, onSuccess }: CreatePageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const id = propsId || searchParams.get("id");
 
   // Fetching data
   const { currentData: settings, isFetching: isFetchingSettings } = useSettingGetDataQuery();
@@ -81,7 +88,10 @@ const PageComponent = () => {
   useEffect(() => {
     if (id) {
       fetchLessonById({ id }).then((res) => {
-        if (!res.data) router.back();
+        if (!res.data) {
+          if (isModal && onClose) onClose();
+          else router.back();
+        }
       });
     }
   }, [id]);
@@ -280,7 +290,9 @@ const PageComponent = () => {
         resetForm();
       }
 
-      router.back();
+      if (onSuccess) onSuccess();
+      if (isModal && onClose) onClose();
+      else router.back();
     } catch (error: any) {
       console.error("Lesson operation failed:", error);
       toast.error(error?.message || JSON.stringify(error));
@@ -289,7 +301,7 @@ const PageComponent = () => {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <BackButton title={t(id ? "TeacherLessonsPage.update-info" : "TeacherLessonsPage.add")} />
+      {!isModal && <BackButton title={t(id ? "TeacherLessonsPage.update-info" : "TeacherLessonsPage.add")} />}
 
       {isFetching || isFetchingSettings ? (
         <div className="space-y-6 p-6">
@@ -725,11 +737,10 @@ const PageComponent = () => {
                               {filteredStudents.map((student) => (
                                 <div
                                   key={student.id}
-                                  className={`rounded-lg p-4 transition-colors border ${
-                                    accumulatedStudentIds.has(student.id)
+                                  className={`rounded-lg p-4 transition-colors border ${accumulatedStudentIds.has(student.id)
                                       ? "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700"
                                       : "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
-                                  }`}>
+                                    }`}>
                                   <CheckBoxForm
                                     formikProps={props}
                                     name={`studentIds.${student.id}`}

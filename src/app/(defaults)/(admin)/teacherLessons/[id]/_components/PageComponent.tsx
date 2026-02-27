@@ -16,18 +16,26 @@ import DeleteModel from "@/components/Model/DeleteModel";
 import { LessonAttachment } from "./LessonAttachment";
 import { StudentLesson } from "./StudentLesson";
 
-const PageComponent = () => {
+export interface DetailsPageComponentProps {
+  id?: string;
+  isModal?: boolean;
+  onClose?: () => void;
+  onEdit?: () => void;
+}
+
+const PageComponent = ({ id: propsId, isModal, onClose, onEdit }: DetailsPageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const params = useParams();
-  const { id } = params;
+  const id = propsId || params.id;
   const [TeacherLessonsGetDataById, { currentData: data, isFetching }] = useLazyTeacherLessonsGetDataByIdQuery();
 
   useEffect(() => {
     if (id) {
       TeacherLessonsGetDataById({ id: String(id) }).then((data) => {
         if (!data.data) {
-          router.back();
+          if (isModal && onClose) onClose();
+          else router.back();
         }
       });
     }
@@ -39,8 +47,9 @@ const PageComponent = () => {
   const handleRemove = async () => {
     try {
       await TeacherLessonsRemove({ id: String(id) }).unwrap();
-      toast.success(t("common.deleted-successfully"), { autoClose: 15000 });
-      router.back();
+      toast.success(t("common.deleted-successfully"), { autoClose: 3000 });
+      if (isModal && onClose) onClose();
+      else router.back();
     } catch (error: any) {
       console.error("Failed to operation :", error);
       if (error && error.message) {
@@ -53,9 +62,11 @@ const PageComponent = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="mb-6">
-          <BackButton title={t("TeacherLessonsPage.infoTeacherLessons")} />
-        </div>
+        {!isModal && (
+          <div className="mb-6">
+            <BackButton title={t("TeacherLessonsPage.infoTeacherLessons")} />
+          </div>
+        )}
 
         {isFetching ? (
           <div className="flex justify-center py-12">
@@ -181,7 +192,13 @@ const PageComponent = () => {
 
               <div className="p-6 flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => router.push(`/teacherLessons/createOrUpdate?id=${id}`)}
+                  onClick={() => {
+                    if (isModal && onEdit) {
+                      onEdit();
+                    } else {
+                      router.push(`/teacherLessons/createOrUpdate?id=${id}`);
+                    }
+                  }}
                   className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path

@@ -40,7 +40,7 @@ const UpdateModel = ({
       <div>
         <Formik initialValues={initialValues} validationSchema={schema} enableReinitialize onSubmit={(values, formikHelpers) => onSubmit(values, formikHelpers)}>
           {(props) => (
-            <Form className="flex flex-col gap-3">
+            <Form className="flex flex-col gap-3 min-h-[200px]">
               <SelectForm
                 formikProps={props}
                 name={"Status"}
