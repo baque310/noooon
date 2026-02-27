@@ -31,7 +31,6 @@ import {
   Users,
   Backpack,
   Library,
-  Heart,
   Flag,
   FileSignature,
   Presentation,
@@ -166,7 +165,7 @@ const Sidebar = () => {
                     ]}
                   />
 
-                  <MenuItem permission={["read-any", "read-own"]} resource={"parent"} toggleMenu={toggleMenu} to={"/parent"} label={t("sidebar.parent")} pathname={pathname} icon={<Heart size={18} />} />
+                  <MenuItem permission={["read-any", "read-own"]} resource={"parent"} toggleMenu={toggleMenu} to={"/parent"} label={t("sidebar.parent")} pathname={pathname} icon={<Users size={18} />} />
 
                   <MenuSubItem
                     permission={["read-any", "read-own"]}

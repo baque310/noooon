@@ -10,6 +10,7 @@ import RowCardMullite from "./RowCardMullite";
 import { RowToday } from "./RowToday";
 import { RowWeek } from "./RowWeek";
 import { RowMonth } from "./RowMonth";
+import { TopSummary } from "./TopSummary";
 
 const RowComponent = () => {
   const { t } = getTranslation();
@@ -18,26 +19,24 @@ const RowComponent = () => {
   return (
     <div className={`m-4 flex-col flex gap-4`}>
 
-      <div className="grid md:grid-cols-4 gap-4 ">
-        <RowCard
-          title={t("DashboardPage.adminCount")}
-          number={currentData?.adminCount}
-        />
-        <RowCard
-          title={t("DashboardPage.teacherCount")}
-          number={currentData?.teacherCount}
-        />
-        <RowCard
-          title={t("DashboardPage.studentCount")}
-          number={currentData?.studentCount}
-        />
-        <RowCard
-          title={t("DashboardPage.busCount")}
-          number={currentData?.busCount}
-        />
+      <TopSummary />
+
+      {/* Exam Pass/Fail Rates Section */}
+      <div className="w-full bg-white dark:bg-[#1a2941] p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 mt-2">
+        <div className="flex items-center justify-between w-full mb-6">
+          <div className="flex flex-col gap-1 items-start text-left rtl:text-right w-full">
+            <h2 className="text-xl font-bold text-[#1f2937] dark:text-white">إحصائيات الامتحانات ونسب النجاح والرسوب</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              تفصيل لنتائج الامتحانات مقسمة حسب النوع، مبيناً إجمالي المُمتحنين، والناجحين، ونسب النجاح والرسوب المئوية.
+            </p>
+          </div>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-gray-100 dark:border-gray-800">
+          <TableComponent data={currentData?.passFailRates} isFetching={isFetching} />
+        </div>
       </div>
 
-      <div className="gap-4  max-md:flex-col flex  w-full">
+      <div className="gap-4 max-md:flex-col flex w-full">
         {/* <RowCardMullite
           title={t("DashboardPage.ThisToday")}
           numberAbsent={currentData?.attendanceCounts.today.Absent}
@@ -46,7 +45,6 @@ const RowComponent = () => {
           titleAbsent={t("DashboardPage.absent")}
           titlePresent={t("DashboardPage.present")}
           titleVacation={t("DashboardPage.vacation")}
-
         /> */}
         <RowToday data={currentData} />
         <RowWeek data={currentData} />
@@ -70,7 +68,6 @@ const RowComponent = () => {
           titleVacation={t("DashboardPage.vacation")}
         /> */}
       </div>
-      <TableComponent data={currentData?.passFailRates} isFetching={isFetching} />
     </div>
   );
 };

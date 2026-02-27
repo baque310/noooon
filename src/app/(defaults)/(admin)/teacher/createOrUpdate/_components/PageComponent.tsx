@@ -21,11 +21,19 @@ import { DateTimeForm } from '@/components/Form/DateTimeForm';
 import { UploadFileForm } from '@/components/Form/uploadFileForm';
 import { SelectForm } from '@/components/Form/SelectForm';
 
-const PageComponent = () => {
+interface PageComponentProps {
+  id?: string | null;
+  isModal?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+}
+
+const PageComponent = ({ id: propId, isModal, onClose, onSuccess }: PageComponentProps = {}) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const queryId = searchParams.get("id");
+  const id = propId ?? queryId;
   const [TeacherGetDataById, { currentData: data, isFetching }] = useLazyTeacherGetDataByIdQuery()
   useEffect(() => {
     if (id) {
@@ -74,8 +82,13 @@ const PageComponent = () => {
       }
       toast.success(t(id ? "common.updated-successfully" : "common.added-successfully"), { autoClose: 30000, });
       resetForm();
-      if (id) {
-        router.back();
+      if (onSuccess) onSuccess();
+      if (isModal) {
+        if (onClose) onClose();
+      } else {
+        if (id) {
+          router.back();
+        }
       }
     } catch (error: any) {
       console.error("Failed to operation :", error);
@@ -99,8 +112,8 @@ const PageComponent = () => {
 
   return (
     <>
-      <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton title={t(id ? "TeacherPage.update-info" : "TeacherPage.add")} />
+      <div className={`mx-auto w-full ${isModal ? "" : "max-md:max-w-[100%] md:max-w-[50%]"}`}>
+        {!isModal && <BackButton title={t(id ? "TeacherPage.update-info" : "TeacherPage.add")} />}
 
         {isFetching ? (
           <LoadingForm />

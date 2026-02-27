@@ -48,38 +48,40 @@ const TableComponent = () => {
       <div className={"flex justify-between items-center mb-4"}>
         <div className="text-xl font-bold text-slate-800 dark:text-white uppercase ">{t("StagePage.Stages")}</div>
       </div>
-      <div className="datatables pagination-padding mt-2">
-        {isMounted && (
-          <DataTable
-            onRowClick={async (item) => {
-              router.push(`/stage/${item.record.id}`);
-            }}
-            fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-            records={data as any}
-            columns={[
-              {
-                title: t("StagePage.name"),
-                accessor: "name",
-                // sortable: true,
-                render: ({ name }: any) => t(name as any),
-              },
+      <div className="mt-4">
+        {/* List Header */}
+        <div className="hidden md:grid grid-cols-[2fr_1fr] gap-4 px-6 py-4 bg-primary/5 dark:bg-primary/10 rounded-xl mb-4 text-primary font-extrabold text-sm">
+          <div className="text-start">اسم المرحلة</div>
+          <div className="text-center">تاريخ الإنشاء</div>
+        </div>
 
-              {
-                title: t("common.createdAt"),
-                accessor: "createdAt",
-                // sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
-              },
-            ]}
-            customLoader={<div className="loader !bg-primary"></div>}
-            noRecordsText={t("common.no-data")}
-            noRecordsIcon={<></>}
-            {...(isFetching && { minHeight: 130 })}
-
-
-          />
-        )}
+        {/* List Body */}
+        <div className="flex flex-col gap-3">
+          {isFetching ? (
+            <div className="flex justify-center items-center py-16">
+              <div className="loader !bg-primary !w-8 !h-8" />
+            </div>
+          ) : data?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-14 gap-3 text-gray-400 dark:text-gray-500">
+              <p className="font-bold text-sm">{t("common.no-data")}</p>
+            </div>
+          ) : (
+            (data as any[])?.map((item: any) => (
+              <div
+                key={item.id}
+                onClick={() => router.push(`/stage/${item.id}`)}
+                className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+              >
+                <div className="font-extrabold text-gray-800 dark:text-gray-200 text-center md:text-start">
+                  {t(item.name as any)}
+                </div>
+                <div className="font-bold text-gray-500 dark:text-gray-400 text-sm text-center">
+                  {item.createdAt ? moment(item.createdAt).format("YYYY-MM-DD") : "—"}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
       <PageComponent open={open} setOpen={setOpen} />
     </div>

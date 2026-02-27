@@ -16,7 +16,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-export interface FormValues extends AddParentPayload {}
+export interface FormValues extends AddParentPayload { }
 export interface FormValuesMulti {
   parentsData: {
     id: number;
@@ -30,11 +30,18 @@ import SingleAdd from "./SingleAdd";
 import { Tab, TabOption } from "./_components/Tab";
 import ExcelAdd from "./ExcelAdd";
 
-const PageComponent = () => {
+interface PageComponentProps {
+  id?: string;
+  isModal?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
+}
+
+const PageComponent = ({ id: propsId, isModal, onClose, onSuccess }: PageComponentProps) => {
   const { t } = getTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+  const id = propsId || searchParams.get("id");
   const [selected, setSelected] = useState<TabOption>("add");
   const [ParentGetDataById, { currentData: data, isFetching }] =
     useLazyParentGetDataByIdQuery();
@@ -42,11 +49,12 @@ const PageComponent = () => {
     if (id) {
       ParentGetDataById({ id: String(id) }).then((data) => {
         if (!data.data) {
-          router.back();
+          if (isModal && onClose) onClose();
+          else router.back();
         }
       });
     }
-  }, [id]);
+  }, [id, isModal, onClose, router]);
 
   const [ParentCreate, { isLoading: isLoadingParentCreate }] =
     useParentCreateMutation();
@@ -95,8 +103,10 @@ const PageComponent = () => {
         { autoClose: 30000 }
       );
       resetForm();
+      if (onSuccess) onSuccess();
       if (id) {
-        router.back();
+        if (isModal && onClose) onClose();
+        else router.back();
       }
     } catch (error: any) {
       console.error("Failed to operation :", error);
@@ -143,10 +153,12 @@ const PageComponent = () => {
 
   return (
     <>
-      <div className="mx-auto my-0 max-md:max-w-[100%] md:max-w-[50%]">
-        <BackButton
-          title={t(id ? "ParentPage.update-info" : "ParentPage.add")}
-        />
+      <div className={`mx-auto my-0 ${isModal ? "w-full" : "max-md:max-w-[100%] md:max-w-[50%]"}`}>
+        {!isModal && (
+          <BackButton
+            title={t(id ? "ParentPage.update-info" : "ParentPage.add")}
+          />
+        )}
 
         {isFetching ? (
           <LoadingForm />

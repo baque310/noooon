@@ -24,37 +24,56 @@ const TableComponent = ({ isFetching, data }: { isFetching: boolean, data?: any[
           records={data as any}
           columns={[
             {
-              title: t("DashboardPage.examTypeName"),
+              title: t("DashboardPage.examTypeName") || "نوع الامتحان",
               accessor: "examTypeName",
+              render: ({ examTypeName }: any) => <div className="font-bold text-gray-800 dark:text-gray-200">{examTypeName}</div>
             },
             {
-              title: t("DashboardPage.totalStudents"),
+              title: t("DashboardPage.totalStudents") || "الطلاب الممتحنون",
               accessor: "totalStudents",
+              render: ({ totalStudents }: any) => <div className="font-semibold">{totalStudents}</div>
             },
             {
-              title: t("DashboardPage.passingCount"),
+              title: t("DashboardPage.passingCount") || "عدد الناجحين",
               accessor: "passingCount",
+              render: ({ passingCount }: any) => <div className="text-green-600 font-semibold">{passingCount}</div>
             },
             {
-              title: t("DashboardPage.passRate"),
+              title: t("DashboardPage.passRate") || "نسبة النجاح",
               accessor: "passRate",
+              render: ({ passRate }: any) => (
+                <div className="flex items-center gap-2 min-w-[120px]">
+                  <span className="text-green-600 font-bold w-12">{passRate}</span>
+                  <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="bg-green-500 h-2 rounded-full" style={{ width: passRate }}></div>
+                  </div>
+                </div>
+              ),
             },
             {
-              title: t("DashboardPage.failingCount"),
+              title: t("DashboardPage.failingCount") || "عدد الراسبين",
               accessor: "failingCount",
+              render: ({ failingCount }: any) => <div className="text-red-500 font-semibold">{failingCount}</div>
             },
             {
-              title: t("DashboardPage.failRate"),
+              title: t("DashboardPage.failRate") || "نسبة الرسوب",
               accessor: "failRate",
+              render: ({ failRate }: any) => (
+                <div className="flex items-center gap-2 min-w-[120px]">
+                  <span className="text-red-500 font-bold w-12">{failRate}</span>
+                  <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="bg-red-500 h-2 rounded-full" style={{ width: failRate }}></div>
+                  </div>
+                </div>
+              ),
             },
-
           ]}
           customLoader={<div className="loader !bg-primary"></div>}
           noRecordsText={t("common.no-data")}
           noRecordsIcon={<></>}
           {... { minHeight: 130 } as any}
           totalRecords={data?.length}
-          recordsPerPage={30}  
+          recordsPerPage={30}
         />
       )}
     </div>

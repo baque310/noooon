@@ -18,6 +18,8 @@ import { useSelector } from "react-redux";
 import { AddIcons } from "@/components/common/icons/Actions";
 import Avatar from "@/components/common/Avatar";
 import { exportJsonToExcel } from "@/utils/excelParser";
+import ParentModal from "./ParentModal";
+import { Search as SearchIcon, Users, Download } from "lucide-react";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -34,13 +36,15 @@ const TableComponent = () => {
   const { isMounted } = useMounted();
 
   const [pageNumber, setPageNumber] = useState(Number(1));
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedParentId, setSelectedParentId] = useState<string | undefined>();
 
   const [param, setParam] = useState<
     | {
-        approval_status?: string;
-        search?: string;
-        range?: string;
-      }
+      approval_status?: string;
+      search?: string;
+      range?: string;
+    }
     | undefined
   >();
   const params = {
@@ -84,427 +88,132 @@ const TableComponent = () => {
   };
 
   return (
-    <div
-      className={`m-4 rtl:transition-[left] ltr:transition-[right] duration-1000`}
-    >
+    <div className="p-4">
       {/* Header Section */}
-      <div className="mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex justify-between items-center max-lg:flex-col max-lg:items-start gap-6">
-            {/* Title Section */}
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                  {t("ParentPage.parents")}
-                </h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">
-                  {t("ParentPage.manageAndViewParentInfo")}
-                </p>
-              </div>
-            </div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-extrabold text-gray-800 dark:text-gray-100">{t("ParentPage.parents")}</h2>
+        <div className="flex gap-3">
+          {/* Export to Excel Button */}
+          <button
+            onClick={() => {
+              exportJsonToExcel({
+                data:
+                  data?.data.map((item) => {
+                    return {
+                      fullName: item.fullName,
+                      User: item.User?.username,
+                      birth: item.birth,
+                      gender: item.gender,
+                      address: item.address,
+                      email: item.email,
+                      phone1: item.phone1,
+                      phone2: item.phone2,
+                    };
+                  }) ?? [],
+                fileName: "Parents",
+                sheetName: "Parents",
+              });
+            }}
+            disabled={!data?.data || data.data.length === 0 || isFetching}
+            className="flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 font-extrabold px-6 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-800 transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+            <Download className="h-4 w-4" />
+            تصدير للأكسل
+          </button>
 
-            {/* Action Section */}
-            <div className="flex gap-4 max-md:flex-col max-md:w-full">
-              {/* Search Input */}
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg
-                    className="h-5 w-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                <input
-                  value={Search ?? ""}
-                  placeholder={`${t("common.searchParents")}`}
-                  onKeyDown={handleKeyPress}
-                  onChange={handleChange}
-                  id="search"
-                  className="pl-10 pr-4 py-3 w-80 max-md:w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 shadow-sm hover:shadow-md"
-                  name="search"
-                />
-              </div>
-
-              {/* Export to Excel Button */}
+          <RolePageAndActionBasedComponent
+            component={(props) => (
               <button
                 onClick={() => {
-                  exportJsonToExcel({
-                    data:
-                      data?.data.map((item) => {
-                        return {
-                          fullName: item.fullName,
-                          User: item.User?.username,
-                          birth: item.birth,
-                          gender: item.gender,
-                          address: item.address,
-                          email: item.email,
-                          phone1: item.phone1,
-                          phone2: item.phone2,
-                        };
-                      }) ?? [],
-                    fileName: "Parents",
-                    sheetName: "Parents",
-                  });
+                  router.push("/parent/createOrUpdate");
                 }}
-                disabled={!data?.data || data.data.length === 0 || isFetching}
-                className={`
-                                relative overflow-hidden group
-                                flex items-center gap-3 px-6 py-3
-                                bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700
-                                disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed
-                                text-white font-semibold rounded-xl
-                                shadow-lg hover:shadow-xl disabled:shadow-md
-                                transform hover:scale-105 active:scale-95 disabled:transform-none
-                                transition-all duration-200
-                                border border-green-500/20 disabled:border-gray-400/20
-                                min-w-fit whitespace-nowrap
-                              `}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                <svg
-                  className="h-5 w-5 relative z-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                <span className="relative z-10">{t("common.ExportExcel")}</span>
+                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-extrabold px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-sm">
+                <AddIcons className="h-5 w-5" />
+                إضافة ولي أمر جديد
               </button>
+            )}
+            resource="admin"
+            permission={["create-any", "create-own"]}
+          />
+        </div>
+      </div>
 
-              {/* Add Button */}
-              <RolePageAndActionBasedComponent
-                component={(props) => {
-                  return (
-                    <button
-                      className={`${props.disabled && "hidden"} 
-                        relative overflow-hidden group
-                        flex items-center gap-3 px-6 py-3
-                        bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700
-                        text-white font-semibold rounded-xl
-                        shadow-lg hover:shadow-xl
-                        transform hover:scale-105 active:scale-95
-                        transition-all duration-200
-                        border border-green-500/20
-                        min-w-fit whitespace-nowrap`}
-                      onClick={() => {
-                        router.push("/parent/createOrUpdate");
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                      <AddIcons className="h-5 w-5 relative z-10" />
-                      <span className="relative z-10">{t("common.add")}</span>
-                    </button>
-                  );
-                }}
-                resource={"admin"}
-                permission={["create-any", "create-own"]}
-              />
-            </div>
-          </div>
+      {/* Search Bar Row */}
+      <div className="mb-6">
+        <div className="relative max-w-md">
+          <SearchIcon className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            value={Search ?? ""}
+            onChange={handleChange}
+            onKeyDown={handleKeyPress}
+            placeholder={t("common.searchParents")}
+            className="w-full rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-4 py-3 ps-10 text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition shadow-sm"
+          />
         </div>
       </div>
       {/* Data Table Section */}
       <div className="datatables pagination-padding mt-2">
-        {isMounted && (
-          <DataTable
-            onRowClick={async (item) => {
-              router.push(`/parent/${item.record.id}`);
-            }}
-            fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-            records={data?.data as any}
-            columns={[
-              {
-                title: t("ParentPage.photo"),
-                accessor: "photo",
-                sortable: true,
-                width: 80,
-                render: ({ photo, fullName }: any) => (
-                  <div className="flex items-center justify-center">
-                    <div className="relative group">
-                      <Avatar photo={photo} username={fullName} />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-full transition-colors duration-200"></div>
-                    </div>
+        <div className="flex flex-col gap-3">
+          <div className="hidden md:grid grid-cols-[80px_1fr_1fr_1fr_1fr] gap-4 px-6 py-4 bg-primary/5 dark:bg-primary/10 rounded-xl mb-4 text-primary font-extrabold text-sm">
+            <div className="text-center">{t("ParentPage.photo")}</div>
+            <div className="text-start">{t("ParentPage.fullName")}</div>
+            <div className="text-center">{t("ParentPage.Username")}</div>
+            <div className="text-center">{t("ParentPage.gender")}</div>
+            <div className="text-center">{t("common.createdAt")}</div>
+          </div>
+
+          {isFetching ? (
+            <div className="flex justify-center items-center py-16">
+              <div className="loader !bg-primary !w-8 !h-8" />
+            </div>
+          ) : data?.data?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-14 gap-3 text-gray-400 dark:text-gray-500">
+              <p className="font-bold text-sm">{t("common.no-data")}</p>
+            </div>
+          ) : (
+            data?.data?.map((item: any) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  setSelectedParentId(item.id);
+                  setIsModalOpen(true);
+                }}
+                className="grid grid-cols-1 md:grid-cols-[80px_1fr_1fr_1fr_1fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+              >
+                <div className="flex items-center justify-center">
+                  <div className="relative group">
+                    <Avatar photo={item.photo} username={item.fullName} className="w-12 h-12 text-sm" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-full transition-colors duration-200"></div>
                   </div>
-                ),
-              },
-              {
-                title: t("ParentPage.fullName"),
-                accessor: "fullName",
-                sortable: true,
-                render: ({ fullName }: any) => (
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    {fullName}
-                  </div>
-                ),
-              },
-              {
-                title: t("ParentPage.Username"),
-                accessor: "User.username",
-                render: ({ User }: any) => (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 px-2 py-1 rounded-lg font-medium">
-                      {User?.username}
-                    </span>
-                  </div>
-                ),
-              },
-              {
-                title: t("ParentPage.gender"),
-                accessor: "gender",
-                render: ({ gender }: any) => (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">
-                      {t(gender.toLowerCase() as any)}
-                    </span>
-                  </div>
-                ),
-              },
-              {
-                title: t("ParentPage.birth"),
-                accessor: "birth",
-                sortable: true,
-                render: ({ birth }: any) =>
-                  birth ? (
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      {moment(birth).format("MMM DD, YYYY")}
-                    </div>
-                  ) : null,
-              },
-              {
-                title: t("ParentPage.fullNameStudent"),
-                accessor: "fullNameStudent",
-                sortable: true,
-                render: ({ Student }: any) =>
-                  Student && (Student.fullName ?? ""),
-              },
-              {
-                title: t("ParentPage.address"),
-                accessor: "address",
-                sortable: true,
-                render: ({ address }: any) => (
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 max-w-48 truncate">
-                    <svg
-                      className="w-4 h-4 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    <span title={address}>{address}</span>
-                  </div>
-                ),
-              },
-              {
-                title: t("ParentPage.email"),
-                accessor: "email",
-                sortable: true,
-                render: ({ email }: any) => (
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                    {email}
-                  </div>
-                ),
-              },
-              {
-                title: t("ParentPage.phone1"),
-                accessor: "phone1",
-                sortable: true,
-                render: ({ phone1 }: any) => (
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                    {phone1}
-                  </div>
-                ),
-              },
-              {
-                title: t("ParentPage.phone2"),
-                accessor: "phone2",
-                sortable: true,
-                render: ({ phone2 }: any) =>
-                  phone2 ? (
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                        />
-                      </svg>
-                      {phone2}
-                    </div>
-                  ) : null,
-              },
-              {
-                title: t("common.updatedAt"),
-                accessor: "updatedAt",
-                sortable: true,
-                render: ({ updatedAt }: any) =>
-                  updatedAt ? (
-                    <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">
-                        {moment(updatedAt).format("MMM DD, YYYY")}
-                      </div>
-                      <div className="text-gray-400 dark:text-gray-500">
-                        {moment(updatedAt).format("hh:mm A")}
-                      </div>
-                    </div>
-                  ) : null,
-              },
-              {
-                title: t("common.createdAt"),
-                accessor: "createdAt",
-                sortable: true,
-                render: ({ createdAt }: any) =>
-                  createdAt ? (
-                    <div className="text-xs">
-                      <div className="text-gray-500 dark:text-gray-400 font-medium">
-                        {moment(createdAt).format("MMM DD, YYYY")}
-                      </div>
-                      <div className="text-gray-400 dark:text-gray-500">
-                        {moment(createdAt).format("hh:mm A")}
-                      </div>
-                    </div>
-                  ) : null,
-              },
-            ]}
-            customLoader={
-              <div className="flex items-center justify-center py-12">
-                <div className="relative">
-                  <div className="w-12 h-12 border-4 border-green-200 dark:border-green-800 rounded-full animate-spin"></div>
-                  <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent border-t-green-600 rounded-full animate-spin"></div>
+                </div>
+                <div className="font-extrabold text-gray-800 dark:text-gray-200 text-center md:text-start">
+                  {item.fullName}
+                </div>
+                <div className="font-mono text-gray-500 dark:text-gray-400 text-sm text-center">
+                  {item.User?.username || "—"}
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-lg font-medium">
+                    {t(item.gender.toLowerCase() as any)}
+                  </span>
+                </div>
+                <div className="font-bold text-gray-500 dark:text-gray-400 text-sm text-center">
+                  {item.createdAt ? moment(item.createdAt).format("YYYY-MM-DD") : "—"}
                 </div>
               </div>
-            }
-            noRecordsText={""}
-            noRecordsIcon={
-              <div className="text-center py-12">
-                <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    className="w-12 h-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {t("common.no-data")}
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  {t("common.noParentsFound")}
-                </p>
-              </div>
-            }
-            {...((data?.data &&
-              data?.data?.length == 0 && { minHeight: 300 }) as any)}
-            sortStatus={sortStatus}
-            onSortStatusChange={(sort) => {
-              setSortStatus(sort);
-            }}
-            totalRecords={data?.totalCount}
-            recordsPerPage={30}
-            page={pageNumber}
-            onPageChange={(p) => {
-              setPageNumber(p);
-            }}
-            rowClassName={({ record }) =>
-              "hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-            }
-            borderRadius="lg"
-          />
-        )}
+            ))
+          )}
+        </div>
       </div>
+
+      <ParentModal
+        open={isModalOpen}
+        setOpen={setIsModalOpen}
+        parentId={selectedParentId}
+        onSuccess={() => {
+          // Refetch can be implemented if needed, handled by RTK Query cache generally 
+        }}
+      />
     </div>
   );
 };

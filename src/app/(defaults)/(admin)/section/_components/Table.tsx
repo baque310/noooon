@@ -128,68 +128,48 @@ const TableComponent = () => {
           />
         </div>
       </div>
-      <div className="datatables pagination-padding mt-2">
-        {isMounted && (
-          <DataTable
-            onRowClick={async (item) => {
-              router.push(`/section/${item.record.id}`);
-            }}
-            fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-            records={data as any}
-            columns={[
-              {
-                title: t("SectionPage.name"),
-                accessor: "name",
-                sortable: true,
-                render: ({ name }: any) => t(name as any),
-              },
-              {
-                title: t("SectionPage.ClassName"),
-                accessor: "Class.name",
-                // sortable: true,
-                // render: ({ Class }: any) => t(Class.name as any),
-              },
-              // {
-              //   title: t("common.status"),
-              //   accessor: "isActive",
-              //   sortable: true,
-              //   render: ({ isActive }) => (
-              //     <div className="flex gap-2 px-[2px]">
-              //       {isActive == "true" ? (
-              //         <div className={` rounded-md p-1 text-center bg-success/20 text-success `}>{t("common.isActive")}</div>
-              //       ) : (
-              //         <div className={` rounded-md p-1 text-center bg-danger/50 text-danger`}>{t("common.isNotActive")}</div>
-              //       )}
-              //     </div>
-              //   ),
-              // },
+      <div className="mt-4">
+        {/* List Header */}
+        <div className="hidden md:grid grid-cols-[1fr_1.5fr_1fr_1fr] gap-4 px-6 py-4 bg-primary/5 dark:bg-primary/10 rounded-xl mb-4 text-primary font-extrabold text-sm">
+          <div className="text-start">اسم الشعبة</div>
+          <div className="text-center">اسم الصف</div>
+          <div className="text-center">تاريخ التحديث</div>
+          <div className="text-center">تاريخ الإنشاء</div>
+        </div>
 
-              {
-                title: t("common.updatedAt"),
-                accessor: "updatedAt",
-                // sortable: true,
-                render: ({ updatedAt }: any) => (updatedAt ? <div>{moment(updatedAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
-              },
-              {
-                title: t("common.createdAt"),
-                accessor: "createdAt",
-                // sortable: true,
-                render: ({ createdAt }: any) => (createdAt ? <div>{moment(createdAt).format("YYYY-MM-DD hh:mm:ss A")}</div> : null),
-              },
-            ]}
-            customLoader={<div className="loader !bg-primary"></div>}
-            noRecordsText={t("common.no-data")}
-            noRecordsIcon={<></>}
-            {...(isFetching && { minHeight: 130 })}
-            sortStatus={sortStatus}
-            onSortStatusChange={(sort) => {
-              setSortStatus(sort);
-            }}
-
-
-          />
-        )}
+        {/* List Body */}
+        <div className="flex flex-col gap-3">
+          {isFetching ? (
+            <div className="flex justify-center items-center py-16">
+              <div className="loader !bg-primary !w-8 !h-8" />
+            </div>
+          ) : data?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-14 gap-3 text-gray-400 dark:text-gray-500">
+              <p className="font-bold text-sm">{t("common.no-data")}</p>
+            </div>
+          ) : (
+            (data as any[])?.map((item: any) => (
+              <div
+                key={item.id}
+                onClick={() => router.push(`/section/${item.id}`)}
+                className="grid grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr_1fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+              >
+                <div className="font-extrabold text-gray-800 dark:text-gray-200 text-center md:text-start">
+                  {t(item.name as any)}
+                </div>
+                <div className="font-bold text-gray-600 dark:text-gray-300 text-sm text-center">
+                  {t(item?.Class?.name as any) || "—"}
+                </div>
+                <div className="font-bold text-gray-500 dark:text-gray-400 text-sm text-center">
+                  {item.updatedAt ? moment(item.updatedAt).format("YYYY-MM-DD") : "—"}
+                </div>
+                <div className="font-bold text-gray-500 dark:text-gray-400 text-sm text-center">
+                  {item.createdAt ? moment(item.createdAt).format("YYYY-MM-DD") : "—"}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
       <CreateComponent open={open} setOpen={setOpen} />
     </div>

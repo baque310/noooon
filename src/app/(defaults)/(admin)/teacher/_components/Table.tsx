@@ -1,22 +1,15 @@
 "use client";
-import { DataTable } from "mantine-datatable";
-import React from "react";
-
+import React, { useState, useMemo } from "react";
 import moment from "moment";
 import { RolePageAndActionBasedComponent, withRole } from "@/components/Provider/RolePageAndActionBasedComponent";
-import useMounted from "@/hooks/useMounted";
 import { getTranslation } from "@/ni18n/i18n";
 import { useTeacherGetDataQuery } from "@/services/admin/teacher";
-import { IRootState } from "@/store";
-import { DataTableSortStatus } from "mantine-datatable";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-
 import { AddIcons } from "@/components/common/icons/Actions";
-import Avatar from "@/components/common/Avatar";
-import SelectFilter from "@/components/Filter/SelectFilter";
-import FormattedDate from "@/components/common/FormattedDate";
+import { BASE_URL } from "@/services/api";
+import { Search as SearchIcon, ChevronRight, ChevronLeft, CalendarPlus } from "lucide-react";
+import { DataTableSortStatus } from "mantine-datatable";
+import TeacherModal from "./TeacherModal";
 
 const TableComponent = () => {
   const { t } = getTranslation();
@@ -28,222 +21,239 @@ const TableComponent = () => {
     direction: "desc",
   });
 
-  const isDark = useSelector((state: IRootState) => state.themeConfig.theme) === "dark";
-  const { isMounted } = useMounted();
-
   const [pageNumber, setPageNumber] = useState(Number(1));
+  const [searchValue, setSearchValue] = useState(search);
+  const [selectedTeacherId, setSelectedTeacherId] = useState<string | undefined>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [param, setParam] = useState<
-    | {
-        Gender?: string;
-        search?: string;
-        range?: string;
-      }
-    | undefined
-  >();
   const params = {
     skip: pageNumber,
     take: 30,
     sortBy: sortStatus.columnAccessor,
     sortDirection: sortStatus.direction,
-    ...(search && { search: search as string }),
-    ...param,
+    ...(searchValue && { search: searchValue as string }),
   };
 
   const { isFetching, currentData: data } = useTeacherGetDataQuery({
     ...params,
   });
 
-  const [Search, setSearch] = useState(search);
   const handleChange = (e: any) => {
     const value = e.target.value;
-    setSearch(value);
-    if (value == "") {
-      handleSearch(value);
-    }
-  };
-  const allParams = new URLSearchParams(searchParams);
-  const handleSearch = (value?: string) => {
-    if (search != Search) {
-      allParams.set("search", value ?? Search);
-
-      router.push(`/teacher?${allParams.toString()}`);
+    setSearchValue(value);
+    if (value === "") {
       setPageNumber(1);
     }
   };
+
+  const handleSearch = () => {
+    setPageNumber(1);
+  };
+
   const handleKeyPress = (event: any) => {
     if (event.key === "Enter") {
       handleSearch();
     }
   };
 
-  const handleSelectGander = (value: any) => {
-    if (value) {
-      setParam({ ...param, Gender: value });
-    } else {
-      setParam({ ...param, Gender: undefined });
-    }
+  // Helper to extract unique subjects from TeacherSubject
+  const getSubjects = (teacherSubjects: any[]) => {
+    if (!teacherSubjects || teacherSubjects.length === 0) return "—";
+    const subjects = teacherSubjects.map((ts: any) => ts?.StageSubject?.Subject?.name).filter(Boolean);
+    const uniqueSubjects = Array.from(new Set(subjects));
+    return uniqueSubjects.join("، ");
   };
-  console.log(data);
 
   return (
-    <div className={`m-4    rtl:transition-[left] ltr:transition-[right] duration-1000`}>
-      <div className={"flex justify-between max-md:flex-col gap-2 "}>
-        <div className="text-xl uppercase ">{t("TeacherPage.teachers")}</div>
-        <div className={"flex gap-3 max-md:flex-col max-md:items-end"}>
-          <input
-            value={Search ?? ""}
-            placeholder={`${t("common.search")} ...`}
-            onKeyDown={handleKeyPress}
-            onChange={handleChange}
-            id="search"
-            className="form-input text-white-dark"
-            name="search"
-          />
-          <SelectFilter
-            handleChange={handleSelectGander}
-            title={t("TeacherPage.Gender")}
-            options={[
-              {
-                label: t("TeacherPage.Male"),
-                value: "Male",
-              },
-              {
-                label: t("TeacherPage.Female"),
-                value: "Female",
-              },
-            ]}
-          />
-
-          {
-            <RolePageAndActionBasedComponent
-              component={(props) => {
-                return (
-                  <button
-                    className={` ${
-                      props.disabled && "hidden"
-                    } flex justify-center gap-1 items-center bg-primary border-primary/70 text-white hover:scale-[1.01] transition-transform py-1 px-2    rounded border `}
-                    onClick={() => {
-                      router.push("/teacher/createOrUpdate");
-                    }}>
-                    <AddIcons className="h-4 w-4" />
-                    {t("common.add")}
-                  </button>
-                );
+    <div className="p-4">
+      {/* Header Section */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-extrabold text-gray-800 dark:text-gray-100">الكادر التدريسي</h2>
+        <RolePageAndActionBasedComponent
+          component={(props) => (
+            <button
+              onClick={() => {
+                router.push("/teacher/createOrUpdate");
               }}
-              resource={"admin"}
-              permission={["create-any", "create-own"]}
-            />
-          }
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-extrabold px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-sm">
+              <AddIcons className="h-5 w-5" />
+              إضافة معلم جديد
+            </button>
+          )}
+          resource="admin"
+          permission={["create-any", "create-own"]}
+        />
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative max-w-md">
+          <SearchIcon className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            value={searchValue}
+            onChange={handleChange}
+            onKeyDown={handleKeyPress}
+            placeholder="بحث عن معلم..."
+            className="w-full rounded-2xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-4 py-3 ps-10 text-sm font-bold focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition shadow-sm"
+          />
         </div>
       </div>
-      <div className="datatables pagination-padding mt-2">
-        {isMounted && (
-          <DataTable
-            onRowClick={async (item) => {
-              router.push(`/teacher/${item.record.id}`);
-            }}
-            fetching={isFetching}
-            className={`${isDark} table-hover whitespace-nowrap rounded-lg shadow-base`}
-            records={data?.data as any}
-            columns={[
-              {
-                title: t("TeacherPage.photo"),
-                accessor: "photo",
-                sortable: true,
-                render: ({ photo, fullName }: any) => (
-                  <>
-                    <Avatar photo={photo} username={fullName} />
-                  </>
-                ),
-              },
-              {
-                title: t("TeacherPage.fullName"),
-                accessor: "fullName",
-                sortable: true,
-              },
-              {
-                title: t("TeacherPage.Username"),
-                accessor: "User.username",
-                // sortable: true,
-              },
-              {
-                title: t("TeacherPage.Gender"),
-                accessor: "Gender",
-                sortable: true,
-                render: ({ Gender }) => (Gender ? t(("TeacherPage." + Gender) as any) : ""),
-              },
-              {
-                title: t("TeacherPage.birth"),
-                accessor: "birth",
-                sortable: true,
-                render: ({ birth }: any) => (birth ? <div>{moment(birth).format("YYYY-MM-DD")}</div> : null),
-              },
-              {
-                title: t("TeacherPage.hiringDate"),
-                accessor: "hiringDate",
-                sortable: true,
-                render: ({ hiringDate }: any) => (hiringDate ? <div>{moment(hiringDate).format("YYYY-MM-DD")}</div> : null),
-              },
-              {
-                title: t("TeacherPage.address"),
-                accessor: "address",
-                sortable: true,
-              },
-              {
-                title: t("TeacherPage.email"),
-                accessor: "email",
-                sortable: true,
-              },
-              {
-                title: t("TeacherPage.phone1"),
-                accessor: "phone1",
-                sortable: true,
-              },
-              {
-                title: t("TeacherPage.phone2"),
-                accessor: "phone2",
-                sortable: true,
-              },
 
-              {
-                title: t("common.updatedAt"),
-                accessor: "updatedAt",
-                render: (row: any) => (
-                  <div className="text-center">
-                    <div className="mb-1 text-xs text-gray-500">{t("common.updatedAt")}</div>
-                    <FormattedDate date={row.updatedAt} />
+      {/* List Header - Matching Student Grid Style */}
+      {/* Columns: Image | Name | Specialization (Subjects) | Phone | Status | Date */}
+      <div className="hidden md:grid grid-cols-[70px_1.5fr_1.5fr_1.2fr_0.8fr_1.2fr] gap-4 px-6 py-4 bg-primary/5 dark:bg-primary/10 rounded-xl mb-4 text-primary font-extrabold text-sm text-center">
+        <div>الصورة</div>
+        <div>اسم المعلم</div>
+        <div>التخصص</div>
+        <div>رقم الهاتف</div>
+        <div>الحالة</div>
+        <div>تاريخ الإنشاء</div>
+      </div>
+
+      {/* Teacher Cards List */}
+      <div className="flex flex-col gap-3">
+        {isFetching ? (
+          <div className="flex justify-center items-center py-16">
+            <div className="loader !bg-primary !w-8 !h-8" />
+          </div>
+        ) : data?.data?.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-14 gap-3 text-gray-400 dark:text-gray-500">
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+              <SearchIcon className="w-8 h-8 opacity-50" />
+            </div>
+            <p className="font-bold text-sm">{t("common.no-data")}</p>
+          </div>
+        ) : (
+          data?.data?.map((teacher: any) => {
+            const hasPhone = teacher.phone1 || teacher.phone2;
+            // From provided code we assume user is active naturally because findAll filters inactive users. 
+            // We just display Active badge.
+            const isActive = true;
+
+            return (
+              <div
+                key={teacher.id}
+                onClick={() => {
+                  setSelectedTeacherId(teacher.id);
+                  setIsModalOpen(true);
+                }}
+                className="grid grid-cols-1 md:grid-cols-[70px_1.5fr_1.5fr_1.2fr_0.8fr_1.2fr] gap-4 items-center px-6 py-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                {/* Photo */}
+                <div className="flex justify-center">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm bg-gray-100 dark:bg-gray-700">
+                    {teacher.photo && teacher.photo !== "null" && teacher.photo !== "undefined" && teacher.photo.trim() !== "" ? (
+                      <img
+                        src={teacher.photo.startsWith("http") ? teacher.photo : `${BASE_URL}uploads/${teacher.photo}`}
+                        alt={teacher.fullName}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                          (e.target as HTMLImageElement).parentElement!.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-extrabold text-lg">${teacher.fullName?.charAt(0) || "?"}</div>`;
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-extrabold text-lg">
+                        {teacher.fullName?.charAt(0) || "?"}
+                      </div>
+                    )}
                   </div>
-                ),
-              },
-              {
-                title: t("common.createdAt"),
-                accessor: "createdAt",
-                render: (row: any) => (
-                  <div className="text-center">
-                    <div className="mb-1 text-xs text-gray-500">{t("common.createdAt")}</div>
-                    <FormattedDate date={row.createdAt} />
-                  </div>
-                ),
-              },
-            ]}
-            customLoader={<div className="loader !bg-primary"></div>}
-            noRecordsText={t("common.no-data")}
-            noRecordsIcon={<></>}
-            {...(isFetching && { minHeight: 130 })}
-            sortStatus={sortStatus}
-            onSortStatusChange={(sort) => {
-              setSortStatus(sort);
-            }}
-            totalRecords={data?.totalCount}
-            recordsPerPage={30}
-            page={pageNumber}
-            onPageChange={(p) => {
-              setPageNumber(p);
-            }}
-          />
+                </div>
+
+                {/* Name */}
+                <div className="font-extrabold text-gray-800 dark:text-gray-200 text-center md:text-start">{teacher.fullName}</div>
+
+                {/* Specialization (Subjects) */}
+                <div className="font-semibold text-gray-600 dark:text-gray-400 text-sm text-center">
+                  {getSubjects(teacher.TeacherSubject)}
+                </div>
+
+                {/* Phone */}
+                <div className="font-mono text-gray-600 dark:text-gray-400 text-sm text-center" dir="ltr">
+                  {teacher.phone1 || teacher.phone2 || "—"}
+                </div>
+
+                {/* Status */}
+                <div className="text-center">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${isActive ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-500" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-500"}`}>
+                    نشط
+                  </span>
+                </div>
+
+                {/* Created Date */}
+                <div className="font-bold text-gray-500 dark:text-gray-400 text-sm text-center flex items-center justify-center gap-1">
+                  <CalendarPlus className="w-3.5 h-3.5" />
+                  {teacher.createdAt ? moment(teacher.createdAt).format("YYYY-MM-DD") : "—"}
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
+
+      {/* Pagination */}
+      {(data?.totalCount ?? 0) > 30 &&
+        (() => {
+          const totalPages = Math.ceil((data?.totalCount ?? 0) / 30);
+          const startRecord = (pageNumber - 1) * 30 + 1;
+          const endRecord = Math.min(pageNumber * 30, data?.totalCount ?? 0);
+          return (
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+              <div className="text-sm font-bold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-xl">
+                عرض{" "}
+                <span className="text-primary font-extrabold">
+                  {startRecord}–{endRecord}
+                </span>{" "}
+                من أصل <span className="text-gray-700 dark:text-gray-200 font-extrabold">{data?.totalCount}</span> معلم
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
+                  disabled={pageNumber === 1}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm shadow-sm hover:bg-primary hover:text-white hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 dark:disabled:hover:text-gray-200 transition-all duration-200">
+                  <ChevronRight className="w-4 h-4" />
+                  السابق
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let page: number;
+                    if (totalPages <= 5) {
+                      page = i + 1;
+                    } else if (pageNumber <= 3) {
+                      page = i + 1;
+                    } else if (pageNumber >= totalPages - 2) {
+                      page = totalPages - 4 + i;
+                    } else {
+                      page = pageNumber - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setPageNumber(page)}
+                        className={`w-10 h-10 rounded-xl font-extrabold text-sm transition-all duration-200 ${pageNumber === page
+                          ? "bg-primary text-white shadow-md shadow-primary/30 scale-110"
+                          : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-primary hover:text-primary"
+                          }`}>
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => setPageNumber((p) => p + 1)}
+                  disabled={!data?.data || data.data.length < 30}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm shadow-sm hover:bg-primary hover:text-white hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed dark:disabled:hover:hidden transition-all duration-200">
+                  التالي
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          );
+        })()}
+      <TeacherModal open={isModalOpen} setOpen={setIsModalOpen} teacherId={selectedTeacherId} />
     </div>
   );
 };
